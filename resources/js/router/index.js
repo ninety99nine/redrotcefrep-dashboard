@@ -1,10 +1,13 @@
 import SubscriptionPlans from '@Pages/subscription-plans/SubscriptionPlans.vue';
+import StoreSettings from '@Pages/store/settings/StoreSettings.vue';
 import Subscriptions from '@Pages/subscriptions/Subscriptions.vue';
 import Transactions from '@Pages/transactions/Transactions.vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthState } from '@Stores/auth-store.js';
+import { useApiState } from '@Stores/api-store.js';
 import Dashboard from '@Pages/dashboard/Index.vue';
-import { useAuthStore } from '@Stores/auth-store.js';
-import { useApiStore } from '@Stores/api-store.js';
+import Store from '@Pages/store/Store.vue';
+import Profile from '@Pages/profile/Profile.vue';
 import Register from '@Pages/auth/Register.vue';
 import NotFound from '@Pages/error/404.vue';
 import Login from '@Pages/auth/Login.vue';
@@ -36,6 +39,65 @@ const routes = [
         component: Dashboard,
         children: [
             {
+                name: 'profile',
+                path: 'profile',
+                component: Profile
+            },
+            {
+                name: 'stores',
+                path: 'stores',
+                component: Subscriptions
+            },
+            {
+                name: 'store',
+                path: 'stores/:href',
+                component: Store,
+                children: [
+                    {
+                        path: '',
+                        name: 'store-home',
+                        component: Transactions
+                    },
+                    {
+                        path: 'orders',
+                        name: 'store-orders',
+                        component: Transactions
+                    },
+                    {
+                        path: 'reviews',
+                        name: 'store-reviews',
+                        component: Transactions
+                    },
+                    {
+                        path: 'products',
+                        name: 'store-products',
+                        component: Transactions
+                    },
+                    {
+                        path: 'coupons',
+                        name: 'store-coupons',
+                        component: Transactions
+                    },
+                    {
+                        path: 'transactions',
+                        name: 'store-transactions',
+                        component: Transactions
+                    },
+                    {
+                        path: 'team-members',
+                        name: 'store-team-members',
+                        component: Transactions
+                    },
+                    {
+                        path: 'settings',
+                        name: 'store-settings',
+                        component: StoreSettings
+                    }
+                ]
+            },
+
+
+            {
                 name: 'subscriptions',
                 path: 'subscriptions',
                 component: Subscriptions
@@ -50,7 +112,6 @@ const routes = [
                 path: 'subscription-plans',
                 component: SubscriptionPlans
             },
-
         ]
     },
     {
@@ -84,8 +145,8 @@ router.beforeEach(async (to, from, next) => {
 
     }else{
 
-        //  Capture the useApiStore instance
-        const _useApiStore = useApiStore();
+        //  Capture the useApiState instance
+        const _useApiStore = useApiState();
 
         if(_useApiStore.hasApiHome == false) {
 
@@ -105,8 +166,8 @@ router.beforeEach(async (to, from, next) => {
 
         }
 
-        //  Capture the useAuthStore instance
-        const auth = useAuthStore();
+        //  Capture the useAuthState instance
+        const auth = useAuthState();
 
         // Check if the route has meta data and requiresAuth is explicitly set to false
         if (to.meta && to.meta.requiresAuth === false) {

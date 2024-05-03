@@ -3,7 +3,9 @@
     <div>
 
         <!-- Input Label -->
-        <InputLabel :_for="uniqueId">Mobile Number</InputLabel>
+        <InputLabel :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
+            Mobile Number
+        </InputLabel>
 
         <div class="mt-2">
 
@@ -28,6 +30,12 @@
     export default {
         props: {
             modelValue: {
+                type: String
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
                 type: String
             },
             errorText: {

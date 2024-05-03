@@ -196,7 +196,7 @@
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
-    import { getTransactions } from '@Repositories/transactions.js';
+    import { getTransactions } from '@Repositories/transaction-repository.js';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
@@ -354,7 +354,7 @@
                     //  Stop loader
                     this.isFetching = false;
 
-                }).catch(error => {
+                }).catch(errorException => {
 
                     //  Stop loader
                     this.isFetching = false;

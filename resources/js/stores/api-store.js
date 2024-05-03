@@ -1,8 +1,8 @@
-import { useAuthStore } from '@Stores/auth-store.js';
+import { useAuthState } from '@Stores/auth-store.js';
 import settings from '@Js/settings.js';
 import { defineStore } from 'pinia';
 
-export const useApiStore = defineStore('api', {
+export const useApiState = defineStore('api', {
     state: () => ({
         apiHome: null,
         lastErrorMessage: null
@@ -27,13 +27,13 @@ export const useApiStore = defineStore('api', {
                 //  Set apiHome
                 this.apiHome = response.data;
 
-                //  Capture the useAuthStore instance
-                const auth = useAuthStore();
+                //  Capture the useAuthState instance
+                const auth = useAuthState();
 
-                //  Set the user on the useAuthStore instance
+                //  Set the user on the useAuthState instance
                 auth.user = this.apiHome.user;
 
-                //  Set the authenticated status on the useAuthStore instance
+                //  Set the authenticated status on the useAuthState instance
                 auth.authenticated = this.apiHome.authenticated;
 
             } catch (error) {

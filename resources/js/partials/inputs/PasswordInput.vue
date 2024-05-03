@@ -5,7 +5,12 @@
         <div :class="{ 'flex items-center justify-between': showForgotPassword }">
 
             <!-- Input Label -->
-            <InputLabel :_for="uniqueId">{{ showForgotPassword ? 'Password' : 'New Password' }}</InputLabel>
+            <InputLabel :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription">
+
+                <template  v-if="label == ''">{{ showForgotPassword ? 'Password' : 'New Password' }}</template>
+                <template v-else>{{ label }}</template>
+
+            </InputLabel>
 
             <div v-if="showForgotPassword" class="text-sm">
 
@@ -16,10 +21,10 @@
 
         </div>
 
-        <div class="relative mt-2">
+        <div class="mt-2 relative">
 
             <!-- Input Field -->
-            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3">
+            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" :required="_required" :placeholder="_placeholder" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3">
 
             <!-- Show/Hide Password Toggle Icon -->
             <div class="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -28,8 +33,8 @@
 
                     <!-- Open Eye Icon -->
                     <svg class="h-5 w-5" fill="none" :class="{ 'hidden': !showPassword, 'block': showPassword }" :xmlns="showPassword ? 'http://www.w3.org/2000/svg' : ''" viewBox="0 0 20 20" stroke="currentColor" >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 12a2 2 0 100-4 2 2 0 000 4z" ></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 10a8.001 8.001 0 11-16 0 8.001 8.001 0 0116 0z" ></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 12a2 2 0 100-4 2 2 0 000 4z" ></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 10a8.001 8.001 0 11-16 0 8.001 8.001 0 0116 0z" ></path>
                     </svg>
 
                     <!-- Closed Eye Icon -->
@@ -42,10 +47,10 @@
 
             </div>
 
-            <!-- Input Error Message -->
-            <InputErrorMessage :errorText="errorText"></InputErrorMessage>
-
         </div>
+
+        <!-- Input Error Message -->
+        <InputErrorMessage :errorText="errorText"></InputErrorMessage>
 
     </div>
 
@@ -59,16 +64,34 @@
 
   export default {
     props: {
-      modelValue: {
-        type: String
-      },
-      showForgotPassword: {
-        type: Boolean,
-        default: true
-      },
-      errorText: {
-        type: String
-      }
+        modelValue: {
+            type: String
+        },
+        label: {
+            type: String,
+            default: ''
+        },
+        showForgotPassword: {
+            type: Boolean,
+            default: true
+        },
+        labelPopoverTitle: {
+            type: String
+        },
+        labelPopoverDescription: {
+            type: String
+        },
+        _placeholder: {
+            type: String,
+            default: ''
+        },
+        _required: {
+            type: Boolean,
+            default: true
+        },
+        errorText: {
+            type: String
+        }
     },
     mixins: [UtilsMixin],
     components: { InputLabel, InputErrorMessage },

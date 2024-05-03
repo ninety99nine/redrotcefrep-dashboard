@@ -66,6 +66,71 @@ export const UtilsMixin = {
             }
 
             return result;
-        }
+        },
+
+        isValidMoney(value) {
+            // Regular expression to match valid money format
+            const moneyRegex = /^\d+(\.\d{1,2})?$/;
+
+            // Check if the value matches the money format
+            return moneyRegex.test(value);
+        },
+
+        twoDecimalPlaces(value) {
+
+            // Parse the value as a floating-point number
+            let floatValue = parseFloat(value);
+
+            // Check if floatValue is a valid number
+            if (!isNaN(floatValue)) {
+
+                // Round the number to two decimal places
+                floatValue = Math.round(floatValue * 100) / 100;
+
+                // Convert the rounded number back to a string with two decimal places
+                return floatValue.toFixed(2);
+
+            } else {
+
+                // Return value as is
+                return value;
+
+            }
+
+        },
+
+        covertToValidMoney(value) {
+
+            // Convert value to string
+            value = value.toString();
+
+            // Remove non-numeric characters
+            let numericValue = value.replace(/[^0-9.]/g, '');
+
+            if(numericValue == '') {
+
+                // Set to zero
+                numericValue = 0;
+
+            }else{
+
+                // Convert to float
+                numericValue = parseFloat(numericValue);
+
+            }
+
+            // Ensure the value is not negative
+            numericValue = Math.max(0, numericValue);
+
+            // Round the value to two decimal places
+            numericValue = Math.round(numericValue * 100) / 100;
+
+            //  Convert to string
+            numericValue = numericValue.toFixed(2);
+
+            return numericValue;
+
+        },
+
     }
   };

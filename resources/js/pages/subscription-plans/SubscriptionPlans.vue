@@ -55,7 +55,7 @@
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import { getSubscriptionPlans } from '@Repositories/subscription-plans.js';
+    import { getSubscriptionPlans } from '@Repositories/subscription-plan-repository.js';
 
     export default {
         components: { TextHeader, BasicTable, MoreInfoPopover },
@@ -104,7 +104,7 @@
                     //  Stop loader
                     this.isFetching = false;
 
-                }).catch(error => {
+                }).catch(errorException => {
 
                     //  Stop loader
                     this.isFetching = false;

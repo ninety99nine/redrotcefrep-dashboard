@@ -3,9 +3,11 @@
     <div>
 
         <!-- Input Label -->
-        <InputLabel :_for="uniqueId">Confirm Password</InputLabel>
+        <InputLabel :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
+            Confirm Password
+        </InputLabel>
 
-        <div class="relative mt-2">
+        <div class="mt-2 relative">
 
             <!-- Input Field -->
             <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :type="showPassword ? 'text' : 'password'" autocomplete="current-password" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3">
@@ -31,10 +33,10 @@
 
             </div>
 
-            <!-- Input Error Message -->
-            <InputErrorMessage :errorText="errorText"></InputErrorMessage>
-
         </div>
+
+        <!-- Input Error Message -->
+        <InputErrorMessage :errorText="errorText"></InputErrorMessage>
 
     </div>
 
@@ -49,6 +51,12 @@
     export default {
         props: {
             modelValue: {
+                type: String
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
                 type: String
             },
             errorText: {

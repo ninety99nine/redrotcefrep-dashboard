@@ -9,7 +9,7 @@
 
 <script>
 
-    import Logo from '@Partials/Logo.vue';
+    import Logo from '@Partials/logos/Logo.vue';
 
     export default {
         components: { Logo },

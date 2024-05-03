@@ -21,7 +21,7 @@
 
         <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm flex space-x-4 justify-center">
 
-            <template v-if="auth.authenticated">
+            <template v-if="authState.authenticated">
 
                 <router-link :to="{ name: 'dashboard' }">Dashboard</router-link>
 
@@ -41,10 +41,10 @@
 
 <script>
 
-    import Logo from '@Partials/Logo.vue';
     import { RouterLink } from 'vue-router';
-    import { useApiStore } from '@Stores/api-store.js';
-    import { useAuthStore } from '@Stores/auth-store.js';
+    import Logo from '@Partials/logos/Logo.vue';
+    import { useApiState } from '@Stores/api-store.js';
+    import { useAuthState } from '@Stores/auth-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import LargeTextHeader from '@Partials/texts/LargeTextHeader.vue';
 
@@ -52,8 +52,8 @@
         components: { Logo, RouterLink, TextHeader, LargeTextHeader },
         data() {
             return {
-                api: useApiStore(),
-                auth: useAuthStore(),
+                apiState: useApiState(),
+                authState: useAuthState(),
             }
         }
     };

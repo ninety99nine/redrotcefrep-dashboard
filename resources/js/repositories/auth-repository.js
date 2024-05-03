@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { useApiStore } from '@Stores/api-store.js';
-import { useAuthStore } from '@Stores/auth-store.js';
+import { useApiState } from '@Stores/api-store.js';
+import { useAuthState } from '@Stores/auth-store.js';
 
-const apiHomeLinks = () => useApiStore().apiHome._links;
+const apiHomeLinks = () => useApiState().apiHome._links;
 
 // Login function
 async function login(data) {
@@ -19,6 +19,26 @@ async function login(data) {
 
         // Handle error
         console.error('Login error:', error);
+        throw error;
+
+    }
+}
+
+// Validate Register function
+async function validateRegister(data) {
+    try {
+
+        const response = await axios.post(apiHomeLinks().validateRegister, data);
+        if(response.status == 201) {
+            saveAccessToken(response);
+            saveUser(response);
+        }
+        return response;
+
+    } catch (error) {
+
+        // Handle error
+        console.error('Registration error:', error);
         throw error;
 
     }
@@ -49,7 +69,7 @@ async function logout() {
     try {
 
         //  Get the Auth Store instance
-        const auth = useAuthStore();
+        const auth = useAuthState();
 
         const response = await axios.post(auth.user._links.logout);
         if(response.status == 200) {
@@ -95,7 +115,7 @@ function removeAccessToken() {
 function saveUser(response) {
 
     //  Get the Auth Store instance
-    const auth = useAuthStore();
+    const auth = useAuthState();
 
     //  Set the authenticated status
     auth.authenticated = true;
@@ -108,7 +128,7 @@ function saveUser(response) {
 function removeUser() {
 
     //  Get the Auth Store instance
-    const auth = useAuthStore();
+    const auth = useAuthState();
 
     //  Set the authenticated status
     auth.authenticated = false;
@@ -118,4 +138,4 @@ function removeUser() {
 }
 
 // Export functions
-export { login, register, logout };
+export { login, validateRegister, register, logout };

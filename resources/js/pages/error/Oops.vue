@@ -34,17 +34,18 @@
 
 <script>
 
-    import Logo from '@Partials/Logo.vue';
     import { RouterLink } from 'vue-router';
-    import { useApiStore } from '@Stores/api-store.js';
+    import Logo from '@Partials/logos/Logo.vue';
+    import { useApiState } from '@Stores/api-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
+    import WarningAlert from '@Partials/alerts/WarningAlert.vue';
     import LargeTextHeader from '@Partials/texts/LargeTextHeader.vue';
 
     export default {
-        components: { Logo, RouterLink, TextHeader, LargeTextHeader },
+        components: { Logo, RouterLink, TextHeader, WarningAlert, LargeTextHeader },
         data() {
             return {
-                api: useApiStore()
+                api: useApiState()
             }
         }
     };
