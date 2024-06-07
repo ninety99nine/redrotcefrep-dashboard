@@ -27,9 +27,7 @@
     import { useNotificationState } from '@Stores/notification-store.js';
 
     export default {
-        components: {
-            TextHeader
-        },
+        components: { TextHeader },
         data() {
             return {
                 isLoadingStore: false,
@@ -41,7 +39,7 @@
             }
         },
         watch: {
-            '$route.params.href'(newValue, oldValue) {
+            '$route.params.store_href'(newValue, oldValue) {
                 this.getRouteMatchingStore();
             }
         },
@@ -57,7 +55,7 @@
                     //'_includeLinks': 'self,showOrders,showProducts',
                 };
 
-                getStore(this.$route.params.href, params).then(response => {
+                getStore(this.$route.params.store_href, params).then(response => {
 
                     if(response.status == 200) {
 

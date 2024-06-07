@@ -14,9 +14,9 @@
             <TextHeader class="mt-20 text-center">Seems like something went wrong</TextHeader>
 
             <!-- API Call Last Error Message Info Alert -->
-            <WarningAlert v-if="api.hasLastErrorMessage" class="mt-4 mb-0 mx-auto max-w-96">
+            <Alert v-if="api.hasLastErrorMessage" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
                 {{ api.lastErrorMessage }}
-            </WarningAlert>
+            </Alert>
 
             <!-- Guidance -->
             <p class="text-center mt-4 text-gray-500">Hey, don't worry, check out our links below to get back on track</p>
@@ -36,13 +36,13 @@
 
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
+    import Alert from '@Partials/alerts/Alert.vue';
     import { useApiState } from '@Stores/api-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
-    import WarningAlert from '@Partials/alerts/WarningAlert.vue';
     import LargeTextHeader from '@Partials/texts/LargeTextHeader.vue';
 
     export default {
-        components: { Logo, RouterLink, TextHeader, WarningAlert, LargeTextHeader },
+        components: { Logo, Alert, RouterLink, TextHeader, LargeTextHeader },
         data() {
             return {
                 api: useApiState()

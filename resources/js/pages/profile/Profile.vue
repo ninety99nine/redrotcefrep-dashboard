@@ -64,9 +64,9 @@
                         <template v-if="hasChangedMobileNumber">
 
                             <!-- Enter Verification Code Alert -->
-                            <InfoAlert>
+                            <Alert>
                                 Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> on <span class="font-bold">{{ mobileNumber }}</span> to confirm ownership of this mobile number.
-                            </InfoAlert>
+                            </Alert>
 
                             <!-- Mobile Verification Pin Input -->
                             <OtpInput v-model="verificationCode" :errorText="getFormError('verificationCode')"></OtpInput>
@@ -76,12 +76,12 @@
                     </template>
 
                     <!-- General Error Info Alert -->
-                    <WarningAlert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96">
+                    <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
                         {{ getFormError('general') }}
-                    </WarningAlert>
+                    </Alert>
 
                     <!-- Save Changes Button -->
-                    <PrimaryButton :action="updateUser" :loading="isSubmitting">
+                    <PrimaryButton :action="updateUser" :loading="isSubmitting" class="w-full">
                         Save Changes
                     </PrimaryButton>
 
@@ -98,12 +98,11 @@
 <script>
 
     import { initFlowbite } from "flowbite";
+    import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { useAuthState } from '@Stores/auth-store.js';
-    import InfoAlert from '@Partials/alerts/InfoAlert.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import WarningAlert from '@Partials/alerts/WarningAlert.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import { updateUser } from '@Repositories/user-repository.js';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
@@ -119,7 +118,7 @@
     export default {
         mixins: [FormMixin],
         components: {
-            InfoAlert, TextInput, WarningAlert, TextareaInput, PasswordInput, OtpInput, PrimaryButton,
+            Alert, TextInput, TextareaInput, PasswordInput, OtpInput, PrimaryButton,
             MoreInfoPopover, ProfilePhoto, ToogleSwitch, ConfirmPasswordInput, CurrentPasswordInput
         },
         data() {

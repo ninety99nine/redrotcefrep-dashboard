@@ -1,129 +1,165 @@
-import SubscriptionPlans from '@Pages/subscription-plans/SubscriptionPlans.vue';
-import StoreSettings from '@Pages/store/settings/StoreSettings.vue';
-import Subscriptions from '@Pages/subscriptions/Subscriptions.vue';
-import Transactions from '@Pages/transactions/Transactions.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthState } from '@Stores/auth-store.js';
 import { useApiState } from '@Stores/api-store.js';
-import Dashboard from '@Pages/dashboard/Index.vue';
-import Store from '@Pages/store/Store.vue';
-import Profile from '@Pages/profile/Profile.vue';
-import Register from '@Pages/auth/Register.vue';
-import NotFound from '@Pages/error/404.vue';
-import Login from '@Pages/auth/Login.vue';
-import Oops from '@Pages/error/Oops.vue';
-import Home from '@Pages/auth/Home.vue';
 
 const routes = [
     {
         path: '/',
         name: 'home',
-        component: Home,
-        meta: { requiresAuth: false }
+        meta: { requiresAuth: false },
+        component: () => import('@Pages/auth/Home.vue')
     },
     {
         path: '/login',
         name: 'login',
-        component: Login,
-        meta: { requiresAuth: false }
+        meta: { requiresAuth: false },
+        component: () => import('@Pages/auth/Login.vue')
     },
     {
         path: '/register',
         name: 'register',
-        component: Register,
-        meta: { requiresAuth: false }
+        meta: { requiresAuth: false },
+        component: () => import('@Pages/auth/Register.vue')
     },
     {
         path: '/dashboard',
         name: 'dashboard',
-        component: Dashboard,
+        component: () => import('@Pages/dashboard/Index.vue'),
         children: [
             {
                 name: 'profile',
                 path: 'profile',
-                component: Profile
+                component: () => import('@Pages/profile/Profile.vue')
             },
             {
                 name: 'stores',
                 path: 'stores',
-                component: Subscriptions
+                component: () => import('@Pages/subscriptions/Subscriptions.vue')
             },
             {
                 name: 'store',
-                path: 'stores/:href',
-                component: Store,
+                path: 'stores/:store_href',
+                component: () => import('@Pages/store/Store.vue'),
                 children: [
                     {
                         path: '',
-                        name: 'store-home',
-                        component: Transactions
+                        name: 'show-store-home',
+                        component: () => import('@Pages/store/orders/StoreOrders.vue')
                     },
                     {
                         path: 'orders',
-                        name: 'store-orders',
-                        component: Transactions
+                        name: 'show-store-orders',
+                        component: () => import('@Pages/store/orders/StoreOrders.vue')
+                    },
+                    {
+                        path: 'orders/:order_href',
+                        name: 'show-store-order',
+                        component: () => import('@Pages/store/orders/StoreOrder.vue')
+                    },
+                    {
+                        path: 'orders/create',
+                        name: 'create-store-order',
+                        component: () => import('@Pages/store/orders/StoreOrder.vue')
                     },
                     {
                         path: 'reviews',
-                        name: 'store-reviews',
-                        component: Transactions
+                        name: 'show-store-reviews',
+                        component: () => import('@Pages/store/reviews/StoreReviews.vue')
                     },
                     {
                         path: 'products',
-                        name: 'store-products',
-                        component: Transactions
+                        name: 'show-store-products',
+                        component: () => import('@Pages/store/products/StoreProducts.vue')
+                    },
+                    {
+                        path: 'products/:product_href',
+                        name: 'show-store-product',
+                        component: () => import('@Pages/store/products/StoreProduct.vue')
+                    },
+                    {
+                        path: 'products/create',
+                        name: 'create-store-product',
+                        component: () => import('@Pages/store/products/StoreProduct.vue')
                     },
                     {
                         path: 'coupons',
-                        name: 'store-coupons',
-                        component: Transactions
+                        name: 'show-store-coupons',
+                        component: () => import('@Pages/store/coupons/StoreCoupons.vue')
+                    },
+                    {
+                        path: 'coupons/:coupon_href',
+                        name: 'show-store-coupon',
+                        component: () => import('@Pages/store/coupons/StoreCoupon.vue')
+                    },
+                    {
+                        path: 'coupons/create',
+                        name: 'create-store-coupon',
+                        component: () => import('@Pages/store/coupons/StoreCoupon.vue')
                     },
                     {
                         path: 'transactions',
-                        name: 'store-transactions',
-                        component: Transactions
+                        name: 'show-store-transactions',
+                        component: () => import('@Pages/store/transactions/StoreTransactions.vue')
+                    },
+                    {
+                        path: 'transactions/:transaction_href',
+                        name: 'show-store-transaction',
+                        component: () => import('@Pages/store/transactions/StoreTransaction.vue')
+                    },
+                    {
+                        path: 'transactions/create',
+                        name: 'create-store-transaction',
+                        component: () => import('@Pages/store/transactions/StoreTransaction.vue')
                     },
                     {
                         path: 'team-members',
-                        name: 'store-team-members',
-                        component: Transactions
+                        name: 'show-store-team-members',
+                        component: () => import('@Pages/store/team-members/StoreTeamMembers.vue')
+                    },
+                    {
+                        path: 'team-members/:team_member_href',
+                        name: 'show-store-team-member',
+                        component: () => import('@Pages/store/team-members/StoreTeamMember.vue')
+                    },
+                    {
+                        path: 'team-members/invite',
+                        name: 'invite-store-team-member',
+                        component: () => import('@Pages/store/team-members/StoreTeamMember.vue')
                     },
                     {
                         path: 'settings',
-                        name: 'store-settings',
-                        component: StoreSettings
+                        name: 'show-store-settings',
+                        component: () => import('@Pages/store/settings/StoreSettings.vue')
                     }
                 ]
-            },
-
-
-            {
-                name: 'subscriptions',
-                path: 'subscriptions',
-                component: Subscriptions
             },
             {
                 name: 'transactions',
                 path: 'transactions',
-                component: Transactions
+                component: () => import('@Pages/transactions/Transactions.vue')
+            },
+            {
+                name: 'subscriptions',
+                path: 'subscriptions',
+                component: () => import('@Pages/subscriptions/Subscriptions.vue')
             },
             {
                 name: 'subscription-plans',
                 path: 'subscription-plans',
-                component: SubscriptionPlans
+                component: () => import('@Pages/subscription-plans/SubscriptionPlans.vue')
             },
         ]
     },
     {
         path: '/oops',
         name: 'oops',
-        component: Oops,
-        meta: { requiresAuth: false }
+        meta: { requiresAuth: false },
+        component: () => import('@Pages/error/Oops.vue')
     },
     {
         path: '/:catchAll(.*)',
         name: 'notFound',
-        component: NotFound
+        component: () => import('@Pages/error/404.vue')
     },
 ];
 

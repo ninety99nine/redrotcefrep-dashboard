@@ -22,9 +22,9 @@
                 <template v-if="accountExists">
 
                     <!-- Set New Password Info Alert -->
-                    <InfoAlert v-if="requiresPassword">
+                    <Alert v-if="requiresPassword">
                         Please set a new password for your account.
-                    </InfoAlert>
+                    </Alert>
 
                     <!-- Password Input -->
                     <PasswordInput v-model="password" :showForgotPassword="!requiresPassword" :errorText="getFormError('password')" @keydown.enter="handleLogin"></PasswordInput>
@@ -35,9 +35,9 @@
                         <ConfirmPasswordInput v-model="passwordConfirmation" :errorText="getFormError('passwordConfirmation')" @keydown.enter="handleLogin"></ConfirmPasswordInput>
 
                         <!-- Enter Verification Code Alert -->
-                        <InfoAlert>
+                        <Alert>
                             Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> and enter the verification code below to confirm ownership of the mobile number <span class="font-bold">{{ mobileNumber }}</span>
-                        </InfoAlert>
+                        </Alert>
 
                         <!-- Mobile Verification Pin Input -->
                         <OtpInput v-model="verificationCode" :errorText="getFormError('verificationCode')"></OtpInput>
@@ -47,12 +47,12 @@
                 </template>
 
                 <!-- General Error Info Alert -->
-                <WarningAlert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96">
+                <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
                     {{ getFormError('general') }}
-                </WarningAlert>
+                </Alert>
 
                 <!-- Sign In Button -->
-                <PrimaryButton :action="handleLogin" :loading="isSubmitting">
+                <PrimaryButton :action="handleLogin" :loading="isSubmitting" class="w-full">
                     <template v-if="accountExists && requiresPassword">Set Password</template>
                     <template v-else-if="accountExists && !requiresPassword">Sign In</template>
                     <template v-else-if="!accountExists && !requiresPassword">Continue</template>
@@ -77,27 +77,23 @@
     import axios from 'axios';
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
+    import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { useAuthState } from '@Stores/auth-store.js';
-    import InfoAlert from '@Partials/alerts/InfoAlert.vue';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import { login } from '@Repositories/auth-repository.js';
-    import WarningAlert from '@Partials/alerts/WarningAlert.vue';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
+    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: {
-            Logo, RouterLink, InfoAlert, TextHeader, WarningAlert, PasswordInput,
-            PrimaryButton, OtpInput, MobileNumberInput, ConfirmPasswordInput
-        },
+        components: { Logo, Alert, RouterLink, TextHeader, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, ConfirmPasswordInput },
         data() {
             return {
                 loginUrl: null,

@@ -15,7 +15,7 @@ async function getApi(url, params) {
 }
 
 // POST function
-async function postApi(url, data, config) {
+async function postApi(url, data, config = {}) {
     try {
 
         return axios.post(url, data, config);
@@ -29,7 +29,7 @@ async function postApi(url, data, config) {
 }
 
 // PUT function
-async function putApi(url, data, config) {
+async function putApi(url, data, config = {}) {
     try {
 
         return axios.put(url, data, config);
@@ -43,10 +43,17 @@ async function putApi(url, data, config) {
 }
 
 // DELETE function
-async function deleteApi(url, data, config) {
+async function deleteApi(url, data, config = {}) {
     try {
 
-        return axios.delete(url, data, config);
+        /**
+         *  The axios.delete method in Axios does not accept the data parameter directly as part of its arguments.
+         *  To send data with a DELETE request, you need to include it in the config parameter, specifically in
+         *  the data property.
+         */
+        config.data = data;
+
+        return axios.delete(url, config);
 
     } catch (error) {
 

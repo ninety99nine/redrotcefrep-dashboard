@@ -1,15 +1,16 @@
 <template>
-    <button type="submit" @click.prevent="action" :disabled="disabled" :class="[disabled ? 'bg-black/50 cursor-not-allowed' : 'bg-black hover:bg-black/80 cursor-pointer', 'flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700']">
-        <span class="text-xl block -mt-1.5">&#10229;</span>
-    </button>
+    <PrimaryButton :action="action ?? goBack" :disabled="disabled" :loading="loading" :size="size" :type="type">
+        <span>&larr;</span>
+        <slot></slot>
+    </PrimaryButton>
 </template>
 
   <script>
 
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 
     export default {
-        components: { SpiningLoader },
+        components: { PrimaryButton },
         props: {
             action: {
                 type: Function
@@ -17,6 +18,25 @@
             disabled: {
                 type: Boolean,
                 default: false
+            },
+            loading: {
+                type: Boolean,
+                default: false
+            },
+            size: {
+                type: String,
+                default: 'base',
+                options: ['xs', 'sm', 'base', 'lg']
+            },
+            type: {
+                type: String,
+                default: 'dark',
+                options: ['dark', 'success', 'light', 'primary', 'warning', 'danger']
+            }
+        },
+        methods: {
+            goBack() {
+                this.$router.go(-1);
             }
         }
     };

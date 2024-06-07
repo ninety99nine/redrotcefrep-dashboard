@@ -13,7 +13,7 @@
         </div>
 
         <!-- Subscriptions Table -->
-        <BasicTable :pagination="pagination" :isLoading="isFetching" @paginate="paginate" @search="search" @refresh="_getSubscriptions" :filters="filters" @addOrUpdateFilter="addOrUpdateFilter" @showSelectedFilter="showSelectedFilter" @hideFilterModal="hideFilterModal" @removeFilter="removeFilter" :totalHeaders="tableHeaders.length">
+        <BasicTable :pagination="pagination" :isLoading="isFetching" @paginate="paginate" @search="search" @refresh="_getSubscriptions" :showAddFilter="true" :filters="filters" @addOrUpdateFilter="addOrUpdateFilter" @showSelectedFilter="showSelectedFilter" @hideFilterModal="hideFilterModal" @removeFilter="removeFilter" :totalHeaders="tableHeaders.length">
 
             <!-- Filters -->
             <template v-slot:primaryFilters>
@@ -86,7 +86,7 @@
 
             <!-- Table Body -->
             <template v-slot:body>
-                <tr @click.stop="onView(subscription)" v-for="(subscription, index) in subscriptions" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
+                <tr @click.stop="onView(subscription)" v-for="(subscription, index) in subscriptions" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
 
                     <!-- User Name -->
                     <td class="whitespace-nowrap px-4 py-4">{{ subscription._relationships.user._attributes.name }}</td>

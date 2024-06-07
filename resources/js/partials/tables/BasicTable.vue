@@ -40,75 +40,79 @@
 
         </div>
 
-        <div class="flex justify-start items-center bg-gray-50 rounded-lg p-4 mb-4">
+        <template v-if="showAddFilter">
 
-            <!-- Add Filter Button -->
-            <button @click="showFilterModal" type="button" class="text-xs text-blue-500 rounded-lg py-1 px-4 whitespace-nowrap cursor-pointer border border-blue-300 bg-blue-50 hover:text-blue-400 hover:border-blue-200 active:text-blue-300 active:border-blue-100">
-                + Add Filter
-            </button>
+            <div class="flex justify-start items-center bg-gray-50 rounded-lg p-4 mb-4">
 
-            <!-- Separator -->
-            <div class="h-4 border-r border-gray-300 mx-4"></div>
-
-            <!-- Selected Filters -->
-            <div class="flex flex-wrap">
-
-                <button @click.self="showSelectedFilter(filter)" type="button" class="flex items-center mr-2 text-xs text-white rounded-lg py-1 px-2 whitespace-nowrap cursor-pointer border border-white bg-blue-500"
-                    v-for="(filter, filterIndex) in filters" :key="filterIndex">
-
-                    <!-- Filter Display Name -->
-                    <span @click.self="showSelectedFilter(filter, filterIndex)">{{ filter.displayName }}</span>
-
-                    <!-- Remove Filter Button -->
-                    <svg @click.self="removeFilter(filterIndex)" class="w-4 h-4 ml-2 hover:text-blue-400 hover:border-blue-200 active:text-blue-300 active:border-blue-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path  @click.self="removeFilter(filterIndex)" stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-
+                <!-- Add Filter Button -->
+                <button @click="showFilterModal" type="button" class="text-xs text-blue-500 rounded-lg py-1 px-4 whitespace-nowrap cursor-pointer border border-blue-300 bg-blue-50 hover:text-blue-400 hover:border-blue-200 active:text-blue-300 active:border-blue-100">
+                    + Add Filter
                 </button>
+
+                <!-- Separator -->
+                <div class="h-4 border-r border-gray-300 mx-4"></div>
+
+                <!-- Selected Filters -->
+                <div class="flex flex-wrap">
+
+                    <button @click.self="showSelectedFilter(filter)" type="button" class="flex items-center mr-2 text-xs text-white rounded-lg py-1 px-2 whitespace-nowrap cursor-pointer border border-white bg-blue-500"
+                        v-for="(filter, filterIndex) in filters" :key="filterIndex">
+
+                        <!-- Filter Display Name -->
+                        <span @click.self="showSelectedFilter(filter, filterIndex)">{{ filter.displayName }}</span>
+
+                        <!-- Remove Filter Button -->
+                        <svg @click.self="removeFilter(filterIndex)" class="w-4 h-4 ml-2 hover:text-blue-400 hover:border-blue-200 active:text-blue-300 active:border-blue-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path  @click.self="removeFilter(filterIndex)" stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    </button>
+
+                </div>
 
             </div>
 
-        </div>
+            <!-- Add Filter Modal -->
+            <div :id="uniqueModalId" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
 
-        <!-- Add Filter Modal -->
-        <div :id="uniqueModalId" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
 
-            <div class="relative p-4 w-full max-w-md max-h-full">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
 
-                <!-- Modal content -->
-                <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
 
-                    <!-- Modal header -->
-                    <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <!-- Modal Title -->
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ filter == null ? '+ Add Filter' : 'Edit Filter' }}
+                            </h3>
 
-                        <!-- Modal Title -->
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                            {{ filter == null ? '+ Add Filter' : 'Edit Filter' }}
-                        </h3>
-
-                        <!-- Modal Close Icon Button -->
-                        <button @click="hideFilterModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                            <span class="sr-only">Close modal</span>
-                        </button>
-
-                    </div>
-
-                    <!-- Modal body -->
-                    <div class="grid grid-col-12 lg:gap-4 gap-4 p-4">
-
-                        <!-- Modal Filters -->
-                        <slot name="modalFilters"></slot>
-
-                        <div class="col-span-12 flex justify-end">
-
-                            <!-- Modal Add Filter Button -->
-                            <button @click.prevent="addOrUpdateFilter" @click="hideFilterModal" type="button" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                <svg v-if="filter == null" class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                                {{ filter == null ? 'Add Filter' : 'Done' }}
+                            <!-- Modal Close Icon Button -->
+                            <button @click="hideFilterModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                </svg>
+                                <span class="sr-only">Close modal</span>
                             </button>
+
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="grid grid-col-12 lg:gap-4 gap-4 p-4">
+
+                            <!-- Modal Filters -->
+                            <slot name="modalFilters"></slot>
+
+                            <div class="col-span-12 flex justify-end">
+
+                                <!-- Modal Add Filter Button -->
+                                <button @click.prevent="addOrUpdateFilter" @click="hideFilterModal" type="button" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    <svg v-if="filter == null" class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
+                                    {{ filter == null ? 'Add Filter' : 'Done' }}
+                                </button>
+
+                            </div>
 
                         </div>
 
@@ -118,41 +122,88 @@
 
             </div>
 
-        </div>
+        </template>
 
         <!-- Top Pagination -->
         <Pagination v-if="pagination && pagination.total > 5" :pagination="pagination" @paginate="paginate" class="mb-4"></Pagination>
 
         <!-- Table -->
-        <div class="relative overflow-x-auto">
+        <div class="relative overflow-y-auto">
 
             <!-- Table Loader -->
-            <div v-if="pagination && isLoading && !isSearching" class="py-20 absolute bg-white/50 top-0 bottom-0 left-0 right-0 flex justify-center items-center">
+            <div v-if="pagination && isLoading && !isSearching" class="absolute top-0 bottom-0 left-0 right-0 bg-white/50 flex justify-center items-center">
                 <SpiningLoader v-if="!isSearching"></SpiningLoader>
             </div>
 
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 te">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500">
 
                 <!-- Table Head -->
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <slot name="head"></slot>
 
                 </thead>
 
-                <!-- Table Body -->
-                <tbody>
-                    <slot name="body"></slot>
+                <!-- Pulsing Placeholder Rows -->
+                <tbody v-if="!pagination && isLoading && totalHeaders > 0">
 
-                    <!-- Pulsing Placeholder Rows -->
-                    <template v-if="!pagination && isLoading && totalHeaders > 0">
+                    <tr v-for="(row, index) in [1,2,3]" :key="index" class="animate-pulse">
+                        <td v-for="(count, index) in totalHeaders" :key="index">
+                            <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mx-4 my-4"></div>
+                        </td>
+                    </tr>
 
-                        <tr v-for="(row, index) in [1,2,3]" :key="index" class="animate-pulse">
-                            <td v-for="(count, index) in totalHeaders" :key="index">
-                                <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mx-4 my-4"></div>
+                </tbody>
+
+                <!--
+                    Table Body Without <tbody> wrapper tag.
+                    This slot is mainly used by the Vue Draggable Component which will define the <tbody> wrapper tag itself e.g:
+
+                    The component would define this as follows:
+
+                    <BasicTable>
+
+                        <template #thead>
+                            <tr>
+                                ...
+                            </tr>
+                        </template>
+
+                        <template #tbody>
+                            <draggable tag="tbody">
+                                <tr v-for="item in items">
+                                    ...
+                                </td>
+                            </draggable>
+                        </template>
+
+                    </BasicTable>
+                -->
+                <slot v-else-if="$slots.tbody" name="tbody"></slot>
+
+                <!--
+                    Table Body With <tbody> wrapper tag.
+                    This slot is maily used by most Components to simply set the <tr> tags only e.g:
+
+                    The component would define this as follows:
+
+                    <BasicTable>
+
+                        <template #thead>
+                            <tr>
+                                ...
+                            </tr>
+                        </template>
+
+                        <template #tbody>
+                            <tr v-for="item in items">
+                                ...
                             </td>
-                        </tr>
+                        </template>
 
-                    </template>
+                    </BasicTable>
+                -->
+                <tbody v-else>
+                    <slot name="body"></slot>
 
                 </tbody>
 
@@ -174,115 +225,125 @@
 
 <script>
 
-import debounce from 'lodash.debounce';
-import { Modal, initFlowbite } from "flowbite";
-import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import debounce from 'lodash.debounce';
+    import { Modal, initFlowbite } from "flowbite";
+    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import Pagination from '@Partials/paginations/Pagination.vue';
+    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
 
-export default {
-    mixins: [UtilsMixin],
-    props: {
-        isLoading: {
-            type: Boolean,
-            default: false
+    export default {
+        mixins: [UtilsMixin],
+        components: { Pagination, SpiningLoader },
+        props: {
+            isLoading: {
+                type: Boolean,
+                default: false
+            },
+            pagination: {
+                type: Object
+            },
+            totalHeaders: {
+                type: Number,
+                default: 0
+            },
+            showAddFilter: {
+                type: Boolean,
+                default: false
+            },
+            filters: {
+                type: Array,
+                default: () => []
+            }
         },
-        pagination: {
-            type: Object
+        data() {
+            return {
+                modal: null,
+                filter: null,
+                searchTerm: '',
+                filterIndex: null,
+                selectedFilter: null,
+                debouncedSearch: null,
+                uniqueModalId: this.generateUniqueId('modal'),
+            }
         },
-        totalHeaders: {
-            type: Number,
-            default: 0
-        },
-        filters: {
-            type: Array,
-            default: () => []
-        }
-    },
-    data() {
-        return {
-            modal: null,
-            filter: null,
-            searchTerm: '',
-            filterIndex: null,
-            selectedFilter: null,
-            debouncedSearch: null,
-            uniqueModalId: this.generateUniqueId('modal'),
-        }
-    },
-    watch: {
-        isSearching(newValue, oldValue) {
-            console.log('isSearching: '+newValue);
+        watch: {
+            isSearching(newValue, oldValue) {
 
-            //  Once we stop searching
-            if(newValue == false) {
+                //  Once we stop searching
+                if(newValue == false) {
 
-                this.focusInput();
+                    this.focusInput();
+
+                }
 
             }
-        }
-    },
-    computed: {
-        isSearching() {
-            return this.searchTerm.length > 0 && this.isLoading;
-        }
-    },
-    methods: {
-        refresh() {
-            if(!this.isLoading) this.$emit('refresh');
         },
-        paginate(url) {
-            this.$emit('paginate', url);
+        computed: {
+            isSearching() {
+                return this.searchTerm.length > 0 && this.isLoading;
+            }
         },
-        search(event) {
-            if (event) this.searchTerm = event.target.value;
-            this.debouncedSearch();
+        methods: {
+            refresh() {
+                if(!this.isLoading) this.$emit('refresh');
+            },
+            paginate(url) {
+                this.$emit('paginate', url);
+            },
+            search(event) {
+                if (event) this.searchTerm = event.target.value;
+                this.debouncedSearch();
+            },
+            focusInput() {
+                this.$nextTick(() => {
+                    this.$refs.searchInput.focus();
+                });
+            },
+            addOrUpdateFilter() {
+                this.$emit('addOrUpdateFilter', this.filterIndex);
+                this.filterIndex = null;
+                this.filter = null;
+            },
+            removeFilter(filterIndex) {
+                this.filters.splice(filterIndex, 1);
+                this.$emit('removeFilter');
+            },
+            showFilterModal() {
+                this.modal.show();
+                this.$emit('showFilterModal');
+            },
+            hideFilterModal() {
+                this.modal.hide();
+                this.$emit('hideFilterModal');
+            },
+            showSelectedFilter(filter, filterIndex) {
+                this.showFilterModal();
+                this.filter = filter;
+                this.filterIndex = filterIndex;
+                this.$emit('showSelectedFilter', filter);
+            },
         },
-        focusInput() {
-            this.$nextTick(() => {
-                this.$refs.searchInput.focus();
-            });
-        },
-        addOrUpdateFilter() {
-            this.$emit('addOrUpdateFilter', this.filterIndex);
-            this.filterIndex = null;
-            this.filter = null;
-        },
-        removeFilter(filterIndex) {
-            this.filters.splice(filterIndex, 1);
-            this.$emit('removeFilter');
-        },
-        showFilterModal() {
-            this.modal.show();
-            this.$emit('showFilterModal');
-        },
-        hideFilterModal() {
-            this.modal.hide();
-            this.$emit('hideFilterModal');
-        },
-        showSelectedFilter(filter, filterIndex) {
-            this.showFilterModal();
-            this.filter = filter;
-            this.filterIndex = filterIndex;
-            this.$emit('showSelectedFilter', filter);
-        },
-    },
-    mounted() {
+        mounted() {
 
-        /**
-         *  Flowbite javascript will not work unless we deliberately
-         *  Initialize Flowbite on mount of the Vue component.
-         *
-         *  Reference: https://stackoverflow.com/questions/76043935/flowbite-is-not-working-with-inertia-laravel-app
-         */
-        initFlowbite();
+            /**
+             *  Flowbite javascript will not work unless we deliberately
+             *  Initialize Flowbite on mount of the Vue component.
+             *
+             *  Reference: https://stackoverflow.com/questions/76043935/flowbite-is-not-working-with-inertia-laravel-app
+             */
+            initFlowbite();
 
-        const $targetEl = document.getElementById(this.uniqueModalId);
-        this.modal = new Modal($targetEl);
+            const $targetEl = document.getElementById(this.uniqueModalId);
 
-    },
-    created() {
-        this.debouncedSearch = debounce(() => {
-            this.$emit('search', this.searchTerm);
-        }, 1000);
-    },
-};
+            if($targetEl != null) {
+                this.modal = new Modal($targetEl);
+            }
+
+        },
+        created() {
+            this.debouncedSearch = debounce(() => {
+                this.$emit('search', this.searchTerm);
+            }, 1000);
+        },
+    };
 </script>

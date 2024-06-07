@@ -1,6 +1,6 @@
 <template>
 
-    <div class="fixed top-0 right-0 w-80 mt-8 mr-4">
+    <div class="fixed top-0 right-0 z-50 w-80 mt-8 mr-4">
 
         <TransitionGroup name="fade" tag="div" class="w-full space-y-2">
             <div v-for="notification in notifications" :key="notification.id" class="w-full">
@@ -26,9 +26,12 @@
 
 <script>
 
+    import SuccessToast from '@Partials/toasts/SuccessToast.vue';
+    import WarningToast from '@Partials/toasts/WarningToast.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
 
     export default {
+        components: { SuccessToast, WarningToast },
         data() {
             return {
                 notificationState: useNotificationState()

@@ -21,13 +21,14 @@
         </label>
 
         <!-- Input Error Message -->
-        <InputErrorMessage :errorText="errorText"></InputErrorMessage>
+        <InputErrorMessage :errorText="errorText" class="block"></InputErrorMessage>
 
      </div>
 </template>
 
 <script>
 
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
@@ -50,7 +51,7 @@
                 type: String
             }
         },
-        components: { InputErrorMessage },
+        components: { MoreInfoPopover, InputErrorMessage },
         data() {
             return {
                 localModelValue: this.modelValue,

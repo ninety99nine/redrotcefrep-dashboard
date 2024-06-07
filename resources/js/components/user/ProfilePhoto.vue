@@ -32,7 +32,7 @@
             </div>
 
             <!-- Placeholder for uploading image -->
-            <div v-else @click="selectImage" :class="['w-full h-full relative rounded-full overflow-hidden', { 'cursor-pointer group' : canUpload }]">
+            <div v-else @click="selectImage" :class="['w-full h-full rounded-full border-4 border-transparent overflow-hidden relative', { 'cursor-pointer group' : canUpload }]">
 
                 <!-- Camera Icon -->
                 <div v-if="canUpload" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">

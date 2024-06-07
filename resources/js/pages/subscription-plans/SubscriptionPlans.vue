@@ -26,7 +26,7 @@
 
             <!-- Table Body -->
             <template v-slot:body>
-                <tr @click.stop="onView(subscriptionPlan)" v-for="(subscriptionPlan, index) in subscriptionPlans" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
+                <tr @click.stop="onView(subscriptionPlan)" v-for="(subscriptionPlan, index) in subscriptionPlans" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
 
                     <td class="whitespace-nowrap px-4 py-4">{{ subscriptionPlan.name }}</td>
                     <td class="whitespace-nowrap px-4 py-4">{{ subscriptionPlan.description }}</td>
@@ -52,13 +52,9 @@
 <script>
 
     import { initFlowbite } from "flowbite";
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import BasicTable from '@Partials/tables/BasicTable.vue';
-    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getSubscriptionPlans } from '@Repositories/subscription-plan-repository.js';
 
     export default {
-        components: { TextHeader, BasicTable, MoreInfoPopover },
         data() {
             return {
                 url: null,

@@ -40,6 +40,13 @@ export const UtilsMixin = {
             return dayjs(date).fromNow();
         },
 
+        /**
+         *  Return true/false whether the passed date is in the future
+         */
+        isFutureDate(date) {
+            return dayjs(date).isAfter(dayjs());
+        },
+
         capitalize(value) {
             if (!value) return '';
             return value.charAt(0).toUpperCase() + value.slice(1);
@@ -60,6 +67,18 @@ export const UtilsMixin = {
 
             let result = '';
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+
+            return result;
+        },
+
+        generateRandomNumber(length) {
+
+            let result = '';
+            const characters = '0123456789';
 
             for (let i = 0; i < length; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));

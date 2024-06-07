@@ -49,6 +49,7 @@
     import Vue3TagsInput from 'vue3-tags-input';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
@@ -85,7 +86,7 @@
             }
         },
         mixins: [UtilsMixin],
-        components: { Vue3TagsInput, InputLabel, InputErrorMessage },
+        components: { Vue3TagsInput, InputLabel, MoreInfoPopover, InputErrorMessage },
         data() {
             return {
                 tag: '',

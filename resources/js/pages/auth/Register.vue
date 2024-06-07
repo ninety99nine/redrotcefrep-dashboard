@@ -19,9 +19,9 @@
                 <template v-if="showVerificationCode">
 
                     <!-- Enter Verification Code Alert -->
-                    <InfoAlert>
+                    <Alert>
                         Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> and enter the verification code below to confirm ownership of the mobile number <span class="font-bold">{{ mobileNumber }}</span>
-                    </InfoAlert>
+                    </Alert>
 
                     <!-- Mobile Verification Pin Input -->
                     <OtpInput v-model="verificationCode" :errorText="getFormError('verificationCode')"></OtpInput>
@@ -68,14 +68,14 @@
                 </template>
 
                 <!-- General Error Info Alert -->
-                <WarningAlert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96">
+                <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
                     {{ getFormError('general') }}
-                </WarningAlert>
+                </Alert>
 
                 <!-- Create Account Button -->
                 <div class="flex">
                     <BackButton v-if="showVerificationCode" :action="backToRegistrationForm" class="w-16 mr-2"></BackButton>
-                    <PrimaryButton :action="handleRegistration" :loading="isSubmitting">
+                    <PrimaryButton :action="handleRegistration" :loading="isSubmitting" class="w-full">
                         <template v-if="showVerificationCode">Create Account</template>
                         <template v-else>Continue</template>
                     </PrimaryButton>
@@ -97,31 +97,28 @@
 
 <script>
 
+
     import axios from 'axios';
     import settings from '@Js/settings.js';
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
+    import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useApiState } from '@Stores/api-store.js';
-    import InfoAlert from '@Partials/alerts/InfoAlert.vue';
+    import TextInput from '@Partials/inputs/TextInput.vue';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import BackButton from '@Partials/buttons/BackButton.vue';
-    import WarningAlert from '@Partials/alerts/WarningAlert.vue';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
+    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import ConfirmPasswordInput from '@Partials/inputs/TextInput.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
-    import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import { validateRegister, register } from '@Repositories/auth-repository.js';
-
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: {
-            Logo, RouterLink, InfoAlert, TextHeader, BackButton, WarningAlert, PasswordInput,
-            PrimaryButton, OtpInput, MobileNumberInput, ConfirmPasswordInput
-        },
+        components: { Logo, Alert, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, ConfirmPasswordInput },
         data() {
             return {
                 registerUrl: null,

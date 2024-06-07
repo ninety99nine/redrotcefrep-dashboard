@@ -7,7 +7,7 @@
         <span v-if="showResultTotals" class="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.from }}-{{ pagination.to }}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.total }}</span></span>
         <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
             <li v-for="(link, index) in pagination.links" :key="index">
-                <a :href="link.url ?? '#'" @click.prevent="onClick(link)" :disabled="isDisabled(index)" :class="getLinkClass(index, link)">
+                <a :href="link.url ?? '#'" @click.prevent="onClick(link)" :disabled="isDisabled(link)" :class="getLinkClass(index, link)">
                     <span v-html="link.label"></span>
                 </a>
             </li>
@@ -35,25 +35,8 @@
                 this.$emit('paginate', link.url);
             }
         },
-        isDisabled(index) {
-
-            //  If first link
-            if(index == 0) {
-
-                return this.pagination.prevPageUrl == null;
-
-            //  If last link
-            }else if(index == this.pagination.links.length - 1) {
-
-                return this.pagination.lastPageUrl == null;
-
-            //  If in-between link
-            }else{
-
-                return false;
-
-            }
-
+        isDisabled(link) {
+            return link.url == null;
         },
         getLinkClass(index, link) {
 
@@ -76,7 +59,7 @@
 
             }
 
-            if(this.isDisabled(index)) {
+            if(this.isDisabled(link)) {
 
                 classes += ' cursor-not-allowed bg-gray-100';
 

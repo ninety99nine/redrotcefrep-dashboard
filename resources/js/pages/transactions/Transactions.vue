@@ -13,7 +13,7 @@
         </div>
 
         <!-- Transactions Table -->
-        <BasicTable :pagination="pagination" :isLoading="isFetching" @paginate="paginate" @search="search" @refresh="_getTransactions" :filters="filters" @addOrUpdateFilter="addOrUpdateFilter" @showSelectedFilter="showSelectedFilter" @hideFilterModal="hideFilterModal" @removeFilter="removeFilter" :totalHeaders="tableHeaders.length">
+        <BasicTable :pagination="pagination" :isLoading="isFetching" @paginate="paginate" @search="search" @refresh="_getTransactions" :showAddFilter="true" :filters="filters" @addOrUpdateFilter="addOrUpdateFilter" @showSelectedFilter="showSelectedFilter" @hideFilterModal="hideFilterModal" @removeFilter="removeFilter" :totalHeaders="tableHeaders.length">
 
             <!-- Filters -->
             <template v-slot:primaryFilters>
@@ -99,7 +99,7 @@
 
             <!-- Table Body -->
             <template v-slot:body>
-                <tr @click.stop="onView(transaction)" v-for="(transaction, index) in transactions" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b dark:bg-gray-800 dark:border-gray-700">
+                <tr @click.stop="onView(transaction)" v-for="(transaction, index) in transactions" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
 
                     <!-- For -->
                     <td class="whitespace-nowrap px-4 py-4">{{ capitalizeAllWords(transaction.ownerType) }}</td>
@@ -196,8 +196,8 @@
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
-    import { getTransactions } from '@Repositories/transaction-repository.js';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import { getTransactions } from '@Repositories/transaction-repository.js';
 
     export default {
         mixins: [UtilsMixin],

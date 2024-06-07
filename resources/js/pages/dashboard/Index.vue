@@ -36,11 +36,18 @@
                 <div class="mb-4 border-b"></div>
 
                 <!-- General Error Info Alert -->
-                <WarningAlert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96">
+                <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
                     {{ getFormError('general') }}
-                </WarningAlert>
+                </Alert>
 
                 <ul class="space-y-1 font-medium">
+
+                    <!-- Spining Loader -->
+                    <li v-if="isLoadingStoresAsTeamMember">
+                        <div class="flex justify-center my-4">
+                            <SpiningLoader></SpiningLoader>
+                        </div>
+                    </li>
 
                     <!-- Store Nav Links -->
                     <li v-for="(storeLink, index) in storeLinks"
@@ -102,12 +109,9 @@
 
                     <!-- Add Store -->
                     <li>
-                        <PrimaryButton class="flex items-center space-x-2 my-4">
-                            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
+                        <AddButton class="flex items-center space-x-2 my-4 w-full">
                             <span class="text-xs">Add Store</span>
-                        </PrimaryButton>
+                        </AddButton>
                     </li>
                 </ul>
 
@@ -159,13 +163,14 @@
 
     import SlideUpDown from 'vue-slide-up-down';
     import Logo from '@Partials/logos/Logo.vue';
+    import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import Footer from '@Pages/dashboard/Footer.vue';
     import RightSideAlerts from './RightSideAlerts.vue';
     import { useAuthState } from '@Stores/auth-store.js';
+    import AddButton from '@Partials/buttons/AddButton.vue';
     import { logout } from '@Repositories/auth-repository.js';
     import StatusDot from '@Partials/status-dots/StatusDot.vue';
-    import WarningAlert from '@Partials/alerts/WarningAlert.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import { getUserStores } from '@Repositories/store-repository.js';
@@ -173,7 +178,7 @@
 
     export default {
         mixins: [FormMixin],
-        components: { SlideUpDown, RightSideAlerts, Logo, Footer, StatusDot, WarningAlert, SpiningLoader, ProfilePhoto },
+        components: { SlideUpDown, Alert, RightSideAlerts, AddButton, Logo, Footer, StatusDot, SpiningLoader, ProfilePhoto },
         data() {
             return {
                 isLoggingOut: false,
@@ -222,7 +227,7 @@
                          *  method relies on the value of "this.$route.name", therefore we must wait for
                          *  the navigation to complete so that we capture the correct route name.
                          */
-                        await vm.$router.push({ name: 'store-settings', params: { href: vm.storeLinks[0].href } });
+                        await vm.$router.push({ name: 'show-store-settings', params: { store_href: vm.storeLinks[0].href } });
 
                     }
 
@@ -256,13 +261,32 @@
 
                 let href = storeLink.href;
 
-                for (let i = 0; i < storeLink.children.length; i++) {
+                if(this.$route.params.store_href == href) {
 
-                    let name = storeLink.children[i].name;
+                    for (let i = 0; i < storeLink.children.length; i++) {
 
-                    if(this.$route.name == name && this.$route.params.href == href) {
+                        var name = storeLink.children[i].name;
+                        var relatedLinks = storeLink.children[i].relatedLinks;
 
-                        return true;
+                        if(this.$route.name == name) {
+
+                            return true;
+
+                        }else if(relatedLinks != undefined) {
+
+                            for (let x = 0; x < relatedLinks.length; x++) {
+
+                                name = relatedLinks[x];
+
+                                if(this.$route.name == name) {
+
+                                    return true;
+
+                                }
+
+                            }
+
+                        }
 
                     }
 
@@ -274,14 +298,41 @@
                 return this.isActiveStoreNavMenu(storeLink) ? 'bg-gray-100' : '';
             },
             navigateToStoreSubNavMenu(storeLink, subStoreLink) {
-                this.$router.push({ name: subStoreLink.name, params: { href: storeLink.href } });
+                this.$router.push({ name: subStoreLink.name, params: { store_href: storeLink.href } });
             },
             activeStoreSubNavMenuClasses(storeLink, storeSubLink) {
-                if(this.$route.name == storeSubLink.name && this.$route.params.href == storeLink.href) {
-                    return 'bg-gray-200';
-                }else{
-                    return '';
+
+                if(this.$route.params.store_href == storeLink.href) {
+
+                    const activeClass = 'bg-gray-200';
+
+                    if(this.$route.name == storeSubLink.name) {
+
+                        return activeClass;
+
+                    }else{
+
+                        if(storeSubLink.relatedLinks != undefined) {
+
+                            var relatedLinks = storeSubLink.relatedLinks;
+
+                            for (let x = 0; x < relatedLinks.length; x++) {
+
+                                var name = relatedLinks[x];
+
+                                if(this.$route.name == name) {
+
+                                    return activeClass;
+
+                                }
+
+                            }
+
+                        }
+                    }
                 }
+
+                return '';
             },
             toggleStoreNavMenu(storeLink, index) {
 
@@ -318,41 +369,46 @@
                         this.storeLinks = response.data.data.map( store => {
 
                             return {
-                                name: 'store-home',
+                                name: 'show-store-home',
                                 href: store._links.self,
                                 label: store._attributes.nameWithEmoji,
                                 children: [
                                     {
                                         label: 'Home',
-                                        name: 'store-home',
+                                        name: 'show-store-home',
                                     },
                                     {
                                         label: 'Orders',
-                                        name: 'store-orders',
+                                        name: 'show-store-orders',
+                                        relatedLinks: ['show-store-order', 'create-store-order']
                                     },
                                     {
                                         label: 'Reviews',
-                                        name: 'store-reviews',
+                                        name: 'show-store-reviews'
                                     },
                                     {
                                         label: 'Products',
-                                        name: 'store-products',
+                                        name: 'show-store-products',
+                                        relatedLinks: ['show-store-product', 'create-store-product']
                                     },
                                     {
                                         label: 'Coupons',
-                                        name: 'store-coupons',
+                                        name: 'show-store-coupons',
+                                        relatedLinks: ['show-store-coupon', 'create-store-coupon']
                                     },
                                     {
                                         label: 'Transactions',
-                                        name: 'store-transactions',
+                                        name: 'show-store-transactions',
+                                        relatedLinks: ['show-store-transaction', 'create-store-transaction']
                                     },
                                     {
                                         label: 'Team Members',
-                                        name: 'store-team-members',
+                                        name: 'show-store-team-members',
+                                        relatedLinks: ['show-store-team-member', 'invite-store-team-member']
                                     },
                                     {
                                         label: 'Store Settings',
-                                        name: 'store-settings',
+                                        name: 'show-store-settings',
                                     }
                                 ]
                             };

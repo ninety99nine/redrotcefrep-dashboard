@@ -30,9 +30,10 @@
 
 <script>
 
-  import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-  import InputLabel from '@Partials/input-labels/InputLabel.vue';
-  import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
+    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
   export default {
     props: {
@@ -66,7 +67,7 @@
         },
     },
     mixins: [UtilsMixin],
-    components: { InputLabel, InputErrorMessage },
+    components: { InputLabel, MoreInfoPopover, InputErrorMessage },
     data() {
       return {
         localModelValue: this.modelValue,

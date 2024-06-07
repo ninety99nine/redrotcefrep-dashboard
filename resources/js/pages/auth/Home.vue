@@ -26,11 +26,9 @@
 
     import settings from '@Js/settings.js';
     import { RouterLink } from 'vue-router';
-    import Logo from '@Partials/logos/Logo.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
 
     export default {
-        components: { Logo, RouterLink, TextHeader },
+        components: { RouterLink },
         data() {
             return {
                 appName: settings.appName
