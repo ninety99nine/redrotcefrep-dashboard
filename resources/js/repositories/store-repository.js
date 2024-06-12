@@ -2,6 +2,11 @@ import { useApiState } from '@Stores/api-store.js';
 import { useAuthState } from '@Stores/auth-store.js';
 import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
+// Create store
+async function createStore(params = {}) {
+    return await postApi(useApiState().apiHome._links['createStores'], params);
+}
+
 // Get store
 async function getStore(href, params = {}) {
     return await getApi(href, params);
@@ -60,6 +65,6 @@ async function getUserStores(user, params = {}) {
 
 // Export functions
 export {
-    getStore, updateStore, updateStoreLogo, getAvailablePaymentMethods, getSupportedPaymentMethods,
+    createStore, getStore, updateStore, updateStoreLogo, getAvailablePaymentMethods, getSupportedPaymentMethods,
     getAvailableDepositPercentages, getAvailableInstallmentPercentages, deleteStore, getUserStores
 };

@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex justify-start">
 
@@ -44,7 +44,7 @@
         </div>
 
         <!-- Transaction Form -->
-        <form class="relative mt-10" action="#" method="POST">
+        <form class="relative" action="#" method="POST">
 
             <!-- General Error Info Alert -->
             <Alert v-if="mustCreate || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
@@ -67,7 +67,7 @@
 
                 <div class="col-span-8">
 
-                    <div class="shadow-lg rounded-lg border space-y-4 p-4 mb-4">
+                    <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
                         <div class="flex items-center space-x-8">
 
@@ -126,7 +126,7 @@
                         {{ getFormError('general') }}
                     </Alert>
 
-                    <div class="shadow-lg rounded-lg border space-y-4 p-4 mb-4">
+                    <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
                         <div class="space-y-4">
 
@@ -248,7 +248,7 @@
 
                     </div>
 
-                    <div v-if="transactionForOrder" class="shadow-lg rounded-lg border space-y-4 p-4 mb-4">
+                    <div v-if="transactionForOrder" class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
                         <div class="flex justify-between">
 
@@ -266,7 +266,7 @@
 
                 <div class="col-span-4">
 
-                    <div class="flex flex-col justify-between h-full shadow-lg rounded-lg border p-4">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
 
                         <div class="flex justify-end mt-8">
 

@@ -52,7 +52,7 @@
                     <!-- Store Nav Links -->
                     <li v-for="(storeLink, index) in storeLinks"
                         @click.self="toggleStoreNavMenu(storeLink, index)" :key="index"
-                        :class="[activeStoreNavMenuClasses(storeLink), 'w-full px-4 py-2 text-sm hover:bg-gray-100 active:bg-gray-200 cursor-pointer rounded-lg']">
+                        :class="storeNavMenuClasses(storeLink)">
 
                         <div @click="toggleStoreNavMenu(storeLink, index)" class="flex items-center space-x-2">
 
@@ -109,7 +109,7 @@
 
                     <!-- Add Store -->
                     <li>
-                        <AddButton class="flex items-center space-x-2 my-4 w-full">
+                        <AddButton :action="navigateToAddStore" class="flex items-center space-x-2 my-4 w-full">
                             <span class="text-xs">Add Store</span>
                         </AddButton>
                     </li>
@@ -145,7 +145,7 @@
 
         </aside>
 
-        <div class="sm:ml-64">
+        <div class="sm:ml-64 bg-gray-50">
 
             <!-- Dashboard Content -->
             <router-view></router-view>
@@ -210,49 +210,32 @@
         },
         beforeRouteEnter(to, from, next) {
             next((vm) => {
-
-                //  Get the stores as a team member
-                vm.getStoresAsTeamMember().then(async response => {
-
-                    //  If we have any store links that have been set
-                    if(to.name == 'dashboard' && vm.storeLinks.length) {
-
-                        /**
-                         *  Redirect to the first store link settings.
-                         *
-                         *  The await method allows us to wait for the route to complete navigating before we
-                         *  proceed to the code below that will toggle open the store navigation menu. Without
-                         *  the await, we would run the isActiveStoreNavMenu() method too soon and the store
-                         *  navigation menu will not open since the route is not yet entirely resolved. The
-                         *  method relies on the value of "this.$route.name", therefore we must wait for
-                         *  the navigation to complete so that we capture the correct route name.
-                         */
-                        await vm.$router.push({ name: 'show-store-settings', params: { store_href: vm.storeLinks[0].href } });
-
-                    }
-
-                    //  Automatically open the active store link
-                    for (let i = 0; i < vm.storeLinks.length; i++) {
-
-                        //  Get the store link
-                        const storeLink = vm.storeLinks[i];
-
-                        //  Check if this store link is currently selected
-                        if(vm.isActiveStoreNavMenu(storeLink)) {
-
-                            //  Toggle open the store navigation menu drawer
-                            vm.toggleStoreNavMenu(storeLink, i);
-
-                        }
-
-                    }
-
-                });
+                vm.navigateToSuitablePage(vm, to);
             });
         },
+        beforeRouteUpdate(to, from) {
+            /**
+             *  1) After creating a store, we navigate to the dashboard
+             *     route with the createdStore query set to "true"
+             *
+             *  2) After deleting a store, we navigate to the dashboard
+             *     route with the deletedStore query set to "true"
+             */
+            if(to.query.hasOwnProperty('createdStore') || to.query.hasOwnProperty('deletedStore')) {
+                this.navigateToSuitablePage(this, to);
+            }
+        },
         methods: {
+            navigateToAddStore() {
+                this.$router.push({ name: 'create-store' });
+            },
             navigateToNavMenu(name) {
-                this.$router.push({ name: name });
+                this.$router.push({ name: name }).then(() => {
+
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+
+                });
             },
             activeNavMenuClasses(name) {
                 return this.$route.name === name ? 'bg-gray-200' : '';
@@ -294,11 +277,24 @@
 
                 return false;
             },
-            activeStoreNavMenuClasses(storeLink) {
-                return this.isActiveStoreNavMenu(storeLink) ? 'bg-gray-100' : '';
+            storeNavMenuClasses(storeLink) {
+                var classes = ['w-full px-4 py-2 text-sm cursor-pointer rounded-lg'];
+
+                if(this.isActiveStoreNavMenu(storeLink)) {
+                    classes.push('bg-white shadow border');
+                }else{
+                    classes.push('hover:bg-gray-100 active:bg-gray-200');
+                }
+                return classes;
             },
             navigateToStoreSubNavMenu(storeLink, subStoreLink) {
-                this.$router.push({ name: subStoreLink.name, params: { store_href: storeLink.href } });
+                this.$router.push({
+                    name: subStoreLink.name,
+                    params: { store_href: storeLink.href }
+                }).then(() => {
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+                });
             },
             activeStoreSubNavMenuClasses(storeLink, storeSubLink) {
 
@@ -345,6 +341,44 @@
                     }
                 }
 
+            },
+            navigateToSuitablePage(instance, to) {
+                this.getStoresAsTeamMember().then(async response => {
+
+                    //  If we have any store links that have been set
+                    if(to.name == 'dashboard' && instance.storeLinks.length) {
+
+                        /**
+                         *  Redirect to the first store link settings.
+                         *
+                         *  The await method allows us to wait for the route to complete navigating before we
+                         *  proceed to the code below that will toggle open the store navigation menu. Without
+                         *  the await, we would run the isActiveStoreNavMenu() method too soon and the store
+                         *  navigation menu will not open since the route is not yet entirely resolved. The
+                         *  method relies on the value of "this.$route.name", therefore we must wait for
+                         *  the navigation to complete so that we capture the correct route name.
+                         */
+                        await instance.$router.push({ name: 'show-store-home', params: { store_href: instance.storeLinks[0].href } });
+
+                    }
+
+                    //  Automatically open the active store link
+                    for (let i = 0; i < instance.storeLinks.length; i++) {
+
+                        //  Get the store link
+                        const storeLink = instance.storeLinks[i];
+
+                        //  Check if this store link is currently selected
+                        if(instance.isActiveStoreNavMenu(storeLink)) {
+
+                            //  Toggle open the store navigation menu drawer
+                            instance.toggleStoreNavMenu(storeLink, i);
+
+                        }
+
+                    }
+
+                });
             },
             getStoresAsTeamMember() {
 

@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -51,7 +51,17 @@
 
             <!-- Table Body -->
             <template #body>
-                <tr @click.stop="onEdit(order)" v-for="order in orders" :key="order.id" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
+                <tr @click.stop="onView(order)" v-for="(order, index) in orders" :key="order.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
+
+                    <!-- Checkbox -->
+                    <td @click.stop class="whitespace-nowrap pl-4">
+
+                        <Checkbox
+                            size="xs"
+                            v-model="checkedRowIds[index]">
+                        </Checkbox>
+
+                    </td>
 
                     <!-- Number -->
                     <td class="whitespace-nowrap px-4 py-4">
@@ -83,14 +93,19 @@
                     </td>
 
                     <!-- Payment Status -->
-                    <td class="whitespace-nowrap px-4 py-4">
+                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
                         <OrderPaymentStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></OrderPaymentStatus>
+                    </td>
+
+                    <!-- Collection Status -->
+                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
+                        <OrderCollectionStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></OrderCollectionStatus>
                     </td>
 
                     <!-- Grand Total -->
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
-                            <span>{{ order.grandTotal.amountWithCurrency }}</span>
+                            <span class="font-bold">{{ order.grandTotal.amountWithCurrency }}</span>
                             <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Cost Breakdown" placement="top">
 
                                 <template #description>
@@ -106,6 +121,37 @@
                         </div>
                     </td>
 
+                    <!-- Amount Paid -->
+                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
+                        <div class="flex space-x-1 items-center">
+                            <span>{{ order.amountPaid.amountWithCurrency }}</span>
+                            <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'Paid: '+order.amountPaidPercentage.valueSymbol" placement="top"></MoreInfoPopover>
+                        </div>
+                    </td>
+
+                    <!-- Amount Pending -->
+                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
+                        <div class="flex space-x-1 items-center">
+                            <span>{{ order.amountPending.amountWithCurrency }}</span>
+                            <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'Pending: '+order.amountPendingPercentage.valueSymbol" placement="top"></MoreInfoPopover>
+                        </div>
+                    </td>
+
+                    <!-- Amount Outstanding -->
+                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
+                        <div class="flex space-x-1 items-center">
+                            <span>{{ order.amountOutstanding.amountWithCurrency }}</span>
+                            <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'Outstanding: '+order.amountOutstandingPercentage.valueSymbol" placement="top"></MoreInfoPopover>
+                        </div>
+                    </td>
+
+                    <!-- Special Note -->
+                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
+                        <div class="flex space-x-1 items-center">
+                            <span>{{ order.specialNote ?? '...' }}</span>
+                        </div>
+                    </td>
+
                     <!-- Created Date -->
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
@@ -117,8 +163,8 @@
                     <!-- Action -->
                     <td class="px-4 py-4 flex items-center space-x-4">
 
-                        <!-- Edit Button -->
-                        <a v-if="!isDeleting(order)" href="#" @click.stop.prevent="onEdit(order)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <!-- View Button -->
+                        <a v-if="!isDeleting(order)" href="#" @click.stop.prevent="onView(order)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
                         <SpiningLoader v-if="isDeleting(order)" type="danger">
@@ -136,7 +182,7 @@
         </BasicTable>
 
         <!-- No Orders -->
-        <div v-else class="flex justify-between space-x-20 p-20 border rounded-lg bg-gray-50">
+        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Ready For Your First Sale?</h1>
                 <p>Your orders will appear here once customers start shopping. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
@@ -183,6 +229,7 @@
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
+    import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import OrderStatus from '@Components/order/OrderStatus.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
@@ -191,16 +238,21 @@
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import OrderPaymentStatus from '@Components/order/OrderPaymentStatus.vue';
+    import OrderCollectionStatus from '@Components/order/OrderCollectionStatus.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { TextHeader, AddButton, BasicTable, OrderStatus, ConfirmModal, SpiningLoader, PrimaryButton, MoreInfoPopover, ToogleSwitch, OrderPaymentStatus },
+        components: {
+            TextHeader, AddButton, BasicTable, Checkbox, OrderStatus, ConfirmModal, SpiningLoader,
+            PrimaryButton, MoreInfoPopover, ToogleSwitch, OrderPaymentStatus, OrderCollectionStatus
+        },
         data() {
             return {
                 orders: [],
                 pagination: null,
                 searchTerm: null,
-                showEverything: false,
+                checkedRowIds: [],
+                showEverything: true,
                 deletableOrder: null,
                 isDeletingOrderIds: [],
                 isLoadingOrders: false,
@@ -213,16 +265,22 @@
             },
             tableHeaders() {
                 return this.showEverything
-                    ? ['Name', 'Customer', 'Summary', 'status', 'Payment Status', 'Grand Total', 'Created Date', '']
-                    : ['Name', 'Customer', 'Summary', 'status', 'Payment Status', 'Grand Total', 'Created Date', ''];
+                    ? ['', 'Name', 'Customer', 'Summary', 'status', 'Payment Status', 'Collection Status', 'Grand Total', 'Paid', 'Pending', 'Outstanding', 'Special Note', 'Created Date', '']
+                    : ['', 'Name', 'Customer', 'Summary', 'status', 'Grand Total', 'Created Date', ''];
             },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
-            onEdit(order) {
-                this.$router.push({ name: 'show-store-order', params: { 'store_href': this.store._links.self, 'order_href': order._links.self } });
+            onView(order) {
+                this.$router.push({
+                    name: 'show-store-order',
+                    params: { 'store_href': this.store._links.self, 'order_href': order._links.self }
+                }).then(() => {
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+                });
             },
             showDeleteConfirmationModal(order) {
                 this.deletableOrder = order;
@@ -254,6 +312,7 @@
                 this.searchTerm = searchTerm;
                 this.getOrders();
             },
+
             getOrders() {
 
                 //  Start loader
@@ -273,6 +332,8 @@
                     if(response.status == 200) {
                         this.pagination = response.data;
                         this.orders = this.pagination.data;
+
+                        this.checkedRowIds = this.orders.map((_) => false);
                     }
 
                     //  Stop loader

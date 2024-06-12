@@ -4,15 +4,15 @@
      -->
      <div>
 
-        <label class="inline-flex items-center cursor-pointer">
+        <label class="inline-flex items-start cursor-pointer">
 
-            <div class="flex items-center">
-                <input :id="uniqueId" :name="uniqueId" v-model="localModelValue" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                <label for="default-checkbox" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ label }}</label>
+            <div class="flex items-start">
+                <input :id="uniqueId" :name="uniqueId" v-model="localModelValue" type="checkbox" class="w-4 h-4 mt-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label v-if="label != ''" for="default-checkbox" :class="textClass">{{ label }}</label>
             </div>
 
             <!-- More Info Popover -->
-            <MoreInfoPopover v-if="labelPopoverTitle || labelPopoverDescription" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-1"></MoreInfoPopover>
+            <MoreInfoPopover v-if="labelPopoverTitle || labelPopoverDescription" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-1 mt-1"></MoreInfoPopover>
 
         </label>
 
@@ -37,12 +37,12 @@
             },
             label: {
                 type: String,
-                default: 'Label'
+                default: ''
             },
             size: {
                 type: String,
-                default: 'lg',
-                options: ['lg', 'md', 'sm']
+                default: 'base',
+                options: ['xs', 'sm', 'base', 'lg']
             },
             labelPopoverTitle: {
                 type: String
@@ -71,6 +71,23 @@
         methods: {
             updateValue(newValue) {
                 this.localModelValue = newValue;
+            }
+        },
+        computed: {
+            textClass() {
+                let classes = ['ms-2 font-medium text-gray-900 dark:text-gray-300'];
+
+                if(this.size == 'xs') {
+                    classes.push('text-xs');
+                }else if(this.size == 'sm') {
+                    classes.push('text-sm');
+                }else if(this.size == 'base') {
+                    classes.push('text-base');
+                }else if(this.size == 'lg') {
+                    classes.push('text-lg');
+                }
+
+                return classes;
             }
         }
     };

@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -86,7 +86,7 @@
         </BasicTable>
 
         <!-- No Reviews -->
-        <div v-else class="flex justify-between space-x-20 p-20 border rounded-lg bg-gray-50">
+        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Discover Customer Feedback</h1>
                 <div>

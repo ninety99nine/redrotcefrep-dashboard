@@ -37,99 +37,104 @@ const routes = [
                 component: () => import('@Pages/subscriptions/Subscriptions.vue')
             },
             {
+                name: 'create-store',
+                path: 'stores/create',
+                component: () => import('@Pages/stores/create/CreateStore.vue')
+            },
+            {
                 name: 'store',
                 path: 'stores/:store_href',
-                component: () => import('@Pages/store/Store.vue'),
+                component: () => import('@Pages/stores/store/Store.vue'),
                 children: [
                     {
                         path: '',
                         name: 'show-store-home',
-                        component: () => import('@Pages/store/orders/StoreOrders.vue')
+                        component: () => import('@Pages/stores/store/home/StoreHome.vue')
                     },
                     {
                         path: 'orders',
                         name: 'show-store-orders',
-                        component: () => import('@Pages/store/orders/StoreOrders.vue')
+                        component: () => import('@Pages/stores/store/orders/StoreOrders.vue')
                     },
                     {
                         path: 'orders/:order_href',
                         name: 'show-store-order',
-                        component: () => import('@Pages/store/orders/StoreOrder.vue')
+                        component: () => import('@Pages/stores/store/orders/StoreOrder.vue')
                     },
                     {
                         path: 'orders/create',
                         name: 'create-store-order',
-                        component: () => import('@Pages/store/orders/StoreOrder.vue')
+                        component: () => import('@Pages/stores/store/orders/StoreOrder.vue')
                     },
                     {
                         path: 'reviews',
                         name: 'show-store-reviews',
-                        component: () => import('@Pages/store/reviews/StoreReviews.vue')
+                        component: () => import('@Pages/stores/store/reviews/StoreReviews.vue')
                     },
                     {
                         path: 'products',
                         name: 'show-store-products',
-                        component: () => import('@Pages/store/products/StoreProducts.vue')
+                        component: () => import('@Pages/stores/store/products/StoreProducts.vue')
                     },
                     {
                         path: 'products/:product_href',
                         name: 'show-store-product',
-                        component: () => import('@Pages/store/products/StoreProduct.vue')
+                        component: () => import('@Pages/stores/store/products/StoreProduct.vue')
                     },
                     {
                         path: 'products/create',
                         name: 'create-store-product',
-                        component: () => import('@Pages/store/products/StoreProduct.vue')
+                        component: () => import('@Pages/stores/store/products/StoreProduct.vue')
                     },
                     {
                         path: 'coupons',
                         name: 'show-store-coupons',
-                        component: () => import('@Pages/store/coupons/StoreCoupons.vue')
+                        component: () => import('@Pages/stores/store/coupons/StoreCoupons.vue')
                     },
                     {
                         path: 'coupons/:coupon_href',
                         name: 'show-store-coupon',
-                        component: () => import('@Pages/store/coupons/StoreCoupon.vue')
+                        component: () => import('@Pages/stores/store/coupons/StoreCoupon.vue')
                     },
                     {
                         path: 'coupons/create',
                         name: 'create-store-coupon',
-                        component: () => import('@Pages/store/coupons/StoreCoupon.vue')
+                        component: () => import('@Pages/stores/store/coupons/StoreCoupon.vue')
                     },
                     {
                         path: 'transactions',
                         name: 'show-store-transactions',
-                        component: () => import('@Pages/store/transactions/StoreTransactions.vue')
+                        component: () => import('@Pages/stores/store/transactions/StoreTransactions.vue')
                     },
                     {
                         path: 'transactions/:transaction_href',
                         name: 'show-store-transaction',
-                        component: () => import('@Pages/store/transactions/StoreTransaction.vue')
+                        component: () => import('@Pages/stores/store/transactions/StoreTransaction.vue')
                     },
                     {
                         path: 'transactions/create',
                         name: 'create-store-transaction',
-                        component: () => import('@Pages/store/transactions/StoreTransaction.vue')
+                        component: () => import('@Pages/stores/store/transactions/StoreTransaction.vue')
                     },
                     {
                         path: 'team-members',
                         name: 'show-store-team-members',
-                        component: () => import('@Pages/store/team-members/StoreTeamMembers.vue')
+                        component: () => import('@Pages/stores/store/team-members/StoreTeamMembers.vue')
                     },
                     {
                         path: 'team-members/:team_member_href',
                         name: 'show-store-team-member',
-                        component: () => import('@Pages/store/team-members/StoreTeamMember.vue')
+                        component: () => import('@Pages/stores/store/team-members/StoreTeamMember.vue')
                     },
                     {
                         path: 'team-members/invite',
                         name: 'invite-store-team-member',
-                        component: () => import('@Pages/store/team-members/StoreTeamMember.vue')
+                        component: () => import('@Pages/stores/store/team-members/StoreTeamMember.vue')
                     },
                     {
                         path: 'settings',
                         name: 'show-store-settings',
-                        component: () => import('@Pages/store/settings/StoreSettings.vue')
+                        component: () => import('@Pages/stores/store/settings/StoreSettings.vue')
                     }
                 ]
             },
@@ -159,6 +164,7 @@ const routes = [
     {
         path: '/:catchAll(.*)',
         name: 'notFound',
+        meta: { requiresAuth: false },
         component: () => import('@Pages/error/404.vue')
     },
 ];

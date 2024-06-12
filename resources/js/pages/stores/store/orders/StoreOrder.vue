@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex justify-start">
 
@@ -44,7 +44,7 @@
         </div>
 
         <!-- Order Form -->
-        <form class="relative mt-10" action="#" method="POST">
+        <form class="relative" action="#" method="POST">
 
             <!-- General Error Info Alert -->
             <Alert v-if="mustCreate || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
@@ -67,7 +67,7 @@
 
                 <div class="col-span-8">
 
-                    <div class="shadow-lg rounded-lg border space-y-4 p-4 mb-4">
+                    <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
                         <div class="flex items-center justify-between">
 
@@ -110,128 +110,118 @@
                     <!-- Cart Summary -->
                     <CartSummary :order="order" :isLoadingOrder="isLoadingOrder"></CartSummary>
 
-                    <OrderTransactions :order="order"></OrderTransactions>
-
                     <!-- Payment Summary -->
-                    <PaymentSummary :order="order" :isLoadingOrder="isLoadingOrder" :refreshOrder="getOrder"></PaymentSummary>
+                    <PaymentSummary :order="order" :isLoadingOrder="isLoadingOrder" :refreshOrder="getOrder">
 
-                    <!-- Collection Summary -->
-                    <CollectionSummary :order="order" :isLoadingOrder="isLoadingOrder"></CollectionSummary>
+                        <template #actionButtons>
+
+                            <div class="flex justify-end space-x-2">
+
+                                <!-- Mark As Paid Button Skeleton -->
+                                <ButtonSkeleton v-if="isEditting && isLoadingOrder" size="xs">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                                        <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
+                                        <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
+                                    </svg>
+                                    <span>Mark As Paid</span>
+                                </ButtonSkeleton>
+
+                                <!-- Mark As Paid Button -->
+                                <PrimaryButton v-else-if="order && canMarkAsPaid" :action="confirmMarkAsPaid" :disabled="isMarkingAsPaid" :loading="isMarkingAsPaid" :type="canRequestPayment ? 'light' : 'success'" size="xs">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
+                                        <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
+                                        <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
+                                    </svg>
+                                    <span>Mark As Paid</span>
+                                </PrimaryButton>
+
+                                <!-- Request Payment Button Skeleton -->
+                                <ButtonSkeleton v-if="isEditting && isLoadingOrder" size="xs">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
+                                        <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Request Payment</span>
+                                </ButtonSkeleton>
+
+                                <!-- Request Payment Button -->
+                                <PrimaryButton v-else-if="order && canRequestPayment" :action="confirmRequestPayment" :disabled="isMarkingAsPaid" :loading="isMarkingAsPaid" type="success" size="xs">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
+                                        <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Request Payment</span>
+                                </PrimaryButton>
+
+                            </div>
+
+                        </template>
+
+                    </PaymentSummary>
+
+                </div>
+
+                <div class="col-span-4 space-y-4">
 
                     <!-- Customer Summary -->
                     <CustomerSummary :order="order" :isLoadingOrder="isLoadingOrder"></CustomerSummary>
 
-                </div>
+                    <!-- Collection Summary -->
+                    <CollectionSummary :order="order" :isLoadingOrder="isLoadingOrder"></CollectionSummary>
 
-                <div class="col-span-4">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
 
-                    <div class="flex flex-col justify-between h-full shadow-lg rounded-lg border p-4">
+                        <div class="space-y-4">
 
-                        <div class="space-y-8">
+                            <p class="font-bold text-lg mb-4">Change Status</p>
 
-                            <div class="space-y-4">
-
-                                <p class="font-bold text-lg mb-4">Change Status</p>
-
-                                <div v-if="isLoadingOrder" class="flex items-center space-x-2">
-                                    <ShineEffect>
-                                        <LineSkeleton v-for="(followUpStatus, index) in 4" :key="index"></LineSkeleton>
-                                    </ShineEffect>
-                                </div>
-
-                                <template v-else-if="followUpStatuses.length > 0">
-                                    <span v-for="(followUpStatus, index) in followUpStatuses" :key="index" @click="confirmUpdateStatus(followUpStatus)" class="cursor-pointer hover:opacity-50 mr-1">
-                                        <BadgeIndicator
-                                            :active="false" :text="followUpStatus.name" inactiveType="info" :showDot="false">
-                                        </BadgeIndicator>
-                                    </span>
-                                </template>
-
+                            <div v-if="isLoadingOrder">
+                                <ShineEffect class="space-y-4">
+                                    <div class="flex space-x-2">
+                                        <LineSkeleton v-for="(followUpStatus, index) in 3" :key="index"></LineSkeleton>
+                                    </div>
+                                    <LineSkeleton width="w-32"></LineSkeleton>
+                                </ShineEffect>
                             </div>
 
-                            <div class="flex justify-end">
-
-                                <div class="flex flex-col items-end space-y-4">
-
-                                    <div class="flex justify-end space-x-2">
-
-                                        <!-- Mark As Paid Button Skeleton -->
-                                        <ButtonSkeleton v-if="isEditting && isLoadingOrder" size="xs">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-                                                <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
-                                                <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
-                                            </svg>
-                                            <span>Mark As Paid</span>
-                                        </ButtonSkeleton>
-
-                                        <!-- Mark As Paid Button -->
-                                        <PrimaryButton v-else-if="order && canMarkAsPaid" :action="confirmMarkAsPaid" :disabled="isMarkingAsPaid" :loading="isMarkingAsPaid" :type="canRequestPayment ? 'light' : 'success'" size="xs">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-                                                <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
-                                                <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
-                                            </svg>
-                                            <span>Mark As Paid</span>
-                                        </PrimaryButton>
-
-                                        <!-- Request Payment Button Skeleton -->
-                                        <ButtonSkeleton v-if="isEditting && isLoadingOrder" size="xs">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                                                <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
-                                            </svg>
-                                            <span>Request Payment</span>
-                                        </ButtonSkeleton>
-
-                                        <!-- Request Payment Button -->
-                                        <PrimaryButton v-else-if="order && canRequestPayment" :action="confirmRequestPayment" :disabled="isMarkingAsPaid" :loading="isMarkingAsPaid" type="success" size="xs">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                                                <path fill-rule="evenodd" d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" clip-rule="evenodd" />
-                                            </svg>
-                                            <span>Request Payment</span>
-                                        </PrimaryButton>
-                                    </div>
-
-                                    <!-- Cancel / Uncancel Skeleton Button -->
-                                    <ButtonSkeleton v-if="isEditting && isLoadingOrder" size="xs">
-                                        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M10.5 1.875a1.125 1.125 0 0 1 2.25 0v8.219c.517.162 1.02.382 1.5.659V3.375a1.125 1.125 0 0 1 2.25 0v10.937a4.505 4.505 0 0 0-3.25 2.373 8.963 8.963 0 0 1 4-.935A.75.75 0 0 0 18 15v-2.266a3.368 3.368 0 0 1 .988-2.37 1.125 1.125 0 0 1 1.591 1.59 1.118 1.118 0 0 0-.329.79v3.006h-.005a6 6 0 0 1-1.752 4.007l-1.736 1.736a6 6 0 0 1-4.242 1.757H10.5a7.5 7.5 0 0 1-7.5-7.5V6.375a1.125 1.125 0 0 1 2.25 0v5.519c.46-.452.965-.832 1.5-1.141V3.375a1.125 1.125 0 0 1 2.25 0v6.526c.495-.1.997-.151 1.5-.151V1.875Z" />
-                                        </svg>
-                                        <span>Cancel Order</span>
-                                    </ButtonSkeleton>
-
-                                    <!-- Cancel / Uncancel Button -->
-                                    <PrimaryButton v-else-if="order" :action="order._attributes.isCancelled ? uncancelOrder : confirmCancelOrder" :loading="isCancelling || isUncancelling" :type="order._attributes.isCancelled ? 'light' : 'warning'" size="xs">
-                                        <svg v-if="canCancel" class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M10.5 1.875a1.125 1.125 0 0 1 2.25 0v8.219c.517.162 1.02.382 1.5.659V3.375a1.125 1.125 0 0 1 2.25 0v10.937a4.505 4.505 0 0 0-3.25 2.373 8.963 8.963 0 0 1 4-.935A.75.75 0 0 0 18 15v-2.266a3.368 3.368 0 0 1 .988-2.37 1.125 1.125 0 0 1 1.591 1.59 1.118 1.118 0 0 0-.329.79v3.006h-.005a6 6 0 0 1-1.752 4.007l-1.736 1.736a6 6 0 0 1-4.242 1.757H10.5a7.5 7.5 0 0 1-7.5-7.5V6.375a1.125 1.125 0 0 1 2.25 0v5.519c.46-.452.965-.832 1.5-1.141V3.375a1.125 1.125 0 0 1 2.25 0v6.526c.495-.1.997-.151 1.5-.151V1.875Z" />
-                                        </svg>
-                                        <svg v-else-if="canUncancel" class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m15 15-6 6m0 0-6-6m6 6V9a6 6 0 0 1 12 0v3" />
-                                        </svg>
-                                        <span class="whitespace-nowrap">{{ order._attributes.isCancelled ? 'Uncancel Order' : 'Cancel Order' }}</span>
-                                    </PrimaryButton>
-
-                                </div>
-
+                            <div v-else-if="followUpStatuses.length > 0">
+                                <span v-for="(followUpStatus, index) in followUpStatuses" :key="index" @click="confirmUpdateStatus(followUpStatus)" class="cursor-pointer hover:opacity-50 mr-1">
+                                    <BadgeIndicator
+                                        :active="false" :text="followUpStatus.name" inactiveType="info" :showDot="false">
+                                    </BadgeIndicator>
+                                </span>
                             </div>
 
                         </div>
 
                         <div class="flex justify-end mt-8">
 
-                            <ButtonSkeleton v-if="isLoadingOrder" class="w-40">{{ isCreating ? 'Create Order' : 'Save Changes' }}</ButtonSkeleton>
+                            <!-- Cancel / Uncancel Skeleton Button -->
+                            <ShineEffect v-if="isEditting && isLoadingOrder">
+                                <ButtonSkeleton>
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M10.5 1.875a1.125 1.125 0 0 1 2.25 0v8.219c.517.162 1.02.382 1.5.659V3.375a1.125 1.125 0 0 1 2.25 0v10.937a4.505 4.505 0 0 0-3.25 2.373 8.963 8.963 0 0 1 4-.935A.75.75 0 0 0 18 15v-2.266a3.368 3.368 0 0 1 .988-2.37 1.125 1.125 0 0 1 1.591 1.59 1.118 1.118 0 0 0-.329.79v3.006h-.005a6 6 0 0 1-1.752 4.007l-1.736 1.736a6 6 0 0 1-4.242 1.757H10.5a7.5 7.5 0 0 1-7.5-7.5V6.375a1.125 1.125 0 0 1 2.25 0v5.519c.46-.452.965-.832 1.5-1.141V3.375a1.125 1.125 0 0 1 2.25 0v6.526c.495-.1.997-.151 1.5-.151V1.875Z" />
+                                    </svg>
+                                    <span>Cancel Order</span>
+                                </ButtonSkeleton>
+                            </ShineEffect>
 
-                            <!-- Create Order / Save Changes Button -->
-                            <PrimaryButton v-else :action="isCreating ? createOrder : updateOrder" :disabled="(isCreating && !mustCreate) || (isEditting && !mustSaveChanges)" :loading="isSubmitting" class="w-40">
-                                {{ isCreating ? 'Create Order' : 'Save Changes' }}
+                            <!-- Cancel / Uncancel Button -->
+                            <PrimaryButton v-else-if="order" :action="order._attributes.isCancelled ? uncancelOrder : confirmCancelOrder" :loading="isCancelling || isUncancelling" :type="order._attributes.isCancelled ? 'light' : 'warning'">
+                                <svg v-if="canCancel" class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M10.5 1.875a1.125 1.125 0 0 1 2.25 0v8.219c.517.162 1.02.382 1.5.659V3.375a1.125 1.125 0 0 1 2.25 0v10.937a4.505 4.505 0 0 0-3.25 2.373 8.963 8.963 0 0 1 4-.935A.75.75 0 0 0 18 15v-2.266a3.368 3.368 0 0 1 .988-2.37 1.125 1.125 0 0 1 1.591 1.59 1.118 1.118 0 0 0-.329.79v3.006h-.005a6 6 0 0 1-1.752 4.007l-1.736 1.736a6 6 0 0 1-4.242 1.757H10.5a7.5 7.5 0 0 1-7.5-7.5V6.375a1.125 1.125 0 0 1 2.25 0v5.519c.46-.452.965-.832 1.5-1.141V3.375a1.125 1.125 0 0 1 2.25 0v6.526c.495-.1.997-.151 1.5-.151V1.875Z" />
+                                </svg>
+                                <svg v-else-if="canUncancel" class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m15 15-6 6m0 0-6-6m6 6V9a6 6 0 0 1 12 0v3" />
+                                </svg>
+                                <span class="whitespace-nowrap">{{ order._attributes.isCancelled ? 'Uncancel Order' : 'Cancel Order' }}</span>
                             </PrimaryButton>
 
                         </div>
 
                     </div>
-
                 </div>
 
             </div>
@@ -515,16 +505,15 @@
     import PaymentSummary from '@Components/order/payment-summary/PaymentSummary.vue';
     import CustomerSummary from '@Components/order/customer-summary/CustomerSummary.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
-    import OrderTransactions from '@Components/order/transactions/OrderTransactions.vue';
     import CollectionSummary from '@Components/order/collection-summary/CollectionSummary.vue';
 
     export default {
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, InputTags, BackButton, NumberInput, SelectInput, OrderStatus, ConfirmModal,
-            ShineEffect, LineSkeleton, PrimaryButton, SpiningLoader, OtpInput, SelectInputTags, ButtonSkeleton, MoreInfoPopover,
-            LoadingBackdrop, CartSummary, OrderPaymentStatus, BadgeIndicator, PaymentSummary, CustomerSummary,
-            OrderTransactions, CollectionSummary
+            ShineEffect, LineSkeleton, PrimaryButton, SpiningLoader, OtpInput, SelectInputTags, ButtonSkeleton,
+            MoreInfoPopover, LoadingBackdrop, CartSummary, OrderPaymentStatus, BadgeIndicator, PaymentSummary,
+            CustomerSummary, CollectionSummary
         },
         data() {
             return {
@@ -677,6 +666,7 @@
                 //  Set the query params
                 const params = {
                     'withCart': '1',
+                    'withOccasion': '1',
                     'withCustomer': '1',
                 }
 

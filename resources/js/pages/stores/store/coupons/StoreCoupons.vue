@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -51,7 +51,17 @@
 
             <!-- Table Body -->
             <template #body>
-                <tr @click.stop="onEdit(coupon)" v-for="coupon in coupons" :key="coupon.id" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
+                <tr @click.stop="onView(coupon)" v-for="(coupon, index) in coupons" :key="coupon.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
+
+                    <!-- Checkbox -->
+                    <td @click.stop class="whitespace-nowrap pl-4">
+
+                        <Checkbox
+                            size="xs"
+                            v-model="checkedRowIds[index]">
+                        </Checkbox>
+
+                    </td>
 
                     <!-- Name -->
                     <td class="whitespace-nowrap align-top px-4 py-4">
@@ -123,8 +133,8 @@
                     <!-- Action -->
                     <td class="align-top px-4 py-4 flex items-center space-x-4">
 
-                        <!-- Edit Button -->
-                        <a v-if="!isDeleting(coupon)" href="#" @click.stop.prevent="onEdit(coupon)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <!-- View Button -->
+                        <a v-if="!isDeleting(coupon)" href="#" @click.stop.prevent="onView(coupon)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
                         <SpiningLoader v-if="isDeleting(coupon)" type="danger">
@@ -142,7 +152,7 @@
         </BasicTable>
 
         <!-- No Coupons -->
-        <div v-else class="flex justify-between space-x-20 p-20 border rounded-lg bg-gray-50">
+        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your coupons</h1>
                 <p>Create amazing incentives for your customers, such as offering <span class="underline decoration-dashed underline-offset-4">discounts</span> or <span class="underline decoration-dashed underline-offset-4">free delivery</span>, while determining who can claim them and when.</p>
@@ -188,6 +198,7 @@
     import { useStoreState } from '@Stores/store-store.js';
     import AddButton from '@Partials/buttons/AddButton.vue';
     import TextHeader from '@Partials/texts/TextHeader.vue';
+    import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
@@ -200,7 +211,7 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            AddButton, TextHeader, BasicTable, ConfirmModal, PrimaryButton,
+            AddButton, TextHeader, BasicTable, Checkbox, ConfirmModal, PrimaryButton,
             SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator
 
         },
@@ -209,6 +220,7 @@
                 coupons: [],
                 pagination: null,
                 searchTerm: null,
+                checkedRowIds: [],
                 showEverything: false,
                 deletableCoupon: null,
                 isDeletingCouponIds: [],
@@ -222,16 +234,22 @@
             },
             tableHeaders() {
                 return this.showEverything
-                    ? ['Name', 'Description', 'Instructions', 'Status', 'Offers', 'Created Date', '']
-                    : ['Name', 'Description', 'Status', 'Offers', ''];
+                    ? ['', 'Name', 'Description', 'Instructions', 'Status', 'Offers', 'Created Date', '']
+                    : ['', 'Name', 'Description', 'Status', 'Offers', ''];
             },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
-            onEdit(coupon) {
-                this.$router.push({ name: 'show-store-coupon', params: { 'store_href': this.store._links.self, 'coupon_href': coupon._links.self } });
+            onView(coupon) {
+                this.$router.push({
+                    name: 'show-store-coupon',
+                    params: { 'store_href': this.store._links.self, 'coupon_href': coupon._links.self }
+                }).then(() => {
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+                });
             },
             showDeleteConfirmationModal(coupon) {
                 this.deletableCoupon = coupon;
@@ -279,6 +297,8 @@
                     if(response.status == 200) {
                         this.pagination = response.data;
                         this.coupons = this.pagination.data;
+
+                        this.checkedRowIds = this.coupons.map((_) => false);
                     }
 
                     //  Stop loader

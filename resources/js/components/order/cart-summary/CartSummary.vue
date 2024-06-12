@@ -1,6 +1,6 @@
 <template>
 
-    <div class="space-y-3 shadow-lg rounded-lg border p-4 mb-4">
+    <div class="space-y-3 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
         <p class="font-bold text-lg">Items</p>
 

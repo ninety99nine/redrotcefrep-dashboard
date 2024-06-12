@@ -16,6 +16,7 @@
 
             <router-link :to="{ name: 'login' }">Login</router-link>
             <router-link :to="{ name: 'register' }">Register</router-link>
+
         </div>
 
     </div>
@@ -26,9 +27,11 @@
 
     import settings from '@Js/settings.js';
     import { RouterLink } from 'vue-router';
+    import Logo from '@Partials/logos/Logo.vue';
+    import TextHeader from '@Partials/texts/TextHeader.vue';
 
     export default {
-        components: { RouterLink },
+        components: { RouterLink, Logo, TextHeader },
         data() {
             return {
                 appName: settings.appName

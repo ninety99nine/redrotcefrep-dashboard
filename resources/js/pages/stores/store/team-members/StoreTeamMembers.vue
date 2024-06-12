@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -51,7 +51,18 @@
 
             <!-- Table Body -->
             <template #body>
-                <tr @click.stop="onEdit(teamMember)" v-for="teamMember in teamMembers" :key="teamMember.id" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
+                <tr @click.stop="onView(teamMember)" v-for="(teamMember, index) in teamMembers" :key="teamMember.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
+
+                    <!-- Checkbox -->
+                    <td @click.stop class="whitespace-nowrap pl-4 align-top">
+
+                        <Checkbox
+                            size="xs"
+                            class="mt-2"
+                            v-model="checkedRowIds[index]">
+                        </Checkbox>
+
+                    </td>
 
                     <!-- Profile Photo -->
                     <td class="w-20 align-top">
@@ -119,8 +130,8 @@
                     <!-- Action -->
                     <td class="px-4 py-4 space-x-4 align-top">
 
-                        <!-- Edit Button -->
-                        <a v-if="!isDeleting(teamMember)" href="#" @click.stop.prevent="onEdit(teamMember)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <!-- View Button -->
+                        <a v-if="!isDeleting(teamMember)" href="#" @click.stop.prevent="onView(teamMember)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
                         <SpiningLoader v-if="isDeleting(teamMember)" type="danger">
@@ -138,13 +149,13 @@
         </BasicTable>
 
         <!-- No Team Members -->
-        <div v-else class="flex justify-between space-x-20 p-20 border rounded-lg bg-gray-50">
+        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Build Your Team</h1>
                 <p>Invite others to help manage your store. Collaborate by adding team members to help you grow your business.</p>
 
                 <!-- Add Team Member Button -->
-                <AddButton :action="onInviteTeamMember" class="w-40" size="sm">
+                <AddButton :action="onInviteTeamMember" class="w-60" size="sm">
                     <span class="ml-2">Add Team Member</span>
                 </AddButton>
             </div>
@@ -185,6 +196,7 @@
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
+    import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
@@ -197,14 +209,15 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            TextHeader, AddButton, BasicTable, ProfilePhoto, ConfirmModal, PrimaryButton,
-            SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
+            TextHeader, AddButton, BasicTable, Checkbox, ProfilePhoto, ConfirmModal,
+            PrimaryButton, SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
         },
         data() {
             return {
                 teamMembers: [],
                 pagination: null,
                 searchTerm: null,
+                checkedRowIds: [],
                 showEverything: false,
                 deletableTeamMember: null,
                 isDeletingTeamMemberIds: [],
@@ -218,16 +231,22 @@
             },
             tableHeaders() {
                 return this.showEverything
-                    ? ['', 'Name', 'Mobile', 'Status', 'Role', 'Permissions', 'Joined Date', '']
-                    : ['', 'Name', 'Mobile', 'Status', 'Role', 'Total Permissions', ''];
+                    ? ['', '', 'Name', 'Mobile', 'Status', 'Role', 'Permissions', 'Joined Date', '']
+                    : ['', '', 'Name', 'Mobile', 'Status', 'Role', 'Total Permissions', ''];
             },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
-            onEdit(teamMember) {
-                this.$router.push({ name: 'show-store-team-member', params: { 'store_href': this.store._links.self, 'team_member_href': teamMember._links.showStoreTeamMember } });
+            onView(teamMember) {
+                this.$router.push({
+                    name: 'show-store-team-member',
+                    params: { 'store_href': this.store._links.self, 'team_member_href': teamMember._links.showStoreTeamMember }
+                }).then(() => {
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+                });
             },
             showDeleteConfirmationModal(teamMember) {
                 this.deletableTeamMember = teamMember;
@@ -275,6 +294,8 @@
                     if(response.status == 200) {
                         this.pagination = response.data;
                         this.teamMembers = this.pagination.data;
+
+                        this.checkedRowIds = this.teamMembers.map((_) => false);
                     }
 
                     //  Stop loader

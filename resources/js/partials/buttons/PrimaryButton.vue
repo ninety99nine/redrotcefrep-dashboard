@@ -1,11 +1,17 @@
 <template>
-    <button type="submit" @click.prevent="action" :disabled="disabled" :class="btnClass">
 
-        <!-- Spining Loader -->
-        <SpiningLoader v-if="loading" type="light"></SpiningLoader>
-        <slot v-else></slot>
+    <div class="shadow rounded-md">
 
-    </button>
+        <button type="submit" @click.prevent="action" :disabled="disabled" :class="btnClass">
+
+            <!-- Spining Loader -->
+            <SpiningLoader v-if="loading" type="light"></SpiningLoader>
+            <slot v-else></slot>
+
+        </button>
+
+    </div>
+
 </template>
 
   <script>
@@ -39,7 +45,7 @@
         },
         computed: {
             btnClass() {
-                let classes = ['flex justify-center items-center rounded-md shadow-sm font-semibold'];
+                let classes = ['w-full h-full flex justify-center items-center rounded-md shadow-sm font-semibold'];
                 classes.push(this.disabled ? 'cursor-not-allowed' : 'cursor-pointer');
 
                 if(this.size == 'xs') {

@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -51,7 +51,17 @@
 
             <!-- Table Body -->
             <template #body>
-                <tr @click.stop="onEdit(transaction)" v-for="transaction in transactions" :key="transaction.id" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
+                <tr @click.stop="onView(transaction)" v-for="(transaction, index) in transactions" :key="transaction.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
+
+                    <!-- Checkbox -->
+                    <td @click.stop class="whitespace-nowrap pl-4">
+
+                        <Checkbox
+                            size="xs"
+                            v-model="checkedRowIds[index]">
+                        </Checkbox>
+
+                    </td>
 
                     <!-- Number -->
                     <td class="whitespace-nowrap px-4 py-4">
@@ -134,8 +144,8 @@
                     <!-- Action -->
                     <td class="px-4 py-4 flex items-center space-x-4">
 
-                        <!-- Edit Button -->
-                        <a v-if="!isDeleting(transaction)" href="#" @click.stop.prevent="onEdit(transaction)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        <!-- View Button -->
+                        <a v-if="!isDeleting(transaction)" href="#" @click.stop.prevent="onView(transaction)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
                         <SpiningLoader v-if="isDeleting(transaction)" type="danger">
@@ -153,7 +163,7 @@
         </BasicTable>
 
         <!-- No Transactions -->
-        <div v-else class="flex justify-between space-x-20 p-20 border rounded-lg bg-gray-50">
+        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">No Transactions Yet</h1>
                 <p>Your transactions will appear here once customers start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
@@ -201,6 +211,7 @@
     import AddButton from '@Partials/buttons/AddButton.vue';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
+    import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
@@ -214,14 +225,15 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            AddButton, TextHeader, BasicTable, ExternalLink, ConfirmModal, SpiningLoader, PrimaryButton,
-            MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
+            AddButton, TextHeader, BasicTable, Checkbox, ExternalLink, ConfirmModal, SpiningLoader,
+            PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
         },
         data() {
             return {
                 transactions: [],
                 pagination: null,
                 searchTerm: null,
+                checkedRowIds: [],
                 showEverything: false,
                 appName: settings.appName,
                 deletableTransaction: null,
@@ -236,16 +248,22 @@
             },
             tableHeaders() {
                 return this.showEverything
-                    ? ['#', 'Description', 'Payment Status', 'Amount', 'Percentage', 'Payment Method', 'Paid By', 'Verified By', 'Requested By', 'DPO Payment Link', 'DPO Link Status', 'DPO Expiry Date', 'Created Date', '']
-                    : ['#', 'Payment Status', 'Amount', 'Payment Method', 'Paid By', 'Verified By', 'Requested By', 'DPO Payment Link', 'DPO Link Status', ''];
+                    ? ['', 'Trans #', 'Description', 'Payment Status', 'Amount', 'Percentage', 'Payment Method', 'Paid By', 'Verified By', 'Requested By', 'DPO Payment Link', 'DPO Link Status', 'DPO Expiry Date', 'Created Date', '']
+                    : ['', 'Trans #', 'Payment Status', 'Amount', 'Payment Method', 'Paid By', 'Verified By', 'Requested By', 'DPO Payment Link', 'DPO Link Status', ''];
             },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
-            onEdit(transaction) {
-                this.$router.push({ name: 'show-store-transaction', params: { 'store_href': this.store._links.self, 'transaction_href': transaction._links.self } });
+            onView(transaction) {
+                this.$router.push({
+                    name: 'show-store-transaction',
+                    params: { 'store_href': this.store._links.self, 'transaction_href': transaction._links.self }
+                }).then(() => {
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+                });
             },
             showDeleteConfirmationModal(transaction) {
                 this.deletableTransaction = transaction;
@@ -298,6 +316,8 @@
                     if(response.status == 200) {
                         this.pagination = response.data;
                         this.transactions = this.pagination.data;
+
+                        this.checkedRowIds = this.transactions.map((_) => false);
                     }
 
                     //  Stop loader

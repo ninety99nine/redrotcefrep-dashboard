@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -57,7 +57,17 @@
                     handle=".draggable-handle"
                     ghost-class="bg-yellow-50"
                     @change="updateProductArrangement">
-                    <tr @click.stop="onEdit(product)" v-for="product in products" :key="product.id" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
+                    <tr @click.stop="onView(product)" v-for="(product, index) in products" :key="product.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
+
+                        <!-- Checkbox -->
+                        <td @click.stop class="whitespace-nowrap pl-4">
+
+                            <Checkbox
+                                size="xs"
+                                v-model="checkedRowIds[index]">
+                            </Checkbox>
+
+                        </td>
 
                         <!-- Name -->
                         <td class="whitespace-nowrap px-4 py-4">
@@ -215,8 +225,8 @@
                         <!-- Action -->
                         <td class="px-4 py-4 flex items-center space-x-4">
 
-                            <!-- Edit Button -->
-                            <a v-if="!isDeleting(product)" href="#" @click.stop.prevent="onEdit(product)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                            <!-- View Button -->
+                            <a v-if="!isDeleting(product)" href="#" @click.stop.prevent="onView(product)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                             <!-- Deleting Loader -->
                             <SpiningLoader v-if="isDeleting(product)" type="danger">
@@ -244,7 +254,7 @@
         </BasicTable>
 
         <!-- No Products -->
-        <div v-else class="flex justify-between p-20 border rounded-lg bg-gray-50">
+        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your products</h1>
                 <p>Start by stocking your store with products your customers will love</p>
@@ -292,6 +302,7 @@
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
+    import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
@@ -303,14 +314,15 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            draggable: VueDraggableNext, TextHeader, AddButton, BasicTable, ConfirmModal, SpiningLoader, PrimaryButton,
-            MoreInfoPopover, ToogleSwitch, BadgeIndicator
+            draggable: VueDraggableNext, TextHeader, AddButton, BasicTable, Checkbox, ConfirmModal,
+            SpiningLoader, PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator
         },
         data() {
             return {
                 products: [],
                 pagination: null,
                 searchTerm: null,
+                checkedRowIds: [],
                 showEverything: false,
                 deletableProduct: null,
                 isDeletingProductIds: [],
@@ -325,16 +337,22 @@
             },
             tableHeaders() {
                 return this.showEverything
-                    ? ['Name', 'Description', 'Visibility', 'Price', 'Stock', 'Variations', 'Quantity Per Order', 'Position', 'Created Date', '']
-                    : ['Name', 'Visibility', 'Price', 'Stock', 'Variations', ''];
+                    ? ['', 'Name', 'Description', 'Visibility', 'Price', 'Stock', 'Variations', 'Quantity Per Order', 'Position', 'Created Date', '']
+                    : ['', 'Name', 'Visibility', 'Price', 'Stock', 'Variations', ''];
             },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
-            onEdit(product) {
-                this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.self, 'product_href': product._links.self } });
+            onView(product) {
+                this.$router.push({
+                    name: 'show-store-product',
+                    params: { 'store_href': this.store._links.self, 'product_href': product._links.self }
+                }).then(() => {
+                    // Ensure scroll to top after route navigation
+                    window.scrollTo(0, 0);
+                });
             },
             showDeleteConfirmationModal(product) {
                 this.deletableProduct = product;
@@ -382,6 +400,8 @@
                     if(response.status == 200) {
                         this.pagination = response.data;
                         this.products = this.pagination.data;
+
+                        this.checkedRowIds = this.products.map((_) => false);
                     }
 
                     //  Stop loader

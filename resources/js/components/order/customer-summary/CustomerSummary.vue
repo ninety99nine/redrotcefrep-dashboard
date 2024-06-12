@@ -1,6 +1,6 @@
 <template>
 
-    <div class="shadow-lg rounded-lg border space-y-3 p-4">
+    <div class="bg-white shadow-lg rounded-lg border space-y-3 p-4">
 
         <p class="font-bold text-lg">Customer</p>
 
@@ -11,18 +11,29 @@
             </ShineEffect>
             <ProfilePhoto v-else-if="customer.profilePhoto" :user="customer" :canUpload="false" width="w-10" height="h-10"></ProfilePhoto>
 
-            <div class="flex items-center space-x-2 text-sm">
-                <span>Name: </span>
-                <LineSkeleton v-if="isLoadingOrder" width="w-32"></LineSkeleton>
-                <span v-else class="font-bold">{{ order.customerFirstName }} {{ order.customerLastName }}</span>
+            <div>
+
+                <div class="flex items-center space-x-2 text-sm">
+                    <span>Name: </span>
+                    <LineSkeleton v-if="isLoadingOrder" width="w-32"></LineSkeleton>
+                    <span v-else class="font-bold">{{ order.customerFirstName }} {{ order.customerLastName }}</span>
+                </div>
+
+                <div class="flex items-center space-x-2 text-sm">
+                    <span>Mobile: </span>
+                    <LineSkeleton v-if="isLoadingOrder" width="w-32"></LineSkeleton>
+                    <span v-else class="font-bold">{{ customer.mobileNumber.withoutExtension }}</span>
+                </div>
+
             </div>
 
-            <div class="flex items-center space-x-2 text-sm">
-                <span>Mobile: </span>
-                <LineSkeleton v-if="isLoadingOrder" width="w-32"></LineSkeleton>
-                <span v-else class="font-bold">{{ customer.mobileNumber.withoutExtension }}</span>
-            </div>
+        </div>
 
+        <div v-if="isLoadingOrder || occasion" class="border-t border-dashed pt-4">
+            <ShineEffect v-if="isLoadingOrder">
+                <LineSkeleton width="w-40"></LineSkeleton>
+            </ShineEffect>
+            <p v-else-if="occasion" class="text-sm">{{ occasion.name }}</p>
         </div>
 
     </div>
@@ -51,6 +62,9 @@
         computed: {
             customer() {
                 return this.order._relationships.customer[0];
+            },
+            occasion() {
+                return this.order._relationships.occasion;
             }
         }
     };

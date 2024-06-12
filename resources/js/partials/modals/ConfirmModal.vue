@@ -27,10 +27,10 @@
                     <div class="flex justify-end space-x-2">
 
                         <!-- No Button -->
-                        <PrimaryButton @click="hideModal" :type="declineType" :disabled="isLoading">{{ declineText }}</PrimaryButton>
+                        <PrimaryButton @click="hideModal" :type="declineType">{{ declineText }}</PrimaryButton>
 
                         <!-- Yes Button -->
-                        <PrimaryButton @click="() => approveAction(hideModal)" :type="approveType" :loading="isLoading">{{ approveText }}</PrimaryButton>
+                        <PrimaryButton @click="() => approveAction(hideModal)" :type="approveType" :disabled="approveDisabled" :loading="isLoading">{{ approveText }}</PrimaryButton>
 
                     </div>
 
@@ -69,6 +69,10 @@
             approveType: {
                 type: String,
                 default: 'danger'
+            },
+            approveDisabled: {
+                type: Boolean,
+                default: false
             },
             approveAction: {
                 type: Function,

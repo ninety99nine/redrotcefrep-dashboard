@@ -128,7 +128,7 @@
         <Pagination v-if="pagination && pagination.total > 5" :pagination="pagination" @paginate="paginate" class="mb-4"></Pagination>
 
         <!-- Table -->
-        <div class="relative overflow-y-auto">
+        <div class="relative overflow-y-auto bg-white border rounded-lg shadow">
 
             <!-- Table Loader -->
             <div v-if="pagination && isLoading && !isSearching" class="absolute top-0 bottom-0 left-0 right-0 bg-white/50 flex justify-center items-center">

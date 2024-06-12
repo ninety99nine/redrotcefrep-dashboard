@@ -139,7 +139,7 @@
                 <!-- Proof Of Payment -->
 
                 <!-- Confirm Delete Transaction -->
-                <div v-if="showDeleteConfirmation" :class="['space-y-1 shadow-lg rounded-lg border p-4', isLoadingTransaction ? 'bg-gray-50' : 'border-red-300 bg-red-50']">
+                <div v-if="showDeleteConfirmation" :class="['space-y-1 bg-white shadow-lg rounded-lg border p-4', isLoadingTransaction ? 'bg-gray-50' : 'border-red-300 bg-red-50']">
 
                     <p class="text-sm font-bold border-b border-dashed pb-2 mb-2">Confirm Delete</p>
                     <p class="text-xs mb-4">Are you sure you want to permanently delete <span class="font-bold text-black">Transaction #{{ transaction._attributes.number }}</span>?</p>

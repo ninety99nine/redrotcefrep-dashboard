@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-start items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
             <BackButton class="w-16 mr-4"></BackButton>
@@ -21,7 +21,7 @@
         </div>
 
         <!-- Coupon Form -->
-        <form class="relative mt-10" action="#" method="POST">
+        <form class="relative" action="#" method="POST">
 
             <!-- Loading Backdrop -->
             <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting"></LoadingBackdrop>
@@ -47,7 +47,7 @@
 
                 <div class="col-span-8">
 
-                    <div class="space-y-4 shadow-lg rounded-lg border p-4 mb-4">
+                    <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
                         <!-- General Error Info Alert -->
                         <Alert v-if="getFormError('general')" type="warning">
@@ -75,7 +75,7 @@
 
                     </div>
 
-                    <div class="shadow-lg rounded-lg border p-4 mb-4">
+                    <div class="bg-white shadow-lg rounded-lg border p-4 mb-4">
 
                         <div :class="['space-y-4', form.offerDiscount ? 'mb-8' : 'mb-4']">
 
@@ -142,7 +142,7 @@
 
                     </div>
 
-                    <div class="shadow-lg rounded-lg border p-4 mb-4">
+                    <div class="bg-white shadow-lg rounded-lg border p-4 mb-4">
 
                         <div :class="['space-y-4', form.offerDiscount ? 'mb-8' : 'mb-4']">
 
@@ -417,7 +417,7 @@
 
                 <div class="col-span-4">
 
-                    <div class="flex flex-col justify-between h-full shadow-lg rounded-lg border p-4">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
 
                         <div class="space-y-4">
 
@@ -452,7 +452,7 @@
 
             </div>
 
-            <div v-if="coupon" class="space-y-4 shadow-lg rounded-lg border border-red-300 bg-red-50 p-4">
+            <div v-if="coupon" :class="['space-y-4 shadow-lg rounded-lg border p-4', isLoadingCoupon ? 'bg-gray-50' : 'border-red-300 bg-red-50']">
 
                 <!-- Delete Coupon Info -->
                 <p>Do you want to permanently delete <span class="font-bold text-black">{{ form.name }}</span>? Once this coupon is deleted you will not be able to recover it.</p>

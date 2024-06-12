@@ -2,7 +2,15 @@
 
     <div>
 
-        <p class="font-bold text-sm">Variations <span v-if="(pagination ?? {}).total > 0">({{ (pagination ?? {}).total }})</span></p>
+        <div class="flex items-center">
+
+            <!-- Text Heading -->
+            <p class="font-bold text-lg">Variations <span v-if="(pagination ?? {}).total > 0">({{ (pagination ?? {}).total }})</span></p>
+
+            <!-- More Info Popover -->
+            <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Variations are different options of the same product e.g options for sizes, colors or materials." placement="top"></MoreInfoPopover>
+
+        </div>
 
         <div v-if="!sentFirstRequest && isLoadingProductVariations" class="flex justify-center">
 
@@ -15,7 +23,6 @@
 
             <!-- Product Variations Table -->
             <BasicTable v-if="(pagination ?? {}).total > 0" :pagination="pagination" :isLoading="isLoadingProductVariations" @paginate="paginate" @search="search" @refresh="getProductVariations" :totalHeaders="tableHeaders.length">
-
 
                 <template #primaryFilters>
 

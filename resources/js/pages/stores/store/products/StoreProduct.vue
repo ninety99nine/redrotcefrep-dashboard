@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-start items-center border-dashed border-b py-6 mb-6">
+        <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
             <BackButton class="w-16 mr-4"></BackButton>
@@ -18,10 +18,11 @@
                 <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Products are physical or non physical items that customers can place orders and pay for using your preferred payment methods" placement="top"></MoreInfoPopover>
 
             </template>
+
         </div>
 
         <!-- Product Form -->
-        <form class="relative mt-10" action="#" method="POST">
+        <form class="relative" action="#" method="POST">
 
             <!-- Loading Backdrop -->
             <LoadingBackdrop v-if="isLoadingProduct || isSubmitting"></LoadingBackdrop>
@@ -47,7 +48,7 @@
 
                 <div class="col-span-8">
 
-                    <div class="space-y-4 shadow-lg rounded-lg border p-4 mb-4">
+                    <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
                         <!-- General Error Info Alert -->
                         <Alert v-if="getFormError('general')" type="warning">
@@ -176,7 +177,7 @@
 
                     </div>
 
-                    <div class="space-y-4 shadow-lg rounded-lg border p-4 mb-4">
+                    <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
                         <!-- Allow Variations Toggle Switch -->
                         <ToogleSwitch
@@ -302,7 +303,7 @@
                     </div>
 
                     <!-- Variation List -->
-                    <div v-if="form.allowVariations" class="space-y-4 shadow-lg rounded-lg border p-4">
+                    <div v-if="form.allowVariations" class="space-y-4 bg-white shadow-lg rounded-lg border p-4">
 
                         <template v-if="hasOriginalVariantAttributes && variantAttributesHaveChanged">
 
@@ -337,7 +338,7 @@
 
                 <div class="col-span-4">
 
-                    <div class="flex flex-col justify-between h-full shadow-lg rounded-lg border p-4">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
 
                         <div class="space-y-4">
 
@@ -392,7 +393,7 @@
 
             </div>
 
-            <div v-if="product" class="space-y-4 shadow-lg rounded-lg border border-red-300 bg-red-50 p-4">
+            <div v-if="product" :class="['space-y-4 shadow-lg rounded-lg border p-4', isLoadingProduct ? 'bg-gray-50' : 'border-red-300 bg-red-50']">
 
                 <!-- Delete Product Info -->
                 <p>Do you want to permanently delete <span class="font-bold text-black">{{ form.name }}</span>? Once this product is deleted you will not be able to recover it.</p>
@@ -455,7 +456,7 @@
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
-    import ProductVariations from '@Pages/store/products/variations/ProductVariations.vue';
+    import ProductVariations from '@Pages/stores/store/products/variations/ProductVariations.vue';
 
     export default {
         mixins: [UtilsMixin, FormMixin],
