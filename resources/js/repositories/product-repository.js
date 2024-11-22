@@ -4,7 +4,7 @@ import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository
 
 // Get product
 async function getProduct(product, params = {}) {
-    return await getApi(product._links.self, params);
+    return await getApi(product._links.showProduct, params);
 }
 
 // Update product

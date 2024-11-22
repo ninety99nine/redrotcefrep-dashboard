@@ -1,6 +1,6 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <BadgeIndicator :active="order.paymentStatus.name == 'Paid'" :text="order.paymentStatus.name" :inactiveType="inactiveType" :showDot="false"></BadgeIndicator>
+        <BadgeIndicator :type="type" :text="order.paymentStatus.name" :showDot="false"></BadgeIndicator>
         <MoreInfoPopover :class="moreInfoPopoverClasses" :description="order.paymentStatus.description" placement="top"></MoreInfoPopover>
     </div>
 </template>
@@ -21,12 +21,16 @@
             }
         },
         computed: {
-            inactiveType() {
-                if(this.order.paymentStatus.name == 'Unpaid') {
+            type() {
+                const paymentStatusName = this.order.paymentStatus.name.toLowerCase();
+
+                if(paymentStatusName === 'paid') {
+                    return 'success';
+                }else if (paymentStatusName === 'unpaid') {
                     return 'info';
-                }else if(this.order.paymentStatus.name == 'Partially Paid') {
+                } else if (paymentStatusName === 'partially paid') {
                     return 'primary';
-                }else if(this.order.paymentStatus.name == 'Pending Payment') {
+                } else if (paymentStatusName === 'pending payment') {
                     return 'warning';
                 }
             }

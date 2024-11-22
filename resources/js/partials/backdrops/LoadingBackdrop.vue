@@ -1,6 +1,6 @@
 <template>
-    <div :class="['absolute top-0 left-0 right-0 bottom-0 z-10', type == 'white' ? 'bg-white/50' : 'bg-black/50']">
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+    <div :class="['absolute top-0 left-0 right-0 bottom-0 z-10', bgClass, { 'border border-black' : showBorder }]">
+        <div v-if="showSpiningLoader" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
             <SpiningLoader></SpiningLoader>
         </div>
     </div>
@@ -13,11 +13,18 @@
     export default {
         components: { SpiningLoader },
         props: {
-            type: {
+            bgClass: {
                 type: String,
-                default: 'white',
-                options: ['white', 'black']
-            }
+                default: 'bg-white/50'
+            },
+            showBorder: {
+                type: Boolean,
+                default: true
+            },
+            showSpiningLoader: {
+                type: Boolean,
+                default: true
+            },
         },
         computed: {
             iconClass() {

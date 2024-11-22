@@ -1,6 +1,6 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <BadgeIndicator :active="transaction._attributes.isPaid" :text="transaction.paymentStatus.name" :inactiveType="inactiveType" :showDot="false"></BadgeIndicator>
+        <BadgeIndicator :type="type" :text="transaction.paymentStatus.name" :showDot="false"></BadgeIndicator>
         <MoreInfoPopover :description="transaction.paymentStatus.description" placement="top"></MoreInfoPopover>
     </div>
 </template>
@@ -18,8 +18,12 @@
             }
         },
         computed: {
-            inactiveType() {
-                if(this.transaction._attributes.isPendingPayment) {
+            type() {
+                if(this.transaction._attributes.isPaid) {
+                    return 'success';
+                }else if(this.transaction._attributes.isFailedPayment) {
+                    return 'danger';
+                }else if(this.transaction._attributes.isPendingPayment) {
                     return 'warning';
                 }else {
                     return 'info';

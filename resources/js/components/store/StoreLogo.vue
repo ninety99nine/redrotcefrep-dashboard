@@ -2,7 +2,7 @@
 
     <div>
 
-        <div :class="[width, height, 'relative']">
+        <div :class="[width, height, 'relative', 'mx-auto']">
 
             <!-- Display selected image if exists -->
             <div v-if="imageUrl" @click="selectImage" :class="['w-full h-full', { 'cursor-pointer group' : canUpload }]">
@@ -19,7 +19,7 @@
                     <!-- Dark overlay when hovering for uploading -->
                     <div v-if="canUpload" :class="['absolute top-0 bottom-0 left-0 right-0 z-10 group-hover:bg-black/50', { 'bg-black/75' : isSubmitting }]"></div>
 
-                    <img class="w-full h-full object-cover object-top" :key="imageUrl" :src="imageUrl" alt="Logo">
+                    <img class="w-full h-full object-cover object-top" :key="imageUrl" :src="imageUrl" alt="Store Logo">
 
                 </div>
 
@@ -32,7 +32,7 @@
             </div>
 
             <!-- Placeholder for uploading image -->
-            <div v-else @click="selectImage" :class="['w-full h-full relative rounded-full overflow-hidden', { 'cursor-pointer group' : canUpload }]">
+            <div v-else @click="selectImage" :class="['w-full h-full rounded-full border-4 border-transparent overflow-hidden relative', { 'cursor-pointer group' : canUpload }]">
 
                 <!-- Camera Icon -->
                 <div v-if="canUpload" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
@@ -45,9 +45,9 @@
                 <!-- Dark overlay when hovering for uploading -->
                 <div v-if="canUpload" :class="['absolute top-0 bottom-0 left-0 right-0 z-10 bg-black/75 group-hover:bg-black/50']"></div>
 
-                <!-- Person Icon -->
-                <svg :class="['w-full h-full text-gray-200 dark:text-gray-700']" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
+                <!-- Store Icon -->
+                <svg :class="['w-full h-full rounded-full bg-gray-100 text-gray-200 border-gray-200 p-1 border-2']" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
                 </svg>
 
             </div>
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Input Error Message -->
-        <InputErrorMessage :errorText="getFormError('logo')"  :class="{'block text-center mt-4' : this.getFormError('logo')}"></InputErrorMessage>
+        <InputErrorMessage :errorText="getFormError('logo')" :class="{'block text-center mt-4' : this.getFormError('logo')}"></InputErrorMessage>
 
     </div>
 
@@ -142,7 +142,7 @@
                          *  Update the "useStoreState().store.logo".
                          *  This will allow the entire app to capture this selected logo.
                          */
-                         useStoreState().store.logo = this.imageUrl;
+                        useStoreState().store.logo = this.imageUrl;
 
                     }
 
@@ -156,7 +156,6 @@
             },
             uploadImage(event, file) {
 
-                //  Hide server errors
                 this.hideFormErrors();
 
                 //  Start loader
@@ -164,7 +163,7 @@
 
                 updateStoreLogo(this.store, file).then(response => {
 
-                    if(response.status == 201) {
+                    if(response.status == 200) {
 
                         //  Stop loader
                         this.isSubmitting = false;

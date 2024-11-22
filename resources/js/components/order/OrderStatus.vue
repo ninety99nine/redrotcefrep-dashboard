@@ -1,6 +1,6 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <BadgeIndicator :active="order.status.name == 'Completed'" :text="order.status.name" :inactiveType="inactiveType" :showDot="false"></BadgeIndicator>
+        <BadgeIndicator :type="type" :text="order.status.name" :showDot="false"></BadgeIndicator>
         <MoreInfoPopover :class="moreInfoPopoverClasses" :description="description" placement="top"></MoreInfoPopover>
     </div>
 </template>
@@ -22,18 +22,22 @@
         },
         computed: {
             description() {
-                if(this.order._attributes.isCancelled && this.order.cancellationReason != null) {
+                if (this.order._attributes.isCancelled && this.order.cancellationReason != null) {
                     return this.order.cancellationReason;
-                }else {
+                } else {
                     return this.order.status.description;
                 }
             },
-            inactiveType() {
-                if(this.order.status.name == 'Waiting') {
+            type() {
+                const statusName = this.order.status.name.toLowerCase();
+
+                if (statusName === 'completed') {
+                    return 'success';
+                } else if (statusName === 'waiting') {
                     return 'info';
-                }else if(this.order.status.name == 'On Its Way' || this.order.status.name == 'Ready For Pickup') {
+                } else if (statusName === 'on its way' || statusName === 'ready for pickup') {
                     return 'primary';
-                }else if(this.order.status.name == 'Cancelled') {
+                } else if (statusName === 'cancelled') {
                     return 'warning';
                 }
             }

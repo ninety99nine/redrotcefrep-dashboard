@@ -24,6 +24,8 @@
         "@soerenmartius/vue3-clipboard": "^0.1.2",
         "dayjs": "^1.11.10",
         "flowbite-datepicker": "^1.2.6",
+        "intl-tel-input": "^24.7.0",
+        "libphonenumber-js": "^1.11.15",
         "lodash": "^4.17.21",
         "lodash.debounce": "^4.0.8",
         "pinia": "^2.1.7",

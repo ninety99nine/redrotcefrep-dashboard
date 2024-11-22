@@ -7,7 +7,7 @@
             <div class="flex justify-start">
 
                 <!-- Back Button -->
-                <BackButton class="w-16 mr-4"></BackButton>
+                <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
                 <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
                     <span class="text-2xl font-bold tracking-tight text-gray-300 animate-pulse">Transaction #</span>
@@ -67,22 +67,34 @@
 
                 <div class="col-span-8">
 
+                    <!-- General Error Info Alert -->
+                    <Alert v-if="getFormError('general')" type="warning" class="shadow mb-4">
+                        {{ getFormError('general') }}
+                    </Alert>
+
                     <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
                         <div class="flex items-center space-x-8">
 
+                            <!-- Status -->
                             <div class="flex items-center space-x-2">
                                 <span class="text-xs">Status:</span>
-                                <ShineEffect v-if="isLoadingTransaction">
+                                <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
                                     <LineSkeleton width="w-24"></LineSkeleton>
+                                    <LineSkeleton width="w-4"></LineSkeleton>
                                 </ShineEffect>
                                 <TransactionPaymentStatus v-else :transaction="transaction"></TransactionPaymentStatus>
                             </div>
 
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs">Method:</span>
-                                <ShineEffect v-if="isLoadingTransaction">
+                            <!-- Failure Reason -->
+                            <TransactionFailureType v-if="hasTransaction && transaction.failureReason" :transaction="transaction"></TransactionFailureType>
+
+                            <!-- Payment Method (When We Don't Have A Failure Reason) -->
+                            <div v-if="isLoadingTransaction || !transaction.failureReason" class="flex items-center space-x-2">
+                                <span class="text-xs">Payment Method:</span>
+                                <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
                                     <LineSkeleton width="w-24"></LineSkeleton>
+                                    <LineSkeleton width="w-4"></LineSkeleton>
                                 </ShineEffect>
                                 <div v-else class="flex space-x-1 items-center">
                                     <span class="text-xs font-bold">{{ paymentMethod.name }}</span>
@@ -93,190 +105,179 @@
                         </div>
 
                         <div>
-                            <div v-if="isLoadingTransaction" class="flex items-center space-x-2 w-full">
-                                <RoundSkeleton v-if="isLoadingTransaction" size="w-8 h-8"></RoundSkeleton>
+
+                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2 w-full">
+                                <RoundSkeleton size="w-8 h-8 flex-shrink-0"></RoundSkeleton>
                                 <div class="w-full space-y-2">
-                                    <LineSkeleton v-if="isLoadingTransaction" width="w-full"></LineSkeleton>
-                                    <LineSkeleton v-if="isLoadingTransaction" width="w-2/3"></LineSkeleton>
+                                    <LineSkeleton width="w-2/3"></LineSkeleton>
+                                    <LineSkeleton width="w-1/3"></LineSkeleton>
                                 </div>
-                            </div>
+                            </ShineEffect>
 
-                            <div v-else class="flex items-center space-x-2">
+                            <div v-else>
 
-                                <!-- Checkmark Icon -->
-                                <svg v-if="isPaid" class="w-6 h-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                                </svg>
-
-                                <!-- Clock Icon -->
-                                <svg v-else-if="isPendingPayment" class="w-6 h-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clip-rule="evenodd" />
-                                </svg>
+                                <!-- Payment Method (When We Have A Failure Reason) -->
+                                <div v-if="transaction.failureReason" class="flex items-center space-x-2 border-b border-dashed pb-4 mb-4">
+                                    <span class="text-xs">Payment Method:</span>
+                                    <div class="flex space-x-1 items-center">
+                                        <span class="text-xs font-bold">{{ paymentMethod.name }}</span>
+                                        <MoreInfoPopover title="What Is This?" description="This is the payment method used for this transaction" placement="top"></MoreInfoPopover>
+                                    </div>
+                                </div>
 
                                 <!-- Transaction Description -->
-                                <span class="text-sm">{{ transaction.description }}</span>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <span>{{ transaction.description }}</span>
+                                </div>
 
                             </div>
+
                         </div>
 
                     </div>
 
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" type="warning" class="shadow mb-4">
-                        {{ getFormError('general') }}
-                    </Alert>
+                    <div class="flex items-center bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
-                    <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
+                        <div class="w-full space-y-4">
 
-                        <div class="space-y-4">
-
-                            <div class="flex items-center space-x-2 text-sm">
-                                <span class="whitespace-nowrap">Paid By: </span>
-                                <LineSkeleton v-if="isLoadingTransaction" width="w-40"></LineSkeleton>
-                                <span v-else class="font-bold">{{ paidByUser._attributes.name }}</span>
-                                <MoreInfoPopover title="What Is This?" :description="'This is the person that '+(isPaid ? 'paid' : 'should pay')+' for this order'" placement="top"></MoreInfoPopover>
-                            </div>
-
-                            <div v-if="verifiedByUser" class="flex items-center space-x-2 text-sm">
-                                <span class="whitespace-nowrap">Verified By: </span>
-                                <LineSkeleton v-if="isLoadingTransaction" width="w-40"></LineSkeleton>
-                                <span v-else class="font-bold">{{ verifiedByUser._attributes.name }}</span>
-                                <MoreInfoPopover title="What Is This?" description="This is the person that verified the payment for this order" placement="top"></MoreInfoPopover>
-                            </div>
-
-                            <div v-else-if="requestedByUser && requestedByUser.id != paidByUser.id" class="flex items-center space-x-2 text-sm">
-                                <span class="whitespace-nowrap">Requested By: </span>
-                                <LineSkeleton v-if="isLoadingTransaction" width="w-40"></LineSkeleton>
-                                <span v-else class="font-bold">{{ requestedByUser._attributes.name }}</span>
-                                <MoreInfoPopover title="What Is This?" description="This is the person that requested payment for this order" placement="top"></MoreInfoPopover>
-                            </div>
-
-                            <div v-if="isPaid" class="flex items-center space-x-2 text-sm">
-                                <span class="whitespace-nowrap">Date Paid: </span>
-                                <LineSkeleton v-if="isLoadingTransaction" width="w-40"></LineSkeleton>
-                                <span v-else class="flex items-center space-x-2">
-                                    <span class="font-bold">{{ formattedDatetime(transaction.updatedAt) }}</span>
-                                    <MoreInfoPopover :title="formattedRelativeDate(transaction.updatedAt)" placement="top"></MoreInfoPopover>
-                                </span>
-                            </div>
-
+                            <!-- Amount & Percentage -->
                             <div class="flex items-end space-x-2">
-                                <LineSkeleton v-if="isLoadingTransaction" width="w-40"></LineSkeleton>
+                                <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                    <LineSkeleton width="w-40 h-8"></LineSkeleton>
+                                    <LineSkeleton width="w-12 h-6"></LineSkeleton>
+                                </ShineEffect>
                                 <template v-else>
                                     <span class="text-4xl font-bold">{{ transaction.amount.amountWithCurrency }}</span>
                                     <span v-if="transaction.percentage.value != 100" class="text-2xl text-gray-400">({{ transaction.percentage.valueSymbol }})</span>
                                 </template>
                             </div>
 
-                        </div>
+                            <!-- Date Paid -->
+                            <div v-if="isPaid" class="flex items-center space-x-2 text-sm">
+                                <span class="whitespace-nowrap">Date Paid: </span>
+                                <span class="flex items-center space-x-2">
+                                    <span class="font-bold">{{ formattedDatetime(transaction.updatedAt) }}</span>
+                                    <MoreInfoPopover :title="formattedRelativeDate(transaction.updatedAt)" placement="top"></MoreInfoPopover>
+                                </span>
+                            </div>
 
-                        <!-- DPO Payment Link & Countdown -->
-                        <div v-if="hasDpoPaymentUrlExpiresAt" class="space-y-2">
+                            <div v-if="isLoadingTransaction || (transaction.metadata && transaction.metadata.canPayUsingDpo)" class="flex items-center justify-between">
 
-                            <!-- Divider -->
-                            <div class="border-t my-4"></div>
-
-                            <!-- DPO Payment Link Countdown -->
-                            <Countdown :time="dpoPaymentUrlExpiresAt" textClass="text-yellow-500 font-bold underline decoration-dashed underline-offset-4">
-
-                                <template #suffix="props">
-                                    <span v-if="!props.hasExpired" class="text-sm mr-1">DPO Link Expires in</span>
-                                </template>
-
-                                <div class="w-full flex justify-between items-center">
-
-                                    <!-- DPO Payment Link Expired -->
-                                    <div class="flex items-center space-x-2 text-yellow-500">
-                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                                        </svg>
-                                        <span class="text-sm">DPO Payment Link Expired</span>
-                                        <MoreInfoPopover title="DPO Payment Link Expired" placement="top">
-                                            <template #description>
-                                                <hr>
-                                                <p class="mb-2">The DPO Payment link is shared with your customer to allow them to pay for this order using their <span class="text-black font-bold">Credit/Debit card</span>. </p>
-                                                <p>In this case the link has expired for security reasons, therefore you should generate a new payment link to share with your customer</p>
-                                            </template>
-                                        </MoreInfoPopover>
+                                <!-- Payment Link Expires In -->
+                                <div>
+                                    <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                        <LineSkeleton width="w-40"></LineSkeleton>
+                                        <LineSkeleton width="w-20"></LineSkeleton>
+                                        <LineSkeleton width="w-4"></LineSkeleton>
+                                    </ShineEffect>
+                                    <div v-else class="flex items-center space-x-2">
+                                        <span>Payment Link Expires In: </span>
+                                        <Countdown :showMoreInfoPopover="false" :time="transaction.metadata.dpoPaymentUrlExpiresAt" textClass="text-yellow-500 font-bold underline decoration-dashed underline-offset-4"></Countdown>
+                                        <MoreInfoPopover title="This is the time left before the payment link expires" placement="top"></MoreInfoPopover>
                                     </div>
-
-                                    <!-- Renew Payment Link -->
-                                    <PrimaryButton @click="renewPaymentLink" :loading="isRenewingPaymentLink" type="light" size="sm">
-                                        <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                        </svg>
-                                        <span>Renew Payment Link</span>
-                                    </PrimaryButton>
-
                                 </div>
-                            </Countdown>
 
-                            <!-- DPO Payment Link -->
-                            <p v-if="isFutureDate(dpoPaymentUrlExpiresAt)">
-                                <a class="text-xs text-blue-800 hover:text-blue-500" :href="dpoPaymentUrl" target="_blank">{{ dpoPaymentUrl }}</a>
-                            </p>
-
-                        </div>
-
-                        <!-- Proof Of Payment -->
-
-
-                        <!-- Can Pay Using DPO -->
-                        <template v-if="canPayUsingDpo">
-
-                            <!-- Divider -->
-                            <div class="border-t my-4"></div>
-
-                            <div class="flex items-center justify-end space-x-2">
-
-                                <CopyButton type="light" size="sm" :content="dpoPaymentUrl">
-                                    <span class="ml-1">Copy Payment Link</span>
-                                </CopyButton>
-
-                                <PrimaryButton @click="openDpoLinkInNewTab" type="success" size="sm">
-                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
-                                        <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
-                                        <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
-                                    </svg>
-                                    <span>Pay Now</span>
-                                </PrimaryButton>
+                                <!-- Copy Payment Link & Pay Now Buttons -->
+                                <template v-if="isLoadingTransaction || transaction.metadata.canPayUsingDpo">
+                                    <ShineEffect v-if="isLoadingTransaction" class="flex space-x-2">
+                                        <ButtonSkeleton size="sm">
+                                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
+                                            </svg>
+                                            <span class="ml-1">Copy Payment Link</span>
+                                        </ButtonSkeleton>
+                                        <ButtonSkeleton size="sm">
+                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                                            </svg>
+                                            <span>Pay Now</span>
+                                        </ButtonSkeleton>
+                                    </ShineEffect>
+                                    <div v-else class="flex space-x-2">
+                                        <CopyButton type="light" size="sm" :content="transaction.metadata.dpoPaymentUrl">
+                                            <span class="ml-1">Copy Payment Link</span>
+                                        </CopyButton>
+                                        <PrimaryButton @click="openPaymentLinkInNewTab()" type="primary" size="sm">
+                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                                            </svg>
+                                            <span>Pay Now</span>
+                                        </PrimaryButton>
+                                    </div>
+                                </template>
 
                             </div>
 
-                        </template>
-
-                    </div>
-
-                    <div v-if="transactionForOrder" class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
-
-                        <div class="flex justify-between">
-
-                            <TextHeader>{{ 'Order #'+owner._attributes.number }}</TextHeader>
-
-                            <ProceedButton :action="viewOrder" size="sm">
-                                <span class="mr-2">View Order</span>
-                            </ProceedButton>
+                            <!-- Renew Payment Link Buttons -->
+                            <div v-else-if="transaction.metadata && transaction.metadata.dpoPaymentLinkHasExpired" class="flex justify-end">
+                                <PrimaryButton @click="renewTransactionPaymentLink()" type="primary" size="sm" :loading="isRenewingPaymentLink">
+                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    <span>Renew Payment Link</span>
+                                </PrimaryButton>
+                            </div>
 
                         </div>
+
+                        <!-- Checkmark Icon -->
+                        <span v-if="isPaid" class="border rounded-full bg-gray-50">
+                            <svg class="w-20 h-20 text-green-500"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
 
                     </div>
 
                 </div>
 
-                <div class="col-span-4">
+                <div class="col-span-4 space-y-4">
 
-                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
+                    <!-- Transaction Owner -->
+                    <TransactionOwner :transaction="transaction" :isLoadingTransaction="isLoadingTransaction"></TransactionOwner>
 
-                        <div class="flex justify-end mt-8">
+                    <!-- Transaction Customer -->
+                    <TransactionCustomer :transaction="transaction" :isLoadingTransaction="isLoadingTransaction"></TransactionCustomer>
 
-                            <ButtonSkeleton v-if="isLoadingTransaction">{{ isCreating ? 'Create Transaction' : 'Save Changes' }}</ButtonSkeleton>
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border space-y-2 p-4">
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span class="whitespace-nowrap">Requester: </span>
+                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <LineSkeleton width="w-20"></LineSkeleton>
+                                <LineSkeleton width="w-4"></LineSkeleton>
+                            </ShineEffect>
+                            <template v-else>
+                                <span class="font-bold">{{ requestedByUser._attributes.name }}</span>
+                                <MoreInfoPopover title="What Is This?" description="This is the person that requested this transaction" placement="top"></MoreInfoPopover>
+                            </template>
+                        </div>
 
-                            <!-- Create Transaction / Save Changes Button -->
-                            <PrimaryButton v-else :action="isCreating ? createTransaction : updateTransaction" :disabled="(isCreating && !mustCreate) || (isEditting && !mustSaveChanges)" :loading="isSubmitting">
-                                {{ isCreating ? 'Create Transaction' : 'Save Changes' }}
-                            </PrimaryButton>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span class="whitespace-nowrap">Verifyer: </span>
+                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <LineSkeleton width="w-32"></LineSkeleton>
+                                <LineSkeleton width="w-4"></LineSkeleton>
+                            </ShineEffect>
+                            <template v-else>
+                                <span v-if="manuallyVerifiedByUser" class="font-bold">{{ manuallyVerifiedByUser._attributes.name }}</span>
+                                <span v-else class="font-bold">{{ appName }}</span>
+                                <MoreInfoPopover title="What Is This?" :description="manuallyVerifiedByUser ? 'This is the person that verified this transaction' : 'This is the application that verified this transaction'" placement="top"></MoreInfoPopover>
+                            </template>
+                        </div>
 
+                        <div class="flex items-center space-x-2 text-sm">
+                            <span class="whitespace-nowrap">Verification Method: </span>
+                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <LineSkeleton width="w-20"></LineSkeleton>
+                                <LineSkeleton width="w-4"></LineSkeleton>
+                            </ShineEffect>
+                            <template v-else>
+                                <BadgeIndicator :type="transaction.verificationType.toLowerCase() == 'automatic' ? 'success' : 'info'" :text="transaction.verificationType" :showDot="false"></BadgeIndicator>
+                                <MoreInfoPopover title="What Is This?" description="This indicates whether the transaction was verified manually by a person or automatically by the application" placement="top"></MoreInfoPopover>
+                            </template>
                         </div>
 
                     </div>
@@ -332,6 +333,7 @@
 
 <script>
     import isEqual from 'lodash/isEqual';
+    import settings from '@Js/settings.js';
     import cloneDeep from 'lodash/cloneDeep';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
@@ -342,6 +344,7 @@
     import BackButton from '@Partials/buttons/BackButton.vue';
     import CopyButton from '@Partials/buttons/CopyButton.vue';
     import Countdown from '@Partials/countdowns/Countdown.vue';
+    import ExternalLink from '@Partials/links/ExternalLink.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
@@ -350,21 +353,24 @@
     import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import CartSummary from '@Components/order/cart-summary/CartSummary.vue';
+    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import TransactionOwner from '@Components/transaction/TransactionOwner.vue';
+    import TransactionCustomer from '@Components/transaction/TransactionCustomer.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
+    import TransactionFailureType from '@Components/transaction/TransactionFailureType.vue';
     import TransactionPaymentStatus from '@Components/transaction/TransactionPaymentStatus.vue';
 
     export default {
         mixins: [UtilsMixin, FormMixin],
         components: {
-            Alert, TextHeader, BackButton, CopyButton, Countdown, ConfirmModal, ShineEffect, LineSkeleton, PrimaryButton,
-            ProceedButton, RoundSkeleton, ButtonSkeleton, MoreInfoPopover, CartSummary, TransactionPaymentStatus
+            Alert, TextHeader, BackButton, CopyButton, Countdown, ExternalLink, ConfirmModal, ShineEffect, LineSkeleton, PrimaryButton,
+            ProceedButton, RoundSkeleton, ButtonSkeleton, MoreInfoPopover, BadgeIndicator, TransactionOwner,
+            TransactionFailureType, TransactionCustomer, TransactionPaymentStatus
         },
         data() {
             return {
                 form: {
                     paymentMethodId: null,
-                    paidByUserId: null,
                     description: null,
                     amount: null,
                 },
@@ -372,6 +378,7 @@
                 isDeleting: false,
                 isSubmitting: false,
                 apiState: useApiState(),
+                appName: settings.appName,
                 storeState: useStoreState(),
                 isRenewingPaymentLink: false,
             }
@@ -397,44 +404,23 @@
             isPendingPayment() {
                 return ((this.transaction || {})._attributes || {}).isPendingPayment;
             },
-            isVerifiedByUser() {
-                return ((this.transaction || {})._attributes || {}).isVerifiedByUser;
-            },
-            dpoPaymentUrl() {
-                return (this.transaction || {}).dpoPaymentUrl;
-            },
-            canPayUsingDpo() {
-                return ((this.transaction || {})._attributes || {}).canPayUsingDpo;
+            hasCustomer() {
+                return this.customer != null;
             },
             hasTransaction() {
                 return this.transaction != null;
             },
-            hasTransactions() {
-                return this.transactions.length > 0;
-            },
-            dpoPaymentUrlExpiresAt() {
-                return (this.transaction || {}).dpoPaymentUrlExpiresAt || null;
-            },
-            hasDpoPaymentUrlExpiresAt() {
-                return this.dpoPaymentUrlExpiresAt != null;
+            customer() {
+                return ((this.transaction || {})._relationships || {}).customer;
             },
             paymentMethod() {
                 return ((this.transaction || {})._relationships || {}).paymentMethod || null;
             },
-            paidByUser() {
-                return ((this.transaction || {})._relationships || {}).paidByUser || null;
-            },
-            verifiedByUser() {
-                return ((this.transaction || {})._relationships || {}).verifiedByUser || null;
-            },
             requestedByUser() {
                 return ((this.transaction || {})._relationships || {}).requestedByUser || null;
             },
-            owner() {
-                return ((this.transaction || {})._relationships || {}).owner || null;
-            },
-            transactionForOrder() {
-                return (this.transaction || {}).ownerType == 'order';
+            manuallyVerifiedByUser() {
+                return ((this.transaction || {})._relationships || {}).manuallyVerifiedByUser || null;
             },
             isCreating() {
                 return this.$route.name === 'create-store-transaction';
@@ -458,11 +444,11 @@
             }
         },
         methods: {
-            openDpoLinkInNewTab() {
-                window.open(this.dpoPaymentUrl, '_blank');
+            goBack() {
+                this.$router.replace({ name: 'show-store-transactions', params: { 'store_href': this.store._links.showStore } });
             },
-            viewOrder() {
-                this.$router.push({ name: 'show-store-order', params: { 'store_href': this.store._links.self, 'order_href': this.owner._links.self } });
+            openPaymentLinkInNewTab() {
+                window.open(this.transaction.metadata.dpoPaymentUrl, '_blank');
             },
             getTransaction() {
 
@@ -471,18 +457,14 @@
 
                 //  Set the query params
                 const params = {
-                    'withOwner': '1',
-                    'withPayingUser': '1',
-                    'withVerifyingUser': '1',
-                    'withPaymentMethod': '1',
-                    'withRequestingUser': '1',
+                    '_relationships': 'customer,requestedByUser,manuallyVerifiedByUser,paymentMethod,owner'
                 };
 
                 getApi(this.$route.params.transaction_href, params).then(response => {
 
                     if(response.status == 200) {
 
-                        this.transaction = response.data;
+                        this.transaction = response.data.transaction;
 
                     }
 
@@ -502,12 +484,12 @@
                 });
 
             },
-            renewPaymentLink() {
+            renewTransactionPaymentLink() {
 
                 //  Start loader
                 this.isRenewingPaymentLink = true;
 
-                postApi(this.transaction._links.renewPaymentLink).then(response => {
+                postApi(this.transaction._links.renewTransactionPaymentLink).then(response => {
 
                     if(response.status == 200) {
 
@@ -577,24 +559,31 @@
             },
             deleteTransaction() {
 
-
                 //  Start loader
                 this.isDeleting = true;
 
-                deleteApi(this.order._links.deleteTransaction, this.form).then(response => {
+                deleteApi(this.transaction._links.deleteTransaction).then(response => {
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Transaction deleted');
+                        if(response.data.deleted) {
 
-                        //  Navigate to show transactions
-                        this.$router.push({ name: 'show-store-transactions', params: { 'store_href': this.store._links.self } });
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Transaction deleted');
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            //  Navigate to show transactions
+                            this.$router.push({ name: 'show-store-transactions', params: { 'store_href': this.store._links.showStore } });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }else{
+
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

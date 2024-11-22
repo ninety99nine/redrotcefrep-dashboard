@@ -324,7 +324,7 @@
 
                     register(data).then(response => {
 
-                        if(response.status == 201) {
+                        if(response.status == 200) {
 
                             //  Stop loader
                             this.isSubmitting = false;

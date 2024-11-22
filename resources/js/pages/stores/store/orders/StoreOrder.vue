@@ -7,7 +7,7 @@
             <div class="flex justify-start">
 
                 <!-- Back Button -->
-                <BackButton class="w-16 mr-4"></BackButton>
+                <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
                 <div v-if="isLoadingOrder" class="flex items-center space-x-2">
                     <span class="text-2xl font-bold tracking-tight text-gray-300 animate-pulse">Order #</span>
@@ -67,6 +67,11 @@
 
                 <div class="col-span-8">
 
+                    <!-- General Error Info Alert -->
+                    <Alert v-if="getFormError('general')" type="warning" class="shadow mb-4">
+                        {{ getFormError('general') }}
+                    </Alert>
+
                     <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
                         <div class="flex items-center justify-between">
@@ -91,21 +96,18 @@
 
                         <!-- Cancellation Reason Info Alert -->
                         <Alert v-if="order && order.cancellationReason" type="warning">
-                            <span>
-                                <svg class="w-6 h-6 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.05 4.575a1.575 1.575 0 1 0-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 0 1 3.15 0v1.5m-3.15 0 .075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 0 1 3.15 0V15M6.9 7.575a1.575 1.575 0 1 0-3.15 0v8.175a6.75 6.75 0 0 0 6.75 6.75h2.018a5.25 5.25 0 0 0 3.712-1.538l1.732-1.732a5.25 5.25 0 0 0 1.538-3.712l.003-2.024a.668.668 0 0 1 .198-.471 1.575 1.575 0 1 0-2.228-2.228 3.818 3.818 0 0 0-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0 1 16.35 15m.002 0h-.002" />
-                                </svg>
-                                <span class="font-bold mr-1">Cancellation Reason:</span>
-                            </span>
-                            <span>{{ order.cancellationReason }}</span>
+                            <div class="flex items-center">
+                                <span>
+                                    <svg class="w-4 h-4 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.05 4.575a1.575 1.575 0 1 0-3.15 0v3m3.15-3v-1.5a1.575 1.575 0 0 1 3.15 0v1.5m-3.15 0 .075 5.925m3.075.75V4.575m0 0a1.575 1.575 0 0 1 3.15 0V15M6.9 7.575a1.575 1.575 0 1 0-3.15 0v8.175a6.75 6.75 0 0 0 6.75 6.75h2.018a5.25 5.25 0 0 0 3.712-1.538l1.732-1.732a5.25 5.25 0 0 0 1.538-3.712l.003-2.024a.668.668 0 0 1 .198-.471 1.575 1.575 0 1 0-2.228-2.228 3.818 3.818 0 0 0-1.12 2.687M6.9 7.575V12m6.27 4.318A4.49 4.49 0 0 1 16.35 15m.002 0h-.002" />
+                                    </svg>
+                                    <span class="mr-1">Cancellation Reason:</span>
+                                </span>
+                                <span class="font-bold">{{ order.cancellationReason }}</span>
+                            </div>
                         </Alert>
 
                     </div>
-
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" type="warning" class="shadow mb-4">
-                        {{ getFormError('general') }}
-                    </Alert>
 
                     <!-- Cart Summary -->
                     <CartSummary :order="order" :isLoadingOrder="isLoadingOrder"></CartSummary>
@@ -169,7 +171,7 @@
                     <CustomerSummary :order="order" :isLoadingOrder="isLoadingOrder"></CustomerSummary>
 
                     <!-- Collection Summary -->
-                    <CollectionSummary :order="order" :isLoadingOrder="isLoadingOrder"></CollectionSummary>
+                    <CollectionSummary :order="order" :isLoadingOrder="isLoadingOrder" :refreshOrder="getOrder"></CollectionSummary>
 
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
 
@@ -187,37 +189,13 @@
                             </div>
 
                             <div v-else-if="followUpStatuses.length > 0">
-                                <span v-for="(followUpStatus, index) in followUpStatuses" :key="index" @click="confirmUpdateStatus(followUpStatus)" class="cursor-pointer hover:opacity-50 mr-1">
-                                    <BadgeIndicator
-                                        :active="false" :text="followUpStatus.name" inactiveType="info" :showDot="false">
-                                    </BadgeIndicator>
+                                <span class="cursor-pointer hover:opacity-50 mr-1">
+                                    <BadgeIndicator :type="statusBadgeType" :text="order.status.name" :showDot="false" class="border border-gray-500"></BadgeIndicator>
+                                </span>
+                                <span v-for="(followUpStatus, index) in followUpStatuses" :key="index" @click="confirmUpdateStatus(followUpStatus)" class="cursor-pointer mr-1">
+                                    <BadgeIndicator type="info" :text="followUpStatus.name" :showDot="false" class="border border-transparent hover:border-gray-500"></BadgeIndicator>
                                 </span>
                             </div>
-
-                        </div>
-
-                        <div class="flex justify-end mt-8">
-
-                            <!-- Cancel / Uncancel Skeleton Button -->
-                            <ShineEffect v-if="isEditting && isLoadingOrder">
-                                <ButtonSkeleton>
-                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M10.5 1.875a1.125 1.125 0 0 1 2.25 0v8.219c.517.162 1.02.382 1.5.659V3.375a1.125 1.125 0 0 1 2.25 0v10.937a4.505 4.505 0 0 0-3.25 2.373 8.963 8.963 0 0 1 4-.935A.75.75 0 0 0 18 15v-2.266a3.368 3.368 0 0 1 .988-2.37 1.125 1.125 0 0 1 1.591 1.59 1.118 1.118 0 0 0-.329.79v3.006h-.005a6 6 0 0 1-1.752 4.007l-1.736 1.736a6 6 0 0 1-4.242 1.757H10.5a7.5 7.5 0 0 1-7.5-7.5V6.375a1.125 1.125 0 0 1 2.25 0v5.519c.46-.452.965-.832 1.5-1.141V3.375a1.125 1.125 0 0 1 2.25 0v6.526c.495-.1.997-.151 1.5-.151V1.875Z" />
-                                    </svg>
-                                    <span>Cancel Order</span>
-                                </ButtonSkeleton>
-                            </ShineEffect>
-
-                            <!-- Cancel / Uncancel Button -->
-                            <PrimaryButton v-else-if="order" :action="order._attributes.isCancelled ? uncancelOrder : confirmCancelOrder" :loading="isCancelling || isUncancelling" :type="order._attributes.isCancelled ? 'light' : 'warning'">
-                                <svg v-if="canCancel" class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M10.5 1.875a1.125 1.125 0 0 1 2.25 0v8.219c.517.162 1.02.382 1.5.659V3.375a1.125 1.125 0 0 1 2.25 0v10.937a4.505 4.505 0 0 0-3.25 2.373 8.963 8.963 0 0 1 4-.935A.75.75 0 0 0 18 15v-2.266a3.368 3.368 0 0 1 .988-2.37 1.125 1.125 0 0 1 1.591 1.59 1.118 1.118 0 0 0-.329.79v3.006h-.005a6 6 0 0 1-1.752 4.007l-1.736 1.736a6 6 0 0 1-4.242 1.757H10.5a7.5 7.5 0 0 1-7.5-7.5V6.375a1.125 1.125 0 0 1 2.25 0v5.519c.46-.452.965-.832 1.5-1.141V3.375a1.125 1.125 0 0 1 2.25 0v6.526c.495-.1.997-.151 1.5-.151V1.875Z" />
-                                </svg>
-                                <svg v-else-if="canUncancel" class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m15 15-6 6m0 0-6-6m6 6V9a6 6 0 0 1 12 0v3" />
-                                </svg>
-                                <span class="whitespace-nowrap">{{ order._attributes.isCancelled ? 'Uncancel Order' : 'Cancel Order' }}</span>
-                            </PrimaryButton>
 
                         </div>
 
@@ -226,7 +204,7 @@
 
             </div>
 
-            <div v-if="order && canDelete" :class="['space-y-4 shadow-lg rounded-lg border p-4', isLoadingOrder ? 'bg-gray-50' : 'border-red-300 bg-red-50']">
+            <div v-if="order" :class="['space-y-4 shadow-lg rounded-lg border p-4', isLoadingOrder ? 'bg-gray-50' : 'border-red-300 bg-red-50']">
 
                 <!-- Delete Order Info -->
                 <div class="flex items-center whitespace-pre">
@@ -268,23 +246,52 @@
             <!-- Update Status Modal -->
             <ConfirmModal
                 v-if="order && followUpStatus"
-                approveText="Yes" declineText="No"
-                :autoHide="false" :isLoading="isUpdatingOrderStatus"
-                approveType="primary" :approveAction="(hideModal) => updateOrderStatus(followUpStatus.name, hideModal)">
+                declineText="Cancel" declineType="light"
+                :isLoading="isUpdatingOrderStatus" :autoHide="false"
+                :approveText="followUpStatus.name" approveType="primary"
+                :approveAction="(hideModal) => updateOrderStatus(followUpStatus.name, hideModal)">
 
                 <template #content>
                     <p class="text-lg border-b border-dashed pb-4 mb-4">Mark As <span class="font-bold">{{ followUpStatus.name }}</span></p>
-                    <p class="mb-8">{{ followUpStatus.description }}</p>
+                    <p class="mb-4">{{ followUpStatus.description }}</p>
 
-                    <div :class="{ 'mb-8 space-y-4' : followUpStatus.name == 'Completed' }">
+                    <div :class="{ 'mb-8 space-y-4' : followUpStatus.name.toLowerCase() == 'completed' || followUpStatus.name.toLowerCase() == 'cancelled' }">
 
-                        <template v-if="followUpStatus.name == 'Completed'">
+                        <template v-if="followUpStatus.name.toLowerCase() == 'completed' && !isVerified">
 
                             <!-- Collection Code Instruction (Seller) -->
                             <Alert>{{ order._attributes.dialToShowCollectionCode.instruction }}</Alert>
 
                             <!-- Collection Code Input -->
                             <OtpInput v-model="collectionCode" :errorText="getFormError('collectionCode')"></OtpInput>
+
+                            <!-- Collection Note Textarea -->
+                            <TextareaInput v-model="collectionNote"
+                                label="Note (Optional)" _placeholder="Collected by John Doe" :_rows="2"
+                                :errorText="getFormError('collectionNote')"
+                                labelPopoverTitle="What Is This?"
+                                labelPopoverDescription="Important note regarding this order collection e.g Collected by John Doe">
+                            </TextareaInput>
+
+                        </template>
+
+                        <template v-else-if="followUpStatus.name.toLowerCase() == 'cancelled'">
+
+                            <div class="border-b border-dashed"></div>
+
+                            <!-- Cancellation Reason Select -->
+                            <SelectInput
+                                width="w-full"
+                                v-model="cancellationReason"
+                                labelPopoverTitle="What Is This?"
+                                label="Cancellation Reason (Optional)"
+                                :errorText="getFormError('cancellationReason')"
+                                labelPopoverDescription="A reason for why you are cancelling this order. This helps you keep a record for your cancelled orders">
+                                <option></option>
+                                <option v-for="(cancellationReason, index) in cancellationReasons" :value="cancellationReason" :key="index">
+                                    {{ cancellationReason }}
+                                </option>
+                            </SelectInput>
 
                         </template>
 
@@ -300,49 +307,6 @@
                     </PrimaryButton>
 
                 </template>
-
-            </ConfirmModal>
-
-            <!-- Cancel Order Modal -->
-            <ConfirmModal
-                v-if="order"
-                approveText="Yes" declineText="No"
-                :autoHide="false" :isLoading="isCancelling"
-                approveType="primary" :approveAction="(hideModal) => cancelOrder(hideModal)">
-
-                <template #content>
-                    <p class="text-lg border-b border-dashed pb-4 mb-4">Mark As <span class="font-bold">Cancelled</span></p>
-                    <p class="mb-4">Why are you cancelling this order?</p>
-
-                    <div class="mb-8 space-y-4">
-
-                        <!-- Cancellation Reason Select -->
-                        <SelectInput
-                            width="w-full"
-                            v-model="cancellationReason"
-                            labelPopoverTitle="What Is This?"
-                            label="Cancellation Reason (Optional)"
-                            :errorText="getFormError('cancellationReason')"
-                            labelPopoverDescription="A reason for why you are cancelling this order. This helps you keep a record for your cancelled orders">
-                            <option></option>
-                            <option v-for="(cancellationReason, index) in cancellationReasons" :value="cancellationReason" :key="index">
-                                {{ cancellationReason }}
-                            </option>
-                        </SelectInput>
-
-                    </div>
-
-                </template>
-
-                <template #trigger="triggerProps">
-
-                    <!-- Cancel Order Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmCancelOrder" @click="triggerProps.showModal" class="hidden">
-                        Cancel Order
-                    </PrimaryButton>
-
-                </template>
-
 
             </ConfirmModal>
 
@@ -491,6 +455,7 @@
     import OrderStatus from '@Components/order/OrderStatus.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
+    import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
@@ -511,7 +476,7 @@
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, InputTags, BackButton, NumberInput, SelectInput, OrderStatus, ConfirmModal,
-            ShineEffect, LineSkeleton, PrimaryButton, SpiningLoader, OtpInput, SelectInputTags, ButtonSkeleton,
+            ShineEffect, TextareaInput, LineSkeleton, PrimaryButton, SpiningLoader, OtpInput, SelectInputTags, ButtonSkeleton,
             MoreInfoPopover, LoadingBackdrop, CartSummary, OrderPaymentStatus, BadgeIndicator, PaymentSummary,
             CustomerSummary, CollectionSummary
         },
@@ -535,11 +500,10 @@
                 isDeleting: false,
                 originalForm: null,
                 collectionCode: '',
-                isCancelling: false,
+                collectionNote: '',
                 isSubmitting: false,
                 markAsPaidAmount: 0,
                 followUpStatus: null,
-                isUncancelling: false,
                 isLoadingOrder: false,
                 cancellationReason: '',
                 isMarkingAsPaid: false,
@@ -569,32 +533,42 @@
             store() {
                 return this.storeState.store;
             },
+            isVerified() {
+                return ((this.order || {}).collectionVerified || {}).status;
+            },
+            canMarkAsPaid() {
+                return ((this.order || {})._attributes || {}).canMarkAsPaid;
+            },
             followUpStatuses() {
-                return this.order._attributes.followUpStatuses;
+                return ((this.order || {})._attributes || {}).followUpStatuses;
+            },
+            canRequestPayment() {
+                return ((this.order || {})._attributes || {}).canRequestPayment;
             },
             mobileVerificationShortcode() {
                 return this.apiState.apiHome['mobileVerificationShortcode'];
-            },
-            canCancel() {
-                return this.order._attributes.canCancel;
-            },
-            canUncancel() {
-                return this.order._attributes.canUncancel;
-            },
-            canDelete() {
-                return this.order._attributes.canDelete;
-            },
-            canMarkAsPaid() {
-                return this.order._attributes.canMarkAsPaid;
-            },
-            canRequestPayment() {
-                return this.order._attributes.canRequestPayment;
             },
             isCreating() {
                 return this.$route.name === 'create-store-order';
             },
             isEditting() {
                 return this.$route.name === 'show-store-order';
+            },
+            statusBadgeType() {
+
+                var status = ((this.order || {}).status || {}).name.toLowerCase();
+
+                if(status == 'completed') {
+                    return 'success';
+                }else if(status == 'cancelled') {
+                    return 'warning';
+                }else if(status == 'on its way') {
+                    return 'primary';
+                }else if(status == 'ready for pickup') {
+                    return 'primary';
+                }else{
+                    return 'info';
+                }
             },
             formHasChanged() {
                 // Clone the objects to avoid modifying the original data
@@ -612,6 +586,9 @@
             }
         },
         methods: {
+            goBack() {
+                this.$router.replace({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
+            },
             setOrderFields() {
 
                 this.form.number = this.order.number;
@@ -627,30 +604,23 @@
             },
             confirmUpdateStatus(followUpStatus) {
 
-                if(followUpStatus.name == 'Cancelled') {
+                this.followUpStatus = followUpStatus;
 
-                    this.confirmCancelOrder();
-
-                }else{
-
-                    this.followUpStatus = followUpStatus;
-
-                    /**
-                     *  After setting the followUpStatus, we need to wait until the nextTick()
-                     *  before we programatically trigger the element click() event which
-                     *  opens the confirmation modal dialog. This is so that when the
-                     *  dialog opens we don't get an error trying to access the
-                     *  followUpStatus.name value. This is only available
-                     *  on the nextTick().
-                     */
-                    this.$nextTick(() => {
-                        this.$refs.confirmUpdateOrderStatus.$el.click();
-                    });
-
+                if(this.followUpStatus.name.toLowerCase() == 'cancelled' && this.cancellationReasons.length == 0) {
+                    this.getCancellationReasons();
                 }
-            },
-            confirmCancelOrder() {
-                this.$refs.confirmCancelOrder.$el.click();
+
+                /**
+                 *  After setting the followUpStatus, we need to wait until the nextTick()
+                 *  before we programatically trigger the element click() event which
+                 *  opens the confirmation modal dialog. This is so that when the
+                 *  dialog opens we don't get an error trying to access the
+                 *  followUpStatus.name value. This is only available
+                 *  on the nextTick().
+                 */
+                this.$nextTick(() => {
+                    this.$refs.confirmUpdateOrderStatus.$el.click();
+                });
             },
             confirmMarkAsPaid() {
                 this.$refs.confirmMarkAsPaid.$el.click();
@@ -665,28 +635,33 @@
 
                 //  Set the query params
                 const params = {
-                    'withCart': '1',
-                    'withOccasion': '1',
-                    'withCustomer': '1',
+                    '_relationships': 'cart,customer,occasion,collectionVerifiedByUser'
                 }
 
                 getApi(this.$route.params.order_href, params).then(response => {
 
                     if(response.status == 200) {
 
-                        this.order = response.data;
-                        this.setOrderFields();
+                        if(response.data.exists) {
 
-                        if(this.cancellationReasons.length == 0) {
-                            this.getCancellationReasons();
-                        }
+                            this.order = response.data.order;
+                            this.setOrderFields();
 
-                        if(this.canRequestPayment && this._requestPayment.paymentMethods.length == 0) {
-                            this.getRequestPaymentPaymentMethods();
-                        }
+                            if(this.canRequestPayment && this._requestPayment.paymentMethods.length == 0) {
+                                this.showPaymentMethodsForRequestingOrderPayment();
+                            }
 
-                        if(this.markAsPaid.paymentMethods.length == 0) {
-                            this.getMarkAsUnverifiedPaymentPaymentMethods();
+                            if(this.markAsPaid.paymentMethods.length == 0) {
+                                this.showPaymentMethodsForMarkingAsPaid();
+                            }
+
+                        }else{
+
+                            this.notificationState.addWarningNotification('This order does not exist');
+
+                            //  Navigate to show orders
+                            this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
+
                         }
                     }
 
@@ -706,12 +681,12 @@
                 });
 
             },
-            getRequestPaymentPaymentMethods() {
+            showPaymentMethodsForRequestingOrderPayment() {
 
                 //  Start loader
-                this.isLoadingRequestPaymentPaymentMethods = true;
+                this.isLoadingPaymentMethodsForMarkingAsPaidForRequestingOrderPayment = true;
 
-                getApi(this.order._links.showRequestPaymentPaymentMethods).then(response => {
+                getApi(this.order._links.showPaymentMethodsForRequestingOrderPayment).then(response => {
 
                     if(response.status == 200) {
 
@@ -724,12 +699,12 @@
                     }
 
                     //  Stop loader
-                    this.isLoadingRequestPaymentPaymentMethods = false;
+                    this.isLoadingPaymentMethodsForMarkingAsPaidForRequestingOrderPayment = false;
 
                 }).catch(errorException => {
 
                     //  Stop loader
-                    this.isLoadingRequestPaymentPaymentMethods = false;
+                    this.isLoadingPaymentMethodsForMarkingAsPaidForRequestingOrderPayment = false;
 
                     /**
                      *  Note: the setServerFormErrors() method is part of the FormMixin methods
@@ -739,12 +714,12 @@
                 });
 
             },
-            getMarkAsUnverifiedPaymentPaymentMethods() {
+            showPaymentMethodsForMarkingAsPaid() {
 
                 //  Start loader
-                this.isLoadingPaymentMethods = true;
+                this.isLoadingPaymentMethodsForMarkingAsPaid = true;
 
-                getApi(this.order._links.showMarkAsUnverifiedPaymentPaymentMethods).then(response => {
+                getApi(this.order._links.showPaymentMethodsForMarkingAsPaid).then(response => {
 
                     if(response.status == 200) {
 
@@ -757,12 +732,12 @@
                     }
 
                     //  Stop loader
-                    this.isLoadingPaymentMethods = false;
+                    this.isLoadingPaymentMethodsForMarkingAsPaid = false;
 
                 }).catch(errorException => {
 
                     //  Stop loader
-                    this.isLoadingPaymentMethods = false;
+                    this.isLoadingPaymentMethodsForMarkingAsPaid = false;
 
                     /**
                      *  Note: the setServerFormErrors() method is part of the FormMixin methods
@@ -777,7 +752,7 @@
                 //  Start loader
                 this.isLoadingCancellationReasons = true;
 
-                getApi(this.order._links.showCancellationReasons).then(response => {
+                getApi(this.order._links.showOrderCancellationReasons).then(response => {
 
                     if(response.status == 200) {
 
@@ -818,7 +793,7 @@
 
                 postApi(this.store._links.createOrders, this.parseForm()).then(response => {
 
-                    if(response.status == 201) {
+                    if(response.status == 200) {
 
                         /**
                          *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
@@ -826,7 +801,7 @@
                         this.showSuccessfulNotification('Order created');
 
                         //  Navigate to show orders
-                        this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.self } });
+                        this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
 
                         // Scroll to the top
                         window.scrollTo(0, 0);
@@ -854,7 +829,7 @@
                 //  Start loader
                 this.isSubmitting = true;
 
-                putApi(this.order._links.self, this.parseForm()).then(response => {
+                putApi(this.order._links.showOrder, this.parseForm()).then(response => {
 
                     if(response.status == 200) {
 
@@ -885,30 +860,27 @@
             },
             updateOrderStatus(status, hideModal) {
 
-                if(status == 'Cancelled') {
+                //  Start loader
+                this.isUpdatingOrderStatus = true;
 
-                    this.cancelOrder().then(response => {
+                var data = {
+                    status: status
+                };
 
-                        hideModal();
+                if(status.toLowerCase() == 'completed' && !this.isVerified) {
+                    data.collectionCode = this.collectionCode;
+                    if(this.collectionNote.trim() != '') data['collectionNote'] = this.collectionNote;
+                }
 
-                    });
+                if(status.toLowerCase() == 'cancelled' && this.cancellationReason.trim() != '') {
+                    data.cancellationReason = this.cancellationReason;
+                }
 
-                }else{
+                postApi(this.order._links.updateOrderStatus, data).then(response => {
 
-                    //  Start loader
-                    this.isUpdatingOrderStatus = true;
+                    if(response.status == 200) {
 
-                    var data = {
-                        status: status
-                    };
-
-                    if(status == 'Completed') {
-                        data.collectionCode = this.collectionCode;
-                    }
-
-                    putApi(this.order._links.updateStatus, data).then(response => {
-
-                        if(response.status == 200) {
+                        if(response.data.updated) {
 
                             hideModal();
 
@@ -919,93 +891,21 @@
                              */
                             this.showSuccessfulNotification('Order updated');
 
+                        }else{
+
+                            this.notificationState.addWarningNotification(response.data.message);
+
                         }
 
-                        //  Stop loader
-                        this.isUpdatingOrderStatus = false;
-
-                    }).catch(errorException => {
-
-                        //  Stop loader
-                        this.isUpdatingOrderStatus = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                        this.setServerFormErrors(errorException);
-
-                    });
-
-                }
-
-            },
-            cancelOrder(hideModal) {
-
-                //  Start loader
-                this.isCancelling = true;
-
-                var data = {};
-
-                if(this.cancellationReason.trim() != '') {
-                    data.cancellationReason = this.cancellationReason;
-                }
-
-                return putApi(this.order._links.cancelOrder, data).then(response => {
-
-                    if(response.status == 200) {
-
-                        hideModal();
-
-                        this.getOrder();
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Order cancelled');
-
                     }
 
                     //  Stop loader
-                    this.isCancelling = false;
+                    this.isUpdatingOrderStatus = false;
 
                 }).catch(errorException => {
 
                     //  Stop loader
-                    this.isCancelling = false;
-
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
-                    this.setServerFormErrors(errorException);
-
-                });
-
-            },
-            uncancelOrder() {
-
-                //  Start loader
-                this.isUncancelling = true;
-
-                putApi(this.order._links.uncancelOrder).then(response => {
-
-                    if(response.status == 200) {
-
-                        this.getOrder();
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Order uncancelled');
-
-                    }
-
-                    //  Stop loader
-                    this.isUncancelling = false;
-
-                }).catch(errorException => {
-
-                    //  Stop loader
-                    this.isUncancelling = false;
+                    this.isUpdatingOrderStatus = false;
 
                     /**
                      *  Note: the setServerFormErrors() method is part of the FormMixin methods
@@ -1109,7 +1009,7 @@
                 //  Start loader
                 this.isDeleting = true;
 
-                deleteApi(this.order._links.deleteOrder, this.form).then(response => {
+                deleteApi(this.order._links.deleteOrder).then(response => {
 
                     if(response.status == 200) {
 
@@ -1119,7 +1019,7 @@
                         this.showSuccessfulNotification('Order deleted');
 
                         //  Navigate to show orders
-                        this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.self } });
+                        this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
 
                         // Scroll to the top
                         window.scrollTo(0, 0);

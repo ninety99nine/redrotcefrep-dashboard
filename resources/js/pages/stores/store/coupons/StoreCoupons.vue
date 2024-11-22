@@ -76,14 +76,14 @@
                     <!-- Description -->
                     <td class="align-top px-4 py-4">
                         <div class="flex space-x-1 items-center w-80">
-                            <span v-if="coupon.description == null">...</span>
+                            <NoDataPlaceholder v-if="coupon.description == null"></NoDataPlaceholder>
                             <span v-else>{{ coupon.description }}</span>
                         </div>
                     </td>
 
                     <!-- Instruction -->
                     <td v-if="showEverything" class="align-top px-4 py-4">
-                        <div class="w-80 bg-gray-100 border py-2 px-6 mb-2 shadow-md">
+                        <div class="w-80 bg-green-50 border border-green-200 rounded-md py-2 px-6 mb-2 shadow-md">
                             <ul class="space-y-2 list-disc">
                                 <li v-for="(instruction, index) in coupon._attributes.instructions" :key="index">{{ instruction }}</li>
                             </ul>
@@ -93,7 +93,7 @@
                     <!-- Active -->
                     <td class="whitespace-nowrap align-top px-4 py-4">
                         <div class="flex space-x-1 items-center">
-                            <BadgeIndicator :active="coupon.active.status" :text="coupon.active.name" :inactiveType="coupon.active.status ? 'success' : 'warning'" :showDot="false"></BadgeIndicator>
+                            <BadgeIndicator :type="coupon.active.status ? 'success' : 'warning'" :text="coupon.active.name" :showDot="false"></BadgeIndicator>
                             <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :description="coupon.active.description" placement="top"></MoreInfoPopover>
                         </div>
                     </td>
@@ -103,10 +103,10 @@
 
                         <div class="flex items-center space-x-2">
                             <template v-if="coupon.offerDiscount.status">
-                                <BadgeIndicator v-if="coupon.discountType == 'Fixed'" :active="true" :text="coupon.discountFixedRate.amountWithCurrency+' Discount'" :showDot="false"></BadgeIndicator>
-                                <BadgeIndicator v-else-if="coupon.discountType == 'Percentage'" :active="true" :text="coupon.discountPercentageRate.valueSymbol+' Discount'" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator v-if="coupon.discountType.toLowerCase() == 'fixed'" type="success" :text="coupon.discountFixedRate.amountWithCurrency+' Discount'" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator v-else-if="coupon.discountType.toLowerCase() == 'percentage'" type="success" :text="coupon.discountPercentageRate.valueSymbol+' Discount'" :showDot="false"></BadgeIndicator>
                             </template>
-                            <BadgeIndicator v-if="coupon.offerFreeDelivery.status" :active="true" text="Free Delivery" :showDot="false"></BadgeIndicator>
+                            <BadgeIndicator v-if="coupon.offerFreeDelivery.status" type="success" text="Free Delivery" :showDot="false"></BadgeIndicator>
 
                             <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Instructions" placement="top">
 
@@ -155,7 +155,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your coupons</h1>
-                <p>Create amazing incentives for your customers, such as offering <span class="underline decoration-dashed underline-offset-4">discounts</span> or <span class="underline decoration-dashed underline-offset-4">free delivery</span>, while determining who can claim them and when.</p>
+                <p>Create amazing incentives for your customers, such as offering <BadgeIndicator type="primary" text="discounts" :showDot="false"></BadgeIndicator> or <BadgeIndicator type="primary" text="free delivery" :showDot="false"></BadgeIndicator>, while determining who can claim them and when.</p>
 
                 <!-- Add Coupon Button -->
                 <AddButton :action="onAddCoupon" class="w-40" size="sm">
@@ -207,13 +207,14 @@
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
             AddButton, TextHeader, BasicTable, Checkbox, ConfirmModal, PrimaryButton,
-            SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator
-
+            SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
+            NoDataPlaceholder
         },
         data() {
             return {
@@ -245,7 +246,7 @@
             onView(coupon) {
                 this.$router.push({
                     name: 'show-store-coupon',
-                    params: { 'store_href': this.store._links.self, 'coupon_href': coupon._links.self }
+                    params: { 'store_href': this.store._links.showStore, 'coupon_href': coupon._links.showCoupon }
                 }).then(() => {
                     // Ensure scroll to top after route navigation
                     window.scrollTo(0, 0);
@@ -270,18 +271,16 @@
                 return this.isDeletingCouponIds.findIndex((id) => id == coupon.id) != -1;
             },
             onAddCoupon() {
-                this.$router.push({ name: 'create-store-coupon', params: { 'store_href': this.store._links.self } });
+                this.$router.push({ name: 'create-store-coupon', params: { 'store_href': this.store._links.showStore } });
             },
             paginate(url) {
-                this.url = url;
-                this.getCoupons();
+                this.getCoupons(url);
             },
             search(searchTerm) {
-                this.url = this.store._links.showCoupons;
                 this.searchTerm = searchTerm;
                 this.getCoupons();
             },
-            getCoupons() {
+            getCoupons(url = null) {
 
                 //  Start loader
                 this.isLoadingCoupons = true;
@@ -292,7 +291,9 @@
                 //  If the search term has been provided, then add to the query params
                 if(this.hasSearchTerm) params['search'] = this.searchTerm;
 
-                getApi(this.url, params).then(response => {
+                url = url ?? this.store._links.showStoreCoupons;
+
+                getApi(url, params).then(response => {
 
                     if(response.status == 200) {
                         this.pagination = response.data;
@@ -322,7 +323,7 @@
                 //  Start loader
                 this.isDeletingCouponIds.push(this.deletableCoupon.id);
 
-                deleteApi(this.deletableCoupon._links.deleteCoupon, this.form).then(response => {
+                deleteApi(this.deletableCoupon._links.deleteCoupon).then(response => {
 
                     //  Stop loader
                     this.isDeletingCouponIds.splice(this.isDeletingCouponIds.findIndex((id) => id == this.deletableCoupon.id, 1));
@@ -357,7 +358,6 @@
 
         },
         created() {
-            this.url = this.store._links.showCoupons;
             this.getCoupons();
         }
     };

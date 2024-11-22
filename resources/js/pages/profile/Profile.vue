@@ -4,7 +4,7 @@
 
         <div class="flex min-h-full flex-col justify-center">
 
-            <div class="sm:mx-auto sm:w-full sm:max-w-md p-4 border border-gray-200 rounded-lg shadow sm:p-6">
+            <div class="sm:mx-auto sm:w-full sm:max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6">
 
                 <!-- Profile Photo -->
                 <ProfilePhoto :user="authState.user" class="mx-auto" width="w-40" height="h-40"></ProfilePhoto>
@@ -112,6 +112,7 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import CurrentPasswordInput from '@Partials/inputs/CurrentPasswordInput.vue';
 
@@ -119,7 +120,8 @@
         mixins: [FormMixin],
         components: {
             Alert, TextInput, TextareaInput, PasswordInput, OtpInput, PrimaryButton,
-            MoreInfoPopover, ProfilePhoto, ToogleSwitch, ConfirmPasswordInput, CurrentPasswordInput
+            MoreInfoPopover, ProfilePhoto, ToogleSwitch, MobileNumberInput,
+            ConfirmPasswordInput, CurrentPasswordInput
         },
         data() {
             return {
@@ -152,8 +154,8 @@
                 this.aboutMe = this.authState.user.aboutMe;
                 this.lastName = this.authState.user.lastName;
                 this.firstName = this.authState.user.firstName;
-                this.mobileNumber = this.authState.user.mobileNumber.withoutExtension;
-                this.originalMobileNumber = this.authState.user.mobileNumber.withoutExtension;
+                this.mobileNumber = this.authState.user.mobileNumber.national;
+                this.originalMobileNumber = this.authState.user.mobileNumber.national;
                 this.mobileVerificationShortcode = this.apiState.apiHome['mobileVerificationShortcode'];
             },
             updateUser() {

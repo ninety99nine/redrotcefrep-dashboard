@@ -27,14 +27,14 @@ const routes = [
         component: () => import('@Pages/dashboard/Index.vue'),
         children: [
             {
-                name: 'profile',
+                name: 'show-profile',
                 path: 'profile',
                 component: () => import('@Pages/profile/Profile.vue')
             },
             {
-                name: 'stores',
+                name: 'show-stores',
                 path: 'stores',
-                component: () => import('@Pages/subscriptions/Subscriptions.vue')
+                component: () => import('@Pages/stores/Stores.vue')
             },
             {
                 name: 'create-store',
@@ -100,6 +100,21 @@ const routes = [
                         path: 'coupons/create',
                         name: 'create-store-coupon',
                         component: () => import('@Pages/stores/store/coupons/StoreCoupon.vue')
+                    },
+                    {
+                        path: 'customers',
+                        name: 'show-store-customers',
+                        component: () => import('@Pages/stores/store/customers/StoreCustomers.vue')
+                    },
+                    {
+                        path: 'customers/:customer_href',
+                        name: 'show-store-customer',
+                        component: () => import('@Pages/stores/store/customers/StoreCustomer.vue')
+                    },
+                    {
+                        path: 'customers/create',
+                        name: 'create-store-customer',
+                        component: () => import('@Pages/stores/store/customers/StoreCustomer.vue')
                     },
                     {
                         path: 'transactions',

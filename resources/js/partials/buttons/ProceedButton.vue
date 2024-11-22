@@ -44,6 +44,8 @@
                     classes.push('w-6 h-6 mt-0.5');
                 }else if(this.size == 'sm') {
                     classes.push('w-4 h-4 mt-0.5');
+                }else{
+                    classes.push('w-4 h-4 mt-0.5');
                 }
 
                 return classes;

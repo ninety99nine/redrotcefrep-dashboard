@@ -28,7 +28,7 @@
         </span>
         <slot v-else>Expired</slot>
 
-        <MoreInfoPopover v-if="!hasExpired" placement="top">
+        <MoreInfoPopover v-if="showMoreInfoPopover && !hasExpired" placement="top" :class="moreInfoPopoverClass">
             <template #description>
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead class="font-bold text-xs text-gray-700 uppercase bg-gray-50">
@@ -66,10 +66,18 @@
         },
         props: {
             time: {
-                type: String,
+                type: [String, null],
                 required: true
             },
             textClass: {
+                type: String,
+                default: ''
+            },
+            showMoreInfoPopover: {
+                type: Boolean,
+                default: true
+            },
+            moreInfoPopoverClass: {
                 type: String,
                 default: ''
             },

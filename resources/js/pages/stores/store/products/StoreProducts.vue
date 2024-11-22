@@ -81,12 +81,12 @@
                                         <p>
                                             <span>SKU: </span>
                                             <span  v-if="product.sku" class="text-black"></span>
-                                            <BadgeIndicator v-else :active="false" text="None" inactiveType="info" :showDot="false"></BadgeIndicator>
+                                            <BadgeIndicator v-else type="info" text="None" :showDot="false"></BadgeIndicator>
                                         </p>
                                         <p>
                                             <span>Barcode: </span>
                                             <span  v-if="product.barcode" class="text-black"></span>
-                                            <BadgeIndicator v-else :active="false" text="None" inactiveType="info" :showDot="false"></BadgeIndicator>
+                                            <BadgeIndicator v-else type="info" text="None" :showDot="false"></BadgeIndicator>
                                         </p>
                                         <template v-if="product.showDescription.status && product.description != null">
                                             <hr>
@@ -104,7 +104,7 @@
                             <!-- Description -->
                             <td class="px-4 py-4">
                                 <div class="flex space-x-1 items-center w-60">
-                                    <span v-if="product.description == null">...</span>
+                                    <NoDataPlaceholder v-if="product.description == null"></NoDataPlaceholder>
                                     <template v-else>
                                         <span :class="{ 'line-through' : product.showDescription.status == false }">{{ product.description }}</span>
                                         <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :description="product.showDescription.description" placement="top"></MoreInfoPopover>
@@ -117,19 +117,19 @@
                         <!-- Visible -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 items-center">
-                                <BadgeIndicator :active="product.visible.status" :text="product.visible.name" :inactiveType="product.visible.status ? 'success' : 'warning'" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator :type="product.visible.status ? 'success' : 'warning'" :text="product.visible.name" :showDot="false"></BadgeIndicator>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="product.visible.name" :description="product.visible.description" placement="top"></MoreInfoPopover>
                             </div>
                         </td>
 
                         <!-- Price -->
                         <td class="whitespace-nowrap px-4 py-4">
-                            <span v-if="product.allowVariations.status">...</span>
+                            <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <BadgeIndicator v-if="product.isFree.status" :active="false" text="Free" inactiveType="info" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator v-if="product.isFree.status" type="info" text="Free" :showDot="false"></BadgeIndicator>
                                 <template v-else>
                                     <span>{{ product.unitPrice.amountWithCurrency }}</span>
-                                    <BadgeIndicator v-if="product.onSale.status" :active="true" text="on sale" :showDot="false"></BadgeIndicator>
+                                    <BadgeIndicator v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></BadgeIndicator>
                                 </template>
 
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Pricing" placement="top">
@@ -154,14 +154,14 @@
 
                         <!-- Stock -->
                         <td class="whitespace-nowrap px-4 py-4">
-                            <span v-if="product.allowVariations.status">...</span>
+                            <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <BadgeIndicator :active="false" :text="product.hasStock.status ? (product.stockQuantityType.value == 'Unlimited' ? 'Unlimited' : product.stockQuantity.description) : product.hasStock.name" :inactiveType="product.hasStock.status ? 'info' : 'danger'" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator :type="product.hasStock.status ? 'info' : 'danger'" :text="product.hasStock.status ? (product.stockQuantityType.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.stockQuantity.description) : product.hasStock.name" :showDot="false"></BadgeIndicator>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Stock" placement="top">
 
                                     <template #description>
                                         <div class="whitespace-normal">
-                                            <p v-if="product.stockQuantityType.value == 'Unlimited'">{{ product.stockQuantityType.description }}</p>
+                                            <p v-if="product.stockQuantityType.value.toLowerCase() == 'unlimited'">{{ product.stockQuantityType.description }}</p>
                                             <p v-else>{{ product.stockQuantity.description }}</p>
                                         </div>
                                     </template>
@@ -173,7 +173,7 @@
                         <!-- Allow Variations -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 items-center">
-                                <BadgeIndicator :active="false" :text="product.allowVariations.name == 'Yes' ? (product.totalVisibleVariations) : 'None'" inactiveType="info" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator type="info" :text="product.allowVariations.name.toLowerCase() == 'yes' ? (product.totalVisibleVariations) : 'None'" :showDot="false"></BadgeIndicator>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Allow Variations" placement="top">
 
                                     <template #description>
@@ -196,7 +196,7 @@
                             <!-- Allowed Quantity Per Order -->
                             <td class="whitespace-nowrap px-4 py-4">
                                 <div class="flex space-x-1 items-center">
-                                    <BadgeIndicator :active="false" :text="product.allowedQuantityPerOrder.value == 'Unlimited' ? 'Unlimited' : product.maximumAllowedQuantityPerOrder.value" inactiveType="info" :showDot="false"></BadgeIndicator>
+                                    <BadgeIndicator type="info" :text="product.allowedQuantityPerOrder.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.maximumAllowedQuantityPerOrder.value" :showDot="false"></BadgeIndicator>
                                     <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Quantity Per Order" placement="top">
 
                                         <template #description>
@@ -297,6 +297,7 @@
 
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import { useStoreState } from '@Stores/store-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
@@ -310,12 +311,14 @@
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
+    import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
             draggable: VueDraggableNext, TextHeader, AddButton, BasicTable, Checkbox, ConfirmModal,
-            SpiningLoader, PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator
+            SpiningLoader, PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
+            NoDataPlaceholder
         },
         data() {
             return {
@@ -325,6 +328,7 @@
                 checkedRowIds: [],
                 showEverything: false,
                 deletableProduct: null,
+                apiState: useApiState(),
                 isDeletingProductIds: [],
                 isLoadingProducts: false,
                 storeState: useStoreState(),
@@ -348,7 +352,7 @@
             onView(product) {
                 this.$router.push({
                     name: 'show-store-product',
-                    params: { 'store_href': this.store._links.self, 'product_href': product._links.self }
+                    params: { 'store_href': this.store._links.showStore, 'product_href': product._links.showProduct }
                 }).then(() => {
                     // Ensure scroll to top after route navigation
                     window.scrollTo(0, 0);
@@ -373,14 +377,14 @@
                 return this.isDeletingProductIds.findIndex((id) => id == product.id) != -1;
             },
             onAddProduct() {
-                this.$router.push({ name: 'create-store-product', params: { 'store_href': this.store._links.self } });
+                this.$router.push({ name: 'create-store-product', params: { 'store_href': this.store._links.showStore } });
             },
             paginate(url) {
                 this.url = url;
                 this.getProducts();
             },
             search(searchTerm) {
-                this.url = this.store._links.showProducts;
+                this.url = this.store._links.showStoreProducts;
                 this.searchTerm = searchTerm;
                 this.getProducts();
             },
@@ -425,7 +429,7 @@
                 //  Start loader
                 this.isDeletingProductIds.push(this.deletableProduct.id);
 
-                deleteApi(this.deletableProduct._links.deleteProduct, this.form).then(response => {
+                deleteApi(this.deletableProduct._links.deleteProduct).then(response => {
 
                     //  Stop loader
                     this.isDeletingProductIds.splice(this.isDeletingProductIds.findIndex((id) => id == this.deletableProduct.id, 1));
@@ -462,10 +466,11 @@
 
                 //  Set the query params
                 const params = {
-                    'arrangement': this.products.map((product) => product.id)
+                    'storeId': this.store.id,
+                    'productIds': this.products.map((product) => product.id)
                 }
 
-                postApi(this.store._links.updateProductArrangement, params).then(response => {
+                postApi(this.apiState.apiHome['_links']['updateProductArrangement'], params).then(response => {
 
                     if(response.status == 200) {
 
@@ -497,7 +502,7 @@
 
         },
         created() {
-            this.url = this.store._links.showProducts;
+            this.url = this.store._links.showStoreProducts;
             this.getProducts();
         }
     };

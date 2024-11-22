@@ -5,10 +5,14 @@
         <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
-            <BackButton class="w-16 mr-4"></BackButton>
+            <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
-            <!-- Text Heading -->
-            <SpiningLoader v-if="isLoadingCoupon"></SpiningLoader>
+            <div v-if="isLoadingCoupon" class="flex items-center space-x-2">
+                <ShineEffect class="flex space-x-2">
+                    <LineSkeleton width="w-40 mt-2"></LineSkeleton>
+                    <LineSkeleton width="w-4 mt-2"></LineSkeleton>
+                </ShineEffect>
+            </div>
 
             <template v-else>
 
@@ -22,9 +26,6 @@
 
         <!-- Coupon Form -->
         <form class="relative" action="#" method="POST">
-
-            <!-- Loading Backdrop -->
-            <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting"></LoadingBackdrop>
 
             <!-- General Error Info Alert -->
             <Alert v-if="mustCreate || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
@@ -45,7 +46,10 @@
 
             <div class="grid grid-cols-12 gap-4 mb-8">
 
-                <div class="col-span-8">
+                <div class="col-span-8 relative">
+
+                    <!-- Loading Backdrop -->
+                    <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting" class="rounded-lg"></LoadingBackdrop>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
@@ -142,7 +146,7 @@
 
                     </div>
 
-                    <div class="bg-white shadow-lg rounded-lg border p-4 mb-4">
+                    <div class="bg-white shadow-lg rounded-lg border p-4">
 
                         <div :class="['space-y-4', form.offerDiscount ? 'mb-8' : 'mb-4']">
 
@@ -313,6 +317,7 @@
                                     <span class="whitespace-nowrap">Activate on hours of the day</span>
                                 </ToogleSwitch>
 
+
                                 <!-- Hours Of The Day Input Tags -->
                                 <SelectInputTags
                                     v-if="form.activateUsingHoursOfDay"
@@ -417,7 +422,10 @@
 
                 <div class="col-span-4">
 
-                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 mb-4 relative">
+
+                        <!-- Loading Backdrop -->
+                        <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
 
                         <div class="space-y-4">
 
@@ -437,13 +445,38 @@
 
                         </div>
 
-                        <div class="flex justify-end mt-8">
+                    </div>
 
-                            <!-- Create Coupon / Save Changes Button -->
-                            <PrimaryButton :action="isCreating ? createCoupon : updateCoupon" :disabled="(isCreating && !mustCreate) || (isEditting && !mustSaveChanges)" :loading="isSubmitting" class="w-40">
-                                {{ isCreating ? 'Create Coupon' : 'Save Changes' }}
-                            </PrimaryButton>
+                    <div v-if="coupon && hasInstructions" class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
+                        <!-- Loading Backdrop -->
+                        <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
+
+                        <!-- Activation Rules Title -->
+                        <div class="flex items-center space-x-4 mb-2">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+                                <p class="font-bold text-lg">Activation Rules</p>
+                            </div>
+
+                            <BadgeIndicator type="primary" :text="totalInstructions" :showDot="false"></BadgeIndicator>
+                        </div>
+
+                        <!-- Activation Rules Description -->
+                        <p class="text-sm text-gray-400 border-b border-dashed pb-2 mb-4">Learn how this coupon will be activated</p>
+
+                        <!-- Save Changes Alert -->
+                        <Alert v-if="mustSaveChanges" type="info">
+                            Save changes to apply activation rules
+                        </Alert>
+
+                        <!-- Instructions -->
+                        <div v-else class="space-y-2">
+                            <div v-for="(instruction, index) in instructions" :key="index" class="flex space-x-2 px-2 border-l-4 border-green-300">
+                                <p class="text-xs">{{ instruction }}</p>
+                            </div>
                         </div>
 
                     </div>
@@ -494,6 +527,7 @@
     import cloneDeep from 'lodash/cloneDeep';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import { useApiState } from '@Stores/api-store.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
@@ -505,22 +539,25 @@
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
+    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, BackButton, NumberInput,
-            SelectInput, Datepicker, ConfirmModal, TextareaInput, PrimaryButton, SpiningLoader,
-            SelectInputTags, MoreInfoPopover, LoadingBackdrop,
-            ToogleSwitch
+            SelectInput, Datepicker, ConfirmModal, ShineEffect, TextareaInput, PrimaryButton,
+            SpiningLoader, LineSkeleton, SelectInputTags, MoreInfoPopover, LoadingBackdrop,
+            ToogleSwitch, BadgeIndicator
         },
         data() {
             return {
@@ -591,6 +628,7 @@
                 originalForm: null,
                 isSubmitting: false,
                 isLoadingCoupon: false,
+                apiState: useApiState(),
                 storeState: useStoreState(),
 
                 hoursOfDay: [],
@@ -641,6 +679,15 @@
             isEditting() {
                 return this.$route.name === 'show-store-coupon';
             },
+            instructions() {
+                return (((this.coupon || {})._attributes || {}).instructions || []);
+            },
+            hasInstructions() {
+                return this.totalInstructions > 0;
+            },
+            totalInstructions() {
+                return this.instructions.length;
+            },
             formHasChanged() {
                 // Clone the objects to avoid modifying the original data
                 var a = cloneDeep(this.form);
@@ -657,6 +704,9 @@
             }
         },
         methods: {
+            goBack() {
+                this.$router.replace({ name: 'show-store-coupons', params: { 'store_href': this.store._links.showStore } });
+            },
             populateHoursOfTheDay() {
                 /**
                  *  Generating hours of day e.g 00:00 until 23:00
@@ -765,8 +815,14 @@
                 getApi(this.$route.params.coupon_href).then(response => {
 
                     if(response.status == 200) {
-                        this.coupon = response.data;
-                        this.setCouponFields();
+
+                        if(response.data.exists) {
+
+                            this.coupon = response.data.coupon;
+                            this.setCouponFields();
+
+                        }
+
                     }
 
                     //  Stop loader
@@ -797,12 +853,18 @@
             },
             createCoupon() {
 
+                if(this.form.offerDiscount == false && this.form.offerFreeDelivery == false) {
+                    this.setFormError('offerFreeDelivery', 'Specify an offer e.g discount or free delivery');
+                    this.notificationState.addWarningNotification('Specify an offer e.g discount or free delivery');
+                    return;
+                }
+
                 //  Start loader
                 this.isSubmitting = true;
 
-                postApi(this.store._links.createCoupons, this.parseForm()).then(response => {
+                postApi(this.apiState.apiHome['_links']['createCoupon'], this.parseForm()).then(response => {
 
-                    if(response.status == 201) {
+                    if(response.status == 200) {
 
                         /**
                          *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
@@ -810,7 +872,7 @@
                         this.showSuccessfulNotification('Coupon created');
 
                         //  Navigate to show coupons
-                        this.$router.push({ name: 'show-store-coupons', params: { 'store_href': this.store._links.self } });
+                        this.$router.push({ name: 'show-store-coupons', params: { 'store_href': this.store._links.showStore } });
 
                         // Scroll to the top
                         window.scrollTo(0, 0);
@@ -838,16 +900,32 @@
                 //  Start loader
                 this.isSubmitting = true;
 
-                putApi(this.coupon._links.self, this.parseForm()).then(response => {
+                //  Return product after creation
+                this.form.return = true;
+
+                putApi(this.coupon._links.showCoupon, this.parseForm()).then(response => {
 
                     if(response.status == 200) {
 
-                        this.originalForm = cloneDeep(this.form);
+                        if(response.data.updated) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Coupon updated');
+                            this.originalForm = cloneDeep(this.form);
+
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Coupon updated');
+
+                            this.editMode = false;
+
+                        }else{
+
+                            this.form = cloneDeep(this.originalForm);
+
+                            this.setFormError('general', response.data.message);
+                            this.notificationState.addWarningNotification(response.data.message);
+
+                        }
 
                     }
 
@@ -872,7 +950,7 @@
                 //  Start loader
                 this.isDeleting = true;
 
-                deleteApi(this.coupon._links.deleteCoupon, this.form).then(response => {
+                deleteApi(this.coupon._links.deleteCoupon).then(response => {
 
                     if(response.status == 200) {
 
@@ -882,7 +960,7 @@
                         this.showSuccessfulNotification('Coupon deleted');
 
                         //  Navigate to show coupons
-                        this.$router.push({ name: 'show-store-coupons', params: { 'store_href': this.store._links.self } });
+                        this.$router.push({ name: 'show-store-coupons', params: { 'store_href': this.store._links.showStore } });
 
                         // Scroll to the top
                         window.scrollTo(0, 0);
@@ -911,6 +989,7 @@
             this.populateDaysOfTheMonth();
         },
         created() {
+            this.form.storeId = this.store.id;
             this.originalForm = cloneDeep(this.form);
             if(this.isEditting) this.getCoupon();
         }

@@ -67,7 +67,7 @@
                     <!-- Comment -->
                     <td class="px-4 py-4">
                         <div class="flex space-x-1 items-center w-60">
-                            <span v-if="review.comment == null">...</span>
+                            <NoDataPlaceholder v-if="review.comment == null"></NoDataPlaceholder>
                             <span v-else>{{ review.comment }}</span>
                         </div>
                     </td>
@@ -90,7 +90,7 @@
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Discover Customer Feedback</h1>
                 <div>
-                    <p>See what your customers are saying about your <span class="underline decoration-dashed underline-offset-4">products</span> and <span class="underline decoration-dashed underline-offset-4">services</span>.</p>
+                    <p>See what your customers are saying about your <BadgeIndicator type="primary" text="products" :showDot="false"></BadgeIndicator> and <BadgeIndicator type="primary" text="services" :showDot="false"></BadgeIndicator>.</p>
                     <p>Reviews will appear here once customers provide feedback.</p>
                 </div>
             </div>
@@ -112,10 +112,12 @@
     import { getApi } from '@Repositories/api-repository.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { TextHeader, BasicTable, MoreInfoPopover },
+        components: { TextHeader, BasicTable, MoreInfoPopover, BadgeIndicator, NoDataPlaceholder },
         data() {
             return {
                 reviews: [],
@@ -123,7 +125,7 @@
                 searchTerm: null,
                 isLoadingReviews: false,
                 storeState: useStoreState(),
-                tableHeaders: ['Customer', 'Subject', 'Rating', 'Comment', 'Created Date']
+                tableHeaders: ['Customer', 'Subject', 'Rating', 'Comment', 'Review Date']
             }
         },
         computed: {
@@ -136,28 +138,28 @@
         },
         methods: {
             paginate(url) {
-                this.url = url;
-                this.getReviews();
+                this.getReviews(url);
             },
             search(searchTerm) {
-                this.url = this.store._links.showReviews;
                 this.searchTerm = searchTerm;
                 this.getReviews();
             },
-            getReviews() {
+            getReviews(url = null) {
 
                 //  Start loader
                 this.isLoadingReviews = true;
 
                 //  Set the query params
                 const params = {
-                    'withUser': '1'
+                    '_relationships': 'user'
                 }
 
                 //  If the search term has been provided, then add to the query params
                 if(this.hasSearchTerm) params['search'] = this.searchTerm;
 
-                getApi(this.url, params).then(response => {
+                url = url ?? this.store._links.showStoreReviews;
+
+                getApi(url, params).then(response => {
 
                     if(response.status == 200) {
                         this.pagination = response.data;
@@ -182,7 +184,6 @@
             }
         },
         created() {
-            this.url = this.store._links.showReviews;
             this.getReviews();
         }
     };

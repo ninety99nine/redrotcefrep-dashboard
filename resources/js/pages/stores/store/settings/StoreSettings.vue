@@ -2,7 +2,7 @@
 
     <div class="flex min-h-full flex-col justify-center pt-8">
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-lg p-4 border border-gray-200 rounded-lg shadow sm:p-6">
+        <div class="sm:mx-auto sm:w-full sm:max-w-lg p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6">
 
             <!-- Profile Photo -->
             <StoreLogo :store="store" class="mx-auto" width="w-40" height="h-40"></StoreLogo>
@@ -680,7 +680,7 @@
                 this.allowFreeDelivery = this.store.allowFreeDelivery;
                 this.depositPercentages = this.store.depositPercentages;
                 this.pickupDestinations = this.store.pickupDestinations;
-                this.mobileNumber = this.store.mobileNumber.withExtension;
+                this.mobileNumber = this.store.mobileNumber.international;
                 this.deliveryDestinations = this.store.deliveryDestinations.map(function(deliveryDestination) {
                     return {
                         name: deliveryDestination.name,

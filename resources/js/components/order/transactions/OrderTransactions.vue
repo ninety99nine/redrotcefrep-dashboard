@@ -105,7 +105,7 @@
                         <!-- Verified By -->
                         <td class="text-xs text-center text-gray-300">
                             <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                            <BadgeIndicator v-else :active="false" :text="appName" inactiveType="info" :showDot="false"></BadgeIndicator>
+                            <BadgeIndicator v-else type="info" :text="appName" :showDot="false"></BadgeIndicator>
                         </td>
 
                         <!-- Requested By -->
@@ -125,7 +125,7 @@
                         <!-- DPO Link Status -->
                         <td class="text-xs text-center text-gray-300">
                             <span v-if="transaction._attributes.dpoPaymentLinkHasExpired == null" class="text-xs text-center text-gray-300">---</span>
-                            <BadgeIndicator v-else :active="transaction._attributes.dpoPaymentLinkHasExpired == false" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" inactiveType="warning" :showDot="false"></BadgeIndicator>
+                            <BadgeIndicator v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></BadgeIndicator>
                         </td>
 
                         <!-- DPO Expiry Date -->
@@ -290,7 +290,7 @@
             onView(transaction) {
                 this.$router.push({
                     name: 'show-store-transaction',
-                    params: { 'store_href': this.store._links.self, 'transaction_href': transaction._links.self }
+                    params: { 'store_href': this.store._links.showStore, 'transaction_href': transaction._links.showTransaction }
                 }).then(() => {
                     // Ensure scroll to top after route navigation
                     window.scrollTo(0, 0);
@@ -319,7 +319,7 @@
                 this.getTransactions();
             },
             search(searchTerm) {
-                this.url = this.store._links.showTransactions;
+                this.url = this.store._links.showOrderTransactions;
                 this.searchTerm = searchTerm;
                 this.getTransactions();
             },
@@ -330,10 +330,7 @@
 
                 //  Set the query params
                 const params = {
-                    'withPayingUser': '1',
-                    'withVerifyingUser': '1',
-                    'withPaymentMethod': '1',
-                    'withRequestingUser': '1'
+                    '_relationships': 'customer,requestedByUser,manuallyVerifiedByUser,paymentMethod'
                 }
 
                 //  If the search term has been provided, then add to the query params
@@ -351,8 +348,6 @@
 
                 }).catch(errorException => {
 
-                    console.log(errorException);
-
                     //  Stop loader
                     this.isLoadingTransactions = false;
 
@@ -364,7 +359,7 @@
                 //  Start loader
                 this.isDeletingTransactionIds.push(this.deletableTransaction.id);
 
-                deleteApi(this.deletableTransaction._links.deleteTransaction, this.form).then(response => {
+                deleteApi(this.deletableTransaction._links.deleteTransaction).then(response => {
 
                     //  Stop loader
                     this.isDeletingTransactionIds.splice(this.isDeletingTransactionIds.findIndex((id) => id == this.deletableTransaction.id, 1));
@@ -399,7 +394,7 @@
         },
         created() {
 
-            this.url = this.order._links.showTransactions;
+            this.url = this.order._links.showOrderTransactions;
             this.getTransactions();
 
         }

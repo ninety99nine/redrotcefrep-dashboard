@@ -33,14 +33,36 @@
                         v-for="(productLine, index) in order._relationships.cart._relationships.productLines" :key="index"
                         @click="() => onViewProduct(productLine)"
                         :class="['border-b cursor-pointer', canViewProduct(productLine) ? 'hover:bg-gray-50' : 'hover:bg-red-50']">
-                        <td class="whitespace-nowrap px-4 py-3">...</td>
-                        <td class="w-80 whitespace-nowrap px-4 py-3">{{ productLine.name }}</td>
-                        <td class="whitespace-nowrap px-4 py-3">{{ productLine.unitPrice.amountWithCurrency }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">{{ productLine.quantity }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">{{ productLine.grandTotal.amountWithCurrency}}</td>
+
+                        <!-- Image -->
+                        <td class="whitespace-nowrap px-4 py-3">
+                            <NoDataPlaceholder></NoDataPlaceholder>
+                        </td>
+
+                        <!-- Name -->
+                        <td class="w-80 whitespace-nowrap px-4 py-3">
+                            <span>{{ productLine.name }}</span>
+                        </td>
+
+                        <!-- Unit Price -->
+                        <td class="whitespace-nowrap px-4 py-3">
+                            <span>{{ productLine.unitPrice.amountWithCurrency }}</span>
+                        </td>
+
+                        <!-- Quantity -->
+                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                            <span>{{ productLine.quantity }}</span>
+                        </td>
+
+                        <!-- Grand Total -->
+                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                            <span>{{ productLine.grandTotal.amountWithCurrency}}</span>
+                        </td>
+
                     </tr>
                 </template>
 
+                <!-- Sub Total -->
                 <tr class="text-xs text-right">
                     <td colspan="4" class="whitespace-nowrap px-4 py-2">Sub Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
@@ -50,6 +72,8 @@
                         <span v-else>{{ order._relationships.cart.subTotal.amountWithCurrency }}</span>
                     </td>
                 </tr>
+
+                <!-- Coupon Discount Total -->
                 <tr class="text-xs text-right">
                     <td colspan="4" class="whitespace-nowrap px-4 py-2">Coupon Discount Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
@@ -62,6 +86,8 @@
                         </span>
                     </td>
                 </tr>
+
+                <!-- Sale Discount Total -->
                 <tr class="text-xs text-right border-b">
                     <td colspan="4" class="whitespace-nowrap px-4 py-2">Sale Discount Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
@@ -74,6 +100,8 @@
                         </span>
                     </td>
                 </tr>
+
+                <!-- Grand Total -->
                 <tr class="text-right text-black text-lg font-bold">
                     <td colspan="4" class="whitespace-nowrap px-4 py-3">Grand Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-3">
@@ -106,14 +134,16 @@
 
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import { useStoreState } from '@Stores/store-store.js';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { Alert, ShineEffect, LineSkeleton, MoreInfoPopover, BadgeIndicator },
+        components: { Alert, ShineEffect, LineSkeleton, MoreInfoPopover, BadgeIndicator, NoDataPlaceholder },
         props: {
             order: {
                 type: Object
@@ -122,9 +152,19 @@
                 type: Boolean
             }
         },
+        data() {
+            return {
+                storeState: useStoreState()
+            }
+        },
+        computed: {
+            store() {
+                return this.storeState.store;
+            }
+        },
         methods: {
             canViewProduct(productLine) {
-                if(productLine._links && productLine._links.showProduct) {
+                if(productLine._links.showProduct) {
                     return productLine._links.showProduct;
                 }else{
                     return false;
@@ -132,7 +172,7 @@
             },
             onViewProduct(productLine) {
                 if(this.canViewProduct(productLine)) {
-                    this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.self, 'product_href': productLine._links.showProduct } });
+                    this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': productLine._links.showProduct } });
                 }else{
                     this.showUnsuccessfulNotification('This product does not exist anymore. It might be deleted');
                 }

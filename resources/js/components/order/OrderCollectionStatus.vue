@@ -1,6 +1,6 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <BadgeIndicator :active="order.collectionVerified.status" :text="order.collectionVerified.name" inactiveType="warning" :showDot="false"></BadgeIndicator>
+        <BadgeIndicator :type="order.collectionVerified.status ? 'success' : 'warning'" :text="order.collectionVerified.name" :showDot="false"></BadgeIndicator>
         <MoreInfoPopover :class="moreInfoPopoverClasses" :description="order.collectionVerified.description" placement="top"></MoreInfoPopover>
     </div>
 </template>

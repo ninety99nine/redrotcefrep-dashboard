@@ -16,109 +16,107 @@
 
                 <div :class="['bg-white shadow-lg border p-4', storeRequiresSubscription ? 'rounded-b-lg' : 'rounded-lg']">
 
-                    <div class="space-y-4 mb-6">
+                    <template v-if="isLoadingQuickStartGuide || !completedQuickStartGuide">
 
-                        <template v-if="isLoadingQuickStartGuide || !completedQuickStartGuide">
+                        <div class="flex justify-between">
 
-                            <!-- Quick Start Guide (Heading) -->
-                            <h1 class="text-lg font-bold">Quick Start Guide</h1>
+                            <div class="w-full space-y-4 mb-6">
 
-                            <!-- Quick Start Guide (Instructions) -->
-                            <p class="text-sm text-gray-500">Here's a guide to get you selling in minutes.</p>
+                                <!-- Quick Start Guide (Heading) -->
+                                <h1 class="text-lg font-bold">Quick Start Guide</h1>
 
-                            <!-- Quick Start Guide (Progress) -->
-                            <span v-if="isLoadingQuickStartGuide" class="text-xs border rounded-lg shadow bg-gray-50 py-1 px-2 inline-block">
-                                <ShineEffect v-if="isLoadingQuickStartGuide">
-                                    <span class="flex items-center space-x-2">
-                                        <LineSkeleton width="w-4"></LineSkeleton>
-                                        <span class="text-gray-300">/</span>
-                                        <LineSkeleton width="w-20"></LineSkeleton>
-                                    </span>
+                                <!-- Quick Start Guide (Instructions) -->
+                                <p class="text-sm text-gray-500">Here's a guide to get you selling in minutes.</p>
+
+                                <!-- Quick Start Guide (Progress) -->
+                                <StoreQuickStartGuideProgress></StoreQuickStartGuideProgress>
+
+                                <!-- Milestone Skeletons -->
+                                <ShineEffect v-if="isLoadingQuickStartGuide" class="space-y-4">
+                                    <div v-for="(item, index) in 5" :key="index" class="flex items-center space-x-2">
+                                        <RoundSkeleton size="w-3 h-3"></RoundSkeleton>
+                                        <LineSkeleton :width="['w-40', 'w-48', 'w-60', 'w-80', 'w-72'][index]"></LineSkeleton>
+                                    </div>
                                 </ShineEffect>
-                                <span v-else>{{ quickStartGuide.completedMilestones }} / {{ quickStartGuide.totalMilestones }} completed</span>
-                            </span>
 
-                        </template>
+                                <!-- Milestones -->
+                                <div v-else-if="!completedQuickStartGuide" class="text-sm space-y-3">
 
-                        <div v-else class="flex justify-between">
-                                <div class="space-y-2">
-                                    <p class="text-gray-500">Congratulations 👏 you are ready for market</p>
-                                    <p class="text-gray-500">Tell your customers to dial and access your store 🎉</p>
-                                    <MobileNumberShortcode>
-                                        <template #trigger="triggerProps">
-                                            <p @click="triggerProps.showModal" class="font-bold text-2xl hover:opacity-80 active:opacity-50 active:scale-90 underline decoration-dashed underline-offset-4 cursor-pointer">{{ mobileNumberShortcode }}</p>
+                                    <div v-for="(milestone, index) in quickStartGuide.milestones" :key="index" class="flex items-center space-x-2">
+
+                                        <!-- Milestone Completed Checkmark Icon -->
+                                        <svg v-if="showMilestoneCheckmark(milestone)" :class="milestoneIconClass(milestone)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+                                        </svg>
+
+                                        <!-- Milestone Not Completed Circle -->
+                                        <div v-else class="rounded-full border border-dashed border-gray-300 w-6 h-6"></div>
+
+                                        <!-- Milestone Title -->
+                                        <span :class="{ 'text-yellow-500' : (showMilestoneCheckmark(milestone) && milestone.status == false)}">
+
+                                            <!-- Add Products Action -->
+                                            <template v-if="milestone.type == 'added products' && milestone.status == false">
+                                                <span @click="navigateToAddProduct" class="hover:opacity-80 active:opacity-50 active:scale-90 underline decoration-dashed underline-offset-4 cursor-pointer">{{ milestone.title }} 🛍️</span>
+                                            </template>
+
+                                            <!-- Dial Store Action -->
+                                            <template v-else-if="milestone.type == 'dialed store' && milestone.status == false">
+                                                <span>Dial your store on </span>
+                                                <MobileNumberShortcode></MobileNumberShortcode>
+                                            </template>
+
+                                            <!-- Subscribe Action -->
+                                            <template v-else-if="milestone.type == 'subscribed' && milestone.status == false">
+                                                <span>Open for business by </span>
+                                                <StoreSubscribeButton>
+                                                    <template #trigger="triggerProps">
+                                                        <span @click="triggerProps.showModal" class="hover:opacity-80 active:opacity-50 active:scale-90 underline decoration-dashed underline-offset-4 cursor-pointer">subscribing</span>
+                                                    </template>
+                                                </StoreSubscribeButton>
+                                            </template>
+
+                                            <span v-else>{{ milestone.title }}</span>
+                                        </span>
+
+                                        <!-- Milestone More Info Popover -->
+                                        <template v-if="(showMilestoneCheckmark(milestone) && milestone.status == false)">
+                                            <MoreInfoPopover title="Subscription Expired" placement="top">
+                                                <template #description>
+                                                    <hr>
+                                                    <p>Renew your subscription to reopen your store and allow customers to place orders</p>
+                                                </template>
+                                            </MoreInfoPopover>
                                         </template>
-                                    </MobileNumberShortcode>
+
+                                    </div>
+
                                 </div>
-                            <div class="h-72 overflow-hidden">
-                                <VirtualPhone></VirtualPhone>
+
                             </div>
+
+                            <div class="">
+                                <iframe width="400" height="225" class="rounded-lg shadow-md" src="https://www.youtube.com/embed/u31qwQUeGuM" title="Placeholder video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                            </div>
+
                         </div>
 
+                    </template>
+
+                    <div v-else class="flex justify-between">
+                        <div class="space-y-2">
+                            <p class="text-gray-500">Congratulations 👏 you are ready for market</p>
+                            <p class="text-gray-500">Tell your customers to dial and access your store 🎉</p>
+                            <MobileNumberShortcode>
+                                <template #trigger="triggerProps">
+                                    <p @click="triggerProps.showModal" class="font-bold text-2xl hover:opacity-80 active:opacity-50 active:scale-90 underline decoration-dashed underline-offset-4 cursor-pointer">{{ mobileNumberShortcode }}</p>
+                                </template>
+                            </MobileNumberShortcode>
+                        </div>
+                        <div class="h-72 overflow-hidden">
+                            <VirtualPhone></VirtualPhone>
+                        </div>
                     </div>
-
-                    <!-- Milestone Skeletons -->
-                    <ShineEffect v-if="isLoadingQuickStartGuide" class="space-y-4">
-                        <div v-for="(item, index) in 5" :key="index" class="flex items-center space-x-2">
-                            <RoundSkeleton size="w-3 h-3"></RoundSkeleton>
-                            <LineSkeleton :width="['w-40', 'w-48', 'w-60', 'w-80', 'w-72'][index]"></LineSkeleton>
-                        </div>
-                    </ShineEffect>
-
-                    <!-- Milestones -->
-                    <div v-else-if="!completedQuickStartGuide" class="text-sm space-y-3">
-
-                        <div v-for="(milestone, index) in quickStartGuide.milestones" :key="index" class="flex items-center space-x-2">
-
-                            <!-- Milestone Completed Checkmark Icon -->
-                            <svg v-if="showMilestoneCheckmark(milestone)" :class="milestoneIconClass(milestone)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                            </svg>
-
-                            <!-- Milestone Not Completed Circle -->
-                            <div v-else class="rounded-full border border-dashed border-gray-300 w-6 h-6"></div>
-
-                            <!-- Milestone Title -->
-                            <span :class="{ 'text-yellow-500' : (showMilestoneCheckmark(milestone) && milestone.status == false)}">
-
-                                <!-- Add Products Action -->
-                                <template v-if="milestone.type == 'added products' && milestone.status == false">
-                                    <span @click="navigateToAddProduct" class="hover:opacity-80 active:opacity-50 active:scale-90 underline decoration-dashed underline-offset-4 cursor-pointer">{{ milestone.title }} 🛍️</span>
-                                </template>
-
-                                <!-- Dial Store Action -->
-                                <template v-else-if="milestone.type == 'dialed store' && milestone.status == false">
-                                    <span>Dial your store on </span>
-                                    <MobileNumberShortcode></MobileNumberShortcode>
-                                </template>
-
-                                <!-- Subscribe Action -->
-                                <template v-else-if="milestone.type == 'subscribed' && milestone.status == false">
-                                    <span>Open for business by </span>
-                                    <StoreSubscribeButton>
-                                        <template #trigger="triggerProps">
-                                            <span @click="triggerProps.showModal" class="hover:opacity-80 active:opacity-50 active:scale-90 underline decoration-dashed underline-offset-4 cursor-pointer">subscribing</span>
-                                        </template>
-                                    </StoreSubscribeButton>
-                                </template>
-
-                                <span v-else>{{ milestone.title }}</span>
-                            </span>
-
-                            <!-- Milestone More Info Popover -->
-                            <template v-if="(showMilestoneCheckmark(milestone) && milestone.status == false)">
-                                <MoreInfoPopover title="Subscription Expired" placement="top">
-                                    <template #description>
-                                        <hr>
-                                        <p>Renew your subscription to reopen your store and allow customers to place orders</p>
-                                    </template>
-                                </MoreInfoPopover>
-                            </template>
-
-                        </div>
-
-                    </div>
-
 
                 </div>
 
@@ -297,13 +295,14 @@
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import { postApi, deleteApi } from '@Repositories/api-repository.js';
     import VirtualPhone from '@Components/virtual-phone/VirtualPhone.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import OrderPaymentStatus from '@Components/order/OrderPaymentStatus.vue';
-    import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import StoreSubscribeButton from '@Components/store/StoreSubscribeButton.vue';
     import MobileNumberShortcode from '@Components/user/MobileNumberShortcode.vue';
     import OrderCollectionStatus from '@Components/order/OrderCollectionStatus.vue';
+    import StoreQuickStartGuideProgress from '@Components/store/StoreQuickStartGuideProgress.vue';
     import UserStoreSubscriptionCountdown from '@Components/store/UserStoreSubscriptionCountdown.vue';
 
     export default {
@@ -312,35 +311,39 @@
             TextHeader, AddButton, BasicTable, Checkbox, Countdown, OrderStatus, ConfirmModal, ShineEffect, OtpInput,
             LineSkeleton, SpiningLoader, PrimaryButton, RoundSkeleton, MoreInfoPopover, ToogleSwitch, VirtualPhone,
             OrderPaymentStatus, StoreSubscribeButton, MobileNumberShortcode, OrderCollectionStatus,
-            UserStoreSubscriptionCountdown
+            StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown
         },
         data() {
             return {
-                quickStartGuide: null,
                 isDeletingStore: false,
                 authState: useAuthState(),
                 isLoadingDeleteCode: false,
                 deleteConfirmationCode: '',
                 storeState: useStoreState(),
                 validDeleteConfirmationCode: '',
-                isLoadingQuickStartGuide: false,
             }
         },
         computed: {
             store() {
                 return this.storeState.store;
             },
-            lastSubscriptionHasExpired() {
-                return this.store._attributes.userStoreAssociation.lastSubscriptionHasExpired;
+            quickStartGuide() {
+                return this.storeState.quickStartGuide;
             },
-            storeRequiresSubscription() {
-                return this.lastSubscriptionHasExpired == null || this.lastSubscriptionHasExpired == true
+            isLoadingQuickStartGuide() {
+                return this.storeState.isLoadingQuickStartGuide;
+            },
+            completedQuickStartGuide() {
+                return this.storeState.completedQuickStartGuide;
+            },
+            activeSubscription() {
+                return this.store._relationships.activeSubscription;
             },
             mobileNumberShortcode() {
                 return this.authState.user._attributes.mobileNumberShortcode;
             },
-            completedQuickStartGuide() {
-                return this.quickStartGuide != null && (this.quickStartGuide.completedMilestones == this.quickStartGuide.totalMilestones);
+            storeRequiresSubscription() {
+                return this.activeSubscription == null;
             },
             deleteConfirmationCodeInvalid() {
                 return this.deleteConfirmationCode == '' ||
@@ -370,42 +373,13 @@
                 return classes;
             },
             navigateToAddCoupon() {
-                this.$router.push({ name: 'create-store-coupon', params: { 'store_href': this.store._links.self } });
+                this.$router.push({ name: 'create-store-coupon', params: { 'store_href': this.store._links.showStore } });
             },
             navigateToAddProduct() {
-                this.$router.push({ name: 'create-store-product', params: { 'store_href': this.store._links.self } });
+                this.$router.push({ name: 'create-store-product', params: { 'store_href': this.store._links.showStore } });
             },
             navigateToInviteTeamMember() {
-                this.$router.push({ name: 'invite-store-team-member', params: { 'store_href': this.store._links.self } });
-            },
-            showQuickStartGuide() {
-
-                //  Start loader
-                this.isLoadingQuickStartGuide = true;
-
-                getApi(this.store._links.showQuickStartGuide).then(response => {
-
-                    if(response.status == 200) {
-
-                        this.quickStartGuide = response.data;
-
-                    }
-
-                    //  Stop loader
-                    this.isLoadingQuickStartGuide = false;
-
-                }).catch(errorException => {
-
-                    //  Stop loader
-                    this.isLoadingQuickStartGuide = false;
-
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
-                    this.setServerFormErrors(errorException);
-
-                });
-
+                this.$router.push({ name: 'invite-store-team-member', params: { 'store_href': this.store._links.showStore } });
             },
             showDeleteStoreConfirmationCode() {
 
@@ -494,9 +468,7 @@
 
         },
         created() {
-            if(this.quickStartGuide == null) {
-                this.showQuickStartGuide();
-            }
+
         }
     };
 

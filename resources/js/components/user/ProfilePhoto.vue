@@ -112,11 +112,6 @@
                 deep: false // Since profilePhoto is not a nested object, set deep to false
             }
         },
-        computed: {
-            profilePhotoErrorText() {
-                return this.formErrors.profilePhoto;
-            }
-        },
         methods: {
             selectImage() {
 
@@ -168,7 +163,7 @@
 
                 updateUserProfilePhoto(this.user, file).then(response => {
 
-                    if(response.status == 201) {
+                    if(response.status == 200) {
 
                         //  Stop loader
                         this.isSubmitting = false;

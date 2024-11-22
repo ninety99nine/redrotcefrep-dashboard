@@ -30,7 +30,7 @@
 
                 <div @click="navigateToNavMenu('profile')" class="text-center px-4 py-4 cursor-pointer">
                     <p>{{ authState.user?._attributes?.name ?? '...' }}</p>
-                    <p class="text-sm text-gray-500">{{ authState.user?.mobileNumber?.withoutExtension ?? '...' }}</p>
+                    <p class="text-sm text-gray-500">{{ authState.user?.mobileNumber?.national ?? '...' }}</p>
                 </div>
 
                 <div class="mb-4 border-b"></div>
@@ -109,8 +109,9 @@
 
                     <!-- Add Store -->
                     <li>
-                        <AddButton :action="navigateToAddStore" class="flex items-center space-x-2 my-4 w-full">
-                            <span class="text-xs">Add Store</span>
+
+                        <AddButton :action="navigateToAddStore" class="my-4" size="sm">
+                            <span class="text-xs ml-1">Add Store</span>
                         </AddButton>
                     </li>
                 </ul>
@@ -189,7 +190,11 @@
                 links: [
                     {
                         label: 'My Profile',
-                        name: 'profile',
+                        name: 'show-profile',
+                    },
+                    {
+                        label: 'Stores',
+                        name: 'show-stores',
                     },
                     /*
                     {
@@ -389,7 +394,7 @@
                     '_noRelationships': true,
                     'filter': 'team member joined',
                     '_includeAttributes': 'nameWithEmoji',
-                    '_includeLinks': 'self,showOrders,showProducts',
+                    '_includeLinks': 'showStore,showStoreOrders,showStoreProducts',
                 };
 
                 return getUserStores(this.authState.user, params).then(response => {
@@ -404,7 +409,7 @@
 
                             return {
                                 name: 'show-store-home',
-                                href: store._links.self,
+                                href: store._links.showStore,
                                 label: store._attributes.nameWithEmoji,
                                 children: [
                                     {
@@ -429,6 +434,11 @@
                                         label: 'Coupons',
                                         name: 'show-store-coupons',
                                         relatedLinks: ['show-store-coupon', 'create-store-coupon']
+                                    },
+                                    {
+                                        label: 'Customers',
+                                        name: 'show-store-customers',
+                                        relatedLinks: ['show-store-customer', 'create-store-customer']
                                     },
                                     {
                                         label: 'Transactions',

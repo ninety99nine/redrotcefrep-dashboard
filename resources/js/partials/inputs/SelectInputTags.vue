@@ -99,7 +99,6 @@
                 this.localTags = newValue;
             },
             localTags(newValue, oldValue) {
-                console.log(newValue);
                 this.$emit('onTagsChanged', newValue);
             }
         },

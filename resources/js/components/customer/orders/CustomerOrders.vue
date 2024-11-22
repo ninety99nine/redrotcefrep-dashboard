@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed py-6">
+        <div v-if="!(isLoadingOrders || isLoadingCustomer) && (pagination ?? {}).total > 0" class="flex justify-between items-center border-dashed pb-6">
 
             <div class="flex items-center">
 
@@ -16,6 +16,18 @@
 
             <template v-if="(pagination ?? {}).total > 0">
 
+                <!-- Order Action Buttons -->
+                <slot name="actionButtons"></slot>
+
+            </template>
+
+        </div>
+
+        <!-- Orders Table -->
+        <BasicTable v-if="isLoadingOrders || isLoadingCustomer || (pagination ?? {}).total > 0 || hasSearchTerm" :pagination="pagination" :isLoading="isLoadingOrders || isLoadingCustomer" @paginate="paginate" @search="search" @refresh="getOrders" :totalHeaders="tableHeaders.length">
+
+            <template #primaryFilters>
+
                 <!-- Show Everything Toggle Switch -->
                 <ToogleSwitch
                     v-model="showEverything" size="md"
@@ -24,17 +36,7 @@
                     Show Everything
                 </ToogleSwitch>
 
-                <!-- Add Order Button -->
-                <AddButton :action="onAddOrder" class="w-40">
-                    <span class="ml-2">Add Order</span>
-                </AddButton>
-
             </template>
-
-        </div>
-
-        <!-- Orders Table -->
-        <BasicTable v-if="isLoadingOrders || (pagination ?? {}).total > 0 || hasSearchTerm" :pagination="pagination" :isLoading="isLoadingOrders" @paginate="paginate" @search="search" @refresh="getOrders" :totalHeaders="tableHeaders.length">
 
             <!-- Table Head -->
             <template #head>
@@ -182,19 +184,33 @@
         </BasicTable>
 
         <!-- No Orders -->
-        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
-            <div class="space-y-4">
-                <h1 class="text-2xl font-bold">Ready For Your First Sale?</h1>
-                <p>Your orders will appear here once customers start shopping. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
+        <div v-else class="p-8 border rounded-lg bg-gray-50">
 
-                <!-- Add Order Button -->
-                <AddButton :action="onAddOrder" class="w-40" size="sm">
-                    <span class="ml-2">Add Order</span>
-                </AddButton>
+            <div class="flex items-center space-x-8">
+
+                <div>
+                    <span class="text-8xl">🎁</span>
+                </div>
+
+                <div class="space-y-2">
+
+                    <!-- No Orders Header -->
+                    <h1 class="text-lg font-bold">No Orders Yet</h1>
+
+                    <!-- No Orders Instruction -->
+                    <p class="text-gray-500 text-sm">Orders will appear here once your customer starts shopping.</p>
+
+                </div>
+
             </div>
-            <div>
-                <span class="text-8xl">🎁</span>
+
+            <div class="flex justify-end">
+
+                <!-- Order Action Buttons -->
+                <slot name="actionButtons"></slot>
+
             </div>
+
         </div>
 
         <!-- Confirm Delete Order -->
@@ -248,6 +264,17 @@
             PrimaryButton, MoreInfoPopover, ToogleSwitch, OrderPaymentStatus, NoDataPlaceholder,
             OrderCollectionStatus
         },
+        props: {
+            customer: {
+                type: Object
+            },
+            isLoadingCustomer: {
+                type: Boolean
+            },
+            refreshCustomer: {
+                type: Function
+            }
+        },
         data() {
             return {
                 orders: [],
@@ -259,6 +286,15 @@
                 isDeletingOrderIds: [],
                 isLoadingOrders: false,
                 storeState: useStoreState(),
+            }
+        },
+        watch: {
+            'isLoadingCustomer'(newValue, oldValue) {
+
+                if(newValue == false) {
+                    this.getOrders();
+                }
+
             }
         },
         computed: {
@@ -326,7 +362,7 @@
                 //  If the search term has been provided, then add to the query params
                 if(this.hasSearchTerm) params['search'] = this.searchTerm;
 
-                url = url ?? this.store._links.showStoreOrders;
+                url = url ?? this.customer._links.showCustomerOrders;
 
                 getApi(url, params).then(response => {
 
@@ -373,6 +409,8 @@
                         //  If we are not deleting any other orders, then refresh the order list
                         if(this.isDeletingOrderIds.length == 0) this.getOrders();
 
+                        this.refreshCustomer();
+
                     }
 
                 }).catch(errorException => {
@@ -388,12 +426,6 @@
                 });
 
             }
-        },
-        mounted() {
-
-        },
-        created() {
-            this.getOrders();
         }
     };
 

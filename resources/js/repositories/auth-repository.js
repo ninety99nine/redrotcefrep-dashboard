@@ -29,7 +29,7 @@ async function validateRegister(data) {
     try {
 
         const response = await axios.post(apiHomeLinks().validateRegister, data);
-        if(response.status == 201) {
+        if(response.status == 200) {
             saveAccessToken(response);
             saveUser(response);
         }
@@ -49,7 +49,7 @@ async function register(data) {
     try {
 
         const response = await axios.post(apiHomeLinks().register, data);
-        if(response.status == 201) {
+        if(response.status == 200) {
             saveAccessToken(response);
             saveUser(response);
         }
@@ -71,7 +71,7 @@ async function logout() {
         //  Get the Auth Store instance
         const auth = useAuthState();
 
-        const response = await axios.post(auth.user._links.logout);
+        const response = await axios.post(auth.user._links.logoutUser);
         if(response.status == 200) {
             removeAccessToken();
             removeUser();

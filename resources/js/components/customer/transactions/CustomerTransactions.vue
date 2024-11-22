@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="flex justify-between items-center border-dashed py-6">
+        <div v-if="!(isLoadingTransactions || isLoadingCustomer) && (pagination ?? {}).total > 0" class="flex justify-between items-center border-dashed py-6">
 
             <div class="flex items-center">
 
@@ -17,6 +17,18 @@
 
             <template v-if="(pagination ?? {}).total > 0">
 
+                <!-- Order Action Buttons -->
+                <slot name="actionButtons"></slot>
+
+            </template>
+
+        </div>
+
+        <!-- Transactions Table -->
+        <BasicTable v-if="isLoadingTransactions || isLoadingCustomer || (pagination ?? {}).total > 0 || hasSearchTerm" :pagination="pagination" :isLoading="isLoadingTransactions || isLoadingCustomer" @paginate="paginate" @search="search" @refresh="getTransactions" :totalHeaders="tableHeaders.length">
+
+            <template #primaryFilters>
+
                 <!-- Show Everything Toggle Switch -->
                 <ToogleSwitch
                     v-model="showEverything" size="md"
@@ -25,17 +37,7 @@
                     Show Everything
                 </ToogleSwitch>
 
-                <!-- Add Transaction Button -->
-                <AddButton :action="onAddTransaction">
-                    <span class="ml-2">Add Transaction</span>
-                </AddButton>
-
             </template>
-
-        </div>
-
-        <!-- Transactions Table -->
-        <BasicTable v-if="isLoadingTransactions || (pagination ?? {}).total > 0 || hasSearchTerm" :pagination="pagination" :isLoading="isLoadingTransactions" @paginate="paginate" @search="search" @refresh="getTransactions" :totalHeaders="tableHeaders.length">
 
             <!-- Table Head -->
             <template #head>
@@ -156,19 +158,33 @@
         </BasicTable>
 
         <!-- No Transactions -->
-        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
-            <div class="space-y-4">
-                <h1 class="text-2xl font-bold">No Transactions Yet</h1>
-                <p>Your transactions will appear here once customers start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
+        <div v-else class="p-8 border rounded-lg bg-gray-50">
 
-                <!-- Add Transaction Button -->
-                <AddButton :action="onAddTransaction" class="w-40" size="sm">
-                    <span class="ml-2">Add Transaction</span>
-                </AddButton>
+            <div class="flex items-center space-x-8">
+
+                <div>
+                    <span class="text-8xl">💵</span>
+                </div>
+
+                <div class="space-y-2">
+
+                    <!-- No Transactions Header -->
+                    <h1 class="text-lg font-bold">No Transactions Yet</h1>
+
+                    <!-- No Transactions Instruction -->
+                    <p class="text-gray-500 text-sm">Transactions will appear here once your customer start paying.</p>
+
+                </div>
+
             </div>
-            <div>
-                <span class="text-8xl">💵</span>
+
+            <div class="flex justify-end">
+
+                <!-- Transaction Action Buttons -->
+                <slot name="actionButtons"></slot>
+
             </div>
+
         </div>
 
         <!-- Confirm Delete Transaction -->
@@ -222,6 +238,17 @@
             AddButton, TextHeader, BasicTable, Checkbox, Countdown, ExternalLink, ConfirmModal, SpiningLoader,
             PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
         },
+        props: {
+            customer: {
+                type: Object
+            },
+            isLoadingCustomer: {
+                type: Boolean
+            },
+            refreshCustomer: {
+                type: Function
+            }
+        },
         data() {
             return {
                 transactions: [],
@@ -234,6 +261,15 @@
                 isDeletingTransactionIds: [],
                 isLoadingTransactions: false,
                 storeState: useStoreState(),
+            }
+        },
+        watch: {
+            'isLoadingCustomer'(newValue, oldValue) {
+
+                if(newValue == false) {
+                    this.getTransactions();
+                }
+
             }
         },
         computed: {
@@ -300,7 +336,7 @@
                 //  If the search term has been provided, then add to the query params
                 if(this.hasSearchTerm) params['search'] = this.searchTerm;
 
-                url = url ?? this.store._links.showStoreTransactions;
+                url = url ?? this.customer._links.showCustomerTransactions;
 
                 getApi(url, params).then(response => {
 
@@ -357,12 +393,6 @@
                 });
 
             }
-        },
-        mounted() {
-
-        },
-        created() {
-            this.getTransactions();
         }
     };
 

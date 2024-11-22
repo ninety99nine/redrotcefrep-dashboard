@@ -76,17 +76,17 @@
 
                     <!-- Mobile Number -->
                     <td class="px-4 py-4 align-top">
-                        <span>{{ teamMember.mobileNumber.withoutExtension }}</span>
+                        <span>{{ (teamMember.mobileNumber || {}).national || teamMember._relationships.userStoreAssociation.mobileNumber.national }}</span>
                     </td>
 
                     <!-- Status -->
                     <td class="whitespace-nowrap px-4 py-4 align-top">
-                        <BadgeIndicator :active="teamMember._attributes.userStoreAssociation.teamMemberStatus == 'Joined'" :text="teamMember._attributes.userStoreAssociation.teamMemberStatus" :inactiveType="teamMember._attributes.userStoreAssociation.teamMemberStatus == 'Invited' ? 'warning' : 'info'" :showDot="false"></BadgeIndicator>
+                        <BadgeIndicator :type="teamMember._attributes.userStoreAssociation.teamMemberStatus.toLowerCase() == 'invited' ? 'warning' : 'info'" :text="teamMember._attributes.userStoreAssociation.teamMemberStatus" :showDot="false"></BadgeIndicator>
                     </td>
 
                     <!-- Role -->
                     <td class="whitespace-nowrap px-4 py-4 align-top">
-                        <BadgeIndicator :active="teamMember._attributes.userStoreAssociation.teamMemberRole == 'Creator'" :text="teamMember._attributes.userStoreAssociation.teamMemberRole" inactiveType="info" :showDot="teamMember._attributes.userStoreAssociation.teamMemberRole == 'Creator'"></BadgeIndicator>
+                        <BadgeIndicator :type="teamMember._attributes.userStoreAssociation.teamMemberRole.toLowerCase() == 'creator' ? 'success' : 'info'" :text="teamMember._attributes.userStoreAssociation.teamMemberRole" :showDot="teamMember._attributes.userStoreAssociation.teamMemberRole.toLowerCase() == 'creator'"></BadgeIndicator>
                     </td>
 
                     <!-- Permissions -->
@@ -102,7 +102,7 @@
                     <td v-else class="whitespace-nowrap px-4 py-4 align-top">
 
                         <div class="flex items-center space-x-2">
-                            <BadgeIndicator :active="false" :text="teamMember._attributes.userStoreAssociation.teamMemberPermissions.length" inactiveType="info" :showDot="false"></BadgeIndicator>
+                            <BadgeIndicator type="info" :text="teamMember._attributes.userStoreAssociation.teamMemberPermissions.length" :showDot="false"></BadgeIndicator>
                             <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Permissions" placement="top">
 
                                 <template #description>
@@ -242,7 +242,7 @@
             onView(teamMember) {
                 this.$router.push({
                     name: 'show-store-team-member',
-                    params: { 'store_href': this.store._links.self, 'team_member_href': teamMember._links.showStoreTeamMember }
+                    params: { 'store_href': this.store._links.showStore, 'team_member_href': teamMember._links.showStoreTeamMember }
                 }).then(() => {
                     // Ensure scroll to top after route navigation
                     window.scrollTo(0, 0);
@@ -267,18 +267,16 @@
                 return this.isDeletingTeamMemberIds.findIndex((id) => id == teamMember.id) != -1;
             },
             onInviteTeamMember() {
-                this.$router.push({ name: 'invite-store-team-member', params: { 'store_href': this.store._links.self } });
+                this.$router.push({ name: 'invite-store-team-member', params: { 'store_href': this.store._links.showStore } });
             },
             paginate(url) {
-                this.url = url;
-                this.getTeamMembers();
+                this.getTeamMembers(url);
             },
             search(searchTerm) {
-                this.url = this.store._links.showTeamMembers;
                 this.searchTerm = searchTerm;
                 this.getTeamMembers();
             },
-            getTeamMembers() {
+            getTeamMembers(url = null) {
 
                 //  Start loader
                 this.isLoadingTeamMembers = true;
@@ -289,7 +287,9 @@
                 //  If the search term has been provided, then add to the query params
                 if(this.hasSearchTerm) params['search'] = this.searchTerm;
 
-                getApi(this.url, params).then(response => {
+                url = url ?? this.store._links.showStoreTeamMembers;
+
+                getApi(url, params).then(response => {
 
                     if(response.status == 200) {
                         this.pagination = response.data;
@@ -321,11 +321,11 @@
 
                 var data = {
                     'mobileNumbers': [
-                        this.deletableTeamMember.mobileNumber.withExtension
+                        (this.deletableTeamMember.mobileNumber || {}).international || this.deletableTeamMember._relationships.userStoreAssociation.mobileNumber.international
                     ]
                 };
 
-                deleteApi(this.store._links.removeTeamMembers, data).then(response => {
+                deleteApi(this.store._links.removeStoreTeamMembers, data).then(response => {
 
                     //  Stop loader
                     this.isDeletingTeamMemberIds.splice(this.isDeletingTeamMemberIds.findIndex((id) => id == this.deletableTeamMember.id, 1));
@@ -360,7 +360,6 @@
 
         },
         created() {
-            this.url = this.store._links.showTeamMembers;
             this.getTeamMembers();
         }
     };

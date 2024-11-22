@@ -3,7 +3,6 @@ import axios from 'axios';
 // GET function
 async function getApi(url, params) {
     try {
-
         return axios.get(url, { params: params });
 
     } catch (error) {

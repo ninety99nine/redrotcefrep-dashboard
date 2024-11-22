@@ -16,13 +16,17 @@
 
         <!-- Popover Information -->
         <div :id="popoverUniqueId" role="tooltip" class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0">
-            <div class="p-3 space-y-2 text-xs">
+            <div class="p-3 text-xs">
 
-                <!-- Title -->
-                <h3 v-if="title" class="font-semibold text-gray-900 dark:text-white">{{ title }}</h3>
+                <div class="space-y-2">
 
-                <!-- Description (As Paragraph) -->
-                <p v-if="description" class="whitespace-normal">{{ description }}</p>
+                    <!-- Title -->
+                    <h3 v-if="title" class="font-semibold text-gray-900 dark:text-white">{{ title }}</h3>
+
+                    <!-- Description (As Paragraph) -->
+                    <p v-if="description" class="whitespace-normal">{{ description }}</p>
+
+                </div>
 
                 <!-- Description (As Slot) -->
                 <slot name="description"></slot>

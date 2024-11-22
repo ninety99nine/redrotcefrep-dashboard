@@ -4,7 +4,12 @@ import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository
 
 // Create store
 async function createStore(params = {}) {
-    return await postApi(useApiState().apiHome._links['createStores'], params);
+    return await postApi(useApiState().apiHome._links['createStore'], params);
+}
+
+// Get user stores
+async function getUserStores(user, params = {}) {
+    return await getApi(user._links.showStores, params);
 }
 
 // Get store
@@ -58,13 +63,8 @@ async function deleteStore(store, data) {
     return await deleteApi(store._links.deleteStore, data);
 }
 
-// Get stores
-async function getUserStores(user, params = {}) {
-    return await getApi(user._links.showStores, params);
-}
-
 // Export functions
 export {
-    createStore, getStore, updateStore, updateStoreLogo, getAvailablePaymentMethods, getSupportedPaymentMethods,
-    getAvailableDepositPercentages, getAvailableInstallmentPercentages, deleteStore, getUserStores
+    createStore, getUserStores, getStore, updateStore, updateStoreLogo, getAvailablePaymentMethods,
+    getSupportedPaymentMethods, getAvailableDepositPercentages, getAvailableInstallmentPercentages, deleteStore
 };

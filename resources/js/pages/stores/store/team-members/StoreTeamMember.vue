@@ -5,17 +5,23 @@
         <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
-            <BackButton class="w-16 mr-4"></BackButton>
+            <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
-            <!-- Text Heading -->
-            <SpiningLoader v-if="isLoadingTeamMember"></SpiningLoader>
+            <div v-if="isLoadingTeamMember" class="flex items-center space-x-2">
+                <ShineEffect class="flex space-x-2">
+                    <LineSkeleton width="w-20 mt-2"></LineSkeleton>
+                    <LineSkeleton width="w-16 mt-2"></LineSkeleton>
+                    <LineSkeleton width="w-4 mt-2"></LineSkeleton>
+                </ShineEffect>
+            </div>
 
             <template v-else>
 
                 <div class="flex items-center space-x-2">
 
                     <TextHeader>{{ isInviting ? 'Add Team Member' : teamMember._attributes.name }}</TextHeader>
-                    <BadgeIndicator v-if="isEditting" :active="isCreator" :text="teamMemberRole" inactiveType="info" :showDot="isCreator"></BadgeIndicator>
+                    <BadgeIndicator v-if="isEditting" :type="isCreator ? 'success' : 'info'" :text="teamMemberRole" :showDot="isCreator"></BadgeIndicator>
+                    <BadgeIndicator v-if="isEditting" :type="isInvited ? 'warning' : 'info'" :text="teamMemberStatus" :showDot="isCreator"></BadgeIndicator>
 
                 </div>
 
@@ -28,11 +34,8 @@
         <!-- Team Member Form -->
         <form class="relative" action="#" method="POST">
 
-            <!-- Loading Backdrop -->
-            <LoadingBackdrop v-if="isLoadingTeamMember || isSubmitting"></LoadingBackdrop>
-
             <!-- General Error Info Alert -->
-            <Alert v-if="mustCreate || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
+            <Alert v-if="mustInvite || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
 
                 <div class="flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -48,22 +51,25 @@
 
             </Alert>
 
+            <!-- General Error Info Alert -->
+            <Alert v-if="getFormError('general')" type="warning" class="mb-4">
+                {{ getFormError('general') }}
+            </Alert>
+
             <div class="grid grid-cols-12 gap-4 mb-8">
 
-                <div class="col-span-8">
+                <div class="col-span-8 relative">
+
+                    <!-- Loading Backdrop -->
+                    <LoadingBackdrop v-if="isLoadingTeamMember || isSubmitting" class="rounded-lg"></LoadingBackdrop>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
-
-                        <!-- General Error Info Alert -->
-                        <Alert v-if="getFormError('general')" type="warning">
-                            {{ getFormError('general') }}
-                        </Alert>
 
                         <template v-if="isInviting">
 
                             <p class="font-bold text-sm">Invitation</p>
 
-                            <p class="text-sm text-gray-400">Enter the mobile number of the person you want to invite w.g 26772000001</p>
+                            <p class="text-sm text-gray-400">Enter the mobile number of the person you want to invite e.g +26772000001</p>
 
                         </template>
 
@@ -76,24 +82,40 @@
                             labelPopoverDescription="The mobile number that will be used by customers as the primary contact number of your store">
                         </MobileNumberInput>
 
-                        <div v-else-if="teamMember">
-                            <span>Mobile Number: <span class="font-bold">{{ teamMember.mobileNumber.withoutExtension }}</span></span>
+                        <div v-else>
+                            <div class="flex items-center space-x-2">
+                                <span>Mobile Number: </span>
+                                <ShineEffect v-if="isLoadingTeamMember">
+                                    <LineSkeleton width="w-24"></LineSkeleton>
+                                </ShineEffect>
+                                <span v-else class="font-bold">{{ (teamMember.mobileNumber || {}).national || teamMember._relationships.userStoreAssociation.mobileNumber.national }}</span>
+                            </div>
                         </div>
 
                     </div>
 
                     <div class="bg-white shadow-lg rounded-lg border p-4">
 
-                        <div :class="['space-y-4', form.offerDiscount ? 'mb-8' : 'mb-4']">
+                        <ShineEffect v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions || isLoadingAvailableTeamMemberPermissions" class="space-y-4">
+                            <LineSkeleton width="w-24"></LineSkeleton>
+                            <LineSkeleton width="w-60"></LineSkeleton>
+                        </ShineEffect>
 
-                            <div v-if="isLoadingTeamMemberPermissions || isLoadingAvailableTeamMemberPermissions" class="flex justify-center">
+                        <div v-else class="space-y-2">
 
-                                <!-- Spining Loader -->
-                                <SpiningLoader class="my-4"></SpiningLoader>
+                            <template v-if="isMe">
 
-                            </div>
+                                <!-- Info Alert -->
+                                <Alert v-if="form.hasFullPermissions" class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                    </svg>
+                                    <span>You cannot change your own permissions</span>
+                                </Alert>
 
-                            <div v-else class="space-y-2">
+                            </template>
+
+                            <template v-else>
 
                                 <Checkbox
                                     v-model="form.hasFullPermissions"
@@ -110,12 +132,12 @@
                                 <!-- Permission Input Tags -->
                                 <SelectInputTags
                                     v-else
-                                    :tags="form.permissions" :selectableTags="availableTeamMemberPermissions" @onTagsChanged="(newValues) => form.permissions = newValues"
+                                    :tags="form.permissions" :selectableTags="teamMemberPermissionOptions" @onTagsChanged="(newValues) => form.permissions = newValues"
                                     label="Permissions" labelPopoverTitle="What Is This?" :errorText="getFormError('permissions')"
                                     labelPopoverDescription="Set the permissions for your team member" class="w-full"
                                 />
 
-                            </div>
+                            </template>
 
                         </div>
 
@@ -125,16 +147,44 @@
 
                 <div class="col-span-4">
 
-                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
 
-                        <div class="flex justify-end">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
-                            <!-- Invite Team Member / Save Changes Button -->
-                            <PrimaryButton :action="isInviting ? inviteTeamMember : updateTeamMember" :disabled="(isInviting && !mustCreate) || (isEditting && !mustSaveChanges)" :loading="isSubmitting" class="w-40">
-                                {{ isInviting ? 'Invite' : 'Save Changes' }}
-                            </PrimaryButton>
+                        <!-- Loading Backdrop -->
+                        <LoadingBackdrop v-if="isLoadingTeamMember || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
 
+                        <!-- Permissions Title -->
+                        <div class="flex items-center space-x-4 mb-2">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+
+                                <p class="font-bold text-lg">Permissions</p>
+                            </div>
+
+                            <BadgeIndicator type="primary" :text="form.hasFullPermissions ? 'All' : totalPermissions" :showDot="false"></BadgeIndicator>
                         </div>
+
+                        <!-- Permissions Description -->
+                        <p class="text-sm text-gray-400 border-b border-dashed pb-2 mb-4">See permissions granted</p>
+
+                        <!-- Instructions Loader -->
+                        <ShineEffect v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions" class="space-y-4">
+                            <LineSkeleton width="w-32"></LineSkeleton>
+                            <LineSkeleton width="w-60"></LineSkeleton>
+                        </ShineEffect>
+
+                        <!-- Instructions -->
+                        <div v-else-if="hasPermissions" class="space-y-2">
+                            <div v-for="(permission, index) in form.permissions" :key="index" class="flex space-x-2 px-2 border-l-4 border-green-300">
+                                <p class="text-xs">{{ permission.text }}</p>
+                            </div>
+                        </div>
+
+                        <Alert v-else>
+                            No permissions granted
+                        </Alert>
 
                     </div>
 
@@ -165,7 +215,6 @@
 
                         </template>
 
-
                     </ConfirmModal>
 
                 </div>
@@ -184,6 +233,7 @@
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { useAuthState } from '@Stores/auth-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
@@ -193,7 +243,9 @@
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
+    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -206,24 +258,26 @@
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, Checkbox, InputTags, BackButton, NumberInput,
-            SelectInput, ConfirmModal, PrimaryButton, SpiningLoader, SelectInputTags,
-            MoreInfoPopover, LoadingBackdrop, MobileNumberInput, BadgeIndicator
+            SelectInput, ConfirmModal, ShineEffect, PrimaryButton, LineSkeleton,
+            SpiningLoader, SelectInputTags, MoreInfoPopover, LoadingBackdrop,
+            MobileNumberInput, BadgeIndicator
         },
         data() {
             return {
                 form: {
                     hasFullPermissions: false,
-                    mobileNumbers: [''],
+                    mobileNumbers: ['+26772000001'],
                     permissions: [],
                 },
                 teamMember: null,
                 isDeleting: false,
                 originalForm: null,
                 isSubmitting: false,
+                authState: useAuthState(),
                 isLoadingTeamMember: false,
                 storeState: useStoreState(),
                 selectedAllPermissions: false,
-                availableTeamMemberPermissions: [],
+                teamMemberPermissionOptions: [],
                 isLoadingTeamMemberPermissions: false,
                 isLoadingAvailableTeamMemberPermissions: false,
             }
@@ -252,8 +306,29 @@
             teamMemberRole() {
                 return this.teamMember == null ? null : this.teamMember._attributes.userStoreAssociation.teamMemberRole;
             },
+            teamMemberStatus() {
+                return this.teamMember == null ? null : this.teamMember._attributes.userStoreAssociation.teamMemberStatus;
+            },
+            hasPermissions() {
+                return this.totalPermissions > 0;
+            },
+            totalPermissions() {
+                return this.form.permissions.length;
+            },
+            isMe() {
+                return (this.teamMember || {}).id == this.authState.user.id;
+            },
             isCreator() {
-                return this.teamMemberRole == 'Creator';
+                return this.teamMemberRole.toLowerCase() == 'creator';
+            },
+            isInvited() {
+                return this.teamMemberStatus.toLowerCase() == 'invited';
+            },
+            hasFullPermissions() {
+                return this.form.hasFullPermissions;
+            },
+            hasProvidedMobileNumber() {
+                return this.form.mobileNumbers.length > 0 && this.form.mobileNumbers.some(number => number.trim() !== '');
             },
             formHasChanged() {
                 // Clone the objects to avoid modifying the original data
@@ -264,15 +339,18 @@
                 return !isEqual(a, b);
             },
             mustSaveChanges() {
-                return this.isEditting && this.formHasChanged && !this.isLoadingTeamMemberPermissions && !this.isLoadingAvailableTeamMemberPermissions && !this.isSubmitting;
+                return this.isEditting && this.formHasChanged && this.hasProvidedMobileNumber && (this.hasFullPermissions || this.hasPermissions) && !this.isLoadingTeamMemberPermissions && !this.isLoadingAvailableTeamMemberPermissions && !this.isSubmitting;
             },
-            mustCreate() {
-                return this.isInviting && this.formHasChanged && !this.isLoadingTeamMemberPermissions && !this.isLoadingAvailableTeamMemberPermissions && !this.isSubmitting;
+            mustInvite() {
+                return this.isInviting && this.formHasChanged && this.hasProvidedMobileNumber && (this.hasFullPermissions || this.hasPermissions) && !this.isLoadingTeamMemberPermissions && !this.isLoadingAvailableTeamMemberPermissions && !this.isSubmitting;
             }
         },
         methods: {
+            goBack() {
+                this.$router.replace({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
+            },
             setTeamMemberFields() {
-                this.form.mobileNumbers[0] = this.teamMember.mobileNumber.withExtension;
+                this.form.mobileNumbers[0] = (this.teamMember.mobileNumber || {}).international || this.teamMember._relationships.userStoreAssociation.mobileNumber.international;
 
                 //  Capture the original form before editting.
                 this.originalForm = cloneDeep(this.form);
@@ -286,9 +364,9 @@
                 getApi(this.$route.params.team_member_href).then(response => {
 
                     if(response.status == 200) {
-                        this.teamMember = response.data;
+                        this.teamMember = response.data.user;
                         this.setTeamMemberFields();
-                        this.showTeamMemberPermissions();
+                        this.showStoreTeamMemberPermissions();
                     }
 
                     //  Stop loader
@@ -307,7 +385,7 @@
                 });
 
             },
-            showTeamMemberPermissions() {
+            showStoreTeamMemberPermissions() {
 
                 //  Start loader
                 this.isLoadingTeamMemberPermissions = true;
@@ -317,7 +395,7 @@
                     if(response.status == 200) {
 
                         this.form.hasFullPermissions = response.data.hasFullPermissions;
-                        this.form.permissions = response.data.teamMemberPermissions.map(permission => ({
+                        this.form.permissions = response.data.permissions.map(permission => ({
                             text: permission.name,
                             grant: permission.grant
                          }));
@@ -342,15 +420,15 @@
                 });
 
             },
-            showAllTeamMemberPermissions() {
+            showTeamMemberPermissionOptions() {
 
                 //  Start loader
                 this.isLoadingAvailableTeamMemberPermissions = true;
 
-                getApi(this.store._links.showAllTeamMemberPermissions).then(response => {
+                getApi(this.store._links.showTeamMemberPermissionOptions).then(response => {
 
                     if(response.status == 200) {
-                        this.availableTeamMemberPermissions = response.data.map(permission => ({
+                        this.teamMemberPermissionOptions = response.data.map(permission => ({
                             text: permission.name,
                             grant: permission.grant
                          }));
@@ -389,7 +467,7 @@
 
                 }
 
-                postApi(this.store._links.inviteTeamMembers, data).then(response => {
+                postApi(this.store._links.inviteStoreTeamMembers, data).then(response => {
 
                     if(response.status == 200) {
 
@@ -399,7 +477,7 @@
                         this.showSuccessfulNotification(response.data.message);
 
                         //  Navigate to show team members
-                        this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.self } });
+                        this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
 
                         // Scroll to the top
                         window.scrollTo(0, 0);
@@ -424,6 +502,8 @@
             },
             updateTeamMember() {
 
+                if(this.isMe) return;
+
                 //  Start loader
                 this.isSubmitting = true;
 
@@ -443,12 +523,27 @@
 
                     if(response.status == 200) {
 
-                        this.originalForm = cloneDeep(this.form);
+                        if(response.data.updated) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Team member updated');
+                            this.originalForm = cloneDeep(this.form);
+
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Team member updated');
+
+                            if(this.form.hasFullPermissions) {
+                                this.showStoreTeamMemberPermissions();
+                            }
+
+                        }else{
+
+                            this.form = cloneDeep(this.originalForm);
+
+                            this.setFormError('general', response.data.message);
+                            this.notificationState.addWarningNotification(response.data.message);
+
+                        }
 
                     }
 
@@ -473,7 +568,11 @@
                 //  Start loader
                 this.isDeleting = true;
 
-                deleteApi(this.store._links.removeTeamMembers, this.form).then(response => {
+                var data = {
+                    'mobileNumbers': this.form.mobileNumbers
+                };
+
+                deleteApi(this.store._links.removeStoreTeamMembers, data).then(response => {
 
                     if(response.status == 200) {
 
@@ -483,7 +582,7 @@
                         this.showSuccessfulNotification(response.data.message);
 
                         //  Navigate to show team members
-                        this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.self } });
+                        this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
 
                         // Scroll to the top
                         window.scrollTo(0, 0);
@@ -510,7 +609,7 @@
         created() {
             this.originalForm = cloneDeep(this.form);
             if(this.isEditting) this.getTeamMember();
-            this.showAllTeamMemberPermissions();
+            this.showTeamMemberPermissionOptions();
         }
     };
 

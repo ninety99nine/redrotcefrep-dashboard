@@ -12,10 +12,46 @@
                 <!-- Description -->
                 <p v-if="store.description" class="mt-2">{{ store.description }}</p>
 
-                <!-- User Store Subscription Countdown -->
-                <div v-if="$route.name != 'show-store-home' && storeRequiresSubscription" class="bg-white shadow-lg rounded-lg border border-b-2 p-4 mt-4">
-                    <UserStoreSubscriptionCountdown></UserStoreSubscriptionCountdown>
-                </div>
+                <template v-if="$route.name != 'show-store-home'">
+
+                    <template v-if="!completedQuickStartGuide">
+
+                        <div class="flex justify-between items-end bg-white shadow-lg rounded-lg border py-4 px-8 mt-4">
+
+                            <div class="space-y-3">
+
+                                <!-- Quick Start Guide (Heading) -->
+                                <h1 class="text-lg font-bold">Quick Start Guide</h1>
+
+                                <!-- Quick Start Guide (Instructions) -->
+                                <p class="text-sm text-gray-500">Let's continue setting up your store</p>
+
+                                <!-- Quick Start Guide (Progress) -->
+                                <StoreQuickStartGuideProgress></StoreQuickStartGuideProgress>
+
+                            </div>
+
+                            <div>
+
+                                <PrimaryButton :action="navigateToStoreHome" class="w-40" size="xs" type="success">
+                                    <span class="mr-2">Continue</span>
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+                                    </svg>
+                                </PrimaryButton>
+
+                            </div>
+
+                        </div>
+
+                    </template>
+
+                    <!-- User Store Subscription Countdown -->
+                    <div v-else-if="storeRequiresSubscription" class="bg-white shadow-lg rounded-lg border border-b-2 p-4 mt-4">
+                        <UserStoreSubscriptionCountdown></UserStoreSubscriptionCountdown>
+                    </div>
+
+                </template>
 
                 <Alert v-if="getFormError('general')" type="warning">
                     {{ getFormError('general') }}
@@ -48,13 +84,16 @@
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
+    import { getApi } from '@Repositories/api-repository.js';
     import { getStore } from '@Repositories/store-repository.js';
+    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
+    import StoreQuickStartGuideProgress from '@Components/store/StoreQuickStartGuideProgress.vue';
     import UserStoreSubscriptionCountdown from '@Components/store/UserStoreSubscriptionCountdown.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { Alert, TextHeader, UserStoreSubscriptionCountdown },
+        components: { Alert, TextHeader, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
         data() {
             return {
                 isLoadingStore: false,
@@ -64,46 +103,59 @@
         },
         watch: {
             '$route.params.store_href'(newValue, oldValue) {
-                this.getRouteMatchingStore();
+                this.showStoreMatchingRoute();
             }
+        },
+        beforeRouteUpdate(to, from) {
+            this.showQuickStartGuide();
         },
         computed: {
             store() {
                 return this.storeState.store;
             },
-            lastSubscriptionHasExpired() {
-                return this.store._attributes.userStoreAssociation.lastSubscriptionHasExpired;
+            quickStartGuide() {
+                return this.storeState.quickStartGuide;
+            },
+            activeSubscription() {
+                return this.store._relationships.activeSubscription;
+            },
+            completedQuickStartGuide() {
+                return this.storeState.completedQuickStartGuide;
             },
             storeRequiresSubscription() {
-                return this.lastSubscriptionHasExpired == null || this.lastSubscriptionHasExpired == true
+                return this.activeSubscription == null;
             }
         },
         methods: {
             navigateToStoreHome() {
-                this.$router.push({ name: 'show-store-home', params: { 'store_href': this.store._links.self } });
+                this.$router.push({ name: 'show-store-home', params: { 'store_href': this.store._links.showStore } });
             },
-            getRouteMatchingStore() {
+            showStoreMatchingRoute() {
 
                 this.isLoadingStore = true;
 
                 let params = {
-                    //'_noFields': true,
-                    //'_noRelationships': true,
-                    //'_includeAttributes': 'nameWithEmoji',
-                    //'_includeLinks': 'self,showOrders,showProducts',
+                    '_relationships': 'activeSubscription,userStoreAssociation'
                 };
 
                 getStore(this.$route.params.store_href, params).then(response => {
 
                     if(response.status == 200) {
 
-                        //  Stop loader
-                        this.isLoadingStore = false;
+                        if(response.data.exists) {
 
-                        //  Set the store on the component state and the pinia store state
-                        useStoreState().store = response.data;
+                            //  Set the store on the component state and the pinia store state
+                            useStoreState().store = response.data.store;
+
+                            //  Load the store quick start guide
+                            this.showQuickStartGuide();
+
+                        }
 
                     }
+
+                    //  Stop loader
+                    this.isLoadingStore = false;
 
                 }).catch(errorException => {
 
@@ -116,10 +168,40 @@
                     this.setServerFormErrors(errorException);
 
                 });
-            }
+            },
+            showQuickStartGuide() {
+
+                //  Start loader
+                useStoreState().isLoadingQuickStartGuide = true;
+
+                getApi(this.store._links.showStoreQuickStartGuide).then(response => {
+
+                    if(response.status == 200) {
+
+                        //  Set the quickStartGuide on the component state and the pinia store state
+                        useStoreState().quickStartGuide = response.data;
+
+                    }
+
+                    //  Stop loader
+                    useStoreState().isLoadingQuickStartGuide = false;
+
+                }).catch(errorException => {
+
+                    //  Stop loader
+                    useStoreState().isLoadingQuickStartGuide = false;
+
+                    /**
+                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
+                     */
+                    this.setServerFormErrors(errorException);
+
+                });
+
+            },
         },
         created() {
-            this.getRouteMatchingStore();
+            this.showStoreMatchingRoute();
         }
     };
 

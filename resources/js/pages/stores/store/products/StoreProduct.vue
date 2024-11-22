@@ -5,10 +5,14 @@
         <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
-            <BackButton class="w-16 mr-4"></BackButton>
+            <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
-            <!-- Text Heading -->
-            <SpiningLoader v-if="isLoadingProduct"></SpiningLoader>
+            <div v-if="isLoadingProduct" class="flex items-center space-x-2">
+                <ShineEffect class="flex space-x-2">
+                    <LineSkeleton width="w-40 mt-2"></LineSkeleton>
+                    <LineSkeleton width="w-4 mt-2"></LineSkeleton>
+                </ShineEffect>
+            </div>
 
             <template v-else>
 
@@ -22,23 +26,32 @@
         </div>
 
         <!-- Product Form -->
-        <form class="relative" action="#" method="POST">
-
-            <!-- Loading Backdrop -->
-            <LoadingBackdrop v-if="isLoadingProduct || isSubmitting"></LoadingBackdrop>
+        <form action="#" method="POST">
 
             <!-- General Error Info Alert -->
-            <Alert v-if="mustCreate || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
+            <Alert v-if="(mustCreate && !(form.allowVariations && !hasVariantAttributes)) || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
 
                 <div class="flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                     </svg>
-                    <span>{{ isCreating ? 'Create your product' : 'Please save your changes'}}</span>
+                    <span>
+                        <template v-if="!product && variantAttributesHaveChanged && hasVariantAttributes">Create your product and variations</template>
+                        <template v-else-if="variantAttributesHaveChanged && hasVariantAttributes">Create your product variations</template>
+                        <template v-else>{{ isCreating ? 'Create your product' : 'Please save your changes'}}</template>
+                    </span>
                 </div>
 
+                <!-- Create Variations Button -->
+                <PrimaryButton v-if="variantAttributesHaveChanged && hasVariantAttributes" :action="() => product ? createProductVariations() : createProduct()" :loading="isCreatingVariations" class="w-48" type="primary">
+                    <svg class="w-3 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+                    </svg>
+                    Create Variations
+                </PrimaryButton>
+
                 <!-- Create Product / Save Changes Button -->
-                <PrimaryButton :action="isCreating ? createProduct : updateProduct" :loading="isSubmitting" class="w-40">
+                <PrimaryButton v-else :action="isCreating ? createProduct : updateProduct" :loading="isSubmitting" class="w-40">
                     {{ isCreating ? 'Create Product' : 'Save Changes' }}
                 </PrimaryButton>
 
@@ -46,7 +59,10 @@
 
             <div class="grid grid-cols-12 gap-4 mb-8">
 
-                <div class="col-span-8">
+                <div class="col-span-8 relative">
+
+                    <!-- Loading Backdrop -->
+                    <LoadingBackdrop v-if="isLoadingProduct || isSubmitting" class="rounded-lg"></LoadingBackdrop>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
@@ -181,6 +197,7 @@
 
                         <!-- Allow Variations Toggle Switch -->
                         <ToogleSwitch
+                            v-if="form.allowVariations || hasOriginalVariantAttributes"
                             labelPopoverTitle="What Is This?"
                             v-model="form.allowVariations" size="md"
                             :errorText="getFormError('allowVariations')"
@@ -188,17 +205,42 @@
                             Allow variations
                         </ToogleSwitch>
 
-                        <!-- Variation Settings -->
-                        <template v-if="form.allowVariations">
+                        <div v-if="!hasOriginalVariantAttributes">
 
-                            <div class="flex justify-end">
+                            <div class="flex justify-between p-20 border rounded-lg bg-gray-50">
 
-                                <!-- Add Product Button -->
-                                <AddButton :action="onAddVariantAttribute" class="w-40" size="xs">
-                                    <span class="ml-2">Add Option</span>
-                                </AddButton>
+                                <div class="space-y-4">
+                                    <h1 class="text-2xl font-bold">
+                                        <template v-if="form.allowVariations && hasVariantAttributes">Create Variations</template>
+                                        <template v-else-if="form.allowVariations">Add Options</template>
+                                        <template v-else>Have Options?</template>
+                                    </h1>
+                                    <p v-if="hasVariantAttributes">Click the <BadgeIndicator type="primary" text="Create Variations" :showDot="false"></BadgeIndicator> button to create different variations of your product e.g different sizes, materials, colors, etc</p>
+                                    <p v-else-if="form.allowVariations">Click the <BadgeIndicator type="primary" text="+ Add Option" :showDot="false"></BadgeIndicator> button to add different variations of your product e.g different sizes, materials, colors, etc</p>
+                                    <p v-else>Turn on <BadgeIndicator type="primary" text="Allow variations" :showDot="false"></BadgeIndicator> if you want your product to support variations (different versions of itself e.g different sizes, materials, colors, etc)</p>
+
+                                    <!-- Allow Variations Toggle Switch -->
+                                    <ToogleSwitch
+                                        v-if="!form.allowVariations"
+                                        labelPopoverTitle="What Is This?"
+                                        v-model="form.allowVariations" size="md"
+                                        :errorText="getFormError('allowVariations')"
+                                        labelPopoverDescription="Turn on if you want your product to support variations (different versions of itself e.g different sizes, materials, colors, etc)">
+                                        Allow variations
+                                    </ToogleSwitch>
+
+                                </div>
+
+                                <div>
+                                    <span class="text-8xl">🛍️</span>
+                                </div>
 
                             </div>
+
+                        </div>
+
+                        <!-- Variation Settings -->
+                        <template v-if="form.allowVariations">
 
                             <div v-for="(variantAttribute, index) in form.variantAttributes" :key="index" class="relative bg-gray-50 p-4 border rounded-lg">
 
@@ -278,17 +320,33 @@
 
                             </div>
 
-                            <div v-if="variantAttributesHaveChanged" class="flex justify-end space-x-2">
+                            <div class="flex justify-end space-x-2">
 
                                 <!-- Undo Button -->
-                                <UndoButton v-if="hasOriginalVariantAttributes" :action="onResetVariantAttributes" size="xs">
+                                <UndoButton v-if="variantAttributesHaveChanged && hasOriginalVariantAttributes" :action="onResetVariantAttributes" size="xs">
                                     <span class="ml-1">Undo</span>
                                 </UndoButton>
 
+                                <div class="flex justify-end">
+
+                                    <!-- Add Option Button -->
+                                    <div class="relative">
+                                        <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                                            <div v-if="!hasVariantAttributes" class="animate-bounce text-4xl">👆</div>
+                                        </div>
+                                        <AddButton :action="onAddVariantAttribute" :class="hasVariantAttributes ? 'w-48' : 'w-40'" size="xs">
+                                            <span class="ml-2">{{ hasVariantAttributes ? 'Add Another Option' : 'Add Option' }}</span>
+                                        </AddButton>
+                                    </div>
+
+                                </div>
+
                                 <!-- Create Variations Button -->
-                                <div v-if="hasVariantAttributes" class="relative">
-                                    <span v-if="!isCreatingVariations" class="absolute -bottom-12 left-1/2 -translate-x-1/2 animate-bounce text-4xl">👆</span>
-                                    <PrimaryButton :action="createProductVariations" :loading="isCreatingVariations" class="w-40" size="xs" type="primary">
+                                <div v-if="variantAttributesHaveChanged && hasVariantAttributes" class="relative">
+                                    <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
+                                        <div v-if="!isCreatingVariations" class="animate-bounce text-4xl">👆</div>
+                                    </div>
+                                    <PrimaryButton :action="() => product ? createProductVariations() : createProduct()" :loading="isCreatingVariations" class="w-40" size="xs" type="primary">
                                         <svg class="w-3 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
                                         </svg>
@@ -302,54 +360,40 @@
 
                     </div>
 
-                    <!-- Variation List -->
-                    <div v-if="form.allowVariations" class="space-y-4 bg-white shadow-lg rounded-lg border p-4">
-
-                        <template v-if="hasOriginalVariantAttributes && variantAttributesHaveChanged">
-
-                            <!-- Info Alert -->
-                            <Alert class="flex items-start space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                                </svg>
-                                <div>
-                                    The variation options have been changed. You can
-                                    <template v-if="hasVariantAttributes">
-                                        either
-                                        <span @click="createProductVariations" class="font-bold underline cursor-pointer">
-                                            Create New Variations
-                                        </span>
-                                        or
-                                    </template>
-                                    <span @click="onResetVariantAttributes" class="font-bold underline cursor-pointer">
-                                        Undo Changes
-                                    </span>
-                                    to revert back to the original variations you had before.
-                                </div>
-                            </Alert>
-
-                        </template>
-
-                        <ProductVariations v-else-if="product" :product="product" :isCreatingVariations="isCreatingVariations"></ProductVariations>
-
-                    </div>
-
                 </div>
 
                 <div class="col-span-4">
 
-                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4">
+                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
+
+                        <!-- Loading Backdrop -->
+                        <LoadingBackdrop v-if="isLoadingProduct || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
 
                         <div class="space-y-4">
 
+                        <div class="flex items-center space-x-4">
+
+                            <!-- Open Eye Icon -->
+                            <svg v-if="form.visible" @click="form.visible = !form.visible" class="w-6 h-6 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+
+                            <!-- Closed Eye Icon -->
+                            <svg v-else @click="form.visible = !form.visible" class="w-6 h-6 cursor-pointer" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                            </svg>
+
                             <!-- Visible Toggle Switch -->
                             <ToogleSwitch
+                                class="flex"
                                 v-model="form.visible" size="md"
                                 labelPopoverTitle="What Is This?"
                                 :errorText="getFormError('visible')"
                                 labelPopoverDescription="Turn on if you want your product to be visible (Made available to customers)">
                                 Show Product
                             </ToogleSwitch>
+                        </div>
 
                             <!-- Info Alert -->
                             <Alert v-if="!form.visible" type="warning">
@@ -378,14 +422,42 @@
 
                         </div>
 
-                        <div class="flex justify-end mt-8">
+                    </div>
 
-                            <!-- Create Product / Save Changes Button -->
-                            <PrimaryButton :action="isCreating ? createProduct : updateProduct" :disabled="(isCreating && !mustCreate) || (isEditting && !mustSaveChanges)" :loading="isSubmitting" class="w-40">
-                                {{ isCreating ? 'Create Product' : 'Save Changes' }}
-                            </PrimaryButton>
+                </div>
 
-                        </div>
+
+                <div class="col-span-12">
+
+                    <!-- Variation List -->
+                    <div v-if="form.allowVariations && hasOriginalVariantAttributes" class="space-y-4 bg-white shadow-lg rounded-lg border p-4">
+
+                        <template v-if="variantAttributesHaveChanged">
+
+                            <!-- Info Alert -->
+                            <Alert class="flex items-start space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                </svg>
+                                <div>
+                                    The variation options have been changed. You can
+                                    <template v-if="hasVariantAttributes">
+                                        either
+                                        <span @click="() => createProductVariations()" class="font-bold underline cursor-pointer">
+                                        Create New Variations
+                                        </span>
+                                        or
+                                    </template>
+                                    <span @click="onResetVariantAttributes" class="font-bold underline cursor-pointer">
+                                        Undo Changes
+                                    </span>
+                                    to revert back to the original variations you had before.
+                                </div>
+                            </Alert>
+
+                        </template>
+
+                        <ProductVariations v-else-if="product" :product="product" :isLoadingProduct="isLoadingProduct" :isCreatingVariations="isCreatingVariations"></ProductVariations>
 
                     </div>
 
@@ -436,6 +508,7 @@
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { useApiState } from '@Stores/api-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
@@ -447,13 +520,17 @@
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
+    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import { useNotificationState } from '@Stores/notification-store.js';
     import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import ProductVariations from '@Pages/stores/store/products/variations/ProductVariations.vue';
@@ -462,8 +539,8 @@
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, AddButton, UndoButton, BackButton, NumberInput, SelectInput,
-            ConfirmModal, DeleteButton, TextareaInput, SpiningLoader, PrimaryButton, MoreInfoPopover, LoadingBackdrop, ToogleSwitch,
-            InputErrorMessage, ProductVariations
+            ConfirmModal, ShineEffect, DeleteButton, TextareaInput, SpiningLoader, PrimaryButton, LineSkeleton, MoreInfoPopover,
+            LoadingBackdrop, ToogleSwitch, BadgeIndicator, InputErrorMessage, ProductVariations
         },
         data() {
             return {
@@ -473,6 +550,7 @@
                     barcode: '',
                     isFree: false,
                     visible: true,
+                    storeId: null,
                     description: '',
                     stockQuantity: '100',
                     unitSalePrice: '0.00',
@@ -488,10 +566,12 @@
                 isDeleting: false,
                 originalForm: null,
                 isSubmitting: false,
+                apiState: useApiState(),
                 isLoadingProduct: false,
                 storeState: useStoreState(),
                 isCreatingVariations: false,
-                originalVariantAttributes: []
+                originalVariantAttributes: [],
+                notificationState: useNotificationState(),
             }
         },
         watch: {
@@ -542,7 +622,7 @@
                 return !isEqual(a, b);
             },
             mustSaveChanges() {
-                return this.isEditting && this.formHasChanged && !this.variantAttributesHaveChanged && !this.isLoadingProduct && !this.isSubmitting;
+                return this.isEditting && this.formHasChanged && !this.isLoadingProduct && !this.isSubmitting;
             },
             mustCreate() {
                 return this.isCreating && this.formHasChanged && !this.isLoadingProduct && !this.isSubmitting;
@@ -577,6 +657,17 @@
                 //  Capture the original form before editting.
                 this.originalForm = cloneDeep(this.form);
 
+            },
+            goBack() {
+                if(this.product) {
+                    if(this.product.parentProductId) {
+                        this.$router.replace({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': this.product._links.showParentProduct } });
+                    }else{
+                        this.$router.replace({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
+                    }
+                }else{
+                    this.$router.replace({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
+                }
             },
             onAddVariantAttribute() {
 
@@ -631,8 +722,14 @@
                 getApi(this.$route.params.product_href).then(response => {
 
                     if(response.status == 200) {
-                        this.product = response.data;
-                        this.setProductFields();
+
+                        if(response.data.exists) {
+
+                            this.product = response.data.product;
+                            this.setProductFields();
+
+                        }
+
                     }
 
                     //  Stop loader
@@ -653,23 +750,51 @@
             },
             createProduct() {
 
+                if(this.form.name.trim() == '') {
+                    this.setFormError('name', 'The product name is required');
+                    this.notificationState.addWarningNotification('The product name is required');
+                    window.scrollTo(0, 0);
+                    return;
+                }
+
+                if(this.form.allowVariations && this.form.variantAttributes.length == 0) {
+                    this.setFormError('allowVariations', 'Add variation options');
+                    this.notificationState.addWarningNotification('Add variation options');
+                    window.scrollTo(0, 0);
+                    return;
+                }
+
                 //  Start loader
                 this.isSubmitting = true;
 
-                postApi(this.store._links.createProducts, this.form).then(response => {
+                //  Return product after creation
+                this.form.return = true;
 
-                    if(response.status == 201) {
+                postApi(this.apiState.apiHome['_links']['createProduct'], this.form).then(response => {
+
+                    if(response.status == 200) {
 
                         /**
                          *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
                          */
                         this.showSuccessfulNotification('Product created');
 
-                        //  Navigate to show products
-                        this.$router.push({ name: 'show-store-products', params: { 'store_href': this.store._links.self } });
+                        if(this.form.allowVariations) {
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            if(this.form.variantAttributes.length) {
+                                var product = response.data.product;
+                                this.createProductVariations(product);
+                            }
+
+                        }else{
+
+                            //  Navigate to show products
+                            this.$router.push({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }
 
                     }
 
@@ -689,12 +814,72 @@
                 });
 
             },
+            createProductVariations(product = null) {
+
+                if(this.isCreatingVariations) return;
+
+                //  Start loader
+                this.isCreatingVariations = true;
+
+                let data = {
+                    'variantAttributes': this.form.variantAttributes
+                };
+
+                const url = product ? product._links.createProductVariations : this.product._links.createProductVariations;
+
+                postApi(url, data).then(response => {
+
+                    if(response.status == 200) {
+
+                        if(product == null) {
+
+                            this.originalForm = cloneDeep(this.form);
+
+                            this.form.variantAttributes = this.form.variantAttributes.map((variantAttribute) => {
+                                variantAttribute.isEditable = false;
+                                return variantAttribute;
+                            });
+
+                            this.originalForm.variantAttributes = cloneDeep(this.form.variantAttributes);
+
+                            this.originalVariantAttributes = cloneDeep(this.form.variantAttributes);
+
+                        }else{
+
+                            this.$router.replace({
+                                name: 'show-store-product',
+                                params: {
+                                    'store_href': this.store._links.showStore,
+                                    'product_href': product._links.showProduct
+                                }
+                            });
+
+                        }
+
+                    }
+
+                    //  Stop loader
+                    this.isCreatingVariations = false;
+
+                }).catch(errorException => {
+
+                    //  Stop loader
+                    this.isCreatingVariations = false;
+
+                    /**
+                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
+                     */
+                    this.setServerFormErrors(errorException);
+
+                });
+
+            },
             updateProduct() {
 
                 //  Start loader
                 this.isSubmitting = true;
 
-                putApi(this.product._links.self, this.form).then(response => {
+                putApi(this.product._links.updateProduct, this.form).then(response => {
 
                     if(response.status == 200) {
 
@@ -728,7 +913,7 @@
                 //  Start loader
                 this.isDeleting = true;
 
-                deleteApi(this.product._links.deleteProduct, this.form).then(response => {
+                deleteApi(this.product._links.deleteProduct).then(response => {
 
                     if(response.status == 200) {
 
@@ -741,12 +926,12 @@
                         if(this.product._attributes.isVariation) {
 
                             //  Navigate to show parent product
-                            this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.self, 'product_href': this.product._links.showParentProduct } });
+                            this.$router.replace({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': this.product._links.showParentProduct } });
 
                         }else{
 
                             //  Navigate to show products
-                            this.$router.push({ name: 'show-store-products', params: { 'store_href': this.store._links.self } });
+                            this.$router.replace({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
 
                             // Scroll to the top
                             window.scrollTo(0, 0);
@@ -771,53 +956,12 @@
                 });
 
             },
-            createProductVariations() {
-
-                if(this.isCreatingVariations) return;
-
-                //  Start loader
-                this.isCreatingVariations = true;
-
-                let data = {
-                    'variantAttributes': this.form.variantAttributes
-                };
-
-                postApi(this.product._links.createVariations, data).then(response => {
-
-                    if(response.status == 201) {
-
-                        this.form.variantAttributes = this.form.variantAttributes.map((variantAttribute) => {
-                            variantAttribute.isEditable = false;
-                            return variantAttribute;
-                        });
-
-                        this.originalForm.variantAttributes = cloneDeep(this.form.variantAttributes);
-
-                        this.originalVariantAttributes = cloneDeep(this.form.variantAttributes);
-
-                    }
-
-                    //  Stop loader
-                    this.isCreatingVariations = false;
-
-                }).catch(errorException => {
-
-                    //  Stop loader
-                    this.isCreatingVariations = false;
-
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
-                    this.setServerFormErrors(errorException);
-
-                });
-
-            },
         },
         mounted() {
 
         },
         created() {
+            this.form.storeId = this.store.id;
             this.originalForm = cloneDeep(this.form);
             if(this.isEditting) this.getProduct();
         }
