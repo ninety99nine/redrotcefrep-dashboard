@@ -1,1 +1,0 @@
-import{o as t,c as r,t as o,i as s}from"./app-vGTXn0df.js";import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";const a={props:{errorText:{type:String}}},c={key:0,class:"font-medium mt-1 text-red-500 text-xs"};function i(m,p,e,_,x,d){return e.errorText?(t(),r("span",c,o(e.errorText),1)):s("",!0)}const l=n(a,[["render",i]]);export{l as I};

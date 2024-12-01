@@ -5,9 +5,7 @@ import { useApiState } from '@Stores/api-store.js';
 const routes = [
     {
         path: '/',
-        name: 'home',
-        meta: { requiresAuth: false },
-        component: () => import('@Pages/auth/Home.vue')
+        redirect: '/login',
     },
     {
         path: '/login',

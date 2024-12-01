@@ -1,1 +1,0 @@
-import{f as o}from"./app-vGTXn0df.js";async function n(t,a){try{return o.get(t,{params:a})}catch(r){throw r}}async function s(t,a,r={}){try{return o.post(t,a,r)}catch(e){throw e}}async function p(t,a,r={}){try{return o.put(t,a,r)}catch(e){throw e}}async function u(t,a,r={}){try{return r.data=a,o.delete(t,r)}catch(e){throw e}}export{p as a,u as d,n as g,s as p};
