@@ -73,11 +73,11 @@
 
                         <!-- Name Input -->
                         <TextInput
+                            label="Name"
                             v-model="form.name"
-                            @keydown.enter="updateProduct"
-                            :errorText="getFormError('name')"
-                            label="Name" _placeholder="Standard Ticket"
+                            placeholder="Standard Ticket"
                             labelPopoverTitle="What Is This?"
+                            :errorText="getFormError('name')"
                             labelPopoverDescription="The name of your product e.g Standard Ticket">
                         </TextInput>
 
@@ -86,7 +86,8 @@
 
                             <!-- If Free Toggle Switch -->
                             <ToogleSwitch
-                                v-model="form.isFree" size="md"
+                                size="md"
+                                v-model="form.isFree"
                                 labelPopoverTitle="What Is This?"
                                 :errorText="getFormError('isFree')"
                                 labelPopoverDescription="Turn on if you want your product to be made Free for customers">
@@ -103,10 +104,9 @@
                                 <!-- Unit Regular Price Money Input -->
                                 <MoneyInput
                                     label="Regular Price"
-                                    @keydown.enter="updateProduct"
                                     v-model="form.unitRegularPrice"
-                                    :errorText="getFormError('unitRegularPrice')"
                                     labelPopoverTitle="What Is This?"
+                                    :errorText="getFormError('unitRegularPrice')"
                                     labelPopoverDescription="Set the regular price of this product (How much the product is sold when its not on sale)">
                                 </MoneyInput>
 
@@ -114,9 +114,8 @@
                                 <MoneyInput
                                     label="Sale Price"
                                     v-model="form.unitSalePrice"
-                                    @keydown.enter="updateProduct"
-                                    :errorText="getFormError('unitSalePrice')"
                                     labelPopoverTitle="What Is This?"
+                                    :errorText="getFormError('unitSalePrice')"
                                     labelPopoverDescription="Set the sale price of this product (if the product is on sale)">
                                 </MoneyInput>
 
@@ -134,18 +133,21 @@
 
                             <!-- Description Textarea -->
                             <TextareaInput v-if="form.showDescription"
+                                :rows="2"
+                                label="Description"
                                 v-model="form.description"
-                                label="Description" _placeholder="1 day show with popular artists" :_rows="2"
-                                :errorText="getFormError('description')" @keydown.enter="updateProduct"
                                 labelPopoverTitle="What Is This?"
+                                :errorText="getFormError('description')"
+                                placeholder="1 day show with popular artists"
                                 labelPopoverDescription="Sweet and short description of your product e.g 1 day show with popular artists">
                             </TextareaInput>
 
                             <div class="flex space-x-4">
 
                                 <!-- Stock Quantity Type Select -->
-                                <SelectInput v-model="form.stockQuantityType"
+                                <SelectInput
                                     label="Available Stock"
+                                    v-model="form.stockQuantityType"
                                     labelPopoverTitle="What Is This?"
                                     :errorText="getFormError('stockQuantityType')"
                                     labelPopoverDescription="Select the available stock e.g Unlimited means that stock is always available while limited means that stock is limited to the quatities specified">
@@ -154,11 +156,12 @@
                                 </SelectInput>
 
                                 <!-- Stock Quantity Input -->
-                                <NumberInput v-if="form.stockQuantityType == 'Limited'"
+                                <NumberInput
                                     v-model="form.stockQuantity"
-                                    label="Stock Quantity" _placeholder="100"
-                                    :errorText="getFormError('stockQuantity')" @keydown.enter="updateProduct"
                                     labelPopoverTitle="What Is This?"
+                                    label="Stock Quantity" placeholder="100"
+                                    v-if="form.stockQuantityType == 'Limited'"
+                                    :errorText="getFormError('stockQuantity')"
                                     labelPopoverDescription="Set the stock quantity e.g 100 means that you only have 100 items of this product">
                                 </NumberInput>
 
@@ -168,9 +171,9 @@
 
                                 <!-- Quantities Per Order Select -->
                                 <SelectInput
-                                    v-model="form.allowedQuantityPerOrder"
                                     label="Quantities Per Order"
                                     labelPopoverTitle="What Is This?"
+                                    v-model="form.allowedQuantityPerOrder"
                                     :errorText="getFormError('allowedQuantityPerOrder')"
                                     labelPopoverDescription="Select the maximum quantity per order of this product (Used to manage supply and demand) e.g Unlimited means that a customer can specify any quantity while limited means that a customer can only specify up to the maximum quantity that you support">
                                     <option value="Limited">Limited</option>
@@ -178,12 +181,13 @@
                                 </SelectInput>
 
                                 <!-- Maximum Allowed Quantity Per Order Input -->
-                                <NumberInput v-if="form.allowedQuantityPerOrder == 'Limited'"
-                                    v-model="form.maximumAllowedQuantityPerOrder"
-                                    label="Maximum Quantities Per Order" _placeholder="10"
-                                    :errorText="getFormError('maximumAllowedQuantityPerOrder')"
-                                    @keydown.enter="updateProduct"
+                                <NumberInput
+                                    placeholder="10"
                                     labelPopoverTitle="What Is This?"
+                                    label="Maximum Quantities Per Order"
+                                    v-model="form.maximumAllowedQuantityPerOrder"
+                                    v-if="form.allowedQuantityPerOrder == 'Limited'"
+                                    :errorText="getFormError('maximumAllowedQuantityPerOrder')"
                                     labelPopoverDescription="Set the maximum quantity per order of this product (Used to manage supply and demand) e.g 10 means that a customer can only specify a quantity of 1 up to 10 when placing an order. They will not be permitted to order anymore than this quantity">
                                 </NumberInput>
 
@@ -261,8 +265,7 @@
                                     <!-- Variant Attribute Name Input -->
                                     <TextInput
                                         label="Name"
-                                        _placeholder="Size"
-                                        @keydown.enter="updateProduct"
+                                        placeholder="Size"
                                         labelPopoverTitle="What Is This?"
                                         v-model="form.variantAttributes[index].name"
                                         :errorText="getFormError('variantAttributes'+index+'name')"
@@ -272,8 +275,7 @@
                                     <!-- Variant Attribute Instruction Textarea -->
                                     <TextInput
                                         label="Instruction"
-                                        @keydown.enter="updateProduct"
-                                        _placeholder="Select your size"
+                                        placeholder="Select your size"
                                         labelPopoverTitle="What Is This?"
                                         v-model="form.variantAttributes[index].instruction"
                                         :errorText="getFormError('variantAttributes'+index+'instruction')"
@@ -403,20 +405,18 @@
                             <!-- Sku Input -->
                             <TextInput
                                 v-model="form.sku"
-                                @keydown.enter="updateProduct"
                                 :errorText="getFormError('sku')"
-                                label="SKU" _placeholder="std-ticket"
                                 labelPopoverTitle="What Is This?"
+                                label="SKU" placeholder="std-ticket"
                                 labelPopoverDescription="The stock keeping unit of this product. Useful for stock management">
                             </TextInput>
 
                             <!-- Barcode Input -->
                             <TextInput
                                 v-model="form.barcode"
-                                @keydown.enter="updateProduct"
-                                :errorText="getFormError('barcode')"
-                                label="Barcode" _placeholder="123456789"
                                 labelPopoverTitle="What Is This?"
+                                :errorText="getFormError('barcode')"
+                                label="Barcode" placeholder="123456789"
                                 labelPopoverDescription="The barcode of this product. Useful for stock management">
                             </TextInput>
 
@@ -875,6 +875,13 @@
 
             },
             updateProduct() {
+
+                if(this.form.name.trim() == '') {
+                    this.setFormError('name', 'The product name is required');
+                    this.notificationState.addWarningNotification('The product name is required');
+                    window.scrollTo(0, 0);
+                    return;
+                }
 
                 //  Start loader
                 this.isSubmitting = true;

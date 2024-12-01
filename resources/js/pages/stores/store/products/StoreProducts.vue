@@ -257,7 +257,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your products</h1>
-                <p>Start by stocking your store with products your customers will love</p>
+                <p>Start by stocking your store with <BadgeIndicator type="primary" text="products" :showDot="false" @click="onAddProduct" class="cursor-pointer hover:opacity-80"></BadgeIndicator> your customers will love</p>
 
                 <!-- Add Product Button -->
                 <AddButton :action="onAddProduct" class="w-40" size="sm">

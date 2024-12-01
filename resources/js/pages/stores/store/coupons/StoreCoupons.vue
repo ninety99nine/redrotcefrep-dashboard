@@ -155,7 +155,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your coupons</h1>
-                <p>Create amazing incentives for your customers, such as offering <BadgeIndicator type="primary" text="discounts" :showDot="false"></BadgeIndicator> or <BadgeIndicator type="primary" text="free delivery" :showDot="false"></BadgeIndicator>, while determining who can claim them and when.</p>
+                <p>Create amazing incentives for your customers, such as offering <BadgeIndicator type="primary" text="discounts" :showDot="false" @click="onAddCoupon" class="cursor-pointer hover:opacity-80"></BadgeIndicator> and <BadgeIndicator type="primary" text="free delivery" :showDot="false" @click="onAddCoupon" class="cursor-pointer hover:opacity-80"></BadgeIndicator>, while determining who can claim them and when.</p>
 
                 <!-- Add Coupon Button -->
                 <AddButton :action="onAddCoupon" class="w-40" size="sm">

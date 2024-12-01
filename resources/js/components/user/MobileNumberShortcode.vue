@@ -40,7 +40,7 @@
 
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useAuthState } from '@Stores/auth-store.js';
-    import BasicModal from '../../partials/modals/BasicModal.vue';
+    import BasicModal from '@Partials/modals/BasicModal.vue';
 
     export default {
         mixins: [FormMixin],

@@ -7,10 +7,16 @@
             <div class="col-span-1">
 
                 <!-- Text Heading -->
-                <TextHeader>{{ store._attributes.nameWithEmoji }}</TextHeader>
+                <ShineEffect v-if="isLoadingStore">
+                    <LineSkeleton width="w-32" height="h-4"></LineSkeleton>
+                </ShineEffect>
+                <TextHeader v-else>{{ store._attributes.nameWithEmoji }}</TextHeader>
 
                 <!-- Description -->
-                <p v-if="store.description" class="mt-2">{{ store.description }}</p>
+                <ShineEffect v-if="isLoadingStore" class="mt-4">
+                    <LineSkeleton width="w-40"></LineSkeleton>
+                </ShineEffect>
+                <p v-else-if="store.description" class="mt-2">{{ store.description }}</p>
 
                 <template v-if="$route.name != 'show-store-home'">
 
@@ -26,8 +32,12 @@
                                 <!-- Quick Start Guide (Instructions) -->
                                 <p class="text-sm text-gray-500">Let's continue setting up your store</p>
 
+                                <ShineEffect v-if="isLoadingStore">
+                                    <LineSkeleton width="w-32" height="h-4"></LineSkeleton>
+                                </ShineEffect>
+
                                 <!-- Quick Start Guide (Progress) -->
-                                <StoreQuickStartGuideProgress></StoreQuickStartGuideProgress>
+                                <StoreQuickStartGuideProgress v-else></StoreQuickStartGuideProgress>
 
                             </div>
 
@@ -47,7 +57,7 @@
                     </template>
 
                     <!-- User Store Subscription Countdown -->
-                    <div v-else-if="storeRequiresSubscription" class="bg-white shadow-lg rounded-lg border border-b-2 p-4 mt-4">
+                    <div class="bg-white shadow-lg rounded-lg border border-b-2 p-4 mt-4">
                         <UserStoreSubscriptionCountdown></UserStoreSubscriptionCountdown>
                     </div>
 
@@ -85,7 +95,8 @@
     import { useStoreState } from '@Stores/store-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import { getApi } from '@Repositories/api-repository.js';
-    import { getStore } from '@Repositories/store-repository.js';
+    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import StoreQuickStartGuideProgress from '@Components/store/StoreQuickStartGuideProgress.vue';
@@ -93,7 +104,7 @@
 
     export default {
         mixins: [FormMixin],
-        components: { Alert, TextHeader, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
+        components: { Alert, TextHeader, ShineEffect, LineSkeleton, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
         data() {
             return {
                 isLoadingStore: false,
@@ -103,7 +114,11 @@
         },
         watch: {
             '$route.params.store_href'(newValue, oldValue) {
-                this.showStoreMatchingRoute();
+                this.showStore();
+            },
+            'storeState.shouldUpdate'(newValue, oldValue) {
+                useStoreState().shouldUpdate = false;
+                this.showStore();
             }
         },
         beforeRouteUpdate(to, from) {
@@ -121,24 +136,25 @@
             },
             completedQuickStartGuide() {
                 return this.storeState.completedQuickStartGuide;
-            },
-            storeRequiresSubscription() {
-                return this.activeSubscription == null;
             }
         },
         methods: {
             navigateToStoreHome() {
                 this.$router.push({ name: 'show-store-home', params: { 'store_href': this.store._links.showStore } });
             },
-            showStoreMatchingRoute() {
+            showStore() {
 
                 this.isLoadingStore = true;
 
+                let countableRelationships = ['subscriptions'];
+                let relationships = ['address', 'storeRollingNumbers', 'activeSubscription', 'userStoreAssociation'];
+
                 let params = {
-                    '_relationships': 'activeSubscription,userStoreAssociation'
+                    '_relationships': relationships.join(','),
+                    '_countable_relationships': countableRelationships.join(',')
                 };
 
-                getStore(this.$route.params.store_href, params).then(response => {
+                getApi(this.$route.params.store_href, params).then(response => {
 
                     if(response.status == 200) {
 
@@ -201,7 +217,7 @@
             },
         },
         created() {
-            this.showStoreMatchingRoute();
+            this.showStore();
         }
     };
 

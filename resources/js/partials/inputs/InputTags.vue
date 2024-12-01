@@ -9,11 +9,11 @@
             {{ label }}
         </InputLabel>
 
-        <div class="mt-2">
+        <div :class="[{ 'mt-2' : label != '' }]">
 
             <div class="flex">
                 <!-- Input Tags Field -->
-                <vue3-tags-input :id="uniqueId" :name="uniqueId" :required="_required" :placeholder="_placeholder" :tags="localTags" @on-tags-changed="newTags => localTags = newTags" />
+                <vue3-tags-input :id="uniqueId" :name="uniqueId" :required="required" :placeholder="placeholder" :tags="localTags" @on-tags-changed="newTags => localTags = newTags" />
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
@@ -43,7 +43,7 @@
             },
             label: {
                 type: String,
-                default: 'Label'
+                default: ''
             },
             labelPopoverTitle: {
                 type: String
@@ -51,11 +51,11 @@
             labelPopoverDescription: {
                 type: String
             },
-            _placeholder: {
+            placeholder: {
                 type: String,
                 default: 'Separate with comma , or press Enter ⏎'
             },
-            _required: {
+            required: {
                 type: Boolean,
                 default: true
             },

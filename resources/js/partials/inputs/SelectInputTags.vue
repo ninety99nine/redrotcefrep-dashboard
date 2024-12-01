@@ -9,7 +9,7 @@
             {{ label }}
         </InputLabel>
 
-        <div class="mt-2">
+        <div :class="[{ 'mt-2' : label != '' }]">
 
             <div class="flex">
                 <!-- Select Input Tags Field -->
@@ -19,7 +19,7 @@
                     :select="true" :select-items="selectableTags"
                     @on-select="addTag"
                     @on-tags-changed="newTags => localTags = newTags"
-                    placeholder="Select the tag">
+                    :placeholder="placeholder">
                     <template #item="{ tag, index }">
                         {{ tag.text }}
                     </template>
@@ -65,7 +65,7 @@
             },
             label: {
                 type: String,
-                default: 'Label'
+                default: ''
             },
             labelPopoverTitle: {
                 type: String
@@ -73,11 +73,11 @@
             labelPopoverDescription: {
                 type: String
             },
-            _placeholder: {
+            placeholder: {
                 type: String,
                 default: 'Separate with comma , or press Enter ⏎'
             },
-            _required: {
+            required: {
                 type: Boolean,
                 default: true
             },

@@ -149,8 +149,25 @@ const routes = [
                     {
                         path: 'settings',
                         name: 'show-store-settings',
-                        component: () => import('@Pages/stores/store/settings/StoreSettings.vue')
-                    }
+                        component: () => import('@Pages/stores/store/settings/StoreSettings.vue'),
+                        children: [
+                            {
+                                path: '',
+                                name: 'show-store-general-settings',
+                                component: () => import('@Pages/stores/store/settings/general/GeneralSettings.vue')
+                            },
+                            {
+                                path: 'social',
+                                name: 'show-store-social-settings',
+                                component: () => import('@Pages/stores/store/settings/social/SocialSettings.vue')
+                            },
+                            {
+                                path: 'payment-methods',
+                                name: 'show-store-payment-method-settings',
+                                component: () => import('@Pages/stores/store/settings/payment-methods/PaymentMethodSettings.vue')
+                            },
+                        ]
+                    },
                 ]
             },
             {

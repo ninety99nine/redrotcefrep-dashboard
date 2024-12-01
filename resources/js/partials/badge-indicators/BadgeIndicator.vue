@@ -2,6 +2,7 @@
     <!-- Component Reference: https://flowbite.com/docs/components/indicators/#badge-indicator -->
     <span :class="badgeClasses">
         <StatusDot v-if="showDot" :type="dotType"></StatusDot>
+        <slot></slot>
         {{ text }}
     </span>
 </template>
@@ -22,6 +23,10 @@
                 type: String,
                 default: 'danger',
                 validator: value => ['info', 'warning', 'primary', 'danger', 'success'].includes(value)
+            },
+            size: {
+                type: String,
+                default: 'px-2.5 py-0.5'
             }
         },
         computed: {
@@ -34,7 +39,7 @@
                     info: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300'
                 };
 
-                return `inline-flex items-center ${typeClassMap[this.type]} text-xs font-medium px-2.5 py-0.5 rounded-full`;
+                return `inline-flex items-center ${typeClassMap[this.type]} text-xs font-medium ${this.size} rounded-full`;
             },
             dotType() {
                 return this.type;

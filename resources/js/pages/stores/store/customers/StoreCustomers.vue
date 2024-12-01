@@ -153,7 +153,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your first customer</h1>
-                <p>Start building your customer base! You can <BadgeIndicator type="primary" text="invite customers" :showDot="false"></BadgeIndicator> directly or let them find you through your amazing offers and services.</p>
+                <p>Start building your customer base! You can <BadgeIndicator type="primary" text="add customers" :showDot="false" @click="onAddCustomer" class="cursor-pointer hover:opacity-80"></BadgeIndicator> directly or let them find you by marketing your store.</p>
 
                 <!-- Add Customer Button -->
                 <AddButton :action="onAddCustomer" class="w-40" size="sm">
@@ -250,6 +250,9 @@
                     window.scrollTo(0, 0);
                 });
             },
+            onAddCustomer() {
+                this.$router.push({ name: 'create-store-customer', params: { 'store_href': this.store._links.showStore } });
+            },
             showDeleteConfirmationModal(customer) {
                 this.deletableCustomer = customer;
 
@@ -267,9 +270,6 @@
             },
             isDeleting(customer) {
                 return this.isDeletingCustomerIds.findIndex((id) => id == customer.id) != -1;
-            },
-            onAddCustomer() {
-                this.$router.push({ name: 'create-store-customer', params: { 'store_href': this.store._links.showStore } });
             },
             paginate(url) {
                 this.getCustomers(url);

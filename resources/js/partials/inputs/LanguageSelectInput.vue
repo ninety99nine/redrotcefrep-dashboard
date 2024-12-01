@@ -1,0 +1,64 @@
+<template>
+
+    <SelectInput v-bind="$attrs">
+        <option v-for="(language, index) in languages" :key="index" :value="language.code">{{ language.name }}</option>
+    </SelectInput>
+
+</template>
+
+<script>
+
+    import { useApiState } from '@Stores/api-store.js';
+    import { getApi } from '@Repositories/api-repository.js';
+    import SelectInput from '@Partials/inputs/SelectInput.vue';
+
+    export default {
+        components: {
+            SelectInput
+        },
+        data() {
+            return {
+                languages: [],
+                apiState: useApiState(),
+                isLoadingLanguages: false
+
+            };
+        },
+        methods: {
+            showLanguages() {
+
+                if(this.languages.length) return;
+
+                //  Start loader
+                this.isLoadingLanguages = true;
+
+                getApi(this.apiState.apiHome['_links']['showLanguages']).then(response => {
+
+                    if(response.status == 200) {
+
+                        this.languages = response.data;
+
+                    }
+
+                    //  Stop loader
+                    this.isLoadingLanguages = false;
+
+                }).catch(errorException => {
+
+                    //  Stop loader
+                    this.isLoadingLanguages = false;
+
+                    /**
+                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
+                     */
+                    this.setServerFormErrors(errorException);
+
+                });
+
+            }
+        },
+        created() {
+            this.showLanguages();
+        }
+    };
+</script>

@@ -7,12 +7,12 @@
             {{ label }}
         </InputLabel>
 
-        <div class="mt-2">
+        <div :class="[{ 'mt-2' : label != '' }]">
 
             <div class="flex">
 
                 <!-- Input Field -->
-                <textarea v-model="localModelValue" :id="uniqueId" :name="uniqueId" :required="_required" :rows="_rows" :placeholder="_placeholder" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3"></textarea>
+                <textarea v-model="localModelValue" :id="uniqueId" :name="uniqueId" :required="required" :rows="rows" :placeholder="placeholder" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3"></textarea>
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
@@ -53,15 +53,15 @@
         errorText: {
             type: String
         },
-        _rows: {
+        rows: {
             type: Number,
             default: 4
         },
-        _placeholder: {
+        placeholder: {
             type: String,
             default: ''
         },
-        _required: {
+        required: {
             type: Boolean,
             default: true
         },

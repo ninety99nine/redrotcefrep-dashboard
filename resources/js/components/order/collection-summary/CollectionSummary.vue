@@ -145,7 +145,7 @@
 
                     <!-- Collection Note Textarea -->
                     <TextareaInput v-model="collectionNote"
-                        label="Note (Optional)" _placeholder="Collected by John Doe" :_rows="2"
+                        label="Note (Optional)" placeholder="Collected by John Doe" :rows="2"
                         :errorText="getFormError('collectionNote')"
                         labelPopoverTitle="What Is This?"
                         labelPopoverDescription="Important note regarding this order collection e.g Collected by John Doe">

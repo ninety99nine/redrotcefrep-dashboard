@@ -82,31 +82,31 @@
 
                         <!-- First Name Input -->
                         <TextInput
+                            label="First Name"
+                            placeholder="John"
                             v-model="form.firstName"
-                            @keydown.enter="updateCustomer"
-                            :errorText="getFormError('firstName')"
                             labelPopoverTitle="What Is This?"
-                            label="First Name" _placeholder="John"
+                            :errorText="getFormError('firstName')"
                             labelPopoverDescription="Customer's first name e.g John">
                         </TextInput>
 
                         <!-- Last Name Input -->
                         <TextInput
+                            label="Last Name"
+                            placeholder="Doe"
                             v-model="form.lastName"
-                            @keydown.enter="updateCustomer"
-                            :errorText="getFormError('lastName')"
                             labelPopoverTitle="What Is This?"
-                            label="Last Name" _placeholder="Doe"
+                            :errorText="getFormError('lastName')"
                             labelPopoverDescription="Customer's last name e.g Doe">
                         </TextInput>
 
                         <!-- Email -->
                         <TextInput
+                            label="Email"
                             v-model="form.email"
-                            @keydown.enter="updateCustomer"
+                            placeholder="johndoe@gmail.com"
                             :errorText="getFormError('email')"
                             labelPopoverTitle="What Is This?"
-                            label="Email" _placeholder="johndoe@gmail.com"
                             labelPopoverDescription="Customer's email e.g johndoe@gmail.com">
                         </TextInput>
 
@@ -120,10 +120,12 @@
 
                         <!-- Notes Textarea -->
                         <TextareaInput
+                            :rows="2"
+                            label="Notes"
                             v-model="form.notes"
                             labelPopoverTitle="What Is This?"
-                            label="Notes" _placeholder="Very loyal customer" :_rows="2"
-                            :errorText="getFormError('notes')" @keydown.enter="updateCustomer"
+                            :errorText="getFormError('notes')"
+                            placeholder="Very loyal customer"
                             labelPopoverDescription="Short notes about customer e.g Very loyal customer">
                         </TextareaInput>
 
@@ -131,8 +133,9 @@
                         <Datepicker
                             :key="form.birthday"
                             v-model="form.birthday"
+                            :errorText="getFormError('birthday')"
                             label="Birthday" labelPopoverTitle="What Is This?"
-                            :errorText="getFormError('birthday')" labelPopoverDescription="Customer's birthday 🥳">
+                            labelPopoverDescription="Customer's birthday 🥳">
                         </Datepicker>
 
                     </div>

@@ -7,13 +7,13 @@
             {{ label }}
         </InputLabel>
 
-        <div class="mt-2">
+        <div :class="[{ 'mt-2' : label != '' }]">
 
             <div class="flex">
 
                 <!-- Input Field -->
-                <input v-if="size == 'lg'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="nonNegative ? 0 : null" :autocomplete="_autocomplete" :required="_required" :placeholder="_placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3']">
-                <input v-else-if="size == 'sm'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="nonNegative ? 0 : null" :autocomplete="_autocomplete" :required="_required" :placeholder="_placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'block w-full border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3']">
+                <input v-if="size == 'lg'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="nonNegative ? 0 : null" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3']">
+                <input v-else-if="size == 'sm'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="nonNegative ? 0 : null" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'block w-full border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3']">
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
@@ -54,7 +54,7 @@
         },
         label: {
             type: String,
-            default: 'Label'
+            default: ''
         },
         labelPopoverTitle: {
             type: String
@@ -62,14 +62,14 @@
         labelPopoverDescription: {
             type: String
         },
-        _autocomplete: {
+        autocomplete: {
             type: String
         },
-        _placeholder: {
+        placeholder: {
             type: String,
             default: ''
         },
-        _required: {
+        required: {
             type: Boolean,
             default: true
         },

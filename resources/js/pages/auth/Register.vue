@@ -40,14 +40,14 @@
                             <div class="md:col-span-1 col-span-2">
 
                                 <!-- First Name Input -->
-                                <TextInput v-model="firstName" label="First Name" _autocomplete="given-name" :errorText="getFormError('firstName')" @keydown.enter="handleRegistration"></TextInput>
+                                <TextInput v-model="firstName" label="First Name" autocomplete="given-name" :errorText="getFormError('firstName')" @keydown.enter="handleRegistration"></TextInput>
 
                             </div>
 
                             <div class="md:col-span-1 col-span-2">
 
                                 <!-- Last Name Input -->
-                                <TextInput v-model="lastName" label="Last Name" _autocomplete="family-name" :errorText="getFormError('lastName')" @keydown.enter="handleRegistration"></TextInput>
+                                <TextInput v-model="lastName" label="Last Name" autocomplete="family-name" :errorText="getFormError('lastName')" @keydown.enter="handleRegistration"></TextInput>
 
                             </div>
 
@@ -112,9 +112,9 @@
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import ConfirmPasswordInput from '@Partials/inputs/TextInput.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
+    import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import { validateRegister, register } from '@Repositories/auth-repository.js';
     export default {
         mixins: [FormMixin, UtilsMixin],
@@ -335,7 +335,7 @@
                             /**
                              *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
                              */
-                            this.showSuccessfulNotification('Welcome to ' + appName);
+                            this.showSuccessfulNotification('Welcome to ' + this.appName);
 
                         }
 

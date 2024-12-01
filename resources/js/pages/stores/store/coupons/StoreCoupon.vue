@@ -61,19 +61,19 @@
                         <!-- Name Input -->
                         <TextInput
                             v-model="form.name"
-                            @keydown.enter="updateCoupon"
                             :errorText="getFormError('name')"
                             labelPopoverTitle="What Is This?"
-                            label="Name" _placeholder="10% off"
+                            label="Name" placeholder="10% off"
                             labelPopoverDescription="The name of your coupon e.g 10% off">
                         </TextInput>
 
                         <!-- Description Textarea -->
                         <TextareaInput
+                            :rows="2"
                             v-model="form.description"
                             labelPopoverTitle="What Is This?"
-                            label="Description" _placeholder="Offer 10% discount" :_rows="2"
-                            :errorText="getFormError('description')" @keydown.enter="updateCoupon"
+                            :errorText="getFormError('description')"
+                            label="Description" placeholder="Offer 10% discount"
                             labelPopoverDescription="Sweet and short description of your coupon (for internal use) e.g Offer 10% discount">
                         </TextareaInput>
 
@@ -110,20 +110,19 @@
                                 </SelectInput>
 
                                 <!-- Percentage Discount Rate Input -->
-                                <NumberInput
+                                <TextInput
+                                    placeholder="100"
+                                    label="Percentage Rate"
                                     labelPopoverTitle="What Is This?"
                                     v-model="form.discountPercentageRate"
                                     v-if="form.discountType == 'Percentage'"
-                                    label="Percentage Rate" _placeholder="100"
-                                    :errorText="getFormError('discountPercentageRate')" @keydown.enter="updateCoupon"
+                                    :errorText="getFormError('discountPercentageRate')"
                                     labelPopoverDescription="Set the percentage discount amount (This is the percentage amount of the entire order that will be applied as a discount e.g 50%)">
-                                    <template #suffix>%</template>
-                                </NumberInput>
+                                </TextInput>
 
                                 <!-- Fixed Discount Rate Money Input -->
                                 <MoneyInput
                                     label="Fixed Rate"
-                                    @keydown.enter="updateCoupon"
                                     v-model="form.discountFixedRate"
                                     labelPopoverTitle="What Is This?"
                                     v-if="form.discountType == 'Fixed'"
@@ -170,10 +169,9 @@
                                 <TextInput
                                     v-model="form.code"
                                     v-if="form.activateUsingCode"
-                                    @keydown.enter="updateCoupon"
                                     :errorText="getFormError('code')"
                                     labelPopoverTitle="What Is This?"
-                                    label="Activation Code" _placeholder="1234"
+                                    label="Activation Code" placeholder="1234"
                                     labelPopoverDescription="The activation code of your coupon e.g 1234">
                                 </TextInput>
 
@@ -211,7 +209,6 @@
                                 <!-- Minimum Grand Total Text Input -->
                                 <MoneyInput
                                     label="Grand Total"
-                                    @keydown.enter="updateCoupon"
                                     v-model="form.minimumGrandTotal"
                                     labelPopoverTitle="What Is This?"
                                     v-if="form.activateUsingMinimumGrandTotal"
@@ -234,11 +231,12 @@
 
                                 <!-- Minimum Total Products Input -->
                                 <NumberInput
+                                    placeholder="100"
+                                    label="Minimum Products"
                                     labelPopoverTitle="What Is This?"
                                     v-model="form.minimumTotalProducts"
-                                    label="Minimum Products" _placeholder="100"
                                     v-if="form.activateUsingMinimumTotalProducts"
-                                    :errorText="getFormError('minimumTotalProducts')" @keydown.enter="updateCoupon"
+                                    :errorText="getFormError('minimumTotalProducts')"
                                     labelPopoverDescription="Set the minimum total products e.g Must have selected 2 different products or more">
                                 </NumberInput>
 
@@ -257,11 +255,12 @@
 
                                 <!-- Minimum Total Product Quantities Input -->
                                 <NumberInput
+                                    placeholder="100"
+                                    label="Minimum Products"
                                     labelPopoverTitle="What Is This?"
-                                    label="Minimum Products" _placeholder="100"
                                     v-model="form.minimumTotalProductQuantities"
+                                    :errorText="getFormError('minimumTotalProducts')"
                                     v-if="form.activateUsingMinimumTotalProductQuantities"
-                                    :errorText="getFormError('minimumTotalProducts')" @keydown.enter="updateCoupon"
                                     labelPopoverDescription="Set the minimum total product quantities e.g Must have selected 10 quantities of all items combined or more">
                                     <template #suffix>%</template>
                                 </NumberInput>
@@ -404,11 +403,12 @@
 
                                 <!-- Remaining Quantity Input -->
                                 <NumberInput
+                                    placeholder="100"
+                                    label="Remaining Quantity"
                                     labelPopoverTitle="What Is This?"
                                     v-model="form.remainingQuantity"
                                     v-if="form.activateUsingUsageLimit"
-                                    label="Remaining Quantity" _placeholder="100"
-                                    :errorText="getFormError('remainingQuantity')" @keydown.enter="updateCoupon"
+                                    :errorText="getFormError('remainingQuantity')"
                                     labelPopoverDescription="Set the remaining quantity e.g 10 means that this coupon can only be claimed 10 times">
                                 </NumberInput>
 
@@ -903,7 +903,7 @@
                 //  Return product after creation
                 this.form.return = true;
 
-                putApi(this.coupon._links.showCoupon, this.parseForm()).then(response => {
+                putApi(this.coupon._links.updateCoupon, this.parseForm()).then(response => {
 
                     if(response.status == 200) {
 
@@ -964,6 +964,11 @@
 
                         // Scroll to the top
                         window.scrollTo(0, 0);
+
+                    }else{
+
+                        this.setFormError('general', response.data.message);
+                        this.notificationState.addWarningNotification(response.data.message);
 
                     }
 

@@ -159,7 +159,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">No Transactions Yet</h1>
-                <p>Your transactions will appear here once customers start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
+                <p>Your transactions will appear here once <BadgeIndicator type="primary" text="customers" :showDot="false" @click="navigateToShowCustomers" class="cursor-pointer hover:opacity-80"></BadgeIndicator> start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
 
                 <!-- Add Transaction Button -->
                 <AddButton :action="onAddTransaction" class="w-40" size="sm">
@@ -258,6 +258,9 @@
                     // Ensure scroll to top after route navigation
                     window.scrollTo(0, 0);
                 });
+            },
+            navigateToShowCustomers() {
+                this.$router.push({ name: 'show-store-customers', params: { 'store_href': this.store._links.showStore } });
             },
             showDeleteConfirmationModal(transaction) {
                 this.deletableTransaction = transaction;

@@ -17,21 +17,37 @@
                         <div class="md:col-span-1 col-span-2">
 
                             <!-- First Name Input -->
-                            <TextInput v-model="firstName" label="First Name" _autocomplete="given-name" :errorText="getFormError('firstName')" @keydown.enter="updateUser"></TextInput>
+                            <TextInput
+                                v-model="firstName"
+                                label="First Name"
+                                autocomplete="given-name"
+                                :errorText="getFormError('firstName')">
+                            </TextInput>
 
                         </div>
 
                         <div class="md:col-span-1 col-span-2">
 
                             <!-- Last Name Input -->
-                            <TextInput v-model="lastName" label="Last Name" _autocomplete="family-name" :errorText="getFormError('lastName')" @keydown.enter="updateUser"></TextInput>
+                            <TextInput
+                                label="Last Name"
+                                v-model="lastName"
+                                autocomplete="family-name"
+                                :errorText="getFormError('lastName')">
+                            </TextInput>
 
                         </div>
 
                         <div class="md:col-span-2">
 
                             <!-- About Me Textarea -->
-                            <TextareaInput v-model="aboutMe" label="About Me" _placeholder="Say something about yourself" :_rows="2" :errorText="getFormError('aboutMe')" @keydown.enter="updateUser"></TextareaInput>
+                            <TextareaInput
+                                :rows="2"
+                                label="About Me"
+                                v-model="aboutMe"
+                                :errorText="getFormError('aboutMe')"
+                                placeholder="Say something about yourself">
+                            </TextareaInput>
 
                         </div>
 
@@ -43,13 +59,24 @@
                     <template v-if="changePassword">
 
                         <!-- Current Password Input -->
-                        <CurrentPasswordInput v-model="currentPassword" :showForgotPassword="false" :errorText="getFormError('currentPassword')" @keydown.enter="updateUser"></CurrentPasswordInput>
+                        <CurrentPasswordInput
+                            v-model="currentPassword"
+                            :showForgotPassword="false"
+                            :errorText="getFormError('currentPassword')">
+                        </CurrentPasswordInput>
 
                         <!-- Password Input -->
-                        <PasswordInput v-model="password" :showForgotPassword="false" :errorText="getFormError('password')" @keydown.enter="updateUser"></PasswordInput>
+                        <PasswordInput
+                            v-model="password"
+                            :showForgotPassword="false"
+                            :errorText="getFormError('password')" >
+                        </PasswordInput>
 
                         <!-- Confirm Password Input -->
-                        <ConfirmPasswordInput v-model="passwordConfirmation" :errorText="getFormError('passwordConfirmation')" @keydown.enter="updateUser"></ConfirmPasswordInput>
+                        <ConfirmPasswordInput
+                            v-model="passwordConfirmation"
+                            :errorText="getFormError('passwordConfirmation')">
+                        </ConfirmPasswordInput>
 
                     </template>
 
@@ -59,7 +86,10 @@
                     <template v-if="changeMobileNumber">
 
                         <!-- Mobile Number Input -->
-                        <MobileNumberInput v-model="mobileNumber" :errorText="getFormError('mobileNumber')" @keydown.enter="updateUser"></MobileNumberInput>
+                        <MobileNumberInput
+                            v-model="mobileNumber"
+                            :errorText="getFormError('mobileNumber')">
+                        </MobileNumberInput>
 
                         <template v-if="hasChangedMobileNumber">
 

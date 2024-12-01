@@ -12,7 +12,7 @@
             </svg>
         </button>
 
-        <aside id="main-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
+        <aside id="main-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 border-r" aria-label="Sidebar">
 
             <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
 
@@ -170,11 +170,11 @@
     import RightSideAlerts from './RightSideAlerts.vue';
     import { useAuthState } from '@Stores/auth-store.js';
     import AddButton from '@Partials/buttons/AddButton.vue';
+    import { getApi } from '@Repositories/api-repository.js';
     import { logout } from '@Repositories/auth-repository.js';
     import StatusDot from '@Partials/status-dots/StatusDot.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
-    import { getUserStores } from '@Repositories/store-repository.js';
     import { useNotificationState } from '@Stores/notification-store.js';
 
     export default {
@@ -397,7 +397,7 @@
                     '_includeLinks': 'showStore,showStoreOrders,showStoreProducts',
                 };
 
-                return getUserStores(this.authState.user, params).then(response => {
+                return getApi(this.authState.user._links.showStores, params).then(response => {
 
                     if(response.status == 200) {
 
@@ -452,7 +452,7 @@
                                     },
                                     {
                                         label: 'Store Settings',
-                                        name: 'show-store-settings',
+                                        name: 'show-store-general-settings',
                                     }
                                 ]
                             };

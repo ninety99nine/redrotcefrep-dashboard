@@ -1,7 +1,7 @@
 <template>
 
     <!-- Countdown -->
-    <Countdown :time="lastSubscriptionEndAt" textClass="text-yellow-500 font-bold underline decoration-dashed underline-offset-4">
+    <Countdown :time="time" textClass="text-yellow-500 font-bold underline decoration-dashed underline-offset-4">
 
         <template #suffix="props">
             <span v-if="!props.hasExpired" class="text-sm mr-1">Subscription Expires in</span>
@@ -14,13 +14,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                 </svg>
                 <span class="font-bold text-sm">
-                    {{ noSubscription ? 'No Subscription' : 'Your Subscription Expired' }}
+                    {{ totalSubscriptions ? 'Your Subscription Expired' : 'No Subscription' }}
                 </span>
-                <MoreInfoPopover :title="noSubscription ? 'No Subscription' : 'Subscription Expired'" placement="top">
+                <MoreInfoPopover :title="totalSubscriptions ? 'Subscription Expired' : 'No Subscription'" placement="top">
                     <template #description>
-                        <hr>
-                        <p>
-                            {{ noSubscription ? 'Subscribe to open your store and allow customers to place orders' : 'Renew your subscription to reopen your store and allow customers to place orders' }}
+                        <p class="border-t pt-2 mt-2">
+                            {{ totalSubscriptions ? 'Renew your subscription to reopen your store and allow customers to place orders' : 'Subscribe to open your store and allow customers to place orders' }}
                         </p>
                     </template>
                 </MoreInfoPopover>
@@ -57,12 +56,15 @@
             store() {
                 return this.storeState.store;
             },
-            lastSubscriptionEndAt() {
-                return this.store._attributes.userStoreAssociation.lastSubscriptionEndAt;
+            time() {
+                return ((this.activeSubscription || {}).endAt || null);
             },
-            noSubscription() {
-                return this.lastSubscriptionEndAt == null;
-            }
+            activeSubscription() {
+                return this.store._relationships.activeSubscription;
+            },
+            totalSubscriptions() {
+                return this.store.subscriptionsCount;
+            },
         },
     };
 </script>

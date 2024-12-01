@@ -75,7 +75,7 @@
 
                         <!-- Mobile Number Input -->
                         <MobileNumberInput
-                           v-if="isInviting"
+                            v-if="isInviting"
                             v-model="form.mobileNumbers[0]"
                             labelPopoverTitle="What Is This?"
                             :errorText="getFormError('mobileNumbers0')"
@@ -118,8 +118,8 @@
                             <template v-else>
 
                                 <Checkbox
-                                    v-model="form.hasFullPermissions"
                                     label="Grant Full Permissions"
+                                    v-model="form.hasFullPermissions"
                                     labelPopoverTitle="What Is This?"
                                     labelPopoverDescription="The team member will be granted all available permissions when this is checked">
                                 </Checkbox>
@@ -132,9 +132,14 @@
                                 <!-- Permission Input Tags -->
                                 <SelectInputTags
                                     v-else
-                                    :tags="form.permissions" :selectableTags="teamMemberPermissionOptions" @onTagsChanged="(newValues) => form.permissions = newValues"
-                                    label="Permissions" labelPopoverTitle="What Is This?" :errorText="getFormError('permissions')"
-                                    labelPopoverDescription="Set the permissions for your team member" class="w-full"
+                                    class="w-full"
+                                    label="Permissions"
+                                    :tags="form.permissions"
+                                    labelPopoverTitle="What Is This?"
+                                    :errorText="getFormError('permissions')"
+                                    :selectableTags="teamMemberPermissionOptions"
+                                    @onTagsChanged="(newValues) => form.permissions = newValues"
+                                    labelPopoverDescription="Set the permissions for your team member"
                                 />
 
                             </template>

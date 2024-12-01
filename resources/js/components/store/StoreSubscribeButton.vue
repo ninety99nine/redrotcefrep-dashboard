@@ -75,7 +75,7 @@
 
             <!-- Subscribe Button - Triggers Modal -->
             <slot name="trigger" :showModal="triggerProps.showModal">
-                <PrimaryButton ref="storeSubscribeButton" @click="triggerProps.showModal" size="xs" type="success">
+                <PrimaryButton @click="triggerProps.showModal" size="xs" type="success">
                     Subscribe
                 </PrimaryButton>
             </slot>
@@ -93,7 +93,7 @@
     import { useStoreState } from '@Stores/store-store.js';
     import { postApi } from '@Repositories/api-repository.js';
     import Countdown from '@Partials/countdowns/Countdown.vue';
-    import BasicModal from '../../partials/modals/BasicModal.vue';
+    import BasicModal from '@Partials/modals/BasicModal.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SquareSkeleton from '@Partials/skeletons/SquareSkeleton.vue';

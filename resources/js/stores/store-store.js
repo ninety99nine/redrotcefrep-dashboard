@@ -4,6 +4,7 @@ export const useStoreState = defineStore('store', {
     state: () => {
         return {
             store: null,
+            shouldUpdate: false,
             quickStartGuide: null,
             isLoadingQuickStartGuide: false
         }
@@ -12,7 +13,6 @@ export const useStoreState = defineStore('store', {
         completedQuickStartGuide(state) {
             if(state.quickStartGuide == null) return false;
             return state.quickStartGuide.completedMilestones == this.quickStartGuide.totalMilestones;
-
         }
     },
 })

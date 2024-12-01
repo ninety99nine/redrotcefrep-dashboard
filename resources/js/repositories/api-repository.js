@@ -27,6 +27,36 @@ async function postApi(url, data, config = {}) {
     }
 }
 
+// POST File function
+async function postFileApi(url, fileName, file) {
+    try {
+
+        const formData = new FormData();
+
+        if (Array.isArray(file)) {
+            file.forEach(f => {
+                formData.append(fileName, f);
+            });
+        } else {
+            formData.append(fileName, file);
+        }
+
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
+
+        return axios.post(url, formData, config);
+
+    } catch (error) {
+
+        // Handle error here
+        throw error;
+
+    }
+}
+
 // PUT function
 async function putApi(url, data, config = {}) {
     try {
@@ -63,4 +93,4 @@ async function deleteApi(url, data, config = {}) {
 }
 
 // Export functions
-export { getApi, postApi, putApi, deleteApi };
+export { getApi, postApi, postFileApi, putApi, deleteApi };

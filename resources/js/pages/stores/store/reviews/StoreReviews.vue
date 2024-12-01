@@ -90,7 +90,7 @@
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Discover Customer Feedback</h1>
                 <div>
-                    <p>See what your customers are saying about your <BadgeIndicator type="primary" text="products" :showDot="false"></BadgeIndicator> and <BadgeIndicator type="primary" text="services" :showDot="false"></BadgeIndicator>.</p>
+                    <p>See what your customers are saying about your <BadgeIndicator type="primary" text="products" :showDot="false" @click="navigateToShowProducts" class="cursor-pointer hover:opacity-80"></BadgeIndicator> and <BadgeIndicator type="primary" text="services" :showDot="false" @click="navigateToShowProducts" class="cursor-pointer hover:opacity-80"></BadgeIndicator>.</p>
                     <p>Reviews will appear here once customers provide feedback.</p>
                 </div>
             </div>
@@ -137,6 +137,9 @@
             }
         },
         methods: {
+            navigateToShowProducts() {
+                this.$router.push({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
+            },
             paginate(url) {
                 this.getReviews(url);
             },

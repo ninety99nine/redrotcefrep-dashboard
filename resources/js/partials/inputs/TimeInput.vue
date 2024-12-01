@@ -15,7 +15,7 @@
             </div>
 
             <!-- Input Field -->
-            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="text" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :maxlength="maxlength" :minlength="minlength" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
+            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="time" :min="min" :max="max" :required="required" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
 
             <!-- Suffix Slot -->
             <div v-if="$slots.suffix">
@@ -52,20 +52,13 @@
         labelPopoverDescription: {
             type: String
         },
-        autocomplete: {
-            type: String
-        },
-        placeholder: {
+        min: {
             type: String,
-            default: ''
+            default: '09:00'
         },
-        maxlength: {
+        max: {
             type: String,
-            default: null
-        },
-        minlength: {
-            type: String,
-            default: null
+            default: '18:00'
         },
         required: {
             type: Boolean,

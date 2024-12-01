@@ -7,10 +7,10 @@
             {{ label }}
         </InputLabel>
 
-        <div class="mt-2">
+        <div :class="[{ 'mt-2' : label != '' }, 'flex items-center']">
 
             <!-- Select Field -->
-            <select v-model="localModelValue" :id="uniqueId" :name="uniqueId" :required="_required" :class="['w-full block p-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500']">
+            <select v-model="localModelValue" :id="uniqueId" :name="uniqueId" :required="required" :class="['w-full block py-1.5 px-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500']">
                 <slot></slot>
             </select>
 
@@ -42,7 +42,7 @@
             },
             label: {
                 type: String,
-                default: 'Label'
+                default: ''
             },
             labelPopoverTitle: {
                 type: String
@@ -53,7 +53,7 @@
             errorText: {
                 type: String
             },
-            _required: {
+            required: {
                 type: Boolean,
                 default: true
             },
