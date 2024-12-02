@@ -1,0 +1,1 @@
+import{o,c as s,n}from"./app-Crpx-0aq.js";import{_ as r}from"./_plugin-vue_export-helper-DlAUqK2U.js";const t={props:{size:{type:String,default:"w-12 h-12"}}};function a(c,l,e,i,p,_){return o(),s("div",{class:n([e.size,"bg-gray-200 rounded-full"])},null,2)}const u=r(t,[["render",a]]);export{u as R};
