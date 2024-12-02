@@ -18,7 +18,7 @@
         </template>
 
         <!-- Form -->
-        <form class="mt-4" action="#" method="POST">
+        <form class="mt-8" action="#" method="POST">
 
             <div class="space-y-4">
 
@@ -178,7 +178,7 @@
                         <!-- Add Button -->
                         <template v-if="paymentMethod.storeId">
                             <PrimaryButton @click="() => updatePaymentMethod()" :disabled="!mustSaveChanges" type="dark" class="w-full mt-8">
-                                <span>Save Payment Method</span>
+                                <span>Save Changes</span>
                             </PrimaryButton>
                         </template>
                         <template v-else>
@@ -208,6 +208,9 @@
                 <!-- Non Associated Payment Methods -->
                 <div v-else-if="isShowingNonAssociatedPaymentMethods" class="space-y-2">
 
+                    <!-- Search Input -->
+                    <SearchInput v-model="searchTerm" :isSearching="isSearching"></SearchInput>
+
                     <div
                         :key="index"
                         @click="() => selectPaymentMethod(nonAssociatedPaymentMethod)"
@@ -226,6 +229,17 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                                 </svg>
                             </div>
+                        </div>
+
+                    </div>
+
+                    <div v-if="!hasNonAssociatedPaymentMethods">
+
+                        <div class="flex items-center space-x-2 p-4 border rounded-lg bg-gray-50">
+                            <svg class="w-8 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                            </svg>
+                            <p class="text-gray-500 text-sm">No payment methods found</p>
                         </div>
 
                     </div>
@@ -254,11 +268,15 @@
                 <!-- Store Payment Methods -->
                 <template v-else>
 
+                    <!-- Search Input -->
+                    <SearchInput v-if="hasSearchTerm || hasPaymentMethods" v-model="searchTerm" :isSearching="isSearching"></SearchInput>
+
                     <draggable
                         class="space-y-2"
                         v-model="paymentMethods"
                         handle=".draggable-handle"
-                        ghost-class="bg-yellow-50">
+                        ghost-class="bg-yellow-50"
+                        @change="updatePaymentMethodArrangement">
                         <div v-for="(paymentMethod, index) in paymentMethods" @click="() => selectPaymentMethod(paymentMethod)" :key="index" class="flex items-center justify-between space-x-4 border shadow-sm rounded-lg p-4 bg-gray-50 cursor-pointer hover:border-blue-200 hover:bg-blue-50 group">
 
                             <!-- Payment Method -->
@@ -303,6 +321,20 @@
 
                         </div>
                     </draggable>
+
+                    <div v-if="!hasPaymentMethods">
+
+                        <div class="flex justify-between items-center space-x-8 px-16 py-4 border rounded-lg bg-gray-50">
+                            <svg class="w-80 text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                            </svg>
+                            <div class="space-y-2">
+                                <p v-if="hasSearchTerm" class="font-bold">No payment methods found.</p>
+                                <p>Click the <BadgeIndicator @click="() => openNonAssociatedPaymentMethods()" type="primary" text="+ Add Payment Method" :showDot="false" class="whitespace-nowrap cursor-pointer shadow border border-blue-300 hover:bg-blue-50 hover:border-blue-400 hover:scale-95 hover:shadow-sm active:bg-blue-100 active:scale-90 transition-all"></BadgeIndicator> button to offer your customers convenient payment methods on your store</p>
+                            </div>
+                        </div>
+
+                    </div>
 
                 </template>
 
@@ -349,6 +381,7 @@
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import BackButton from '@Partials/buttons/BackButton.vue';
+    import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
@@ -366,13 +399,14 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             Alert, draggable: VueDraggableNext, TextInput, TextHeader, StoreLogo, AddButton, BasicModal,
-            Checkbox, UndoButton, BackButton, ConfirmModal, DeleteButton, ShineEffect, TextareaInput,
-            PrimaryButton, LineSkeleton, RoundSkeleton, ButtonSkeleton, ToogleSwitch,
-            MobileNumberInput, BadgeIndicator
+            Checkbox, UndoButton, BackButton, SearchInput, ConfirmModal, DeleteButton, ShineEffect,
+            TextareaInput, PrimaryButton, LineSkeleton, RoundSkeleton, ButtonSkeleton,
+            ToogleSwitch, MobileNumberInput, BadgeIndicator
         },
         data() {
             return {
                 form: null,
+                searchTerm: '',
                 isDeleting: false,
                 paymentMethods: [],
                 settings: settings,
@@ -384,17 +418,36 @@
                 isLoadingPaymentMethods: false,
                 nonAssociatedPaymentMethods: [],
                 selectedPaymentCategory: 'Automated',
+                isUpdatingPaymentMethodArrangement: false,
                 isShowingNonAssociatedPaymentMethods: false,
                 isLoadingNonAssociatedPaymentMethods: false,
                 paymentCategories: ['All', 'Manual', 'Local', 'Automated']
             }
         },
         watch: {
-
+            searchTerm(newValue, oldValue) {
+                if(this.isShowingNonAssociatedPaymentMethods) {
+                    this.showNonAssociatedPaymentMethods();
+                }else{
+                    this.showPaymentMethods();
+                }
+            }
         },
         computed: {
             store() {
                 return this.storeState.store;
+            },
+            hasSearchTerm() {
+                return this.searchTerm.length > 0;
+            },
+            hasPaymentMethods() {
+                return this.paymentMethods.length;
+            },
+            hasNonAssociatedPaymentMethods() {
+                return this.nonAssociatedPaymentMethods.length;
+            },
+            isSearching() {
+                return this.searchTerm.length > 0 && (this.isLoadingPaymentMethods || this.isLoadingNonAssociatedPaymentMethods);
             },
             formHasChanged() {
                 // Clone the objects to avoid modifying the original data
@@ -442,12 +495,9 @@
             checkSocialIcon(name) {
                 return this.socialIcons.some(socialIcon => socialIcon === name);
             },
-            openNonAssociatedPaymentMethods() {
-                this.isShowingNonAssociatedPaymentMethods = true;
-                this.showNonAssociatedPaymentMethods();
-            },
             openPaymentMethods() {
                 this.form = null;
+                this.searchTerm = '';
                 this.originalForm = null;
                 this.paymentMethod = null;
                 this.isShowingNonAssociatedPaymentMethods = false;
@@ -455,6 +505,7 @@
             },
             openNonAssociatedPaymentMethods() {
                 this.form = null;
+                this.searchTerm = '';
                 this.originalForm = null;
                 this.paymentMethod = null;
                 this.isShowingNonAssociatedPaymentMethods = true;
@@ -476,7 +527,8 @@
                 this.isLoadingPaymentMethods = true;
 
                 const params = {
-                    'storeId': this.store.id
+                    'storeId': this.store.id,
+                    'search': this.searchTerm
                 };
 
                 getApi(this.store._links['showStorePaymentMethods'], params).then(response => {
@@ -508,7 +560,8 @@
                 this.isLoadingNonAssociatedPaymentMethods = true;
 
                 const params = {
-                    'nonAssociatedStoreId': this.store.id
+                    'nonAssociatedStoreId': this.store.id,
+                    'search': this.searchTerm
                 };
 
                 if(this.selectedPaymentCategory != 'All') params['_filters'] = 'category:eq:'+this.selectedPaymentCategory;
@@ -640,6 +693,53 @@
 
                     //  Stop loader
                     this.isSubmitting = false;
+
+                    /**
+                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
+                     */
+                    this.setServerFormErrors(errorException);
+
+                });
+
+            },
+            updatePaymentMethodArrangement() {
+
+                //  Start loader
+                this.isUpdatingPaymentMethodArrangement = true;
+
+                //  Set the query params
+                const params = {
+                    'storeId': this.store.id,
+                    'paymentMethodIds': this.paymentMethods.map((paymentMethod) => paymentMethod.id)
+                }
+
+                postApi(this.apiState.apiHome['_links']['updatePaymentMethodArrangement'], params).then(response => {
+
+                    if(response.status == 200) {
+
+                        if(response.data.updated) {
+
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Payment method arrangement updated');
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.notificationState.addWarningNotification(response.data.message);
+
+                        }
+
+                    }
+
+                    //  Stop loader
+                    this.isUpdatingPaymentMethodArrangement = false;
+
+                }).catch(errorException => {
+
+                    //  Stop loader
+                    this.isUpdatingPaymentMethodArrangement = false;
 
                     /**
                      *  Note: the setServerFormErrors() method is part of the FormMixin methods

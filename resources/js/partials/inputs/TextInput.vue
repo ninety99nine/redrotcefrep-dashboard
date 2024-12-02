@@ -15,7 +15,7 @@
             </div>
 
             <!-- Input Field -->
-            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="text" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :maxlength="maxlength" :minlength="minlength" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
+            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :ref="$attrs['ref']" type="text" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :maxlength="maxlength" :minlength="minlength" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
 
             <!-- Suffix Slot -->
             <div v-if="$slots.suffix">
