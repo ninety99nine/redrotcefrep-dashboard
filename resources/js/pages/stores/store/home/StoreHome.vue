@@ -678,27 +678,36 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Store deleted');
+                        if(response.data.deleted) {
 
-                        /**
-                         *  After setting the isDeletingStore to false, we need to wait until the nextTick()
-                         *  so that the ConfirmModal isLoading propery updates. This allows the watcher of
-                         *  the ConfirmModal to auto close the modal once isLoading is set to false. We
-                         *  need to wait for the state change so that the modal is closed gracefully
-                         *  before we navigate away, otherwise the modal backdrop is not removed.
-                         */
-                        this.$nextTick(() => {
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Store deleted');
 
-                            //  Unset the store
-                            this.storeState.store = null;
+                            /**
+                             *  After setting the isDeletingStore to false, we need to wait until the nextTick()
+                             *  so that the ConfirmModal isLoading propery updates. This allows the watcher of
+                             *  the ConfirmModal to auto close the modal once isLoading is set to false. We
+                             *  need to wait for the state change so that the modal is closed gracefully
+                             *  before we navigate away, otherwise the modal backdrop is not removed.
+                             */
+                            this.$nextTick(() => {
 
-                            //  Navigate to dashboard
-                            this.$router.replace({ name: 'dashboard', query: { deletedStore: true } });
+                                //  Unset the store
+                                this.storeState.store = null;
 
-                        });
+                                //  Navigate to dashboard
+                                this.$router.replace({ name: 'dashboard', query: { deletedStore: true } });
+
+                            });
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

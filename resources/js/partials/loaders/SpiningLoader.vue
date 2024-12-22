@@ -15,7 +15,11 @@ export default {
         size: {
             type: String,
             default: 'md',
-            options: ['sm', 'md']
+            options: ['sm', 'md', 'custom']
+        },
+        customSize: {
+            type: String,
+            default: ''
         },
         type: {
             type: String,
@@ -42,6 +46,8 @@ export default {
                 classes.push('w-3 h-3 border');
             }else if(this.size == 'md') {
                 classes.push('w-4 h-4 border-2');
+            }else{
+                classes.push(this.customSize);
             }
 
             if(this.type == 'dark') {

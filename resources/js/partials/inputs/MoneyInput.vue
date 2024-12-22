@@ -43,7 +43,7 @@
         },
         label: {
             type: String,
-            default: 'Label'
+            default: ''
         },
         labelPopoverTitle: {
             type: String

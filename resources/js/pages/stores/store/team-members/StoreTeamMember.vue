@@ -51,17 +51,15 @@
 
             </Alert>
 
-            <!-- General Error Info Alert -->
-            <Alert v-if="getFormError('general')" type="warning" class="mb-4">
-                {{ getFormError('general') }}
-            </Alert>
+            <!-- Form Error Messages -->
+            <FormErrorMessages></FormErrorMessages>
 
             <div class="grid grid-cols-12 gap-4 mb-8">
 
                 <div class="col-span-8 relative">
 
                     <!-- Loading Backdrop -->
-                    <LoadingBackdrop v-if="isLoadingTeamMember || isSubmitting" class="rounded-lg"></LoadingBackdrop>
+                    <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" class="rounded-lg"></BackdropLoader>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
@@ -156,7 +154,7 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <LoadingBackdrop v-if="isLoadingTeamMember || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
+                        <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <!-- Permissions Title -->
                         <div class="flex items-center space-x-4 mb-2">
@@ -254,9 +252,10 @@
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
@@ -264,8 +263,8 @@
         components: {
             Alert, TextInput, TextHeader, Checkbox, InputTags, BackButton, NumberInput,
             SelectInput, ConfirmModal, ShineEffect, PrimaryButton, LineSkeleton,
-            SpiningLoader, SelectInputTags, MoreInfoPopover, LoadingBackdrop,
-            MobileNumberInput, BadgeIndicator
+            SpiningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader,
+            MobileNumberInput, BadgeIndicator, FormErrorMessages
         },
         data() {
             return {
@@ -546,7 +545,7 @@
                             this.form = cloneDeep(this.originalForm);
 
                             this.setFormError('general', response.data.message);
-                            this.notificationState.addWarningNotification(response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
 
                         }
 
@@ -581,16 +580,25 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification(response.data.message);
+                        if(response.data.deleted) {
 
-                        //  Navigate to show team members
-                        this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification(response.data.message);
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            //  Navigate to show team members
+                            this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

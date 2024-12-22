@@ -153,7 +153,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your first customer</h1>
-                <p>Start building your customer base! You can <BadgeIndicator type="primary" text="add customers" :showDot="false" @click="onAddCustomer" class="cursor-pointer hover:opacity-80"></BadgeIndicator> directly or let them find you by marketing your store.</p>
+                <p>Start building your customer base! You can <BadgeIndicator type="primary" text="add customers" :showDot="false" :clickable="true" :action="onAddCustomer" class="cursor-pointer hover:opacity-80"></BadgeIndicator> directly or let them find you by marketing your store.</p>
 
                 <!-- Add Customer Button -->
                 <AddButton :action="onAddCustomer" class="w-40" size="sm">
@@ -261,7 +261,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  deletableCustomer.name value. This is only available
+                 *  deletableCustomer values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -328,13 +328,22 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Customer deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other customers, then refresh the customer list
-                        if(this.isDeletingCustomerIds.length == 0) this.getCustomers();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Customer deleted');
+
+                            //  If we are not deleting any other customers, then refresh the customer list
+                            if(this.isDeletingCustomerIds.length == 0) this.getCustomers();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

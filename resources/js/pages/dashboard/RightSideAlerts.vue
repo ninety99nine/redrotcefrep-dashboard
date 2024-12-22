@@ -46,7 +46,7 @@
             onHide(notification) {
                 const index = this.notificationState.notifications.findIndex(item => item.id === notification.id);
 
-                if (index !== -1) {
+                if(index !== -1) {
                     this.notificationState.notifications.splice(index, 1);
                 }
             }

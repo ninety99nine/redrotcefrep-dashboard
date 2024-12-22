@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useLoaderState } from '@Stores/loader-store.js';
 import { useAuthState } from '@Stores/auth-store.js';
 import { useApiState } from '@Stores/api-store.js';
 
@@ -160,6 +161,36 @@ const routes = [
                                 component: () => import('@Pages/stores/store/settings/social/SocialSettings.vue')
                             },
                             {
+                                path: 'workflows',
+                                name: 'show-store-workflows',
+                                component: () => import('@Pages/stores/store/settings/workflows/Workflows.vue')
+                            },
+                            {
+                                path: 'workflows/:workflow_href',
+                                name: 'show-store-workflow',
+                                component: () => import('@Pages/stores/store/settings/workflows/Workflow.vue')
+                            },
+                            {
+                                path: 'workflows/create',
+                                name: 'create-store-workflow',
+                                component: () => import('@Pages/stores/store/settings/workflows/Workflow.vue')
+                            },
+                            {
+                                path: 'delivery-methods',
+                                name: 'show-store-delivery-methods',
+                                component: () => import('@Pages/stores/store/settings/delivery-methods/DeliveryMethods.vue')
+                            },
+                            {
+                                path: 'delivery-methods/:delivery_method_href',
+                                name: 'show-store-delivery-method',
+                                component: () => import('@Pages/stores/store/settings/delivery-methods/DeliveryMethod.vue')
+                            },
+                            {
+                                path: 'delivery-methods/create',
+                                name: 'create-store-delivery-method',
+                                component: () => import('@Pages/stores/store/settings/delivery-methods/DeliveryMethod.vue')
+                            },
+                            {
                                 path: 'payment-methods',
                                 name: 'show-store-payment-method-settings',
                                 component: () => import('@Pages/stores/store/settings/payment-methods/PaymentMethodSettings.vue')
@@ -209,6 +240,11 @@ const router = createRouter({
  */
 router.beforeEach(async (to, from, next) => {
 
+    const loader = useLoaderState();
+
+    // Show the loader before navigation
+    loader.show();
+
     //  If we are navigating to the oops page
     if(to.name == 'oops') {
 
@@ -242,13 +278,13 @@ router.beforeEach(async (to, from, next) => {
         const auth = useAuthState();
 
         // Check if the route has meta data and requiresAuth is explicitly set to false
-        if (to.meta && to.meta.requiresAuth === false) {
+        if(to.meta && to.meta.requiresAuth === false) {
 
             /**
              *  For non-protected routes, check if the user is authenticated.
              *  If authenticated, redirect to the dashboard.
              */
-            if (auth.authenticated) {
+            if(auth.authenticated) {
 
                 //  Navigate to the dashboard page
                 next({ name: 'dashboard', replace: true });
@@ -266,7 +302,7 @@ router.beforeEach(async (to, from, next) => {
              *  For all other routes, assume they are protected and require authentication.
              *  We must always check if the user is authenticated before navigation.
              */
-            if (auth.authenticated) {
+            if(auth.authenticated) {
 
                 // If authenticated, allow navigation
                 next();
@@ -283,5 +319,12 @@ router.beforeEach(async (to, from, next) => {
     }
 
 });
+
+router.afterEach(() => {
+    const loader = useLoaderState();
+
+    // Hide the loader after navigation is complete
+    loader.hide();
+  });
 
 export default router;

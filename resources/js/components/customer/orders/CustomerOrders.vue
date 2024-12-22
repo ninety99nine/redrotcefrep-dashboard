@@ -328,7 +328,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  deletableOrder.name value. This is only available
+                 *  deletableOrder values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -401,15 +401,24 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Order deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other orders, then refresh the order list
-                        if(this.isDeletingOrderIds.length == 0) this.getOrders();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Order deleted');
 
-                        this.refreshCustomer();
+                            //  If we are not deleting any other orders, then refresh the order list
+                            if(this.isDeletingOrderIds.length == 0) this.getOrders();
+
+                            this.refreshCustomer();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

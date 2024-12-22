@@ -1,0 +1,1 @@
+import{L as e}from"./app-Kf0mCOXy.js";const i=e("store",{state:()=>({store:null,shouldUpdate:!1,quickStartGuide:null,isLoadingQuickStartGuide:!1}),getters:{completedQuickStartGuide(t){return t.quickStartGuide==null?!1:t.quickStartGuide.completedMilestones==this.quickStartGuide.totalMilestones}}});export{i as u};

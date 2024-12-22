@@ -16,6 +16,9 @@
 
             <form class="space-y-6" action="#" method="POST">
 
+                <!-- Form Error Messages -->
+                <FormErrorMessages v-if="hasGeneralError"></FormErrorMessages>
+
                 <template v-if="showVerificationCode">
 
                     <!-- Enter Verification Code Alert -->
@@ -67,11 +70,6 @@
 
                 </template>
 
-                <!-- General Error Info Alert -->
-                <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
-                    {{ getFormError('general') }}
-                </Alert>
-
                 <!-- Create Account Button -->
                 <div class="flex">
                     <BackButton v-if="showVerificationCode" :action="backToRegistrationForm" class="w-16 mr-2"></BackButton>
@@ -114,11 +112,12 @@
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import { validateRegister, register } from '@Repositories/auth-repository.js';
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { Logo, Alert, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, ConfirmPasswordInput },
+        components: { Logo, Alert, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput },
         data() {
             return {
                 registerUrl: null,

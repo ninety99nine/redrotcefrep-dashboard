@@ -16,6 +16,9 @@
 
             <form class="space-y-6" action="#" method="POST">
 
+                <!-- Form Error Messages -->
+                <FormErrorMessages v-if="hasGeneralError"></FormErrorMessages>
+
                 <!-- Mobile Number Input -->
                 <MobileNumberInput v-model="mobileNumber" :errorText="getFormError('mobileNumber')" @keydown.enter="handleLogin"></MobileNumberInput>
 
@@ -45,11 +48,6 @@
                     </template>
 
                 </template>
-
-                <!-- General Error Info Alert -->
-                <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
-                    {{ getFormError('general') }}
-                </Alert>
 
                 <!-- Sign In Button -->
                 <PrimaryButton :action="handleLogin" :loading="isSubmitting" class="w-full">
@@ -89,11 +87,12 @@
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { Logo, Alert, RouterLink, TextHeader, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, ConfirmPasswordInput },
+        components: { Logo, Alert, RouterLink, TextHeader, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput },
         data() {
             return {
                 loginUrl: null,
@@ -248,7 +247,7 @@
                             // Get the redirect query from the URL if present
                             const redirect = this.$route.query.redirect;
 
-                            if (redirect) {
+                            if(redirect) {
 
                                 // Redirect to the specified route
                                 this.$router.replace(redirect);

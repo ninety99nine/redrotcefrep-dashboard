@@ -155,7 +155,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your coupons</h1>
-                <p>Create amazing incentives for your customers, such as offering <BadgeIndicator type="primary" text="discounts" :showDot="false" @click="onAddCoupon" class="cursor-pointer hover:opacity-80"></BadgeIndicator> and <BadgeIndicator type="primary" text="free delivery" :showDot="false" @click="onAddCoupon" class="cursor-pointer hover:opacity-80"></BadgeIndicator>, while determining who can claim them and when.</p>
+                <p>Create amazing incentives for your customers, such as offering <BadgeIndicator type="primary" text="discounts" :showDot="false" :clickable="true" :action="onAddCoupon"></BadgeIndicator> and <BadgeIndicator type="primary" text="free delivery" :showDot="false" :clickable="true" :action="onAddCoupon"></BadgeIndicator>, while determining who can claim them and when.</p>
 
                 <!-- Add Coupon Button -->
                 <AddButton :action="onAddCoupon" class="w-40" size="sm">
@@ -260,7 +260,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  deletableCoupon.name value. This is only available
+                 *  deletableCoupon values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -330,13 +330,22 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Coupon deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other coupons, then refresh the coupon list
-                        if(this.isDeletingCouponIds.length == 0) this.getCoupons();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Coupon deleted');
+
+                            //  If we are not deleting any other coupons, then refresh the coupon list
+                            if(this.isDeletingCouponIds.length == 0) this.getCoupons();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

@@ -72,7 +72,7 @@
         watch: {
             // Watch for changes in the parent modelValue
             modelValue(newValue) {
-                if (this.iti && newValue !== this.iti.getNumber()) {
+                if(this.iti && newValue !== this.iti.getNumber()) {
                     this.iti.setNumber(newValue); // Update intl-tel-input value if modelValue changes
                 }
             }
@@ -91,7 +91,7 @@
                 });
 
                 // Set the initial value if modelValue is provided
-                if (this.modelValue) {
+                if(this.modelValue) {
                     this.iti.setNumber(this.modelValue);
                 }
 
@@ -104,7 +104,7 @@
              */
             geoIpLookup(callback) {
                 const cachedCountry = sessionStorage.getItem('geoip_country');
-                if (cachedCountry) {
+                if(cachedCountry) {
                     callback(cachedCountry); // Use the cached country
                     return;
                 }
@@ -122,7 +122,7 @@
              * Emit updated value to the parent when the phone input changes
              */
             updateModelValue() {
-                if (this.iti && this.iti.isValidNumber()) {
+                if(this.iti && this.iti.isValidNumber()) {
 
                     const fullNumber = this.iti.getNumber(); // International format
                     let nationalNumber = this.iti.getNumber(intlTelInput.utils.numberFormat.NATIONAL); // National format
@@ -140,7 +140,7 @@
             this.initIntlTelInput();
         },
         beforeUnmount() {
-            if (this.iti) {
+            if(this.iti) {
                 this.iti.destroy(); // Clean up intl-tel-input instance
             }
         },

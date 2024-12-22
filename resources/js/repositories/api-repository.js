@@ -33,7 +33,7 @@ async function postFileApi(url, fileName, file) {
 
         const formData = new FormData();
 
-        if (Array.isArray(file)) {
+        if(Array.isArray(file)) {
             file.forEach(f => {
                 formData.append(fileName, f);
             });

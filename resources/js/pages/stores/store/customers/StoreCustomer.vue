@@ -76,7 +76,7 @@
                 <div class="col-span-8 col-start-3 relative">
 
                     <!-- Loading Backdrop -->
-                    <LoadingBackdrop v-if="isLoadingCustomer || isSubmitting" class="rounded-lg"></LoadingBackdrop>
+                    <BackdropLoader v-if="isLoadingCustomer || isSubmitting" class="rounded-lg"></BackdropLoader>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
@@ -400,7 +400,7 @@
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
@@ -413,7 +413,7 @@
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, BackButton, NumberInput,
             SelectInput, Datepicker, ConfirmModal, ShineEffect, TextareaInput, LineSkeleton, PrimaryButton,
-            SpiningLoader, SelectInputTags, MoreInfoPopover, LoadingBackdrop, ToogleSwitch, MobileNumberInput,
+            SpiningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader, ToogleSwitch, MobileNumberInput,
             BadgeIndicator, CustomerOrders, CustomerTransactions
         },
         data() {
@@ -603,7 +603,7 @@
                             this.form = cloneDeep(this.originalForm);
 
                             this.setFormError('general', response.data.message);
-                            this.notificationState.addWarningNotification(response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
 
                         }
 
@@ -634,16 +634,25 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Customer deleted');
+                        if(response.data.deleted) {
 
-                        //  Navigate to show customers
-                        this.$router.push({ name: 'show-store-customers', params: { 'store_href': this.store._links.showStore } });
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Customer deleted');
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            //  Navigate to show customers
+                            this.$router.push({ name: 'show-store-customers', params: { 'store_href': this.store._links.showStore } });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

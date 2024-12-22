@@ -22,11 +22,6 @@
 
                 <div class="space-y-4">
 
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" type="warning">
-                        {{ getFormError('general') }}
-                    </Alert>
-
                     <!-- Name Input -->
                     <TextInput v-model="form.name"
                         label="Name"
@@ -114,6 +109,9 @@
                         :errorText="getFormError('ussdMobileNumber')"
                         labelPopoverDescription="The mobile number that will be used by customers to dial your store, shop and place orders">
                     </MobileNumberInput>
+
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages></FormErrorMessages>
 
                 </div>
 
@@ -205,11 +203,12 @@
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import CountrySelectInput from '@Partials/inputs/CountrySelectInput.vue';
     import CurrencySelectInput from '@Partials/inputs/CurrencySelectInput.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            Alert, TextInput, TextareaInput, PrimaryButton, MobileNumberInput, CountrySelectInput, CurrencySelectInput
+            Alert, TextInput, TextareaInput, PrimaryButton, MobileNumberInput, CountrySelectInput, CurrencySelectInput, FormErrorMessages
         },
         data() {
             return {

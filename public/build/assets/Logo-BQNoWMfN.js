@@ -1,0 +1,1 @@
+import{o as t,c as r,q as o}from"./app-Kf0mCOXy.js";import{_ as s}from"./_plugin-vue_export-helper-DlAUqK2U.js";const a={props:{height:{type:String,default:"h-20"}}};function c(n,l,e,p,i,m){return t(),r("img",{class:o(e.height),src:"/images/logo-black-transparent.png",alt:"Perfect Order"},null,2)}const g=s(a,[["render",c]]);export{g as L};

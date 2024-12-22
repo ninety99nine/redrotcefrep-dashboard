@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 /**
@@ -33,11 +34,18 @@ export const UtilsMixin = {
         },
 
         /**
+         *  Custom format
+         */
+        customFormattedDate(date, format) {
+            return dayjs(date).format(format);
+        },
+
+        /**
          *  Past date: 10 hours ago
          *  Future date: in 10 hours
          */
-        formattedRelativeDate(date) {
-            return dayjs(date).fromNow();
+        formattedRelativeDate(date, withoutSuffix = false) {
+            return dayjs(date).fromNow(withoutSuffix);
         },
 
         /**
@@ -48,19 +56,19 @@ export const UtilsMixin = {
         },
 
         capitalize(value) {
-            if (!value) return '';
+            if(!value) return '';
             return value.charAt(0).toUpperCase() + value.slice(1);
         },
 
         capitalizeAllWords(value) {
-            if (!value) return '';
+            if(!value) return '';
             return value.split(' ').map(word => {
                 return word.charAt(0).toUpperCase() + word.slice(1);
             }).join(' ');
         },
 
-        generateUniqueId(prefix) {
-            return prefix + '_' + this.generateRandomString(8) + Date.now();
+        generateUniqueId(prefix = null) {
+            return (prefix == null ? '' : prefix + '_') + uuidv4().replace(/-/g, '_');
         },
 
         generateRandomString(length) {
@@ -101,7 +109,7 @@ export const UtilsMixin = {
             let floatValue = parseFloat(value);
 
             // Check if floatValue is a valid number
-            if (!isNaN(floatValue)) {
+            if(!isNaN(floatValue)) {
 
                 // Round the number to two decimal places
                 floatValue = Math.round(floatValue * 100) / 100;

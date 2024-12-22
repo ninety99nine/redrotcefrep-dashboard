@@ -1,5 +1,5 @@
 <template>
-    <span v-if="errorText" class="font-medium mt-1 text-red-500 text-xs">
+    <span v-if="errorText" :class="['font-medium text-red-500 text-xs', margin]">
       {{ errorText }}
     </span>
   </template>
@@ -7,9 +7,13 @@
   <script>
   export default {
     props: {
-      errorText: {
-        type: String
-      }
+        errorText: {
+            type: String
+        },
+        margin: {
+            type: String,
+            default: 'mt-1',
+        }
     }
   };
   </script>

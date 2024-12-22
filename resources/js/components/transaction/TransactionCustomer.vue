@@ -17,7 +17,7 @@
 
         <div class="space-y-2">
 
-            <template v-if="isLoadingTransaction || customer.mobileNumber || customer.email">
+            <template v-if="isLoadingTransaction || (hasCustomer && (customer.mobileNumber || customer.email))">
 
                 <div v-if="isLoadingTransaction || customer.mobileNumber" class="flex items-center space-x-2 text-sm">
                     <svg class="w-4 h-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

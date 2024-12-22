@@ -127,7 +127,7 @@
 
                 const file = event.target.files[0];
 
-                if (file) {
+                if(file) {
 
                     // Set selected file
                     this.selectedFile = file;

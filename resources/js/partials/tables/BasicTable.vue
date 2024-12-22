@@ -257,8 +257,11 @@
         },
         computed: {
             isSearching() {
-                return this.searchTerm.length > 0 && this.isLoading;
-            }
+                return this.hasSearchTerm && this.isLoading;
+            },
+            hasSearchTerm() {
+                return this.searchTerm.length > 0;
+            },
         },
         methods: {
             refresh() {

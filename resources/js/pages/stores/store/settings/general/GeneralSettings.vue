@@ -10,10 +10,8 @@
 
                 <div class="space-y-4">
 
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" type="warning">
-                        {{ getFormError('general') }}
-                    </Alert>
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages></FormErrorMessages>
 
                     <!-- Save Changes Info Alert -->
                     <Alert v-if="mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
@@ -129,21 +127,14 @@
                     </MobileNumberInput>
 
                     <!-- Email Input -->
-                    <TextInput
+                    <EmailInput
                         label="Email"
                         v-model="form.email"
                         labelPopoverTitle="What Is This?"
                         :errorText="getFormError('email')"
                         :placeholder="'sales@'+(form.alias || 'example')+'.com'"
                         :labelPopoverDescription="'The store email address e.g sales@'+(form.alias || 'example')+'.com'">
-                        <template #prepend>
-                            <div class="flex items-center space-x-1 py-1.5 px-4 rounded-l-md bg-gray-50 text-gray-500 border-r whitespace-nowrap">
-                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                                </svg>
-                            </div>
-                        </template>
-                    </TextInput>
+                    </EmailInput>
 
                     <!-- SMS Sender Name Input -->
                     <TextInput
@@ -179,7 +170,7 @@
                             <span>WhatsApp Notifications</span>
                         </h1>
 
-                        <p class="text-sm text-gray-500">Set the primary WhatsApp number that your store will use to automatically send updates and notifications using <BadgeIndicator type="primary" text="workflows" :showDot="false" @click="() => {}" class="cursor-pointer hover:opacity-80"></BadgeIndicator>, ensuring clear and timely communication</p>
+                        <p class="text-sm text-gray-500">Set the primary WhatsApp number that your store will use to automatically send updates and notifications using <BadgeIndicator type="primary" text="workflows" :showDot="false" :clickable="true" @action="() => {}"></BadgeIndicator>, ensuring clear and timely communication</p>
 
                         <!-- WhatsApp Number Input -->
                         <MobileNumberInput
@@ -192,8 +183,8 @@
 
                     </div>
 
-                    <!-- Store Rolling Numbers Information -->
-                    <StoreRollingNumbersModal></StoreRollingNumbersModal>
+                    <!-- Store Rolling Numbers -->
+                    <StoreRollingNumbers></StoreRollingNumbers>
 
                 </div>
 
@@ -472,6 +463,7 @@
     import TextInput from '@Partials/inputs/TextInput.vue';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
+    import EmailInput from '@Partials/inputs/EmailInput.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
@@ -485,15 +477,16 @@
     import CurrencySelectInput from '@Partials/inputs/CurrencySelectInput.vue';
     import LanguageSelectInput from '@Partials/inputs/LanguageSelectInput.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
-    import StoreRollingNumbersModal from '@Components/store/StoreRollingNumbersModal.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import { getApi, putApi, postApi, postFileApi, deleteApi } from '@Repositories/api-repository.js';
+    import StoreRollingNumbers from '@Pages/stores/store/settings/general/components/StoreRollingNumbers.vue';
 
     export default {
         mixins: [FormMixin],
         components: {
-            Alert, TimeInput, TextInput, TextHeader, StoreLogo, Checkbox, UndoButton, SelectInput, ConfirmModal, TextareaInput,
+            Alert, TimeInput, TextInput, TextHeader, StoreLogo, EmailInput, Checkbox, UndoButton, SelectInput, ConfirmModal, TextareaInput,
             AddressModal, PrimaryButton, ToogleSwitch, MobileNumberInput, CountrySelectInput, CurrencySelectInput,
-            LanguageSelectInput, BadgeIndicator, StoreRollingNumbersModal
+            LanguageSelectInput, BadgeIndicator, FormErrorMessages, StoreRollingNumbers
         },
         data() {
             return {
@@ -619,7 +612,7 @@
 
                 if(this.form.name.trim() == '') {
                     this.setFormError('name', 'The store name is required');
-                    this.notificationState.addWarningNotification('The store name is required');
+                    this.showUnsuccessfulNotification('The store name is required');
                     return;
                 }
 
@@ -665,16 +658,25 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Store deleted');
+                        if(response.data.deleted) {
 
-                        //  Navigate to show dashboard
-                        this.$router.replace({ name: 'dashboard' });
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Store deleted');
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            //  Navigate to show dashboard
+                            this.$router.replace({ name: 'dashboard' });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

@@ -6,7 +6,7 @@
 
             <div class="grid grid-cols-2 gap-2">
 
-                <h1 class="font-lg font-bold">{{ hasAddress ? 'Edit Address' : 'Add Address' }}</h1>
+                <h1 class="font-lg font-bold">{{ completeAddress ? 'Edit Address' : 'Add Address' }}</h1>
 
                 <div class="col-span-2 space-y-2">
 
@@ -20,8 +20,8 @@
                     <!-- Address Line 2 Input -->
                     <TextInput
                         v-model="form.addressLine2"
-                        placeholder="Apartment, unit number, suite, etc. (optional)"
-                        :errorText="getFormError('addressLine2')">
+                        :errorText="getFormError('addressLine2')"
+                        placeholder="Apartment, unit number, suite, etc. (optional)">
                     </TextInput>
 
                 </div>
@@ -31,7 +31,7 @@
                     <!-- City Input -->
                     <TextInput
                         v-model="form.city"
-                        placeholder="City"
+                        placeholder="City/Town"
                         :errorText="getFormError('city')">
                     </TextInput>
 
@@ -42,7 +42,7 @@
                     <!-- State Input -->
                     <TextInput
                         v-model="form.state"
-                        placeholder="State"
+                        placeholder="State/Province/Region"
                         :errorText="getFormError('state')">
                     </TextInput>
 
@@ -50,11 +50,11 @@
 
                 <div class="col-span-1">
 
-                    <!-- Zip Input -->
+                    <!-- Postal Code Input -->
                     <TextInput
-                        v-model="form.zip"
-                        placeholder="Zip"
-                        :errorText="getFormError('zip')">
+                        placeholder="Postal/ZIP code"
+                        v-model="form.postalCode"
+                        :errorText="getFormError('postalCode')">
                     </TextInput>
 
                 </div>
@@ -72,17 +72,17 @@
                 <div class="col-span-2 flex space-x-2 mt-4">
 
                     <DeleteButton
-                        v-if="hasAddress"
+                        v-if="completeAddress"
                         :disabled="isSubmitting"
-                        @click="() => removeAddress(triggerProps.hideModal)" size="xs" type="danger">
+                        @click="() => deleteAddress(triggerProps.hideModal)" size="xs" type="danger">
                         <span class="ml-2">Delete</span>
                     </DeleteButton>
 
                     <PrimaryButton
-                        @click="() => hasAddress ? updateAddress(triggerProps.hideModal) : createAddress(triggerProps.hideModal)"
+                        @click="() => submit(triggerProps.hideModal)"
                         :disabled="!mustSaveChanges" size="xs" type="success"
                         class="w-full">
-                        {{ hasAddress ? 'Save Address' : 'Add Address' }}
+                        {{ completeAddress ? 'Save Address' : 'Add Address' }}
                     </PrimaryButton>
 
                 </div>
@@ -96,20 +96,20 @@
             <!-- Edit Address / Add Address Button - Triggers Modal -->
             <slot name="trigger" :showModal="triggerProps.showModal">
 
-                <div class="space-y-4 p-4 border rounded-lg shadow-lg">
+                <div class="space-y-4 p-4 border rounded-lg shadow-lg bg-white">
 
                     <h1 class="flex items-center font-lg font-bold">
                         <svg class="w-6 h-6 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                         </svg>
-                        <span>Address</span>
+                        <span>{{ title }}</span>
                     </h1>
 
-                    <p class="text-sm text-gray-500 mb-2 pb-4 border-b border-dashed">Address used by customers to know your store location.</p>
+                    <p class="text-sm text-gray-500 mb-2 pb-4 border-b border-dashed">{{ subtitle }}</p>
 
-                    <div v-if="hasAddress" class="flex justify-between items-center space-x-20">
-                        <span class="text-sm">{{ address._attributes.completeAddress }}</span>
+                    <div v-if="completeAddress" class="flex justify-between items-center space-x-20">
+                        <span class="text-sm">{{ completeAddress }}</span>
 
                         <PrimaryButton @click="triggerProps.showModal" size="xs" type="light">
                             <span class="whitespace-nowrap">Edit Address</span>
@@ -165,28 +165,59 @@
             customerId: {
                 type: [String, null],
                 default: null
+            },
+            deliveryMethodId: {
+                type: [String, null],
+                default: null
+            },
+            title: {
+                type: String,
+                default: 'Address'
+            },
+            subtitle: {
+                type: String,
+                default: 'Address used by customers to know your store location.'
             }
         },
-        emits: ['onCreated', 'onUpdated', 'onDeleted'],
+        emits: ['onValidated', 'onCreated', 'onUpdated', 'onDeleted'],
         data() {
             return {
                 form: {
-                    zip: '',
                     city: '',
                     state: '',
                     country: 'BW',
                     placeId: null,
                     addressLine: '',
+                    postalCode: '',
                     addressLine2: '',
                 },
                 originalForm: null,
                 isSubmitting: false,
+                completeAddress: null,
                 apiState: useApiState()
             };
+        },
+        watch: {
+            'address'(newValue, oldValue) {
+                if(newValue) {
+                    this.setAddressFields();
+                    this.completeAddress = newValue._attributes.completeAddress;
+                }else{
+                    this.completeAddress = null;
+                    this.resetFormFields();
+                }
+            }
         },
         computed: {
             hasAddress() {
                 return this.address != null;
+            },
+            validate() {
+                return this.address === null &&
+                       this.userId === null &&
+                       this.storeId === null &&
+                       this.customerId === null &&
+                       this.deliveryMethodId === null;
             },
             formHasChanged() {
                 // Clone the objects to avoid modifying the original data
@@ -202,11 +233,11 @@
         },
         methods: {
             setAddressFields() {
-                this.form.zip = this.address.zip;
                 this.form.city = this.address.city;
                 this.form.state = this.address.state;
                 this.form.placeId = this.address.placeId;
                 this.form.country = this.address.country;
+                this.form.postalCode = this.address.postalCode;
                 this.form.addressLine = this.address.addressLine;
                 this.form.addressLine2 = this.address.addressLine2;
 
@@ -215,15 +246,58 @@
 
             },
             resetFormFields() {
-                this.form.zip = '';
                 this.form.city = '';
                 this.form.state = '';
                 this.form.country = 'BW';
                 this.form.placeId = null;
+                this.form.postalCode = '';
                 this.form.addressLine = '';
                 this.form.addressLine2 = '';
 
                 this.originalForm = cloneDeep(this.form);
+            },
+            submit(hideModal) {
+                if(this.validate) {
+                    this.validateAddress(hideModal);
+                }else if(this.hasAddress) {
+                    this.updateAddress(hideModal);
+                }else{
+                    this.createAddress(hideModal);
+                }
+            },
+            validateAddress(hideModal) {
+
+                //  Start loader
+                this.isSubmitting = true;
+
+                postApi(this.apiState.apiHome['_links']['validateAddAddress'], this.form).then(response => {
+
+                    if(response.status == 200) {
+
+                        hideModal();
+                        this.$emit('onValidated', this.form);
+                        this.completeAddress = response.data.completeAddress;
+
+                        //  Capture the original form before editting.
+                        this.originalForm = cloneDeep(this.form);
+
+                    }
+
+                    //  Stop loader
+                    this.isSubmitting = false;
+
+                }).catch(errorException => {
+
+                    //  Stop loader
+                    this.isSubmitting = false;
+
+                    /**
+                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
+                     */
+                    this.setServerFormErrors(errorException);
+
+                });
+
             },
             createAddress(hideModal) {
 
@@ -238,9 +312,11 @@
                     data['storeId'] = this.storeId;
                 }else if(this.customerId) {
                     data['customerId'] = this.customerId;
+                }else if(this.deliveryMethodId) {
+                    data['deliveryMethodId'] = this.deliveryMethodId;
                 }
 
-                postApi(this.apiState.apiHome['_links']['addAddress'], data).then(response => {
+                postApi(this.apiState.apiHome['_links']['createAddress'], data).then(response => {
 
                     if(response.status == 200) {
 
@@ -278,7 +354,9 @@
                 //  Start loader
                 this.isSubmitting = true;
 
-                putApi(this.address._links.updateAddress, {...this.form, return: '1'}).then(response => {
+                let data = {...this.form, return: '1'};
+
+                putApi(this.address._links.updateAddress, data).then(response => {
 
                     if(response.status == 200) {
 
@@ -311,23 +389,40 @@
                 });
 
             },
-            removeAddress(hideModal) {
+            deleteAddress(hideModal) {
+
+                if(!this.hasAddress) {
+                    this.$emit('onDeleted', this.form);
+                    this.completeAddress = null;
+                    this.resetFormFields();
+                    hideModal();
+                    return;
+                }
 
                 //  Start loader
                 this.isSubmitting = true;
 
-                deleteApi(this.address._links.removeAddress).then(response => {
+                deleteApi(this.address._links.deleteAddress).then(response => {
 
                     if(response.status == 200) {
 
-                        hideModal();
-                        this.resetFormFields();
-                        this.$emit('onDeleted', response.data.address);
+                        if(response.data.deleted) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Address deleted');
+                            hideModal();
+                            this.resetFormFields();
+                            this.$emit('onDeleted', response.data.address);
+
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Address deleted');
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 
@@ -351,6 +446,7 @@
         created() {
             if(this.address) {
                 this.setAddressFields();
+                this.completeAddress = this.address._attributes.completeAddress;
             }else{
                 this.originalForm = cloneDeep(this.form);
             }

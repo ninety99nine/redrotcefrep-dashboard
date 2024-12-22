@@ -512,7 +512,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  deletableStore.name value. This is only available
+                 *  deletableStore values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -584,13 +584,22 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Coupon deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other stores, then refresh the coupon list
-                        if(this.isDeletingStoreIds.length == 0) this.getStores();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Store deleted');
+
+                            //  If we are not deleting any other stores, then refresh the coupon list
+                            if(this.isDeletingStoreIds.length == 0) this.getStores();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

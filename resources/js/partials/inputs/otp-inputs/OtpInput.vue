@@ -75,7 +75,7 @@
             for (let index = 0; index < newValue.length; index++) {
 
                 // Update otpDigits only if index is within bounds
-                if (index < this.length) {
+                if(index < this.length) {
                     this.otpDigits[index] = newValue.charAt(index);
                 } else {
                     // Break the loop if index exceeds the length of otpDigits
@@ -113,7 +113,7 @@
             }
 
             // Move focus to the next input field after typing a digit
-            if (this.otpDigits[index].length === 1 && index < (this.otpDigits.length - 1)) {
+            if(this.otpDigits[index].length === 1 && index < (this.otpDigits.length - 1)) {
                 this.$refs.otpInputs[index + 1].focus();
             }
         },
@@ -122,7 +122,7 @@
             this.otpDigits[index] = '';
 
             // Move focus to the previous input field on backspace if the current input is empty
-            if (index > 0) {
+            if(index > 0) {
                 this.$refs.otpInputs[index - 1].focus();
             }
 

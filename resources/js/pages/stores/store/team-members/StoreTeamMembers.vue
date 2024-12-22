@@ -256,7 +256,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  deletableTeamMember.name value. This is only available
+                 *  deletableTeamMember values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -332,13 +332,22 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification(response.data.message);
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other team members, then refresh the coupon list
-                        if(this.isDeletingTeamMemberIds.length == 0) this.getTeamMembers();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification(response.data.message);
+
+                            //  If we are not deleting any other team members, then refresh the coupon list
+                            if(this.isDeletingTeamMemberIds.length == 0) this.getTeamMembers();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

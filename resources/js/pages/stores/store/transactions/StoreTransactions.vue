@@ -101,7 +101,7 @@
                     <!-- Verifyer -->
                     <td class="text-xs text-center text-gray-300">
                         <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                        <BadgeIndicator v-else type="info" :text="appName" :showDot="false" class="whitespace-nowrap"></BadgeIndicator>
+                        <BadgeIndicator v-else type="info" :text="appName" :showDot="false"></BadgeIndicator>
                     </td>
 
                     <!-- Payment Link -->
@@ -159,7 +159,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">No Transactions Yet</h1>
-                <p>Your transactions will appear here once <BadgeIndicator type="primary" text="customers" :showDot="false" @click="navigateToShowCustomers" class="cursor-pointer hover:opacity-80"></BadgeIndicator> start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
+                <p>Your transactions will appear here once <BadgeIndicator type="primary" text="customers" :showDot="false" :clickable="true" :action="navigateToShowCustomers"></BadgeIndicator> start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
 
                 <!-- Add Transaction Button -->
                 <AddButton :action="onAddTransaction" class="w-40" size="sm">
@@ -337,13 +337,22 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Transaction deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other transactions, then refresh the transaction list
-                        if(this.isDeletingTransactionIds.length == 0) this.getTransactions();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Transaction deleted');
+
+                            //  If we are not deleting any other transactions, then refresh the transaction list
+                            if(this.isDeletingTransactionIds.length == 0) this.getTransactions();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

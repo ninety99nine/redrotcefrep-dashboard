@@ -7,20 +7,27 @@
             {{ label }}
         </InputLabel>
 
-        <div :class="[{ 'mt-2' : label != '' }, 'flex items-center rounded-md border-0 shadow-sm ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-blue-700 sm:text-sm sm:leading-6 text-gray-900']">
+        <div :class="[{ 'mt-2' : label != '' }, 'flex']">
 
-            <!-- Prepend Slot -->
-            <div v-if="$slots.prepend">
-                <slot name="prepend"></slot>
+            <div :class="['w-full flex items-center rounded-md border-0 shadow-sm ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-blue-700 sm:text-sm sm:leading-6 text-gray-900']">
+
+                <!-- Prepend Slot -->
+                <div v-if="$slots.prepend">
+                    <slot name="prepend"></slot>
+                </div>
+
+                <!-- Input Field -->
+                <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :ref="$attrs['ref']" type="text" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :maxlength="maxlength" :minlength="minlength" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
+
+                <!-- Suffix Slot -->
+                <div v-if="$slots.suffix">
+                    <slot name="suffix"></slot>
+                </div>
+
             </div>
 
-            <!-- Input Field -->
-            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :ref="$attrs['ref']" type="text" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :maxlength="maxlength" :minlength="minlength" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
-
-            <!-- Suffix Slot -->
-            <div v-if="$slots.suffix">
-                <slot name="suffix"></slot>
-            </div>
+            <!-- More Info Popover -->
+            <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
 
         </div>
 
@@ -35,6 +42,7 @@
 
   import { UtilsMixin } from '@Mixins/UtilsMixin.js';
   import InputLabel from '@Partials/input-labels/InputLabel.vue';
+  import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
   import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
   export default {
@@ -76,7 +84,7 @@
         }
     },
     mixins: [UtilsMixin],
-    components: { InputLabel, InputErrorMessage },
+    components: { InputLabel, MoreInfoPopover, InputErrorMessage },
     data() {
       return {
         localModelValue: this.modelValue,

@@ -3,11 +3,50 @@
 @tailwind utilities;
 
 /**
- *  Overide mobile numbers using the intl-tel-input package to display in full-width
+ *  Overide mobile number inputs using the intl-tel-input package to display in full-width.
  *  Refer to: resources/js/partials/inputs/MobileNumberInput.vue
  */
 .iti { width: 100%; }
 
 .iti .iti__selected-dial-code {
     font-size: 0.875rem;
+}
+
+/**
+ *  Overide datepicker cells to use specified colors for various states.
+ *  Refer to: resources/js/partials/datepicker/Datepicker.vue
+ */
+.datepicker-cell {
+    @apply rounded-none;
+}
+
+.datepicker-cell.today {
+    @apply bg-gray-200 text-black;
+}
+
+.datepicker-cell.focused {
+    @apply bg-blue-500 text-white;
+}
+
+.datepicker-cell.highlighted {
+    @apply bg-green-300 text-black;
+}
+
+.datepicker-cell.disabled,
+.datepicker-cell.disabled:hover {
+    @apply bg-red-50 text-red-300 cursor-not-allowed;
+}
+
+.datepicker-cell.today.disabled {
+    @apply bg-red-200 text-red-400;
+}
+
+/*  Fade Transition Styles */
+.fade-loader-enter-active,
+.fade-loader-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-loader-enter-from,
+.fade-loader-leave-to {
+  opacity: 0;
 }

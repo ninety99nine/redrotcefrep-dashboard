@@ -366,15 +366,24 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Transaction deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other transactions, then refresh the transaction list
-                        if(this.isDeletingTransactionIds.length == 0) this.getTransactions();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Transaction deleted');
 
-                        //this.refreshOrder();
+                            //  If we are not deleting any other transactions, then refresh the transaction list
+                            if(this.isDeletingTransactionIds.length == 0) this.getTransactions();
+
+                            //  this.refreshOrder();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

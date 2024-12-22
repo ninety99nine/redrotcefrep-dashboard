@@ -155,11 +155,11 @@
                 onHide: this.onHide
             };
 
-            if (this.backdropClasses) {
+            if(this.backdropClasses) {
                 options.backdropClasses = this.backdropClasses;
             }
 
-            if ($targetEl) {
+            if($targetEl) {
                 this.modal = new Modal($targetEl, options);
             }
         }

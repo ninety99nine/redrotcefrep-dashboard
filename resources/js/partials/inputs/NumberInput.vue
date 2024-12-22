@@ -12,16 +12,16 @@
             <div class="flex">
 
                 <!-- Input Field -->
-                <input v-if="size == 'lg'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="nonNegative ? 0 : null" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3']">
-                <input v-else-if="size == 'sm'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="nonNegative ? 0 : null" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'block w-full border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3']">
-
-                <!-- More Info Popover -->
-                <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
+                <input v-if="size == 'lg'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="min" :max="max" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3']">
+                <input v-else-if="size == 'sm'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="min" :max="max" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'w-full border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3']">
 
                 <!-- Suffix -->
                 <div v-if="$slots.suffix" class="flex items-center px-3 bg-gray-100 rounded-r-lg border text-xs">
                     <slot name="suffix"></slot>
                 </div>
+
+                <!-- More Info Popover -->
+                <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
 
             </div>
 
@@ -48,9 +48,13 @@
         modelValue: {
             type: String
         },
-        nonNegative: {
-            type: Boolean,
-            default: true
+        min: {
+            type: String,
+            default: null
+        },
+        max: {
+            type: String,
+            default: null
         },
         label: {
             type: String,
@@ -80,7 +84,7 @@
             type: String,
             default: 'lg',
             options: ['lg', 'sm']
-        },
+        }
     },
     data() {
       return {

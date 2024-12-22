@@ -105,10 +105,8 @@
 
                     </template>
 
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
-                        {{ getFormError('general') }}
-                    </Alert>
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages></FormErrorMessages>
 
                     <!-- Save Changes Button -->
                     <PrimaryButton :action="updateUser" :loading="isSubmitting" class="w-full">
@@ -143,6 +141,7 @@
     import { useNotificationState } from '@Stores/notification-store.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import CurrentPasswordInput from '@Partials/inputs/CurrentPasswordInput.vue';
 
@@ -151,7 +150,7 @@
         components: {
             Alert, TextInput, TextareaInput, PasswordInput, OtpInput, PrimaryButton,
             MoreInfoPopover, ProfilePhoto, ToogleSwitch, MobileNumberInput,
-            ConfirmPasswordInput, CurrentPasswordInput
+            FormErrorMessages ,ConfirmPasswordInput, CurrentPasswordInput
         },
         data() {
             return {

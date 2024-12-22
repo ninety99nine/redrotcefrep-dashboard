@@ -35,11 +35,6 @@
 
                 <div class="mb-4 border-b"></div>
 
-                <!-- General Error Info Alert -->
-                <Alert v-if="getFormError('general')" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
-                    {{ getFormError('general') }}
-                </Alert>
-
                 <ul class="space-y-1 font-medium">
 
                     <!-- Spining Loader -->
@@ -146,7 +141,10 @@
 
         </aside>
 
-        <div class="sm:ml-64 bg-gray-50">
+        <div class="sm:ml-64 bg-gray-50 relative">
+
+            <!-- Page Loader -->
+            <PageLoader></PageLoader>
 
             <!-- Dashboard Content -->
             <router-view></router-view>
@@ -172,6 +170,7 @@
     import AddButton from '@Partials/buttons/AddButton.vue';
     import { getApi } from '@Repositories/api-repository.js';
     import { logout } from '@Repositories/auth-repository.js';
+    import PageLoader from '@Partials/loaders/PageLoader.vue';
     import StatusDot from '@Partials/status-dots/StatusDot.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
@@ -179,7 +178,10 @@
 
     export default {
         mixins: [FormMixin],
-        components: { SlideUpDown, Alert, RightSideAlerts, AddButton, Logo, Footer, StatusDot, SpiningLoader, ProfilePhoto },
+        components: {
+            SlideUpDown, Alert, RightSideAlerts, AddButton, Logo, Footer, StatusDot,
+            SpiningLoader, PageLoader, ProfilePhoto
+        },
         data() {
             return {
                 isLoggingOut: false,
@@ -508,11 +510,11 @@
 
                 if(method == 'getStoresAsTeamMember') {
 
-                    this.notificationState.addWarningNotification('We couldn\'t show stores');
+                    this.showUnsuccessfulNotification('We couldn\'t show stores');
 
                 }else if(method == 'attemptLogout') {
 
-                    this.notificationState.addWarningNotification('We couldn\'t logout');
+                    this.showUnsuccessfulNotification('We couldn\'t logout');
 
                 }
 

@@ -67,10 +67,8 @@
 
                 <div class="col-span-8">
 
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" type="warning" class="shadow mb-4">
-                        {{ getFormError('general') }}
-                    </Alert>
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages></FormErrorMessages>
 
                     <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
@@ -189,12 +187,26 @@
                             </div>
 
                             <div v-else-if="followUpStatuses.length > 0">
-                                <span class="cursor-pointer hover:opacity-50 mr-1">
-                                    <BadgeIndicator :type="statusBadgeType" :text="order.status.name" :showDot="false" class="border border-gray-500"></BadgeIndicator>
-                                </span>
-                                <span v-for="(followUpStatus, index) in followUpStatuses" :key="index" @click="confirmUpdateStatus(followUpStatus)" class="cursor-pointer mr-1">
-                                    <BadgeIndicator type="info" :text="followUpStatus.name" :showDot="false" class="border border-transparent hover:border-gray-500"></BadgeIndicator>
-                                </span>
+
+                                <!-- Current Status -->
+                                <BadgeIndicator
+                                    :showDot="false"
+                                    :type="statusBadgeType"
+                                    :text="order.status.name" class="border border-gray-500 mr-1">
+                                </BadgeIndicator>
+
+                                <!-- Follow Up Statuses -->
+                                <BadgeIndicator
+                                    type="info"
+                                    :key="index"
+                                    :showDot="false"
+                                    :clickable="true"
+                                    class="mr-1"
+                                    :text="followUpStatus.name"
+                                    :action="() => confirmUpdateStatus(followUpStatus)"
+                                    v-for="(followUpStatus, index) in followUpStatuses">
+                                </BadgeIndicator>
+
                             </div>
 
                         </div>
@@ -463,10 +475,11 @@
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import CartSummary from '@Components/order/cart-summary/CartSummary.vue';
     import OrderPaymentStatus from '@Components/order/OrderPaymentStatus.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import PaymentSummary from '@Components/order/payment-summary/PaymentSummary.vue';
     import CustomerSummary from '@Components/order/customer-summary/CustomerSummary.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
@@ -477,7 +490,7 @@
         components: {
             Alert, TextInput, TextHeader, InputTags, BackButton, NumberInput, SelectInput, OrderStatus, ConfirmModal,
             ShineEffect, TextareaInput, LineSkeleton, PrimaryButton, SpiningLoader, OtpInput, SelectInputTags, ButtonSkeleton,
-            MoreInfoPopover, LoadingBackdrop, CartSummary, OrderPaymentStatus, BadgeIndicator, PaymentSummary,
+            MoreInfoPopover, BackdropLoader, CartSummary, OrderPaymentStatus, BadgeIndicator, FormErrorMessages, PaymentSummary,
             CustomerSummary, CollectionSummary
         },
         data() {
@@ -615,7 +628,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  followUpStatus.name value. This is only available
+                 *  followUpStatus values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -657,7 +670,7 @@
 
                         }else{
 
-                            this.notificationState.addWarningNotification('This order does not exist');
+                            this.showUnsuccessfulNotification('This order does not exist');
 
                             //  Navigate to show orders
                             this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
@@ -893,7 +906,7 @@
 
                         }else{
 
-                            this.notificationState.addWarningNotification(response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
 
                         }
 
@@ -1013,16 +1026,25 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Order deleted');
+                        if(response.data.deleted) {
 
-                        //  Navigate to show orders
-                        this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Order deleted');
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            //  Navigate to show orders
+                            this.$router.push({ name: 'show-store-orders', params: { 'store_href': this.store._links.showStore } });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

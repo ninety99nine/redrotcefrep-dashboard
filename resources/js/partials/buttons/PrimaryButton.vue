@@ -1,6 +1,6 @@
 <template>
 
-    <div class="shadow rounded-md">
+    <div :class="['shadow', this.rounding]">
 
         <button type="submit" @click.prevent="action" :disabled="disabled" :class="btnClass">
 
@@ -41,11 +41,15 @@
                 type: String,
                 default: 'dark',
                 options: ['dark', 'success', 'light', 'primary', 'warning', 'danger']
-            }
+            },
+            rounding: {
+                type: String,
+                default: 'rounded-md'
+            },
         },
         computed: {
             btnClass() {
-                let classes = ['w-full h-full flex justify-center items-center rounded-md shadow-sm font-semibold'];
+                let classes = ['w-full h-full flex justify-center items-center '+this.rounding+' shadow-sm font-semibold'];
                 classes.push(this.disabled ? 'cursor-not-allowed' : 'cursor-pointer');
 
                 if(this.size == 'xs') {

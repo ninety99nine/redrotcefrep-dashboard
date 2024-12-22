@@ -46,20 +46,20 @@
                         name: 'show-store-general-settings'
                     },
                     {
+                        label: 'Workflows',
+                        name: 'show-store-workflows'
+                    },
+                    {
                         label: 'Social Links',
                         name: 'show-store-social-settings'
                     },
                     {
+                        label: 'Delivery / Pickup',
+                        name: 'show-store-delivery-methods'
+                    },
+                    {
                         label: 'Payment Methods',
                         name: 'show-store-payment-method-settings'
-                    },
-                    {
-                        label: 'Pickup',
-                        name: ''
-                    },
-                    {
-                        label: 'Delivery',
-                        name: ''
                     }
                 ],
                 selectedNavOption: 'show-store-general-settings',

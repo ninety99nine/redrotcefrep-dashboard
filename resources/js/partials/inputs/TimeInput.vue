@@ -54,11 +54,11 @@
         },
         min: {
             type: String,
-            default: '09:00'
+            default: null   //  '09:00'
         },
         max: {
             type: String,
-            default: '18:00'
+            default: null   //  '18:00'
         },
         required: {
             type: Boolean,

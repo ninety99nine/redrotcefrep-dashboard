@@ -62,14 +62,12 @@
                 <div class="col-span-8 relative">
 
                     <!-- Loading Backdrop -->
-                    <LoadingBackdrop v-if="isLoadingProduct || isSubmitting" class="rounded-lg"></LoadingBackdrop>
+                    <BackdropLoader v-if="isLoadingProduct || isSubmitting" class="rounded-lg"></BackdropLoader>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
-                        <!-- General Error Info Alert -->
-                        <Alert v-if="getFormError('general')" type="warning">
-                            {{ getFormError('general') }}
-                        </Alert>
+                        <!-- Form Error Messages -->
+                        <FormErrorMessages></FormErrorMessages>
 
                         <!-- Name Input -->
                         <TextInput
@@ -157,6 +155,7 @@
 
                                 <!-- Stock Quantity Input -->
                                 <NumberInput
+                                    min="1"
                                     v-model="form.stockQuantity"
                                     labelPopoverTitle="What Is This?"
                                     label="Stock Quantity" placeholder="100"
@@ -182,6 +181,7 @@
 
                                 <!-- Maximum Allowed Quantity Per Order Input -->
                                 <NumberInput
+                                    min="1"
                                     placeholder="10"
                                     labelPopoverTitle="What Is This?"
                                     label="Maximum Quantities Per Order"
@@ -260,7 +260,7 @@
 
                                 </div>
 
-                                <div v-if="variantAttribute.isEditable" class="space-y-4">
+                                <div v-if="form.variantAttributes[index].isEditable" class="space-y-4">
 
                                     <!-- Variant Attribute Name Input -->
                                     <TextInput
@@ -369,7 +369,7 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <LoadingBackdrop v-if="isLoadingProduct || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
+                        <BackdropLoader v-if="isLoadingProduct || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <div class="space-y-4">
 
@@ -528,9 +528,10 @@
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
-    import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import ProductVariations from '@Pages/stores/store/products/variations/ProductVariations.vue';
@@ -540,7 +541,7 @@
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, AddButton, UndoButton, BackButton, NumberInput, SelectInput,
             ConfirmModal, ShineEffect, DeleteButton, TextareaInput, SpiningLoader, PrimaryButton, LineSkeleton, MoreInfoPopover,
-            LoadingBackdrop, ToogleSwitch, BadgeIndicator, InputErrorMessage, ProductVariations
+            BackdropLoader, ToogleSwitch, BadgeIndicator, FormErrorMessages, InputErrorMessage, ProductVariations
         },
         data() {
             return {
@@ -596,10 +597,10 @@
                 return this.$route.name === 'show-store-product';
             },
             hasVariantAttributes() {
-                return this.form.variantAttributes.length;
+                return this.form.variantAttributes.length > 0;
             },
             hasOriginalVariantAttributes() {
-                return this.originalVariantAttributes.length;
+                return this.originalVariantAttributes.length > 0;
             },
             variantAttributesHaveChanged() {
                 // Clone the arrays to avoid modifying the original data
@@ -672,7 +673,7 @@
             onAddVariantAttribute() {
 
                 // Check if 'Size' variant attribute exists
-                if (!this.form.variantAttributes.some(attribute => attribute.name.toLowerCase() === 'size')) {
+                if(!this.form.variantAttributes.some(attribute => attribute.name.toLowerCase() === 'size')) {
                     this.form.variantAttributes.push({
                         'name': 'Size',
                         'isEditable': true,
@@ -681,7 +682,7 @@
                     });
                 }
                 // Check if 'Colour' variant attribute exists
-                else if (!this.form.variantAttributes.some(attribute => attribute.name.toLowerCase() === 'colour')) {
+                else if(!this.form.variantAttributes.some(attribute => attribute.name.toLowerCase() === 'colour')) {
                     this.form.variantAttributes.push({
                         'name': 'Colour',
                         'isEditable': true,
@@ -690,7 +691,7 @@
                     });
                 }
                 // Check if 'Material' variant attribute exists
-                else if (!this.form.variantAttributes.some(attribute => attribute.name.toLowerCase() === 'material')) {
+                else if(!this.form.variantAttributes.some(attribute => attribute.name.toLowerCase() === 'material')) {
                     this.form.variantAttributes.push({
                         'name': 'Material',
                         'isEditable': true,
@@ -752,14 +753,14 @@
 
                 if(this.form.name.trim() == '') {
                     this.setFormError('name', 'The product name is required');
-                    this.notificationState.addWarningNotification('The product name is required');
+                    this.showUnsuccessfulNotification('The product name is required');
                     window.scrollTo(0, 0);
                     return;
                 }
 
                 if(this.form.allowVariations && this.form.variantAttributes.length == 0) {
                     this.setFormError('allowVariations', 'Add variation options');
-                    this.notificationState.addWarningNotification('Add variation options');
+                    this.showUnsuccessfulNotification('Add variation options');
                     window.scrollTo(0, 0);
                     return;
                 }
@@ -878,7 +879,7 @@
 
                 if(this.form.name.trim() == '') {
                     this.setFormError('name', 'The product name is required');
-                    this.notificationState.addWarningNotification('The product name is required');
+                    this.showUnsuccessfulNotification('The product name is required');
                     window.scrollTo(0, 0);
                     return;
                 }
@@ -924,24 +925,33 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Product deleted');
+                        if(response.data.deleted) {
 
-                        //  If this product is a variation of another product
-                        if(this.product._attributes.isVariation) {
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Product deleted');
 
-                            //  Navigate to show parent product
-                            this.$router.replace({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': this.product._links.showParentProduct } });
+                            //  If this product is a variation of another product
+                            if(this.product._attributes.isVariation) {
+
+                                //  Navigate to show parent product
+                                this.$router.replace({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': this.product._links.showParentProduct } });
+
+                            }else{
+
+                                //  Navigate to show products
+                                this.$router.replace({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
+
+                                // Scroll to the top
+                                window.scrollTo(0, 0);
+
+                            }
 
                         }else{
 
-                            //  Navigate to show products
-                            this.$router.replace({ name: 'show-store-products', params: { 'store_href': this.store._links.showStore } });
-
-                            // Scroll to the top
-                            window.scrollTo(0, 0);
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
 
                         }
 

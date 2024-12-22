@@ -49,14 +49,12 @@
                 <div class="col-span-8 relative">
 
                     <!-- Loading Backdrop -->
-                    <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting" class="rounded-lg"></LoadingBackdrop>
+                    <BackdropLoader v-if="isLoadingCoupon || isSubmitting" class="rounded-lg"></BackdropLoader>
 
                     <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
 
-                        <!-- General Error Info Alert -->
-                        <Alert v-if="getFormError('general')" type="warning">
-                            {{ getFormError('general') }}
-                        </Alert>
+                        <!-- Form Error Messages -->
+                        <FormErrorMessages></FormErrorMessages>
 
                         <!-- Name Input -->
                         <TextInput
@@ -231,6 +229,7 @@
 
                                 <!-- Minimum Total Products Input -->
                                 <NumberInput
+                                    min="1"
                                     placeholder="100"
                                     label="Minimum Products"
                                     labelPopoverTitle="What Is This?"
@@ -255,6 +254,7 @@
 
                                 <!-- Minimum Total Product Quantities Input -->
                                 <NumberInput
+                                    min="1"
                                     placeholder="100"
                                     label="Minimum Products"
                                     labelPopoverTitle="What Is This?"
@@ -403,6 +403,7 @@
 
                                 <!-- Remaining Quantity Input -->
                                 <NumberInput
+                                    min="1"
                                     placeholder="100"
                                     label="Remaining Quantity"
                                     labelPopoverTitle="What Is This?"
@@ -425,7 +426,7 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 mb-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
+                        <BackdropLoader v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <div class="space-y-4">
 
@@ -450,7 +451,7 @@
                     <div v-if="coupon && hasInstructions" class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <LoadingBackdrop v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></LoadingBackdrop>
+                        <BackdropLoader v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <!-- Activation Rules Title -->
                         <div class="flex items-center space-x-4 mb-2">
@@ -546,9 +547,10 @@
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import LoadingBackdrop from '@Partials/backdrops/LoadingBackdrop.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
@@ -556,8 +558,8 @@
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, BackButton, NumberInput,
             SelectInput, Datepicker, ConfirmModal, ShineEffect, TextareaInput, PrimaryButton,
-            SpiningLoader, LineSkeleton, SelectInputTags, MoreInfoPopover, LoadingBackdrop,
-            ToogleSwitch, BadgeIndicator
+            SpiningLoader, LineSkeleton, SelectInputTags, MoreInfoPopover, BackdropLoader,
+            ToogleSwitch, BadgeIndicator, FormErrorMessages
         },
         data() {
             return {
@@ -855,7 +857,7 @@
 
                 if(this.form.offerDiscount == false && this.form.offerFreeDelivery == false) {
                     this.setFormError('offerFreeDelivery', 'Specify an offer e.g discount or free delivery');
-                    this.notificationState.addWarningNotification('Specify an offer e.g discount or free delivery');
+                    this.showUnsuccessfulNotification('Specify an offer e.g discount or free delivery');
                     return;
                 }
 
@@ -923,7 +925,7 @@
                             this.form = cloneDeep(this.originalForm);
 
                             this.setFormError('general', response.data.message);
-                            this.notificationState.addWarningNotification(response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
 
                         }
 
@@ -954,21 +956,30 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Coupon deleted');
+                        if(response.data.deleted) {
 
-                        //  Navigate to show coupons
-                        this.$router.push({ name: 'show-store-coupons', params: { 'store_href': this.store._links.showStore } });
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Coupon deleted');
 
-                        // Scroll to the top
-                        window.scrollTo(0, 0);
+                            //  Navigate to show coupons
+                            this.$router.push({ name: 'show-store-coupons', params: { 'store_href': this.store._links.showStore } });
+
+                            // Scroll to the top
+                            window.scrollTo(0, 0);
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }else{
 
                         this.setFormError('general', response.data.message);
-                        this.notificationState.addWarningNotification(response.data.message);
+                        this.showUnsuccessfulNotification(response.data.message);
 
                     }
 

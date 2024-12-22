@@ -26,11 +26,11 @@
 
                 if(paymentStatusName === 'paid') {
                     return 'success';
-                }else if (paymentStatusName === 'unpaid') {
+                }else if(paymentStatusName === 'unpaid') {
                     return 'info';
-                } else if (paymentStatusName === 'partially paid') {
+                } else if(paymentStatusName === 'partially paid') {
                     return 'primary';
-                } else if (paymentStatusName === 'pending payment') {
+                } else if(paymentStatusName === 'pending payment') {
                     return 'warning';
                 }
             }

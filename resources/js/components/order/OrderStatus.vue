@@ -22,7 +22,7 @@
         },
         computed: {
             description() {
-                if (this.order._attributes.isCancelled && this.order.cancellationReason != null) {
+                if(this.order._attributes.isCancelled && this.order.cancellationReason != null) {
                     return this.order.cancellationReason;
                 } else {
                     return this.order.status.description;
@@ -31,13 +31,13 @@
             type() {
                 const statusName = this.order.status.name.toLowerCase();
 
-                if (statusName === 'completed') {
+                if(statusName === 'completed') {
                     return 'success';
-                } else if (statusName === 'waiting') {
+                } else if(statusName === 'waiting') {
                     return 'info';
-                } else if (statusName === 'on its way' || statusName === 'ready for pickup') {
+                } else if(statusName === 'on its way' || statusName === 'ready for pickup') {
                     return 'primary';
-                } else if (statusName === 'cancelled') {
+                } else if(statusName === 'cancelled') {
                     return 'warning';
                 }
             }

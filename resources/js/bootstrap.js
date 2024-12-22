@@ -27,7 +27,7 @@ window.axios.defaults.headers.common['Content-Type'] = 'application/json';
 // Check if access token exists in localStorage and set it to axios headers if it does
 const accessToken = localStorage.getItem('accessToken');
 
-if (accessToken) {
+if(accessToken) {
     window.axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 }
 

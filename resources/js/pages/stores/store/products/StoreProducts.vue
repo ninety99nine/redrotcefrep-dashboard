@@ -257,7 +257,7 @@
         <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
             <div class="space-y-4">
                 <h1 class="text-2xl font-bold">Add your products</h1>
-                <p>Start by stocking your store with <BadgeIndicator type="primary" text="products" :showDot="false" @click="onAddProduct" class="cursor-pointer hover:opacity-80"></BadgeIndicator> your customers will love</p>
+                <p>Start by stocking your store with <BadgeIndicator type="primary" text="products" :showDot="false" :clickable="true" :action="onAddProduct"></BadgeIndicator> your customers will love</p>
 
                 <!-- Add Product Button -->
                 <AddButton :action="onAddProduct" class="w-40" size="sm">
@@ -285,7 +285,6 @@
                 </PrimaryButton>
 
             </template>
-
 
         </ConfirmModal>
 
@@ -366,7 +365,7 @@
                  *  before we programatically trigger the element click() event which
                  *  opens the confirmation modal dialog. This is so that when the
                  *  dialog opens we don't get an error trying to access the
-                 *  deletableProduct.name value. This is only available
+                 *  deletableProduct values. This is only available
                  *  on the nextTick().
                  */
                 this.$nextTick(() => {
@@ -436,13 +435,22 @@
 
                     if(response.status == 200) {
 
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
-                        this.showSuccessfulNotification('Product deleted');
+                        if(response.data.deleted) {
 
-                        //  If we are not deleting any other products, then refresh the product list
-                        if(this.isDeletingProductIds.length == 0) this.getProducts();
+                            /**
+                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
+                             */
+                            this.showSuccessfulNotification('Product deleted');
+
+                            //  If we are not deleting any other products, then refresh the product list
+                            if(this.isDeletingProductIds.length == 0) this.getProducts();
+
+                        }else{
+
+                            this.setFormError('general', response.data.message);
+                            this.showUnsuccessfulNotification(response.data.message);
+
+                        }
 
                     }
 

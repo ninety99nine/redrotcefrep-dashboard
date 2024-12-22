@@ -103,7 +103,7 @@
         methods: {
             calculateTimeLeft(time) {
 
-                if (!time) {
+                if(!time) {
                     this.timeLeftInMilliSeconds = 0;
                     return;
                 }
@@ -112,7 +112,7 @@
                 const now = dayjs();
                 const diff = targetDate.diff(now);
 
-                if (diff > 0) {
+                if(diff > 0) {
                     this.timeLeftInMilliSeconds = diff;
                 } else {
                     this.timeLeftInMilliSeconds = 0;

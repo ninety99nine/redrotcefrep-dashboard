@@ -14,7 +14,7 @@
             type: {
                 type: String,
                 default: 'info',
-                options: ['info', 'warning', 'danger']
+                options: ['info', 'light', 'warning', 'danger']
             }
         },
         computed: {
@@ -23,6 +23,8 @@
 
                 if(this.type == 'info') {
                     classes.push('text-blue-800 bg-blue-50');
+                }else if(this.type == 'light') {
+                    classes.push('text-gray-800 bg-gray-50');
                 }else if(this.type == 'warning') {
                     classes.push('text-yellow-800 bg-yellow-50');
                 }else if(this.type == 'danger') {

@@ -63,10 +63,6 @@
 
                 </template>
 
-                <Alert v-if="getFormError('general')" type="warning">
-                    {{ getFormError('general') }}
-                </Alert>
-
             </div>
 
             <div class="col-span-1 flex justify-end items-end">
@@ -77,7 +73,6 @@
                 </svg>
 
             </div>
-
 
         </div>
 

@@ -31,6 +31,7 @@
 
 <script>
 
+    import dayjs from 'dayjs';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import Datepicker from 'flowbite-datepicker/Datepicker';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
@@ -53,6 +54,124 @@
             },
             errorText: {
                 type: String
+            },
+
+            //  Datetime Input Specific Props
+            autohide: {
+                type: Boolean,
+                default: true
+            },
+            calendarWeeks: {
+                type: Boolean,
+                default: false
+            },
+            clearBtn: {
+                type: Boolean,
+                default: false
+            },
+            dateDelimiter: {
+                type: String,
+                default: ','
+            },
+            datesDisabled: {
+                type: Array,
+                default: () => []
+            },
+            daysOfWeekDisabled: {
+                type: Array,
+                default: () => []
+            },
+            daysOfWeekHighlighted: {
+                type: Array,
+                default: () => []
+            },
+            defaultViewDate: {
+                type: [String, Date],
+                default: undefined
+            },
+            disableTouchKeyboard: {
+                type: Boolean,
+                default: false
+            },
+            format: {
+                type: String,
+                default: 'dd M yyyy'
+            },
+            language: {
+                type: String,
+                default: 'en'
+            },
+            maxDate: {
+                type: [String, Date],
+                default: null
+            },
+            maxNumberOfDates: {
+                type: Number,
+                default: 1
+            },
+            maxView: {
+                type: Number,
+                default: 3
+            },
+            minDate: {
+                type: [String, Date],
+                default: null
+            },
+            nextArrow: {
+                type: String,
+                default: '<svg class="w-4 h-4 rtl:rotate-180 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>'
+            },
+            prevArrow: {
+                type: String,
+                default: '<svg class="w-4 h-4 rtl:rotate-180 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/></svg>'
+            },
+            orientation: {
+                type: String,
+                default: 'auto'
+            },
+            pickLevel: {
+                type: Number,
+                default: 0
+            },
+            showDaysOfWeek: {
+                type: Boolean,
+                default: true
+            },
+            showOnClick: {
+                type: Boolean,
+                default: true
+            },
+            showOnFocus: {
+                type: Boolean,
+                default: true
+            },
+            startView: {
+                type: Number,
+                default: 0
+            },
+            title: {
+                type: String,
+                default: ''
+            },
+            todayBtn: {
+                type: Boolean,
+                default: false
+            },
+            todayBtnMode: {
+                type: Number,
+                default: 0
+            },
+            todayHighlight: {
+                type: Boolean,
+                default: true
+            },
+            updateOnBlur: {
+                type: Boolean,
+                default: true
+            },
+            weekStart: {
+                type: Number,
+                default: 0
             }
         },
         mixins: [UtilsMixin],
@@ -73,6 +192,12 @@
             updateValue(newValue) {
 
                 /**
+                 *  The newValue is in the format (20 Dec 2024).
+                 *  The datepicker knows this because the format
+                 *  property is set to (dd M yyyy). It will
+                 *  therefore convert it internally to its
+                 *  preferred syntax (20/12/2024).
+                 *
                  *  20/12/2024 (The Flowbite datepicker format)
                  */
                 this.localModelValue = newValue;
@@ -102,9 +227,35 @@
                  *
                  *  Refer to this file for more options: node_modules/flowbite-datepicker/js/options/defaultOptions.js
                  */
-                autohide: true,
-                format: 'dd M yyyy',
-
+                title: this.title,
+                format: this.format,
+                maxDate: this.maxDate,
+                maxView: this.maxView,
+                minDate: this.minDate,
+                clearBtn: this.clearBtn,
+                autohide: this.autohide,
+                language: this.language,
+                todayBtn: this.todayBtn,
+                pickLevel: this.pickLevel,
+                prevArrow: this.prevArrow,
+                nextArrow: this.nextArrow,
+                startView: this.startView,
+                weekStart: this.weekStart,
+                orientation: this.orientation,
+                showOnClick: this.showOnClick,
+                showOnFocus: this.showOnFocus,
+                todayBtnMode: this.todayBtnMode,
+                updateOnBlur: this.updateOnBlur,
+                calendarWeeks: this.calendarWeeks,
+                dateDelimiter: this.dateDelimiter,
+                datesDisabled: this.datesDisabled,
+                todayHighlight: this.todayHighlight,
+                showDaysOfWeek: this.showDaysOfWeek,
+                defaultViewDate: this.defaultViewDate,
+                maxNumberOfDates: this.maxNumberOfDates,
+                daysOfWeekDisabled: this.daysOfWeekDisabled,
+                disableTouchKeyboard: this.disableTouchKeyboard,
+                daysOfWeekHighlighted: this.daysOfWeekHighlighted
             });
 
         },

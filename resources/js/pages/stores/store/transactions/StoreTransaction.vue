@@ -67,10 +67,8 @@
 
                 <div class="col-span-8">
 
-                    <!-- General Error Info Alert -->
-                    <Alert v-if="getFormError('general')" type="warning" class="shadow mb-4">
-                        {{ getFormError('general') }}
-                    </Alert>
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages></FormErrorMessages>
 
                     <div class="bg-white shadow-lg rounded-lg border space-y-4 p-4 mb-4">
 
@@ -355,6 +353,7 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import TransactionOwner from '@Components/transaction/TransactionOwner.vue';
+    import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import TransactionCustomer from '@Components/transaction/TransactionCustomer.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import TransactionFailureType from '@Components/transaction/TransactionFailureType.vue';
@@ -365,7 +364,7 @@
         components: {
             Alert, TextHeader, BackButton, CopyButton, Countdown, ExternalLink, ConfirmModal, ShineEffect, LineSkeleton, PrimaryButton,
             ProceedButton, RoundSkeleton, ButtonSkeleton, MoreInfoPopover, BadgeIndicator, TransactionOwner,
-            TransactionFailureType, TransactionCustomer, TransactionPaymentStatus
+            FormErrorMessages, TransactionFailureType, TransactionCustomer, TransactionPaymentStatus
         },
         data() {
             return {
@@ -581,6 +580,7 @@
 
                         }else{
 
+                            this.setFormError('general', response.data.message);
                             this.showUnsuccessfulNotification(response.data.message);
 
                         }
