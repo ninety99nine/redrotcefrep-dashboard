@@ -28,12 +28,6 @@
 
         </div>
 
-        <!-- Items Card -->
-        <ItemsCard></ItemsCard>
-
-        <!-- Order Summary Card -->
-        <OrderSummaryCard></OrderSummaryCard>
-
         <!-- Checkout Card -->
         <CheckoutCard></CheckoutCard>
 
@@ -60,7 +54,6 @@
 
 import debounce from 'lodash.debounce';
 import { useStoreState } from '@Stores/store-store.js';
-import ItemsCard from '@Pages/shopping/components/ItemsCard.vue';
 import StoreLogo from '@Pages/shopping/components/StoreLogo.vue';
 import StoreName from '@Pages/shopping/components/StoreName.vue';
 import GrandTotal from '@Pages/shopping/components/GrandTotal.vue';
@@ -70,7 +63,6 @@ import CheckoutCard from '@Pages/shopping/components/CheckoutCard.vue';
 import TotalCartItems from '@Pages/shopping/components/TotalCartItems.vue';
 import SocialMediaCard from '@Pages/shopping/components/SocialMediaCard.vue';
 import CreateStoreLink from '@Pages/shopping/components/CreateStoreLink.vue';
-import OrderSummaryCard from '@Pages/shopping/components/OrderSummaryCard.vue';
 import StoreFooterMenus from '@Pages/shopping/components/StoreFooterMenus.vue';
 import StoreDescription from '@Pages/shopping/components/StoreDescription.vue';
 import CustomizeDrawer from '@Pages/shopping/components/CustomizeDrawer/Index.vue';
@@ -78,8 +70,8 @@ import ShoppingCartDrawer from '@Pages/shopping/components/ShoppingCartDrawer/In
 
 export default {
     components: {
-        ItemsCard, StoreLogo, StoreName, GrandTotal, StoreBanner, CheckoutCard, TotalCartItems,
-        SocialMediaCard, CreateStoreLink, OrderSummaryCard, StoreFooterMenus, StoreFooterMenus,
+        StoreLogo, StoreName, GrandTotal, StoreBanner, CheckoutCard, TotalCartItems,
+        SocialMediaCard, CreateStoreLink, StoreFooterMenus, StoreFooterMenus,
         StoreDescription, CustomizeDrawer, ShoppingCartDrawer
     },
     data() {
