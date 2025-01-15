@@ -410,7 +410,7 @@
                                 <p class="mb-4">Are you sure you want to permanently delete <span class="font-bold text-black">{{ store.name }}</span>? Confirm by entering the confirmation code below</p>
 
                                 <div v-if="isLoadingDeleteCode" class="flex justify-center space-x-2 animate-pulse mb-8">
-                                    <SpiningLoader></SpiningLoader>
+                                    <SpinningLoader></SpinningLoader>
                                     <span class="text-xs">Loading code ...</span>
                                 </div>
                                 <p v-else class="font-bold text-4xl text-center mb-8">{{ validDeleteConfirmationCode }}</p>
@@ -423,7 +423,7 @@
                             <template #trigger="triggerProps">
 
                                 <!-- Delete Store Button - Triggers Confirmation Modal -->
-                                <PrimaryButton @click="triggerProps.showModal" :loading="isDeletingStore" class="w-40" type="danger">
+                                <PrimaryButton :action="triggerProps.showModal" :loading="isDeletingStore" class="w-40" type="danger">
                                     Delete Store
                                 </PrimaryButton>
 
@@ -462,7 +462,7 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
@@ -482,7 +482,7 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             TextHeader, AddButton, BasicTable, Checkbox, Countdown, SelectInput, OrderStatus, ConfirmModal, ShineEffect,
-            OtpInput, LineSkeleton, SpiningLoader, PrimaryButton, RoundSkeleton, SelectInputTags, MoreInfoPopover,
+            OtpInput, LineSkeleton, SpinningLoader, PrimaryButton, RoundSkeleton, SelectInputTags, MoreInfoPopover,
             ToogleSwitch, VirtualPhone, OrderPaymentStatus, BadgeIndicator, StoreSubscribeButton, MobileNumberShortcode,
             OrderCollectionStatus, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown
         },
@@ -625,9 +625,6 @@
                     //  Stop loader
                     this.isLoadingStoreInsights = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -654,9 +651,6 @@
                     //  Stop loader
                     this.isLoadingDeleteCode = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -716,9 +710,6 @@
                     //  Stop loader
                     this.isDeletingStore = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

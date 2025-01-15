@@ -1,17 +1,17 @@
 <template>
     <div :class="['absolute top-0 left-0 right-0 bottom-0 z-10', bgClass, { 'border border-black' : showBorder }]">
-        <div v-if="showSpiningLoader" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            <SpiningLoader></SpiningLoader>
+        <div v-if="showSpinningLoader" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+            <SpinningLoader></SpinningLoader>
         </div>
     </div>
 </template>
 
   <script>
 
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
-        components: { SpiningLoader },
+        components: { SpinningLoader },
         props: {
             bgClass: {
                 type: String,
@@ -21,7 +21,7 @@
                 type: Boolean,
                 default: true
             },
-            showSpiningLoader: {
+            showSpinningLoader: {
                 type: Boolean,
                 default: true
             },

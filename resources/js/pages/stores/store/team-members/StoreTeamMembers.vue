@@ -134,9 +134,9 @@
                         <a v-if="!isDeleting(teamMember)" href="#" @click.stop.prevent="onView(teamMember)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
-                        <SpiningLoader v-if="isDeleting(teamMember)" type="danger">
+                        <SpinningLoader v-if="isDeleting(teamMember)" type="danger">
                             <span class="text-xs ml-2">Deleting...</span>
-                        </SpiningLoader>
+                        </SpinningLoader>
 
                         <!-- Delete Button -->
                         <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(teamMember)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Remove</a>
@@ -175,7 +175,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Team Member Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger">
+                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
                     Remove Team Member
                 </PrimaryButton>
 
@@ -200,7 +200,7 @@
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
@@ -210,7 +210,7 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             TextHeader, AddButton, BasicTable, Checkbox, ProfilePhoto, ConfirmModal,
-            PrimaryButton, SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
+            PrimaryButton, SpinningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
         },
         data() {
             return {
@@ -306,9 +306,6 @@
                     //  Stop loader
                     this.isLoadingTeamMembers = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -356,9 +353,6 @@
                     //  Stop loader
                     this.isDeletingTeamMemberIds.splice(this.isDeletingTeamMemberIds.findIndex((id) => id == this.deletableTeamMember.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

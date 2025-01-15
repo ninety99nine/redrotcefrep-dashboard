@@ -242,7 +242,7 @@
                         <template #trigger="triggerProps">
 
                             <!-- Delete Order Button - Triggers Confirmation Modal -->
-                            <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
+                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
                                 Delete Order
                             </PrimaryButton>
 
@@ -314,7 +314,7 @@
                 <template #trigger="triggerProps">
 
                     <!-- Update Status Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmUpdateOrderStatus" @click="triggerProps.showModal" class="hidden">
+                    <PrimaryButton ref="confirmUpdateOrderStatus" :action="triggerProps.showModal" class="hidden">
                         {{ followUpStatus.name }}
                     </PrimaryButton>
 
@@ -374,7 +374,7 @@
                 <template #trigger="triggerProps">
 
                     <!-- Request Payment Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmRequestPayment" @click="triggerProps.showModal" class="hidden">
+                    <PrimaryButton ref="confirmRequestPayment" :action="triggerProps.showModal" class="hidden">
                         Request Payment
                     </PrimaryButton>
 
@@ -435,7 +435,7 @@
                 <template #trigger="triggerProps">
 
                     <!-- Mark As Paid Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmMarkAsPaid" @click="triggerProps.showModal" class="hidden">
+                    <PrimaryButton ref="confirmMarkAsPaid" :action="triggerProps.showModal" class="hidden">
                         Mark As Paid
                     </PrimaryButton>
 
@@ -470,7 +470,7 @@
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
@@ -489,7 +489,7 @@
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, InputTags, BackButton, NumberInput, SelectInput, OrderStatus, ConfirmModal,
-            ShineEffect, TextareaInput, LineSkeleton, PrimaryButton, SpiningLoader, OtpInput, SelectInputTags, ButtonSkeleton,
+            ShineEffect, TextareaInput, LineSkeleton, PrimaryButton, SpinningLoader, OtpInput, SelectInputTags, ButtonSkeleton,
             MoreInfoPopover, BackdropLoader, CartSummary, OrderPaymentStatus, BadgeIndicator, FormErrorMessages, PaymentSummary,
             CustomerSummary, CollectionSummary
         },
@@ -686,9 +686,6 @@
                     //  Stop loader
                     this.isLoadingOrder = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -719,9 +716,6 @@
                     //  Stop loader
                     this.isLoadingPaymentMethodsForMarkingAsPaidForRequestingOrderPayment = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -752,9 +746,6 @@
                     //  Stop loader
                     this.isLoadingPaymentMethodsForMarkingAsPaid = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -781,9 +772,6 @@
                     //  Stop loader
                     this.isLoadingCancellationReasons = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -807,10 +795,6 @@
                 postApi(this.store._links.createOrders, this.parseForm()).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Order created');
 
                         //  Navigate to show orders
@@ -829,9 +813,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -847,10 +828,6 @@
                     if(response.status == 200) {
 
                         this.originalForm = cloneDeep(this.form);
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Order updated');
 
                     }
@@ -863,9 +840,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -920,9 +894,6 @@
                     //  Stop loader
                     this.isUpdatingOrderStatus = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -945,10 +916,6 @@
                         hideModal();
 
                         this.getOrder();
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Payment requested');
 
                     }
@@ -961,9 +928,6 @@
                     //  Stop loader
                     this.isRequestingPayment = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -993,10 +957,6 @@
                         this.getOrder();
 
                         if(hideModal) hideModal();
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Order marked as paid');
 
                     }
@@ -1009,9 +969,6 @@
                     //  Stop loader
                     this.isMarkingAsPaid = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -1056,9 +1013,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

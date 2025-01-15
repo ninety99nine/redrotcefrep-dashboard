@@ -7,7 +7,7 @@
 
         <button data-drawer-target="main-sidebar" data-drawer-toggle="main-sidebar" aria-controls="main-sidebar" type="button" class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
             <span class="sr-only">Open sidebar</span>
-            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
             </svg>
         </button>
@@ -37,10 +37,10 @@
 
                 <ul class="space-y-1 font-medium">
 
-                    <!-- Spining Loader -->
+                    <!-- Spinning Loader -->
                     <li v-if="isLoadingStoresAsTeamMember">
                         <div class="flex justify-center my-4">
-                            <SpiningLoader></SpiningLoader>
+                            <SpinningLoader></SpinningLoader>
                         </div>
                     </li>
 
@@ -124,8 +124,8 @@
 
                     <li @click="attemptLogout" class="flex items-center space-x-2 w-full px-4 py-2 text-sm hover:bg-gray-200 active:bg-gray-300 cursor-pointer rounded-lg">
 
-                        <!-- Spining Loader -->
-                        <SpiningLoader v-if="isLoggingOut" class="my-1"></SpiningLoader>
+                        <!-- Spinning Loader -->
+                        <SpinningLoader v-if="isLoggingOut" class="my-1"></SpinningLoader>
 
                         <svg v-else class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
@@ -173,14 +173,14 @@
     import PageLoader from '@Partials/loaders/PageLoader.vue';
     import StatusDot from '@Partials/status-dots/StatusDot.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
 
     export default {
         mixins: [FormMixin],
         components: {
             SlideUpDown, Alert, RightSideAlerts, AddButton, Logo, Footer, StatusDot,
-            SpiningLoader, PageLoader, ProfilePhoto
+            SpinningLoader, PageLoader, ProfilePhoto
         },
         data() {
             return {

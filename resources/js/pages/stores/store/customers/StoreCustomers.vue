@@ -135,9 +135,9 @@
                         <a v-if="!isDeleting(customer)" href="#" @click.stop.prevent="onView(customer)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
-                        <SpiningLoader v-if="isDeleting(customer)" type="danger">
+                        <SpinningLoader v-if="isDeleting(customer)" type="danger">
                             <span class="text-xs ml-2">Deleting...</span>
-                        </SpiningLoader>
+                        </SpinningLoader>
 
                         <!-- Delete Button -->
                         <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(customer)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
@@ -176,7 +176,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Customer Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger">
+                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
                     Delete Customer
                 </PrimaryButton>
 
@@ -200,7 +200,7 @@
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
@@ -211,7 +211,7 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             AddButton, TextHeader, BasicTable, Checkbox, ConfirmModal, PrimaryButton,
-            SpiningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
+            SpinningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
             NoDataPlaceholder
         },
         data() {
@@ -308,9 +308,6 @@
                     //  Stop loader
                     this.isLoadingCustomers = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -352,9 +349,6 @@
                     //  Stop loader
                     this.isDeletingCustomerIds.splice(this.isDeletingCustomerIds.findIndex((id) => id == this.deletableCustomer.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

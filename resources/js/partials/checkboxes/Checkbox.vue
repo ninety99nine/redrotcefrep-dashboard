@@ -1,7 +1,4 @@
 <template>
-    <!--
-        Component Referece: https://flowbite.com/docs/forms/checkbox/
-     -->
      <div>
 
         <label class="w-full inline-flex items-start cursor-pointer">
@@ -24,7 +21,9 @@
 </template>
 
 <script>
-
+    /**
+     * Component Reference: https://flowbite.com/docs/forms/checkbox/
+     */
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';

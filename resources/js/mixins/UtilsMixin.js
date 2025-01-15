@@ -27,7 +27,7 @@ export const UtilsMixin = {
         },
 
         /**
-         *  02-01-2024 00:00:00
+         *  1736373600
          */
         dateToTimestamp(date) {
             return dayjs(date).unix();
@@ -69,18 +69,6 @@ export const UtilsMixin = {
 
         generateUniqueId(prefix = null) {
             return (prefix == null ? '' : prefix + '_') + uuidv4().replace(/-/g, '_');
-        },
-
-        generateRandomString(length) {
-
-            let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-            for (let i = 0; i < length; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-
-            return result;
         },
 
         generateRandomNumber(length) {

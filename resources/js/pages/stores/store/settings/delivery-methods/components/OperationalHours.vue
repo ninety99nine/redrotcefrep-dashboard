@@ -130,7 +130,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Bulk Add Timeslots Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="bulkAddTimeslotsButton" @click="triggerProps.showModal" class="hidden" type="primary"></PrimaryButton>
+                <PrimaryButton ref="bulkAddTimeslotsButton" :action="triggerProps.showModal" class="hidden" type="primary"></PrimaryButton>
 
             </template>
 
@@ -172,7 +172,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Bulk Reset Timeslots Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="bulkResetTimeslotsButton" @click="triggerProps.showModal" class="hidden" type="primary"></PrimaryButton>
+                <PrimaryButton ref="bulkResetTimeslotsButton" :action="triggerProps.showModal" class="hidden" type="primary"></PrimaryButton>
 
             </template>
 

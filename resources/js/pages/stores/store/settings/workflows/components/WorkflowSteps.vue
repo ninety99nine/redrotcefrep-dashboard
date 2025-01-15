@@ -136,9 +136,6 @@
                     //  Stop loader
                     this.isLoadingWorkflowSteps = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

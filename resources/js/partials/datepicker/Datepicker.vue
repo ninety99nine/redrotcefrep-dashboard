@@ -1,8 +1,6 @@
 <template>
-    <!--
-        Component Referece: https://flowbite.com/docs/plugins/datepicker/
-     -->
-    <div class="col-span-12">
+
+    <div>
 
         <!-- Input Label -->
         <InputLabel v-if="label != ''" :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
@@ -11,7 +9,7 @@
 
         <div :class="{ 'mt-2': label != '' }">
 
-            <div class="relative max-w-sm">
+            <div class="relative">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
@@ -30,8 +28,9 @@
 </template>
 
 <script>
-
-    import dayjs from 'dayjs';
+    /**
+     * Component Reference: https://flowbite.com/docs/plugins/datepicker/
+     */
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import Datepicker from 'flowbite-datepicker/Datepicker';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
@@ -119,11 +118,11 @@
             },
             nextArrow: {
                 type: String,
-                default: '<svg class="w-4 h-4 rtl:rotate-180 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>'
+                default: '<svg class="w-4 h-4 rtl:rotate-180 text-gray-800 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/></svg>'
             },
             prevArrow: {
                 type: String,
-                default: '<svg class="w-4 h-4 rtl:rotate-180 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/></svg>'
+                default: '<svg class="w-4 h-4 rtl:rotate-180 text-gray-800 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/></svg>'
             },
             orientation: {
                 type: String,

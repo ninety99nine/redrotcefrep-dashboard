@@ -191,14 +191,14 @@
 
                         <!-- Save Changes Button -->
                         <template v-if="paymentMethod.storeId">
-                            <PrimaryButton @click="() => updatePaymentMethod()" :disabled="!mustSaveChanges" type="dark" class="w-full mt-8">
+                            <PrimaryButton :action="() => updatePaymentMethod()" :disabled="!mustSaveChanges" type="dark" class="w-full mt-8">
                                 <span>Save Changes</span>
                             </PrimaryButton>
                         </template>
 
                         <!-- Add Payment Method Button -->
                         <template v-else>
-                            <PrimaryButton @click="() => createStorePaymentMethod()" type="dark" class="w-full mt-8">
+                            <PrimaryButton :action="() => createStorePaymentMethod()" type="dark" class="w-full mt-8">
                                 <span>Add Payment Method</span>
                             </PrimaryButton>
                         </template>
@@ -241,7 +241,7 @@
                                 <div class="flex items-center space-x-2">
 
                                     <!-- Logo -->
-                                    <img class="w-8 h-8 flex-shrink-0 rounded-full shadow" :src="settings.domainUrl+'/images/payment-method-logos/'+nonAssociatedPaymentMethod.type+'.jpg'" />
+                                    <img class="w-8 h-8 flex-shrink-0 rounded-full shadow" :src="settings.appApiUrl+'/images/payment-method-logos/'+nonAssociatedPaymentMethod.type+'.jpg'" />
 
                                     <!-- Name -->
                                     <h1 class="text-sm font-semibold">{{ nonAssociatedPaymentMethod.name }}</h1>
@@ -312,7 +312,7 @@
                                     <div class="flex items-center space-x-2">
 
                                         <!-- Logo -->
-                                        <img class="w-8 h-8 flex-shrink-0 rounded-full shadow" :src="settings.domainUrl+'/images/payment-method-logos/'+paymentMethod.type+'.jpg'" />
+                                        <img class="w-8 h-8 flex-shrink-0 rounded-full shadow" :src="settings.appApiUrl+'/images/payment-method-logos/'+paymentMethod.type+'.jpg'" />
 
 
                                         <!-- Name -->
@@ -336,9 +336,9 @@
                                 </div>
 
                                 <!-- Deleting Loader -->
-                                <SpiningLoader v-if="isDeleting(paymentMethod)" type="danger">
+                                <SpinningLoader v-if="isDeleting(paymentMethod)" type="danger">
                                     <span class="text-xs ml-2">Deleting...</span>
-                                </SpiningLoader>
+                                </SpinningLoader>
 
                                 <!-- Delete Button - Triggers Confirmation Modal -->
                                 <svg v-else @click.stop.prevent="showDeleteConfirmationModal(paymentMethod)" class="w-4 h-4 cursor-pointer hover:text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -383,7 +383,7 @@
                         </ShineEffect>
 
                         <!-- Add Payment Method Button -->
-                        <AddButton v-else @click="() => openNonAssociatedPaymentMethods()" size="sm" type="light">
+                        <AddButton v-else :action="() => openNonAssociatedPaymentMethods()" size="sm" type="light">
                             <span class="ml-2">Add Payment Method</span>
                         </AddButton>
 
@@ -402,7 +402,7 @@
                     <template #trigger="triggerProps">
 
                         <!-- Delete Payment Method Button - Triggers Confirmation Modal -->
-                        <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
+                        <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
 
                     </template>
 
@@ -437,7 +437,7 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
@@ -451,7 +451,7 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             Alert, draggable: VueDraggableNext, TextInput, AddButton, Checkbox, UndoButton, BackButton,
-            SearchInput, ConfirmModal, ShineEffect, TextareaInput, PrimaryButton, SpiningLoader,
+            SearchInput, ConfirmModal, ShineEffect, TextareaInput, PrimaryButton, SpinningLoader,
             LineSkeleton, RoundSkeleton, ButtonSkeleton, ToogleSwitch, BadgeIndicator,
             FormErrorMessages, PaymentMethodMetadataSettings
         },
@@ -598,9 +598,6 @@
                     //  Stop loader
                     this.isLoadingPaymentMethods = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -633,9 +630,6 @@
                     //  Stop loader
                     this.isLoadingNonAssociatedPaymentMethods = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -744,9 +738,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -791,9 +782,6 @@
                     //  Stop loader
                     this.isUpdatingPaymentMethodArrangement = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -837,9 +825,6 @@
                     //  Stop loader
                     this.isDeletingPaymentMethodIds.splice(this.isDeletingPaymentMethodIds.findIndex((id) => id == this.deletePaymentMethod.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

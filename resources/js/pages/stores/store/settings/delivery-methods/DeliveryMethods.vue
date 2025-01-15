@@ -62,9 +62,9 @@
                         </div>
 
                         <!-- Deleting Loader -->
-                        <SpiningLoader v-if="isDeleting(deliveryMethod)" type="danger">
+                        <SpinningLoader v-if="isDeleting(deliveryMethod)" type="danger">
                             <span class="text-xs ml-2">Deleting...</span>
-                        </SpiningLoader>
+                        </SpinningLoader>
 
                         <!-- Delete Button - Triggers Confirmation Modal -->
                         <svg v-else @click.stop.prevent="showDeleteConfirmationModal(deliveryMethod)" class="w-4 h-4 cursor-pointer hover:text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -108,7 +108,7 @@
             </ShineEffect>
 
             <!-- Add Delivery Method Button -->
-            <AddButton v-else @click="() => onAddDeliveryMethod()" size="sm" type="light">
+            <AddButton v-else :action="() => onAddDeliveryMethod()" size="sm" type="light">
                 <span class="ml-2">Add Delivery Method</span>
             </AddButton>
 
@@ -123,7 +123,7 @@
                 <template #trigger="triggerProps">
 
                     <!-- Delete Delivery Method Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
+                    <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
 
                 </template>
 
@@ -145,9 +145,9 @@
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
@@ -156,7 +156,7 @@
         mixins: [FormMixin],
         components: {
             draggable: VueDraggableNext, AddButton, SearchInput, ConfirmModal, ShineEffect,
-            SpiningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
+            SpinningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
         },
         props: {
             form: {
@@ -205,6 +205,7 @@
                 });
             },
             onAddDeliveryMethod() {
+                console.log('asd!!!');
                 this.$router.push({ name: 'create-store-delivery-method', params: { 'store_href': this.store._links.showStore } });
             },
             showDeleteConfirmationModal(deliveryMethod) {
@@ -249,9 +250,6 @@
                     //  Stop loader
                     this.isLoadingDeliveryMethods = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -296,9 +294,6 @@
                     //  Stop loader
                     this.isUpdatingDeliveryMethodArrangement = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -342,9 +337,6 @@
                     //  Stop loader
                     this.isDeletingDeliveryMethodIds.splice(this.isDeletingDeliveryMethodIds.findIndex((id) => id == this.deleteDeliveryMethod.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

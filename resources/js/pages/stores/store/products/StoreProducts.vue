@@ -126,7 +126,7 @@
                         <td class="whitespace-nowrap px-4 py-4">
                             <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <BadgeIndicator v-if="product.isFree.status" type="info" text="Free" :showDot="false"></BadgeIndicator>
+                                <BadgeIndicator v-if="product.isFree.status" type="info" text="free" :showDot="false"></BadgeIndicator>
                                 <template v-else>
                                     <span>{{ product.unitPrice.amountWithCurrency }}</span>
                                     <BadgeIndicator v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></BadgeIndicator>
@@ -229,9 +229,9 @@
                             <a v-if="!isDeleting(product)" href="#" @click.stop.prevent="onView(product)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                             <!-- Deleting Loader -->
-                            <SpiningLoader v-if="isDeleting(product)" type="danger">
+                            <SpinningLoader v-if="isDeleting(product)" type="danger">
                                 <span class="text-xs ml-2">Deleting...</span>
-                            </SpiningLoader>
+                            </SpinningLoader>
 
                             <!-- Delete Button -->
                             <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(product)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
@@ -280,7 +280,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Product Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger">
+                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
                     Delete Product
                 </PrimaryButton>
 
@@ -304,7 +304,7 @@
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
@@ -316,7 +316,7 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             draggable: VueDraggableNext, TextHeader, AddButton, BasicTable, Checkbox, ConfirmModal,
-            SpiningLoader, PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
+            SpinningLoader, PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator,
             NoDataPlaceholder
         },
         data() {
@@ -415,9 +415,6 @@
                     //  Stop loader
                     this.isLoadingProducts = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -459,9 +456,6 @@
                     //  Stop loader
                     this.isDeletingProductIds.splice(this.isDeletingProductIds.findIndex((id) => id == this.deletableProduct.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -481,10 +475,6 @@
                 postApi(this.apiState.apiHome['_links']['updateProductArrangement'], params).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Product arrangement updated');
 
                     }
@@ -497,9 +487,6 @@
                     //  Stop loader
                     this.isUpdatingProductArrangement = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

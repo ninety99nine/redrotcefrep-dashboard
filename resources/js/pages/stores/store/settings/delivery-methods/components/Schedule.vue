@@ -44,11 +44,18 @@
 
                 <div class="space-y-4">
 
-                    <!-- Require Minimum Notice for Orders Checkbox -->
-                    <RequireMinimumNoticeForOrdersCheckbox :form="form"></RequireMinimumNoticeForOrdersCheckbox>
+                    <!-- Same Day Delivery Checkbox -->
+                    <SameDayDeliveryCheckbox :form="form"></SameDayDeliveryCheckbox>
 
-                    <!-- Restrict Minimum Notice for Orders Checkbox -->
-                    <RestrictMinimumNoticeForOrdersCheckbox :form="form"></RestrictMinimumNoticeForOrdersCheckbox>
+                    <template v-if="!form.sameDayDelivery">
+
+                        <!-- Require Minimum Notice for Orders Checkbox -->
+                        <RequireMinimumNoticeForOrdersCheckbox :form="form"></RequireMinimumNoticeForOrdersCheckbox>
+
+                        <!-- Restrict Minimum Notice for Orders Checkbox -->
+                        <RestrictMinimumNoticeForOrdersCheckbox :form="form"></RestrictMinimumNoticeForOrdersCheckbox>
+
+                    </template>
 
                     <!-- Schedule Summary -->
                     <ScheduleSummary :form="form"></ScheduleSummary>
@@ -68,6 +75,7 @@
     import ScheduleSummary from '@Pages/stores/store/settings/delivery-methods/components/ScheduleSummary.vue';
     import OperationalHours from '@Pages/stores/store/settings/delivery-methods/components/OperationalHours.vue';
     import ScheduleTypeSelect from '@Pages/stores/store/settings/delivery-methods/components/ScheduleTypeSelect.vue';
+    import SameDayDeliveryCheckbox from '@Pages/stores/store/settings/delivery-methods/components/SameDayDeliveryCheckbox.vue';
     import SetScheduleToogleSwitch from '@Pages/stores/store/settings/delivery-methods/components/SetScheduleToogleSwitch.vue';
     import AutoGenerateTimeSlotsCheckbox from '@Pages/stores/store/settings/delivery-methods/components/AutoGenerateTimeSlotsCheckbox.vue';
     import AutoGenerateTimeSlotsUnitSelect from '@Pages/stores/store/settings/delivery-methods/components/AutoGenerateTimeSlotsUnitSelect.vue';
@@ -77,9 +85,9 @@
 
     export default {
         components: {
-            ScheduleSummary, OperationalHours, ScheduleTypeSelect, SetScheduleToogleSwitch, AutoGenerateTimeSlotsCheckbox,
-            AutoGenerateTimeSlotsUnitSelect, AutoGenerateTimeSlotsNumberInput, RequireMinimumNoticeForOrdersCheckbox,
-            RestrictMinimumNoticeForOrdersCheckbox
+            ScheduleSummary, OperationalHours, ScheduleTypeSelect, SameDayDeliveryCheckbox, SetScheduleToogleSwitch,
+            AutoGenerateTimeSlotsCheckbox, AutoGenerateTimeSlotsUnitSelect, AutoGenerateTimeSlotsNumberInput,
+            RequireMinimumNoticeForOrdersCheckbox, RestrictMinimumNoticeForOrdersCheckbox
         },
         props: {
             form: {

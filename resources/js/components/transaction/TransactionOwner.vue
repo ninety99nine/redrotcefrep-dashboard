@@ -27,7 +27,7 @@
         </template>
 
         <div v-if="transactionForOrder" class="flex justify-end">
-            <PrimaryButton size="xs" type="primary" iconClass="w-4 h-4" @click="onViewOrder()">
+            <PrimaryButton size="xs" type="primary" iconClass="w-4 h-4" :action="() => onViewOrder()">
                 <span>View Order</span>
             </PrimaryButton>
         </div>

@@ -9,10 +9,42 @@ async function login(data) {
     try {
 
         const response = await axios.post(apiHomeLinks().login, data);
+
         if(response.status == 200) {
-            saveAccessToken(response);
-            saveUser(response);
+            saveAccessToken(response.data.accessToken);
+            saveUser(response.data.user);
         }
+
+        return response;
+
+    } catch (error) {
+
+        // Handle error
+        console.error('Login error:', error);
+        throw error;
+
+    }
+}
+
+// Social Login function
+async function socialLogin(accessToken) {
+    try {
+
+        saveAccessToken(accessToken);
+        const response = await axios.get(apiHomeLinks().showAuthUser);
+
+        if(response.status == 200) {
+
+            if(response.data.exists) {
+
+                saveUser(response.data.user);
+
+                console.log('response.data.user');
+                console.log(response.data.user);
+
+            }
+        }
+
         return response;
 
     } catch (error) {
@@ -28,12 +60,7 @@ async function login(data) {
 async function validateRegister(data) {
     try {
 
-        const response = await axios.post(apiHomeLinks().validateRegister, data);
-        if(response.status == 200) {
-            saveAccessToken(response);
-            saveUser(response);
-        }
-        return response;
+        return await axios.post(apiHomeLinks().validateRegister, data);
 
     } catch (error) {
 
@@ -49,10 +76,12 @@ async function register(data) {
     try {
 
         const response = await axios.post(apiHomeLinks().register, data);
+
         if(response.status == 200) {
-            saveAccessToken(response);
-            saveUser(response);
+            saveAccessToken(response.data.accessToken);
+            saveUser(response.data.user);
         }
+
         return response;
 
     } catch (error) {
@@ -72,10 +101,12 @@ async function logout() {
         const auth = useAuthState();
 
         const response = await axios.post(auth.user._links.logoutUser);
+
         if(response.status == 200) {
             removeAccessToken();
             removeUser();
         }
+
         return response;
 
     } catch (error) {
@@ -88,10 +119,7 @@ async function logout() {
 }
 
 // Save access token
-function saveAccessToken(response) {
-
-    //  Get the access token
-    const accessToken = response.data.accessToken;
+function saveAccessToken(accessToken) {
 
     // Set token to axios defaults to use it in future requests
     axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -109,10 +137,11 @@ function removeAccessToken() {
 
     // Remove token save locally
     localStorage.removeItem('accessToken');
+
 }
 
 // Save user
-function saveUser(response) {
+function saveUser(user) {
 
     //  Get the Auth Store instance
     const auth = useAuthState();
@@ -121,7 +150,7 @@ function saveUser(response) {
     auth.authenticated = true;
 
     //  Set the response user
-    auth.user = response.data.user;
+    auth.user = user;
 }
 
 // Remove user
@@ -138,4 +167,4 @@ function removeUser() {
 }
 
 // Export functions
-export { login, validateRegister, register, logout };
+export { login, socialLogin, validateRegister, register, logout };

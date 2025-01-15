@@ -35,57 +35,58 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-  export default {
-    props: {
-        modelValue: {
-            type: String
+    export default {
+        props: {
+            modelValue: {
+                type: String
+            },
+            label: {
+                type: String,
+                default: ''
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            errorText: {
+                type: String
+            },
+            rows: {
+                type: Number,
+                default: 4
+            },
+            placeholder: {
+                type: String,
+                default: ''
+            },
+            required: {
+                type: Boolean,
+                default: true
+            },
         },
-        label: {
-            type: String,
-            default: ''
+        mixins: [UtilsMixin],
+        components: { InputLabel, MoreInfoPopover, InputErrorMessage },
+        data() {
+        return {
+            localModelValue: this.modelValue,
+            uniqueId: this.generateUniqueId('text')
+        };
         },
-        labelPopoverTitle: {
-            type: String
+        watch: {
+        modelValue(newValue, oldValue) {
+            this.updateValue(newValue);
         },
-        labelPopoverDescription: {
-            type: String
+        localModelValue(newValue, oldValue) {
+            this.$emit('update:modelValue', newValue);
+        }
         },
-        errorText: {
-            type: String
-        },
-        rows: {
-            type: Number,
-            default: 4
-        },
-        placeholder: {
-            type: String,
-            default: ''
-        },
-        required: {
-            type: Boolean,
-            default: true
-        },
-    },
-    mixins: [UtilsMixin],
-    components: { InputLabel, MoreInfoPopover, InputErrorMessage },
-    data() {
-      return {
-        localModelValue: this.modelValue,
-        uniqueId: this.generateUniqueId('text')
-      };
-    },
-    watch: {
-      modelValue(newValue, oldValue) {
-        this.updateValue(newValue);
-      },
-      localModelValue(newValue, oldValue) {
-        this.$emit('update:modelValue', newValue);
-      }
-    },
-    methods: {
-      updateValue(newValue) {
-        this.localModelValue = newValue;
-      }
-    }
-  };
+        methods: {
+        updateValue(newValue) {
+            this.localModelValue = newValue;
+        }
+        }
+    };
+
 </script>

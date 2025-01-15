@@ -74,9 +74,9 @@
                         </div>
 
                         <!-- Deleting Loader -->
-                        <SpiningLoader v-if="isDeleting(workflow)" type="danger">
+                        <SpinningLoader v-if="isDeleting(workflow)" type="danger">
                             <span class="text-xs ml-2">Deleting...</span>
-                        </SpiningLoader>
+                        </SpinningLoader>
 
                         <!-- Delete Button - Triggers Confirmation Modal -->
                         <svg v-else @click.stop.prevent="showDeleteConfirmationModal(workflow)" class="w-4 h-4 cursor-pointer hover:text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -120,7 +120,7 @@
             </ShineEffect>
 
             <!-- Add Workflow Button -->
-            <AddButton v-else @click="() => onAddWorkflow()" size="sm" type="light">
+            <AddButton v-else :action="() => onAddWorkflow()" size="sm" type="light">
                 <span class="ml-2">Add Workflow</span>
             </AddButton>
 
@@ -135,7 +135,7 @@
                 <template #trigger="triggerProps">
 
                     <!-- Delete Workflow Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
+                    <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
 
                 </template>
 
@@ -158,7 +158,7 @@
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import { useWorkflowState } from '@Stores/workflow-store.js';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
@@ -169,7 +169,7 @@
         mixins: [FormMixin],
         components: {
             draggable: VueDraggableNext, AddButton, SearchInput, ConfirmModal, ShineEffect,
-            SpiningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
+            SpinningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
         },
         props: {
             form: {
@@ -262,9 +262,6 @@
                     //  Stop loader
                     this.isLoadingWorkflows = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -309,9 +306,6 @@
                     //  Stop loader
                     this.workflowState.setIsUpdatingWorkflowArrangement(false);
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -355,9 +349,6 @@
                     //  Stop loader
                     this.isDeletingWorkflowIds.splice(this.isDeletingWorkflowIds.findIndex((id) => id == this.deleteWorkflow.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

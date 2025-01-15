@@ -1,5 +1,5 @@
 <template>
-    <div :class="[size, 'bg-gray-200 rounded-full']"></div>
+    <div :class="[size, color, 'rounded-full']"></div>
 </template>
 
 <script>
@@ -8,7 +8,11 @@ export default {
         size: {
             type: String,
             default: 'w-12 h-12'
-        }
+        },
+        color: {
+            type: String,
+            default: 'bg-gray-200'
+        },
     }
 };
 </script>

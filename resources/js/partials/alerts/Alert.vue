@@ -1,14 +1,13 @@
 <template>
-    <!--
-        Component Referece: https://flowbite.com/docs/components/alerts/
-     -->
     <div :class="alertClass" role="alert">
         <slot></slot>
     </div>
 </template>
 
-  <script>
-
+<script>
+    /**
+     * Component Reference: https://flowbite.com/docs/components/alerts/
+     */
     export default {
         props: {
             type: {
@@ -35,5 +34,4 @@
             }
         }
     };
-
-  </script>
+</script>

@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-gray-100">
 
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
 
@@ -81,6 +81,9 @@
 
             </form>
 
+            <!-- Social Sign In Links -->
+            <SocialLinks message="Or sign up with"></SocialLinks>
+
             <!-- Register Link -->
             <p class="text-sm text-center mt-8">
                 <span class="text-gray-500 mr-1">Already have an account?</span>
@@ -94,7 +97,6 @@
 </template>
 
 <script>
-
 
     import axios from 'axios';
     import settings from '@Js/settings.js';
@@ -110,6 +112,7 @@
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import SocialLinks from '@Pages/auth/components/SocialLinks.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -117,7 +120,10 @@
     import { validateRegister, register } from '@Repositories/auth-repository.js';
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { Logo, Alert, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput },
+        components: {
+            Logo, Alert, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput,
+            PrimaryButton, SocialLinks, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
+        },
         data() {
             return {
                 registerUrl: null,
@@ -156,12 +162,6 @@
             });
         },
         methods: {
-            setUrls() {
-                this.registerUrl = this.apiState.apiHome['_links']['register'];
-                this.accountExistsUrl = this.apiState.apiHome['_links']['accountExists'];
-                this.validateRegisterUrl = this.apiState.apiHome['_links']['validateRegister'];
-                this.mobileVerificationShortcode = this.apiState.apiHome['mobileVerificationShortcode'];
-            },
             handleRegistration() {
 
                 /**
@@ -364,7 +364,10 @@
             }
         },
         created() {
-            this.setUrls();
+            this.registerUrl = this.apiState.apiHome['_links']['register'];
+            this.accountExistsUrl = this.apiState.apiHome['_links']['accountExists'];
+            this.validateRegisterUrl = this.apiState.apiHome['_links']['validateRegister'];
+            this.mobileVerificationShortcode = this.apiState.apiHome['mobileVerificationShortcode'];
         }
     };
 </script>

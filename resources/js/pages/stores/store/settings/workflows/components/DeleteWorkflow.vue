@@ -17,7 +17,7 @@
                 <template #trigger="triggerProps">
 
                     <!-- Delete Workflow Button - Triggers Confirmation Modal -->
-                    <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
+                    <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
                         Delete Workflow
                     </PrimaryButton>
 
@@ -112,9 +112,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

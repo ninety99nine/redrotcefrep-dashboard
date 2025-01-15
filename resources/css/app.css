@@ -6,7 +6,7 @@
  *  Overide mobile number inputs using the intl-tel-input package to display in full-width.
  *  Refer to: resources/js/partials/inputs/MobileNumberInput.vue
  */
-.iti { width: 100%; }
+.iti { width: 100% !important; }
 
 .iti .iti__selected-dial-code {
     font-size: 0.875rem;
@@ -40,6 +40,45 @@
 .datepicker-cell.today.disabled {
     @apply bg-red-200 text-red-400;
 }
+
+/* Remove the up/down arrow on number inputs using the .remove-arrow class - Chrome, Safari, Edge, Opera */
+.remove-arrow::-webkit-outer-spin-button,
+.remove-arrow::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove the up/down arrow on number inputs using the .remove-arrow class - Firefox */
+input[type=number].remove-arrow {
+    -moz-appearance: textfield;
+}
+
+/*  Fade Transition Styles */
+.fade-1-enter-active,
+.fade-1-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-1-enter-from,
+.fade-1-leave-to {
+  opacity: 0;
+}
+
+/* Fade Transition Styles */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.25s ease-in-out; /* Smooth fade-in/out with easing */
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0; /* Start and end with opacity 0 */
+}
+
+.modal-enter-to,
+.modal-leave-from {
+  opacity: 1; /* Full opacity when entering or leaving */
+}
+
 
 /*  Fade Transition Styles */
 .fade-loader-enter-active,

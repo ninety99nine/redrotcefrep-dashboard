@@ -46,7 +46,7 @@
                 <div v-if="canUpload" :class="['absolute top-0 bottom-0 left-0 right-0 z-10 bg-black/75 group-hover:bg-black/50']"></div>
 
                 <!-- Person Icon -->
-                <svg :class="['w-full h-full text-gray-200 dark:text-gray-700']" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <svg :class="['w-full h-full text-gray-200 dark:text-gray-700']" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a8.949 8.949 0 0 1-4.951-1.488A3.987 3.987 0 0 1 9 13h2a3.987 3.987 0 0 1 3.951 3.512A8.949 8.949 0 0 1 10 18Z"/>
                 </svg>
 
@@ -167,10 +167,6 @@
 
                         //  Stop loader
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Profile photo updated');
 
                     }
@@ -179,9 +175,6 @@
 
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                     //  If the current user is the authenticated user

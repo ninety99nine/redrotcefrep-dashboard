@@ -1,13 +1,17 @@
 <template>
-    <!-- Component Reference: https://flowbite.com/docs/components/indicators/#badge-indicator -->
+
     <span :class="badgeClasses" @click.stop.prevent="action">
         <StatusDot v-if="showDot" :type="dotType"></StatusDot>
         <slot></slot>
         {{ text }}
     </span>
+
 </template>
 
 <script>
+    /**
+     * Component Reference: https://flowbite.com/docs/components/indicators/#badge-indicator
+     */
     import StatusDot from '@Partials/status-dots/StatusDot.vue';
     export default {
         props: {

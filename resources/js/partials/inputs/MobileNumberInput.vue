@@ -7,23 +7,19 @@
             {{ label }}
         </InputLabel>
 
-        <div :class="[{ 'mt-2' : label != '' }, 'flex items-center rounded-md border-0 shadow-sm ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-blue-700 sm:text-sm sm:leading-6 text-gray-900']">
+        <div :class="[{ 'mt-2' : label != '' }, 'w-full flex items-center space-x-2 rounded-md border-0 shadow-sm ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-blue-700 sm:text-sm sm:leading-6 text-gray-900']">
 
-            <div class="flex space-x-2">
+            <!-- Prepend Slot -->
+            <div v-if="$slots.prepend">
+                <slot name="prepend"></slot>
+            </div>
 
-                <!-- Prepend Slot -->
-                <div v-if="$slots.prepend">
-                    <slot name="prepend"></slot>
-                </div>
+            <input ref="phoneInput" :id="uniqueId" :name="uniqueId" type="tel" autocomplete="tel" required
+                    class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
 
-                <input ref="phoneInput" :id="uniqueId" :name="uniqueId" type="tel" autocomplete="tel" required
-                      class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
-
-                <!-- Suffix Slot -->
-                <div v-if="$slots.suffix">
-                    <slot name="suffix"></slot>
-                </div>
-
+            <!-- Suffix Slot -->
+            <div v-if="$slots.suffix">
+                <slot name="suffix"></slot>
             </div>
 
         </div>
@@ -32,6 +28,7 @@
         <InputErrorMessage :errorText="errorText"></InputErrorMessage>
 
     </div>
+
 </template>
 
 <script>

@@ -31,14 +31,12 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import { putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import BulkMobileNumberInput from '@Partials/inputs/BulkMobileNumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
         components: {
             BulkMobileNumberInput
         },
@@ -81,10 +79,6 @@
 
                         var storeRollingNumber = response.data.storeRollingNumber;
                         useStoreState().store._relationships.storeRollingNumbers.push(storeRollingNumber);
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Whatsapp number added');
 
                     }
@@ -97,9 +91,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -152,9 +143,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -195,9 +183,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

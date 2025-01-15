@@ -167,10 +167,6 @@
 
                         //  Stop loader
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Store logo updated');
 
                     }
@@ -180,9 +176,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                     //  If the current store is the stored store

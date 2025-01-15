@@ -17,8 +17,8 @@
 
         <div v-if="!sentFirstRequest && isLoadingProductVariations" class="flex justify-center">
 
-            <!-- Spining Loader -->
-            <SpiningLoader class="my-4"></SpiningLoader>
+            <!-- Spinning Loader -->
+            <SpinningLoader class="my-4"></SpinningLoader>
 
         </div>
 
@@ -220,9 +220,9 @@
 
             <!-- No Product Variations -->
             <div v-else class="flex justify-between p-20 border rounded-lg bg-gray-50">
-                <SpiningLoader v-if="isCreatingVariations">
+                <SpinningLoader v-if="isCreatingVariations">
                     <span class="ml-2">Creating variations</span>
-                </SpiningLoader>
+                </SpinningLoader>
                 <div v-else class="space-y-4">
                     <h1 class="text-2xl font-bold">No variations</h1>
                     <p>Add your product options above ☝️ and then <span class="underline decoration-dashed underline-offset-4">create</span> the different variations of your product</p>
@@ -244,7 +244,7 @@
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import { getApi, putApi, postApi } from '@Repositories/api-repository.js';
@@ -253,7 +253,7 @@
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { MoreInfoPopover, ToogleSwitch, BasicTable, SpiningLoader, BadgeIndicator, NoDataPlaceholder },
+        components: { MoreInfoPopover, ToogleSwitch, BasicTable, SpinningLoader, BadgeIndicator, NoDataPlaceholder },
         props: {
             product: {
                 type: Object
@@ -347,9 +347,6 @@
                     //  Stop loader
                     this.isLoadingProductVariations = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

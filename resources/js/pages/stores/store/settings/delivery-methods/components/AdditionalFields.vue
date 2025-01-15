@@ -368,7 +368,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Field Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
+                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
 
             </template>
 

@@ -135,7 +135,7 @@
                     <p class="text-lg font-bold border-b border-dashed pb-4">Confirm Collection</p>
 
                     <!-- Collection Code Instruction (Seller) -->
-                    <Alert>
+                    <Alert v-if="order._attributes.dialToShowCollectionCode">
                         <span class="font-bold mr-1">How to verify collection</span>
                         - {{ order._attributes.dialToShowCollectionCode.instruction }}
                     </Alert>
@@ -159,7 +159,7 @@
 
                 <div class="flex justify-end">
                     <!-- Confirm Collection Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmCollection" size="xs" type="light" @click="triggerProps.showModal" :disabled="isUpdatingOrderStatus">
+                    <PrimaryButton ref="confirmCollection" size="xs" type="light" :action="triggerProps.showModal" :disabled="isUpdatingOrderStatus">
                         Confirm Collection
                     </PrimaryButton>
                 </div>
@@ -245,10 +245,6 @@
                         hideModal();
 
                         this.refreshOrder();
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Order collection confirmed');
 
                     }
@@ -261,9 +257,6 @@
                     //  Stop loader
                     this.isUpdatingOrderStatus = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

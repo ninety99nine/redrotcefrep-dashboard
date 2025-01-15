@@ -1,7 +1,5 @@
 <template>
-    <!--
-        Component Referece: https://vue3-tags-input.netlify.app/documents
-     -->
+
     <div>
 
         <!-- Input Label -->
@@ -45,7 +43,9 @@
 </template>
 
 <script>
-
+    /**
+     * Component Reference: https://vue3-tags-input.netlify.app/documents
+     */
     import Vue3TagsInput from 'vue3-tags-input';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';

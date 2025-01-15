@@ -50,7 +50,7 @@
                         </UndoButton>
 
                         <!-- Create / Save Changes Button -->
-                        <PrimaryButton @click="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :loading="isSubmitting" type="dark">
+                        <PrimaryButton :action="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :loading="isSubmitting" type="dark">
                             <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
                         </PrimaryButton>
 
@@ -97,7 +97,7 @@
             <FormErrorMessages></FormErrorMessages>
 
             <!-- Create / Save Changes Button -->
-            <PrimaryButton @click="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :disabled="!mustSaveChanges && !mustCreate" :loading="isSubmitting" type="dark" class="w-full">
+            <PrimaryButton :action="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :disabled="!mustSaveChanges && !mustCreate" :loading="isSubmitting" type="dark" class="w-full">
                 <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
             </PrimaryButton>
 
@@ -127,8 +127,8 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, postApi, putApi } from '@Repositories/api-repository.js';
     import { useDeliveryMethodState } from '@Stores/delivery-method-store.js';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -242,17 +242,18 @@
                     setSchedule: this.deliveryMethod.setSchedule,
                     description: this.deliveryMethod.description,
                     scheduleType: this.deliveryMethod.scheduleType,
+                    sameDayDelivery: this.deliveryMethod.sameDayDelivery,
                     operationalHours: this.deliveryMethod.operationalHours,
                     setDailyOrderLimit: this.deliveryMethod.setDailyOrderLimit,
                     timeSlotIntervalUnit: this.deliveryMethod.timeSlotIntervalUnit,
                     requireLocationOnMap: this.deliveryMethod.requireLocationOnMap,
-                    percentageFeeRate: this.deliveryMethod.percentageFeeRate.value,
                     dailyOrderLimit: this.deliveryMethod.dailyOrderLimit.toString(),
                     autoGenerateTimeSlots: this.deliveryMethod.autoGenerateTimeSlots,
                     showDistanceOnInvoice: this.deliveryMethod.showDistanceOnInvoice,
                     flatFeeRate: this.deliveryMethod.flatFeeRate.amountWithoutCurrency,
                     captureAdditionalFields: this.deliveryMethod.captureAdditionalFields,
                     earliestDeliveryTimeUnit: this.deliveryMethod.earliestDeliveryTimeUnit,
+                    percentageFeeRate: this.deliveryMethod.percentageFeeRate.value.toString(),
                     qualifyOnMinimumGrandTotal: this.deliveryMethod.qualifyOnMinimumGrandTotal,
                     timeSlotIntervalValue: this.deliveryMethod.timeSlotIntervalValue.toString(),
                     minimumGrandTotal: this.deliveryMethod.minimumGrandTotal.amountWithoutCurrency,
@@ -341,9 +342,6 @@
                     //  Stop loader
                     useDeliveryMethodState().isLoadingDeliveryMethod = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -451,9 +449,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

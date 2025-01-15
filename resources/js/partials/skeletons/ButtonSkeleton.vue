@@ -6,10 +6,10 @@
 
   <script>
 
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
-        components: { SpiningLoader },
+        components: { SpinningLoader },
         props: {
             size: {
                 type: String,

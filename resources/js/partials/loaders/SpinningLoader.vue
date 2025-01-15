@@ -1,7 +1,4 @@
 <template>
-    <!--
-        Component Referece: https://flowbite.com/docs/components/spinner/
-     -->
     <div :class="[wrapperClass, 'flex items-center']">
         <div :class="loaderClass"></div>
         <slot></slot>
@@ -11,6 +8,9 @@
 
 <script>
 export default {
+    /**
+     * Component Reference: https://flowbite.com/docs/components/spinner/
+     */
     props: {
         size: {
             type: String,
@@ -25,6 +25,9 @@ export default {
             type: String,
             default: 'dark',
             options: ['dark', 'light', 'warning', 'danger']
+        },
+        color: {
+            type: [String, null]
         }
     },
     computed: {
@@ -50,14 +53,22 @@ export default {
                 classes.push(this.customSize);
             }
 
-            if(this.type == 'dark') {
-                classes.push('border-black');
-            }else if(this.type == 'light') {
-                classes.push('border-white');
-            }else if(this.type == 'danger') {
-                classes.push('border-red-600');
-            }else if(this.type == 'warning') {
-                classes.push('border-yellow-400');
+            if(this.color) {
+                classes.push(this.color);
+            }else{
+
+                if(this.type == 'dark') {
+                    classes.push('border-black');
+                }else if(this.type == 'light') {
+                    classes.push('border-white');
+                }else if(this.type == 'danger') {
+                    classes.push('border-red-600');
+                }else if(this.type == 'warning') {
+                    classes.push('border-yellow-400');
+                }else if(this.type == 'warning') {
+                    classes.push('border-yellow-400');
+                }
+
             }
 
             return classes;

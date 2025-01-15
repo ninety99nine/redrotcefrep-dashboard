@@ -19,7 +19,7 @@
 
                             <!-- Loader -->
                             <div v-if="isSendingUssdMessage" class="flex justify-center space-x-2">
-                                <SpiningLoader></SpiningLoader>
+                                <SpinningLoader></SpinningLoader>
                                 <span class="text-xs">Running...</span>
                             </div>
 
@@ -83,11 +83,11 @@
     import { useApiState } from '@Stores/api-store.js';
     import { postApi } from '@Repositories/api-repository.js';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { PrimaryButton, SpiningLoader },
+        components: { PrimaryButton, SpinningLoader },
         props: {
             initialMessage: {
                 type: String,
@@ -154,9 +154,6 @@
                     //  Stop loader
                     this.isSendingUssdMessage = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

@@ -10,7 +10,7 @@
          </div>
 
         <!-- Address Information -->
-        <AddressModal
+        <AddressInput
             :address="address"
             title="Base location"
             @onCreated="setAddress"
@@ -19,7 +19,7 @@
             @onValidated="setValidatedAddressForm"
             :deliveryMethodId="hasDeliveryMethod ? deliveryMethod.id : null"
             subtitle="Set the starting point for calculating delivery distances">
-        </AddressModal>
+        </AddressInput>
 
         <h1 class="text-md font-bold m-2">Zones</h1>
 
@@ -157,8 +157,8 @@
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
+    import AddressInput from '@Partials/inputs/AddressInput.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import AddressModal from '@Components/address/AddressModal.vue';
     import { useDeliveryMethodState } from '@Stores/delivery-method-store.js';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
@@ -167,7 +167,7 @@
     export default {
         mixins: [FormMixin],
         components: {
-            AddButton, MoneyInput, UndoButton, NumberInput, DeleteButton, AddressModal,
+            AddButton, MoneyInput, UndoButton, NumberInput, AddressInput, DeleteButton,
             BadgeIndicator, InputErrorMessage, ShowDistanceInInvoiceCheckbox
         },
         props: {

@@ -7,7 +7,7 @@
     </PrimaryButton>
 </template>
 
-  <script>
+<script>
 
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 
@@ -32,9 +32,9 @@
             },
             type: {
                 type: String,
-                default: 'light',
+                default: 'dark',
                 options: ['dark', 'success', 'light', 'primary', 'warning', 'danger']
-            }
+            },
         },
         computed: {
             iconClass() {
@@ -53,4 +53,4 @@
         }
     };
 
-  </script>
+</script>

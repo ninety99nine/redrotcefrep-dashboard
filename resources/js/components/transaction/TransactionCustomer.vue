@@ -46,7 +46,7 @@
         </div>
 
         <div v-if="!isLoadingTransaction && hasCustomer" class="flex justify-end">
-            <PrimaryButton size="xs" type="primary" iconClass="w-4 h-4" @click="onViewCustomer()">
+            <PrimaryButton size="xs" type="primary" iconClass="w-4 h-4" :action="() => onViewCustomer()">
                 <span>View Customer</span>
             </PrimaryButton>
         </div>

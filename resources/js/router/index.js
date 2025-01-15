@@ -15,6 +15,12 @@ const routes = [
         component: () => import('@Pages/auth/Login.vue')
     },
     {
+        path: '/social-login',
+        name: 'social-login',
+        meta: { requiresAuth: false },
+        component: () => import('@Pages/auth/SocialLogin.vue')
+    },
+    {
         path: '/register',
         name: 'register',
         meta: { requiresAuth: false },
@@ -223,6 +229,23 @@ const routes = [
         component: () => import('@Pages/error/Oops.vue')
     },
     {
+        path: '/:alias',
+        meta: { requiresAuth: false },
+        component: () => import('@Pages/shopping/Index.vue'),
+        children: [
+            {
+                name: 'storefront',
+                path: '/:alias',
+                component: () => import('@Pages/shopping/storefront/Storefront.vue')
+            },
+            {
+                name: 'checkout',
+                path: 'checkout',
+                component: () => import('@Pages/shopping/checkout/Checkout.vue')
+            },
+        ]
+    },
+    {
         path: '/:catchAll(.*)',
         name: 'notFound',
         meta: { requiresAuth: false },
@@ -240,9 +263,8 @@ const router = createRouter({
  */
 router.beforeEach(async (to, from, next) => {
 
-    const loader = useLoaderState();
-
     // Show the loader before navigation
+    const loader = useLoaderState();
     loader.show();
 
     //  If we are navigating to the oops page
@@ -280,36 +302,39 @@ router.beforeEach(async (to, from, next) => {
         // Check if the route has meta data and requiresAuth is explicitly set to false
         if(to.meta && to.meta.requiresAuth === false) {
 
-            /**
-             *  For non-protected routes, check if the user is authenticated.
-             *  If authenticated, redirect to the dashboard.
-             */
             if(auth.authenticated) {
 
-                //  Navigate to the dashboard page
-                next({ name: 'dashboard', replace: true });
+                const restrictedRouteNames = ['login', 'register'];
+
+                if(restrictedRouteNames.includes(to.name)) {
+
+                    //  Navigate to the dashboard page
+                    next({ name: 'dashboard', replace: true });
+
+                }else{
+
+                    // Authenticated - Allow navigation
+                    next();
+
+                }
 
             } else {
 
-                // If not authenticated, allow navigation
+                // Not Authenticated - Allow navigation
                 next();
 
             }
 
         } else {
 
-            /**
-             *  For all other routes, assume they are protected and require authentication.
-             *  We must always check if the user is authenticated before navigation.
-             */
             if(auth.authenticated) {
 
-                // If authenticated, allow navigation
+                // Authenticated - Allow navigation
                 next();
 
             } else {
 
-                // If not authenticated, redirect to login page
+                // Not Authenticated - Redirect to login page
                 next({ name: 'login', query: { redirect: to.fullPath }, replace: true });
 
             }
@@ -321,10 +346,9 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach(() => {
-    const loader = useLoaderState();
-
     // Hide the loader after navigation is complete
+    const loader = useLoaderState();
     loader.hide();
-  });
+});
 
 export default router;

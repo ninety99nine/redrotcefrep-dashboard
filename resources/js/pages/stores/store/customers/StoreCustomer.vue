@@ -358,7 +358,7 @@
                     <template #trigger="triggerProps">
 
                         <!-- Delete Customer Button - Triggers Confirmation Modal -->
-                        <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
+                        <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
                             Delete Customer
                         </PrimaryButton>
 
@@ -397,7 +397,7 @@
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
@@ -413,7 +413,7 @@
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, BackButton, NumberInput,
             SelectInput, Datepicker, ConfirmModal, ShineEffect, TextareaInput, LineSkeleton, PrimaryButton,
-            SpiningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader, ToogleSwitch, MobileNumberInput,
+            SpinningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader, ToogleSwitch, MobileNumberInput,
             BadgeIndicator, CustomerOrders, CustomerTransactions
         },
         data() {
@@ -529,9 +529,6 @@
                     //  Stop loader
                     this.isLoadingCustomer = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -545,10 +542,6 @@
                 postApi(this.apiState.apiHome['_links']['createCustomer'], this.parseForm()).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Customer created');
 
                         //  Navigate to show customers
@@ -567,9 +560,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -617,9 +607,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -664,9 +651,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

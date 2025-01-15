@@ -1,4 +1,5 @@
 <template>
+
     <div class="flex items-center space-x-1">
 
         <!-- Label -->
@@ -10,6 +11,7 @@
         <MoreInfoPopover v-if="labelPopoverTitle || labelPopoverDescription" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top"></MoreInfoPopover>
 
    </div>
+
 </template>
 
 <script>

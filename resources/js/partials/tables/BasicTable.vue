@@ -1,7 +1,5 @@
 <template>
-    <!--
-        Component Referece: https://flowbite.com/docs/components/tables/
-     -->
+
     <div>
 
         <div class="flex justify-between items-center mb-4">
@@ -58,7 +56,7 @@
             </div>
 
             <!-- Add Filter Modal -->
-            <div :id="uniqueModalId" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+            <div :id="uniqueModalId" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
 
                 <div class="relative p-4 w-full max-w-md max-h-full">
 
@@ -75,7 +73,7 @@
 
                             <!-- Modal Close Icon Button -->
                             <button @click="hideFilterModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                                 </svg>
                                 <span class="sr-only">Close modal</span>
@@ -117,7 +115,7 @@
 
             <!-- Table Loader -->
             <div v-if="pagination && isLoading && !isSearching" class="absolute top-0 bottom-0 left-0 right-0 bg-white/50 flex justify-center items-center">
-                <SpiningLoader v-if="!isSearching"></SpiningLoader>
+                <SpinningLoader v-if="!isSearching"></SpinningLoader>
             </div>
 
             <table class="w-full text-sm text-left rtl:text-right text-gray-500">
@@ -209,16 +207,18 @@
 </template>
 
 <script>
-
+    /**
+     * Component Reference: https://flowbite.com/docs/components/tables/
+     */
     import { Modal, initFlowbite } from "flowbite";
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import Pagination from '@Partials/paginations/Pagination.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
         mixins: [UtilsMixin],
-        components: { SearchInput, Pagination, SpiningLoader },
+        components: { SearchInput, Pagination, SpinningLoader },
         props: {
             isLoading: {
                 type: Boolean,

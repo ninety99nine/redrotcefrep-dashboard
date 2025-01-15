@@ -137,9 +137,9 @@
                 <div class="flex items-center space-x-2 absolute top-1 right-0">
 
                     <!-- Deleting Loader -->
-                    <SpiningLoader v-if="isDeleting" type="danger">
+                    <SpinningLoader v-if="isDeleting" type="danger">
                         <span class="text-xs ml-2">Deleting...</span>
-                    </SpiningLoader>
+                    </SpinningLoader>
 
                     <!-- Delete Button - Triggers Confirmation Modal -->
                     <svg v-else-if="totalWorkflowSteps > 1" @click.stop.prevent="deleteWorkflowStep" class="w-4 h-4 cursor-pointer hover:text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -172,7 +172,7 @@
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import { useWorkflowState } from '@Stores/workflow-store.js';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -187,7 +187,7 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            Alert, TextHeader, UndoButton, SelectInput, SpiningLoader, PrimaryButton, MoreInfoPopover,
+            Alert, TextHeader, UndoButton, SelectInput, SpinningLoader, PrimaryButton, MoreInfoPopover,
             FormErrorMessages, BulkMobileNumberInput, NoteTextarea, EmailTextInput, AddDelayCheckbox,
             AutoCancelCheckbox, ReviewLinkTextInput
         },
@@ -368,8 +368,8 @@
             },
             autoSelectExistingOptions() {
                 // Check and reset 'action' only if the current value is invalid
-                if (!this.actions.includes(this.workflowStepForm.settings.action)) {
-                    if (this.actions.length > 0) {
+                if(!this.actions.includes(this.workflowStepForm.settings.action)) {
+                    if(this.actions.length > 0) {
                         this.workflowStepForm.settings.action = this.actions[0];
                     } else {
                         this.workflowStepForm.settings.action = null; // Optional: reset to null if no valid options
@@ -377,8 +377,8 @@
                 }
 
                 // Check and reset 'recipient' only if the current value is invalid
-                if (!this.recipients.includes(this.workflowStepForm.settings.recipient)) {
-                    if (this.recipients.length > 0) {
+                if(!this.recipients.includes(this.workflowStepForm.settings.recipient)) {
+                    if(this.recipients.length > 0) {
                         this.workflowStepForm.settings.recipient = this.recipients[0];
                     } else {
                         this.workflowStepForm.settings.recipient = null; // Optional: reset to null
@@ -386,8 +386,8 @@
                 }
 
                 // Check and reset 'template' only if the current value is invalid
-                if (!this.templates.includes(this.workflowStepForm.settings.template)) {
-                    if (this.templates.length > 0) {
+                if(!this.templates.includes(this.workflowStepForm.settings.template)) {
+                    if(this.templates.length > 0) {
                         this.workflowStepForm.settings.template = this.templates[0];
                     } else {
                         this.workflowStepForm.settings.template = null; // Optional: reset to null
@@ -530,9 +530,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

@@ -167,9 +167,9 @@
                         <a v-if="!isDeleting(order)" href="#" @click.stop.prevent="onView(order)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
-                        <SpiningLoader v-if="isDeleting(order)" type="danger">
+                        <SpinningLoader v-if="isDeleting(order)" type="danger">
                             <span class="text-xs ml-2">Deleting...</span>
-                        </SpiningLoader>
+                        </SpinningLoader>
 
                         <!-- Delete Button -->
                         <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(order)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
@@ -208,7 +208,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Order Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger">
+                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
                     Delete Order
                 </PrimaryButton>
 
@@ -232,7 +232,7 @@
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import OrderStatus from '@Components/order/OrderStatus.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
@@ -244,7 +244,7 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            TextHeader, AddButton, BasicTable, Checkbox, OrderStatus, ConfirmModal, SpiningLoader,
+            TextHeader, AddButton, BasicTable, Checkbox, OrderStatus, ConfirmModal, SpinningLoader,
             PrimaryButton, MoreInfoPopover, ToogleSwitch, OrderPaymentStatus, NoDataPlaceholder,
             OrderCollectionStatus
         },
@@ -345,9 +345,6 @@
                     //  Stop loader
                     this.isLoadingOrders = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -389,9 +386,6 @@
                     //  Stop loader
                     this.isDeletingOrderIds.splice(this.isDeletingOrderIds.findIndex((id) => id == this.deletableOrder.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

@@ -40,69 +40,70 @@
 
 <script>
 
-  import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-  import InputLabel from '@Partials/input-labels/InputLabel.vue';
-  import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-  import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
+    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-  export default {
-    props: {
-        modelValue: {
-            type: String
+    export default {
+        props: {
+            modelValue: {
+                type: String
+            },
+            label: {
+                type: String,
+                default: ''
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            autocomplete: {
+                type: String
+            },
+            placeholder: {
+                type: String,
+                default: ''
+            },
+            maxlength: {
+                type: String,
+                default: null
+            },
+            minlength: {
+                type: String,
+                default: null
+            },
+            required: {
+                type: Boolean,
+                default: true
+            },
+            errorText: {
+                type: String
+            }
         },
-        label: {
-            type: String,
-            default: ''
+        mixins: [UtilsMixin],
+        components: { InputLabel, MoreInfoPopover, InputErrorMessage },
+        data() {
+            return {
+                localModelValue: this.modelValue,
+                uniqueId: this.generateUniqueId('text')
+            };
         },
-        labelPopoverTitle: {
-            type: String
+        watch: {
+            modelValue(newValue, oldValue) {
+                this.updateValue(newValue);
+            },
+            localModelValue(newValue, oldValue) {
+                this.$emit('update:modelValue', newValue);
+            }
         },
-        labelPopoverDescription: {
-            type: String
-        },
-        autocomplete: {
-            type: String
-        },
-        placeholder: {
-            type: String,
-            default: ''
-        },
-        maxlength: {
-            type: String,
-            default: null
-        },
-        minlength: {
-            type: String,
-            default: null
-        },
-        required: {
-            type: Boolean,
-            default: true
-        },
-        errorText: {
-            type: String
+        methods: {
+            updateValue(newValue) {
+                this.localModelValue = newValue;
+            }
         }
-    },
-    mixins: [UtilsMixin],
-    components: { InputLabel, MoreInfoPopover, InputErrorMessage },
-    data() {
-      return {
-        localModelValue: this.modelValue,
-        uniqueId: this.generateUniqueId('text')
-      };
-    },
-    watch: {
-      modelValue(newValue, oldValue) {
-        this.updateValue(newValue);
-      },
-      localModelValue(newValue, oldValue) {
-        this.$emit('update:modelValue', newValue);
-      }
-    },
-    methods: {
-      updateValue(newValue) {
-        this.localModelValue = newValue;
-      }
-    }
-  };
+    };
+
 </script>

@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-gray-100">
 
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
 
@@ -58,6 +58,9 @@
 
             </form>
 
+            <!-- Social Sign In Links -->
+            <SocialLinks></SocialLinks>
+
             <!-- Register Link -->
             <p class="text-sm text-center mt-8">
                 <span class="text-gray-500 mr-1">Don't have an account?</span>
@@ -72,7 +75,6 @@
 
 <script>
 
-    import axios from 'axios';
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
     import Alert from '@Partials/alerts/Alert.vue';
@@ -82,9 +84,12 @@
     import { useAuthState } from '@Stores/auth-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import { login } from '@Repositories/auth-repository.js';
+    import { postApi } from '@Repositories/api-repository.js';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import SocialLinks from '@Pages/auth/components/SocialLinks.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -92,7 +97,10 @@
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { Logo, Alert, RouterLink, TextHeader, PasswordInput, OtpInput, PrimaryButton, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput },
+        components: {
+            Logo, Alert, RouterLink, TextHeader, PasswordInput, OtpInput, PrimaryButton, SocialLinks,
+            SpinningLoader, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
+        },
         data() {
             return {
                 loginUrl: null,
@@ -129,11 +137,6 @@
             });
         },
         methods: {
-            setUrls() {
-                this.loginUrl = this.apiState.apiHome['_links']['login'];
-                this.accountExistsUrl = this.apiState.apiHome['_links']['accountExists'];
-                this.mobileVerificationShortcode = this.apiState.apiHome['mobileVerificationShortcode'];
-            },
             handleLogin() {
                 /**
                  *  Note: the hideFormErrors() method is part of the FormMixin methods
@@ -158,10 +161,11 @@
 
                     this.isSubmitting = true;
 
-                    axios.post(this.accountExistsUrl, {
+                    const data = {
                         mobileNumber: this.mobileNumber
-                    })
-                    .then(response => {
+                    };
+
+                    postApi(this.accountExistsUrl, data).then(response => {
 
                         this.isSubmitting = false;
 
@@ -286,10 +290,12 @@
                     this.setGeneralFormError('The loginUrl does not exist');
 
                 }
-            }
+            },
         },
         created() {
-            this.setUrls();
+            this.loginUrl = this.apiState.apiHome['_links']['login'];
+            this.accountExistsUrl = this.apiState.apiHome['_links']['accountExists'];
+            this.mobileVerificationShortcode = this.apiState.apiHome['mobileVerificationShortcode'];
         }
     };
 </script>

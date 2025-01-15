@@ -102,7 +102,6 @@
         components: { Alert, TextHeader, ShineEffect, LineSkeleton, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
         data() {
             return {
-                isLoadingStore: false,
                 storeState: useStoreState(),
                 notificationState: useNotificationState()
             }
@@ -112,7 +111,7 @@
                 this.showStore();
             },
             'storeState.shouldUpdate'(newValue, oldValue) {
-                useStoreState().shouldUpdate = false;
+                this.storeState.setShouldUpdate(false);
                 this.showStore();
             }
         },
@@ -122,6 +121,9 @@
         computed: {
             store() {
                 return this.storeState.store;
+            },
+            isLoadingStore() {
+                return this.storeState.isLoadingStore;
             },
             quickStartGuide() {
                 return this.storeState.quickStartGuide;
@@ -139,7 +141,7 @@
             },
             showStore() {
 
-                this.isLoadingStore = true;
+                this.storeState.setIsLoadingStore(true);
 
                 let countableRelationships = ['subscriptions'];
                 let relationships = ['address', 'storeRollingNumbers', 'activeSubscription', 'userStoreAssociation'];
@@ -156,7 +158,7 @@
                         if(response.data.exists) {
 
                             //  Set the store on the component state and the pinia store state
-                            useStoreState().store = response.data.store;
+                            this.storeState.setStore(response.data.store);
 
                             //  Load the store quick start guide
                             this.showQuickStartGuide();
@@ -166,16 +168,13 @@
                     }
 
                     //  Stop loader
-                    this.isLoadingStore = false;
+                    this.storeState.setIsLoadingStore(false);
 
                 }).catch(errorException => {
 
                     //  Stop loader
-                    this.isLoadingStore = false;
+                    this.storeState.setIsLoadingStore(false);
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -183,28 +182,25 @@
             showQuickStartGuide() {
 
                 //  Start loader
-                useStoreState().isLoadingQuickStartGuide = true;
+                this.storeState.setIsLoadingQuickStartGuide(true);
 
                 getApi(this.store._links.showStoreQuickStartGuide).then(response => {
 
                     if(response.status == 200) {
 
                         //  Set the quickStartGuide on the component state and the pinia store state
-                        useStoreState().quickStartGuide = response.data;
+                        this.storeState.setQuickStartGuide(response.data);
 
                     }
 
                     //  Stop loader
-                    useStoreState().isLoadingQuickStartGuide = false;
+                    this.storeState.setIsLoadingQuickStartGuide(false);
 
                 }).catch(errorException => {
 
                     //  Stop loader
-                    useStoreState().isLoadingQuickStartGuide = false;
+                    this.storeState.setIsLoadingQuickStartGuide(false);
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

@@ -50,7 +50,7 @@
                         </UndoButton>
 
                         <!-- Create / Save Changes Button -->
-                        <PrimaryButton @click="submit" :loading="isSubmitting" type="dark">
+                        <PrimaryButton :action="submit" :loading="isSubmitting" type="dark">
                             <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
                         </PrimaryButton>
 
@@ -88,7 +88,7 @@
             </Alert>
 
             <!-- Create / Save Changes Button -->
-            <PrimaryButton @click="submit" :disabled="isSubmitting || !(workflowFormHasName && (mustSaveChanges || mustCreate || hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps))" type="dark" class="w-full">
+            <PrimaryButton :action="submit" :disabled="isSubmitting || !(workflowFormHasName && (mustSaveChanges || mustCreate || hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps))" type="dark" class="w-full">
                 <span>{{ isEditting || hasUnsavedWorkflowSteps ? 'Save Changes' : 'Create' }}</span>
             </PrimaryButton>
 
@@ -234,9 +234,6 @@
                     //  Stop loader
                     this.workflowState.setIsLoadingWorkflow(false);
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

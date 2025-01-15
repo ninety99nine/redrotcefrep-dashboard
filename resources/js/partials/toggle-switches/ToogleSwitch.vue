@@ -1,7 +1,5 @@
 <template>
-    <!--
-        Component Referece: https://flowbite.com/docs/forms/toggle/
-     -->
+
      <div>
 
         <label class="inline-flex items-center cursor-pointer">
@@ -24,10 +22,13 @@
         <InputErrorMessage :errorText="errorText" class="block"></InputErrorMessage>
 
      </div>
+
 </template>
 
 <script>
-
+    /**
+     * Component Reference: https://flowbite.com/docs/forms/toggle/
+     */
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 

@@ -426,7 +426,7 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 mb-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <BackdropLoader v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
+                        <BackdropLoader v-if="isLoadingCoupon || isSubmitting" :showSpinningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <div class="space-y-4">
 
@@ -451,7 +451,7 @@
                     <div v-if="coupon && hasInstructions" class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <BackdropLoader v-if="isLoadingCoupon || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
+                        <BackdropLoader v-if="isLoadingCoupon || isSubmitting" :showSpinningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <!-- Activation Rules Title -->
                         <div class="flex items-center space-x-4 mb-2">
@@ -503,7 +503,7 @@
                         <template #trigger="triggerProps">
 
                             <!-- Delete Coupon Button - Triggers Confirmation Modal -->
-                            <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
+                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
                                 Delete Coupon
                             </PrimaryButton>
 
@@ -543,11 +543,11 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -558,7 +558,7 @@
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, BackButton, NumberInput,
             SelectInput, Datepicker, ConfirmModal, ShineEffect, TextareaInput, PrimaryButton,
-            SpiningLoader, LineSkeleton, SelectInputTags, MoreInfoPopover, BackdropLoader,
+            SpinningLoader, LineSkeleton, SelectInputTags, MoreInfoPopover, BackdropLoader,
             ToogleSwitch, BadgeIndicator, FormErrorMessages
         },
         data() {
@@ -835,9 +835,6 @@
                     //  Stop loader
                     this.isLoadingCoupon = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -867,10 +864,6 @@
                 postApi(this.apiState.apiHome['_links']['createCoupon'], this.parseForm()).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Coupon created');
 
                         //  Navigate to show coupons
@@ -889,9 +882,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -939,9 +929,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -991,9 +978,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

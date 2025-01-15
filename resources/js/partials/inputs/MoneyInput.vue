@@ -36,7 +36,7 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-  export default {
+    export default {
     props: {
         modelValue: {
             type: String
@@ -74,10 +74,10 @@
     mixins: [UtilsMixin],
     components: { InputLabel, MoreInfoPopover, InputErrorMessage },
     data() {
-      return {
+        return {
         localModelValue: this.modelValue,
         uniqueId: this.generateUniqueId('money')
-      };
+        };
     },
     watch: {
         modelValue(newValue, oldValue) {
@@ -109,5 +109,6 @@
             this.$emit('update:modelValue', value);
         }
     }
-  };
+    };
+
 </script>

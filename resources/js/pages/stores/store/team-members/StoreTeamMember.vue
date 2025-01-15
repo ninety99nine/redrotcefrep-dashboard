@@ -154,7 +154,7 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
+                        <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" :showSpinningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <!-- Permissions Title -->
                         <div class="flex items-center space-x-4 mb-2">
@@ -212,7 +212,7 @@
                         <template #trigger="triggerProps">
 
                             <!-- Remove Team Member Button - Triggers Confirmation Modal -->
-                            <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
+                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
                                 Remove Team Member
                             </PrimaryButton>
 
@@ -249,7 +249,7 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
@@ -263,7 +263,7 @@
         components: {
             Alert, TextInput, TextHeader, Checkbox, InputTags, BackButton, NumberInput,
             SelectInput, ConfirmModal, ShineEffect, PrimaryButton, LineSkeleton,
-            SpiningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader,
+            SpinningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader,
             MobileNumberInput, BadgeIndicator, FormErrorMessages
         },
         data() {
@@ -381,9 +381,6 @@
                     //  Stop loader
                     this.isLoadingTeamMember = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -416,9 +413,6 @@
                     //  Stop loader
                     this.isLoadingTeamMemberPermissions = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -446,9 +440,6 @@
                     //  Stop loader
                     this.isLoadingAvailableTeamMemberPermissions = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -474,10 +465,6 @@
                 postApi(this.store._links.inviteStoreTeamMembers, data).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification(response.data.message);
 
                         //  Navigate to show team members
@@ -496,9 +483,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -559,9 +543,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -610,9 +591,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

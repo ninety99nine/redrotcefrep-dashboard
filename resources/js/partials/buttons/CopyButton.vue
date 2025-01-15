@@ -8,7 +8,7 @@
     </PrimaryButton>
 </template>
 
-  <script>
+<script>
 
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 
@@ -64,4 +64,4 @@
         }
     };
 
-  </script>
+</script>

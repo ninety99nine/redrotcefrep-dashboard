@@ -1,8 +1,5 @@
 <template>
 
-    <!--
-        Component Referece: https://flowbite.com/docs/components/pagination/
-     -->
     <nav :class="['flex items-center flex-column flex-wrap md:flex-row', showResultTotals ? 'justify-between' : 'justify-end']" aria-label="Table navigation">
         <span v-if="showResultTotals" class="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.from }}-{{ pagination.to }}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.total }}</span></span>
         <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
@@ -17,60 +14,63 @@
 
 </template>
 
-  <script>
-  export default {
-    props: {
-        pagination: {
-            type: Object
-        }
-    },
-    computed: {
-        showResultTotals() {
-            return this.pagination.from && this.pagination.to && this.pagination.total;
-        }
-    },
-    methods: {
-        onClick(link) {
-            if(link.url) {
-                this.$emit('paginate', link.url);
+<script>
+    /**
+     * Component Reference: https://flowbite.com/docs/components/pagination/
+     */
+    export default {
+        props: {
+            pagination: {
+                type: Object
             }
         },
-        isDisabled(link) {
-            return link.url == null;
+        computed: {
+            showResultTotals() {
+                return this.pagination.from && this.pagination.to && this.pagination.total;
+            }
         },
-        getLinkClass(index, link) {
+        methods: {
+            onClick(link) {
+                if(link.url) {
+                    this.$emit('paginate', link.url);
+                }
+            },
+            isDisabled(link) {
+                return link.url == null;
+            },
+            getLinkClass(index, link) {
 
-            var classes;
+                var classes;
 
-            //  If first link
-            if(index == 0) {
+                //  If first link
+                if(index == 0) {
 
-                classes = 'flex items-center justify-center px-3 h-8 ms-0 leading-tight border rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+                    classes = 'flex items-center justify-center px-3 h-8 ms-0 leading-tight border rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
 
-            //  If last link
-            }else if(index == this.pagination.links.length - 1) {
+                //  If last link
+                }else if(index == this.pagination.links.length - 1) {
 
-                classes = 'flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+                    classes = 'flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
 
-            //  If in-between link
-            }else{
+                //  If in-between link
+                }else{
 
-                classes = 'flex items-center justify-center px-3 h-8 leading-tight border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+                    classes = 'flex items-center justify-center px-3 h-8 leading-tight border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
 
+                }
+
+                if(this.isDisabled(link)) {
+
+                    classes += ' cursor-not-allowed bg-gray-100';
+
+                }else{
+
+                    classes += (link.active ? ' bg-blue-500 hover:bg-blue-500 border-blue-500 text-white' : 'bg-white hover:bg-gray-100 hover:text-gray-700 text-gray-500');
+
+                }
+
+                return classes;
             }
-
-            if(this.isDisabled(link)) {
-
-                classes += ' cursor-not-allowed bg-gray-100';
-
-            }else{
-
-                classes += (link.active ? ' bg-blue-500 hover:bg-blue-500 border-blue-500 text-white' : 'bg-white hover:bg-gray-100 hover:text-gray-700 text-gray-500');
-
-            }
-
-            return classes;
         }
-    }
-  };
-  </script>
+    };
+</script>

@@ -369,7 +369,7 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                         <!-- Loading Backdrop -->
-                        <BackdropLoader v-if="isLoadingProduct || isSubmitting" :showSpiningLoader="false" class="rounded-lg"></BackdropLoader>
+                        <BackdropLoader v-if="isLoadingProduct || isSubmitting" :showSpinningLoader="false" class="rounded-lg"></BackdropLoader>
 
                         <div class="space-y-4">
 
@@ -482,7 +482,7 @@
                         <template #trigger="triggerProps">
 
                             <!-- Delete Product Button - Triggers Confirmation Modal -->
-                            <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
+                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
                                 Delete Product
                             </PrimaryButton>
 
@@ -523,7 +523,7 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -540,7 +540,7 @@
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextInput, TextHeader, MoneyInput, InputTags, AddButton, UndoButton, BackButton, NumberInput, SelectInput,
-            ConfirmModal, ShineEffect, DeleteButton, TextareaInput, SpiningLoader, PrimaryButton, LineSkeleton, MoreInfoPopover,
+            ConfirmModal, ShineEffect, DeleteButton, TextareaInput, SpinningLoader, PrimaryButton, LineSkeleton, MoreInfoPopover,
             BackdropLoader, ToogleSwitch, BadgeIndicator, FormErrorMessages, InputErrorMessage, ProductVariations
         },
         data() {
@@ -741,9 +741,6 @@
                     //  Stop loader
                     this.isLoadingProduct = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -774,10 +771,6 @@
                 postApi(this.apiState.apiHome['_links']['createProduct'], this.form).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Product created');
 
                         if(this.form.allowVariations) {
@@ -807,9 +800,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -867,9 +857,6 @@
                     //  Stop loader
                     this.isCreatingVariations = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -892,10 +879,6 @@
                     if(response.status == 200) {
 
                         this.originalForm = cloneDeep(this.form);
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Product updated');
 
                     }
@@ -908,9 +891,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -965,9 +945,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

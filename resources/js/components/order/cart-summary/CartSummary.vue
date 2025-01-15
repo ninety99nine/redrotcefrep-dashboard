@@ -62,14 +62,28 @@
                     </tr>
                 </template>
 
-                <!-- Sub Total -->
+                <!-- Subtotal -->
                 <tr class="text-xs text-right">
-                    <td colspan="4" class="whitespace-nowrap px-4 py-2">Sub Total</td>
+                    <td colspan="4" class="whitespace-nowrap px-4 py-2">Subtotal</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
                         <ShineEffect v-if="isLoadingOrder">
                             <LineSkeleton></LineSkeleton>
                         </ShineEffect>
                         <span v-else>{{ order._relationships.cart.subTotal.amountWithCurrency }}</span>
+                    </td>
+                </tr>
+
+                <!-- Sale Discount Total -->
+                <tr class="text-xs text-right">
+                    <td colspan="4" class="whitespace-nowrap px-4 py-2">Sale Discount Total</td>
+                    <td colspan="1" class="whitespace-nowrap px-4 py-2">
+                        <ShineEffect v-if="isLoadingOrder">
+                            <LineSkeleton></LineSkeleton>
+                        </ShineEffect>
+                        <span v-else>
+                            {{ order._relationships.cart.saleDiscountTotal.amount > 0 ? '-' : '' }}
+                            {{ order._relationships.cart.saleDiscountTotal.amountWithCurrency }}
+                        </span>
                     </td>
                 </tr>
 
@@ -87,22 +101,8 @@
                     </td>
                 </tr>
 
-                <!-- Sale Discount Total -->
-                <tr class="text-xs text-right border-b">
-                    <td colspan="4" class="whitespace-nowrap px-4 py-2">Sale Discount Total</td>
-                    <td colspan="1" class="whitespace-nowrap px-4 py-2">
-                        <ShineEffect v-if="isLoadingOrder">
-                            <LineSkeleton></LineSkeleton>
-                        </ShineEffect>
-                        <span v-else>
-                            {{ order._relationships.cart.saleDiscountTotal.amount > 0 ? '-' : '' }}
-                            {{ order._relationships.cart.saleDiscountTotal.amountWithCurrency }}
-                        </span>
-                    </td>
-                </tr>
-
                 <!-- Grand Total -->
-                <tr class="text-right text-black text-lg font-bold">
+                <tr class="text-right text-black text-lg font-bold border-t">
                     <td colspan="4" class="whitespace-nowrap px-4 py-3">Grand Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-3">
                         <ShineEffect v-if="isLoadingOrder">

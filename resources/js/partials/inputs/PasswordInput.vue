@@ -58,62 +58,63 @@
 
 <script>
 
-  import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-  import InputLabel from '@Partials/input-labels/InputLabel.vue';
-  import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
+    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-  export default {
-    props: {
-        modelValue: {
-            type: String
+    export default {
+        props: {
+            modelValue: {
+                type: String
+            },
+            label: {
+                type: String,
+                default: ''
+            },
+            showForgotPassword: {
+                type: Boolean,
+                default: true
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            placeholder: {
+                type: String,
+                default: ''
+            },
+            required: {
+                type: Boolean,
+                default: true
+            },
+            errorText: {
+                type: String
+            }
         },
-        label: {
-            type: String,
-            default: ''
+        mixins: [UtilsMixin],
+        components: { InputLabel, InputErrorMessage },
+        data() {
+        return {
+            showPassword: false,
+            localModelValue: this.modelValue,
+            uniqueId: this.generateUniqueId('password'),
+        };
         },
-        showForgotPassword: {
-            type: Boolean,
-            default: true
+        watch: {
+        modelValue(newValue, oldValue) {
+            this.updateValue(newValue);
         },
-        labelPopoverTitle: {
-            type: String
-        },
-        labelPopoverDescription: {
-            type: String
-        },
-        placeholder: {
-            type: String,
-            default: ''
-        },
-        required: {
-            type: Boolean,
-            default: true
-        },
-        errorText: {
-            type: String
+        localModelValue(newValue, oldValue) {
+            this.$emit('update:modelValue', newValue);
         }
-    },
-    mixins: [UtilsMixin],
-    components: { InputLabel, InputErrorMessage },
-    data() {
-      return {
-        showPassword: false,
-        localModelValue: this.modelValue,
-        uniqueId: this.generateUniqueId('password'),
-      };
-    },
-    watch: {
-      modelValue(newValue, oldValue) {
-        this.updateValue(newValue);
-      },
-      localModelValue(newValue, oldValue) {
-        this.$emit('update:modelValue', newValue);
-      }
-    },
-    methods: {
-      updateValue(newValue) {
-        this.localModelValue = newValue;
-      }
-    }
-  };
+        },
+        methods: {
+        updateValue(newValue) {
+            this.localModelValue = newValue;
+        }
+        }
+    };
+
 </script>

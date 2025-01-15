@@ -143,9 +143,9 @@
                         <a v-if="!isDeleting(transaction)" href="#" @click.stop.prevent="onView(transaction)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
                         <!-- Deleting Loader -->
-                        <SpiningLoader v-if="isDeleting(transaction)" type="danger">
+                        <SpinningLoader v-if="isDeleting(transaction)" type="danger">
                             <span class="text-xs ml-2">Deleting...</span>
-                        </SpiningLoader>
+                        </SpinningLoader>
 
                         <!-- Delete Button -->
                         <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(transaction)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
@@ -198,7 +198,7 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Transaction Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" @click="triggerProps.showModal" class="hidden" type="danger">
+                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
                     Delete Transaction
                 </PrimaryButton>
 
@@ -224,7 +224,7 @@
     import Countdown from '@Partials/countdowns/Countdown.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import SpiningLoader from '@Partials/loaders/SpiningLoader.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
@@ -235,7 +235,7 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            AddButton, TextHeader, BasicTable, Checkbox, Countdown, ExternalLink, ConfirmModal, SpiningLoader,
+            AddButton, TextHeader, BasicTable, Checkbox, Countdown, ExternalLink, ConfirmModal, SpinningLoader,
             PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
         },
         props: {
@@ -394,9 +394,6 @@
                     //  Stop loader
                     this.isDeletingTransactionIds.splice(this.isDeletingTransactionIds.findIndex((id) => id == this.deletableTransaction.id, 1));
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

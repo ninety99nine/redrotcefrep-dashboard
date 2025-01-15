@@ -33,61 +33,62 @@
 
 <script>
 
-  import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-  import InputLabel from '@Partials/input-labels/InputLabel.vue';
-  import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
+    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-  export default {
-    props: {
-        modelValue: {
-            type: String
+    export default {
+        props: {
+            modelValue: {
+                type: String
+            },
+            label: {
+                type: String,
+                default: ''
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            min: {
+                type: String,
+                default: null   //  '09:00'
+            },
+            max: {
+                type: String,
+                default: null   //  '18:00'
+            },
+            required: {
+                type: Boolean,
+                default: true
+            },
+            errorText: {
+                type: String
+            }
         },
-        label: {
-            type: String,
-            default: ''
+        mixins: [UtilsMixin],
+        components: { InputLabel, InputErrorMessage },
+        data() {
+        return {
+            localModelValue: this.modelValue,
+            uniqueId: this.generateUniqueId('text')
+        };
         },
-        labelPopoverTitle: {
-            type: String
+        watch: {
+        modelValue(newValue, oldValue) {
+            this.updateValue(newValue);
         },
-        labelPopoverDescription: {
-            type: String
-        },
-        min: {
-            type: String,
-            default: null   //  '09:00'
-        },
-        max: {
-            type: String,
-            default: null   //  '18:00'
-        },
-        required: {
-            type: Boolean,
-            default: true
-        },
-        errorText: {
-            type: String
+        localModelValue(newValue, oldValue) {
+            this.$emit('update:modelValue', newValue);
         }
-    },
-    mixins: [UtilsMixin],
-    components: { InputLabel, InputErrorMessage },
-    data() {
-      return {
-        localModelValue: this.modelValue,
-        uniqueId: this.generateUniqueId('text')
-      };
-    },
-    watch: {
-      modelValue(newValue, oldValue) {
-        this.updateValue(newValue);
-      },
-      localModelValue(newValue, oldValue) {
-        this.$emit('update:modelValue', newValue);
-      }
-    },
-    methods: {
-      updateValue(newValue) {
-        this.localModelValue = newValue;
-      }
-    }
-  };
+        },
+        methods: {
+        updateValue(newValue) {
+            this.localModelValue = newValue;
+        }
+        }
+    };
+
 </script>

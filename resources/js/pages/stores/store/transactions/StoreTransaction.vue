@@ -198,7 +198,7 @@
                                         <CopyButton type="light" size="sm" :content="transaction.metadata.dpoPaymentUrl">
                                             <span class="ml-1">Copy Payment Link</span>
                                         </CopyButton>
-                                        <PrimaryButton @click="openPaymentLinkInNewTab()" type="primary" size="sm">
+                                        <PrimaryButton :action="openPaymentLinkInNewTab()" type="primary" size="sm">
                                             <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
                                             </svg>
@@ -211,7 +211,7 @@
 
                             <!-- Renew Payment Link Buttons -->
                             <div v-else-if="transaction.metadata && transaction.metadata.dpoPaymentLinkHasExpired" class="flex justify-end">
-                                <PrimaryButton @click="renewTransactionPaymentLink()" type="primary" size="sm" :loading="isRenewingPaymentLink">
+                                <PrimaryButton :action="renewTransactionPaymentLink()" type="primary" size="sm" :loading="isRenewingPaymentLink">
                                     <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                                     </svg>
@@ -310,7 +310,7 @@
                         <template #trigger="triggerProps">
 
                             <!-- Delete Transaction Button - Triggers Confirmation Modal -->
-                            <PrimaryButton @click="triggerProps.showModal" :loading="isDeleting" type="danger">
+                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" type="danger">
                                 Delete Transaction
                             </PrimaryButton>
 
@@ -347,7 +347,6 @@
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import ProceedButton from '@Partials/buttons/ProceedButton.vue';
     import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -363,7 +362,7 @@
         mixins: [UtilsMixin, FormMixin],
         components: {
             Alert, TextHeader, BackButton, CopyButton, Countdown, ExternalLink, ConfirmModal, ShineEffect, LineSkeleton, PrimaryButton,
-            ProceedButton, RoundSkeleton, ButtonSkeleton, MoreInfoPopover, BadgeIndicator, TransactionOwner,
+            RoundSkeleton, ButtonSkeleton, MoreInfoPopover, BadgeIndicator, TransactionOwner,
             FormErrorMessages, TransactionFailureType, TransactionCustomer, TransactionPaymentStatus
         },
         data() {
@@ -475,9 +474,6 @@
                     //  Stop loader
                     this.isLoadingTransaction = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -491,10 +487,6 @@
                 postApi(this.transaction._links.renewTransactionPaymentLink).then(response => {
 
                     if(response.status == 200) {
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Transaction renewed');
 
                         this.getTransaction();
@@ -509,9 +501,6 @@
                     //  Stop loader
                     this.isRenewingPaymentLink = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -532,10 +521,6 @@
                     if(response.status == 200) {
 
                         this.originalForm = cloneDeep(this.form);
-
-                        /**
-                         *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                         */
                         this.showSuccessfulNotification('Transaction updated');
 
                     }
@@ -548,9 +533,6 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });
@@ -595,9 +577,6 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    /**
-                     *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                     */
                     this.setServerFormErrors(errorException);
 
                 });

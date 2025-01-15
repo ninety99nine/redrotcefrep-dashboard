@@ -1,10 +1,12 @@
 <template>
+
     <span v-if="errorText" :class="['font-medium text-red-500 text-xs', margin]">
       {{ errorText }}
     </span>
-  </template>
 
-  <script>
+</template>
+
+<script>
   export default {
     props: {
         errorText: {
@@ -16,4 +18,4 @@
         }
     }
   };
-  </script>
+</script>
