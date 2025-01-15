@@ -232,12 +232,11 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             this.setIsLoadingNonSelectedProducts(true);
 
             const cartProductIds = this.cartProducts().map((cartProduct) => cartProduct.id).join(',');
-            const filters = (this.hasCartProducts() ? `|id:not_in:${cartProductIds}` : '');
+            const filters = (this.hasCartProducts() ? `id:not_in:${cartProductIds}` : '');
 
             //  Set the query params
-            const params = {
-                '_filters': filters
-            }
+            const params = {}
+            if(filters != '') params['_filters'] = filters;
 
             //  If the search term has been provided, then add to the query params
             if(this.hasSearchTerm) params['search'] = this.searchTerm;
