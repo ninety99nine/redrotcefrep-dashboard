@@ -10,8 +10,6 @@
         <!-- Cart Totals -->
         <CartTotals></CartTotals>
 
-        {{ shoppingCartState.shoppingCartForm }}
-
     </div>
 
 </template>
