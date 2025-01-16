@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex flex-col items-center space-y-4 w-full max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg mb-8">
+    <div class="flex flex-col items-center space-y-4 bg-white md:max-w-lg mx-4 mb-8 md:mx-auto rounded-lg shadow-lg p-6">
 
         <!-- Social Media Links Heading -->
         <p class="font-bold text-xs sm:text-sm text-black">
