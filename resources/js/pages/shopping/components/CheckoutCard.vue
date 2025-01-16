@@ -2,7 +2,7 @@
 
     <div
         :style="'background:'+storeForm.cardSecondaryColor+';'"
-        class="w-full max-w-lg mx-auto rounded-lg shadow-lg mb-4">
+        class="md:max-w-lg mx-4 mb-4 md:mx-auto rounded-lg shadow-lg">
 
         <!-- Checkout Card Heading -->
         <CheckoutCardHeading></CheckoutCardHeading>

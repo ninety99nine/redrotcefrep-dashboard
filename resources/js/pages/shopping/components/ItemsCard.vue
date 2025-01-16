@@ -2,7 +2,7 @@
 
     <div
         :style="'background:'+storeForm.cardSecondaryColor+';'"
-        class="w-full max-w-lg mx-auto rounded-lg shadow-lg overflow-hidden mb-4">
+        class="md:max-w-lg mx-4 mb-4 md:mx-auto rounded-lg shadow-lg space-y-4 p-4 overflow-hidden">
 
         <p class="font-bold p-4">Items</p>
 
