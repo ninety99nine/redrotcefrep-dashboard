@@ -263,7 +263,7 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             });
 
         },
-        async showDeliveryMethods() {
+        async showShoppingDeliveryMethods() {
 
             const store = useStoreState().store;
 
@@ -278,7 +278,7 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             //  If the search term has been provided, then add to the query params
             if(this.hasSearchTerm) params['search'] = this.searchTerm;
 
-            await getApi(store._links.showStoreDeliveryMethods, params).then(response => {
+            await getApi(store._links.showShoppingDeliveryMethods, params).then(response => {
 
                 if(response.status == 200) {
                     this.deliveryMethodsPagination = response.data;

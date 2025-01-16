@@ -167,8 +167,8 @@ export default {
         }
     },
     methods: {
-        async showDeliveryMethods() {
-            await this.shoppingCartState.showDeliveryMethods();
+        async showShoppingDeliveryMethods() {
+            await this.shoppingCartState.showShoppingDeliveryMethods();
         },
         inspectStoreShoppingCart() {
             return this.shoppingCartState.inspectStoreShoppingCart();
@@ -205,7 +205,7 @@ export default {
         },
     },
     created() {
-        this.showDeliveryMethods();
+        this.showShoppingDeliveryMethods();
     }
 };
 </script>
