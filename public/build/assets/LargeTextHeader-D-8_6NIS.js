@@ -1,1 +1,0 @@
-import{o as t,c as r,A as o}from"./app-C6V_Xgnk.js";import{_ as c}from"./_plugin-vue_export-helper-DlAUqK2U.js";const n={},s={class:"text-center text-8xl font-bold leading-3 tracking-tight text-gray-900"};function a(e,l){return t(),r("h2",s,[o(e.$slots,"default")])}const f=c(n,[["render",a]]);export{f as L};
