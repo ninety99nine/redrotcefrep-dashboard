@@ -117,7 +117,7 @@
                             <div class="flex items-center space-x-4">
 
                                 <!-- Logo -->
-                                <img :src="`/images/social-icons/${socialPlatform.name}.png`" :alt="`${socialPlatform.name} Logo`" class="w-8 h-8" />
+                                <img :src="`/images/social-icons/${socialPlatform.name.toLowerCase()}.png`" :alt="`${socialPlatform.name} Logo`" class="w-8 h-8" />
 
                                 <!-- Name -->
                                 <div class="space-y-1 text-sm">
