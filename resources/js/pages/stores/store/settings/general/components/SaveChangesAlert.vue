@@ -1,8 +1,8 @@
 <template>
 
     <SaveChanges
-        :undo="resetStoreForm"
         :saveChanges="updateStore"
+        :undoChanges="resetStoreForm"
         :isSaving="isSubmittingStore"
         :mustSaveChanges="mustSaveChanges">
     </SaveChanges>

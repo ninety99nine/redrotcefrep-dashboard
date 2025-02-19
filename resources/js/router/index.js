@@ -32,6 +32,11 @@ const routes = [
         component: () => import('@Pages/dashboard/Index.vue'),
         children: [
             {
+                name: 'show-components',
+                path: 'components',
+                component: () => import('@Pages/components/Components.vue')
+            },
+            {
                 name: 'show-profile',
                 path: 'profile',
                 component: () => import('@Pages/profile/Profile.vue')
@@ -42,19 +47,70 @@ const routes = [
                 component: () => import('@Pages/stores/Stores.vue')
             },
             {
-                name: 'create-store',
-                path: 'stores/create',
-                component: () => import('@Pages/stores/create/CreateStore.vue')
+                path: '/store-onboarding',
+                meta: { onboarding: true },
+                component: () => import('@Pages/stores/onboarding/StoreOnboarding.vue'),
+                children: [
+                    {
+                        path: 'create/store',
+                        name: 'create-store',
+                        component: () => import('@Pages/stores/onboarding/CreateStore.vue'),
+                    },
+                    {
+                        path: '/:store_href',
+                        children: [
+                            {
+                                path: 'add/products',
+                                name: 'add-products',
+                                component: () => import('@Pages/stores/onboarding/AddProducts.vue'),
+                            },
+                            {
+                                path: 'add/payments',
+                                name: 'add-payments',
+                                component: () => import('@Pages/stores/onboarding/AddPayments.vue'),
+                            },
+                            {
+                                path: 'add/socials',
+                                name: 'add-socials',
+                                component: () => import('@Pages/stores/onboarding/AddSocials.vue'),
+                            },
+                            {
+                                path: 'add/pages',
+                                name: 'add-pages',
+                                component: () => import('@Pages/stores/onboarding/AddPages.vue'),
+                            },
+                            {
+                                path: 'advanced/features',
+                                name: 'advanced-features',
+                                component: () => import('@Pages/stores/onboarding/AddAdvancedFeatures.vue')
+                            },
+                            {
+                                path: 'share',
+                                name: 'share',
+                                component: () => import('@Pages/stores/onboarding/Share.vue')
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 name: 'store',
                 path: 'stores/:store_href',
-                component: () => import('@Pages/stores/store/Store.vue'),
                 children: [
                     {
                         path: '',
                         name: 'show-store-home',
                         component: () => import('@Pages/stores/store/home/StoreHome.vue')
+                    },
+                    {
+                        path: 'components',
+                        name: 'show-store-components',
+                        component: () => import('@Pages/stores/store/pricing-plans/PricingPlans.vue')
+                    },
+                    {
+                        path: 'pricing-plans',
+                        name: 'show-store-pricing-plans',
+                        component: () => import('@Pages/stores/store/pricing-plans/PricingPlans.vue')
                     },
                     {
                         path: 'orders',
@@ -90,6 +146,26 @@ const routes = [
                         path: 'products/create',
                         name: 'create-store-product',
                         component: () => import('@Pages/stores/store/products/StoreProduct.vue')
+                    },
+                    {
+                        path: 'pages',
+                        name: 'show-store-pages',
+                        component: () => import('@Pages/stores/store/pages/StorePages.vue')
+                    },
+                    {
+                        path: 'pages/:page_href',
+                        name: 'show-store-page',
+                        component: () => import('@Pages/stores/store/pages/StorePage.vue')
+                    },
+                    {
+                        path: 'pages/:page_href/preview',
+                        name: 'show-store-page-preview',
+                        component: () => import('@Pages/stores/store/pages/StorePagePreview.vue')
+                    },
+                    {
+                        path: 'pages/create',
+                        name: 'create-store-page',
+                        component: () => import('@Pages/stores/store/pages/StorePage.vue')
                     },
                     {
                         path: 'coupons',
@@ -201,6 +277,11 @@ const routes = [
                                 name: 'show-store-payment-method-settings',
                                 component: () => import('@Pages/stores/store/settings/payment-methods/PaymentMethodSettings.vue')
                             },
+                            {
+                                path: 'checkout',
+                                name: 'show-store-checkout-settings',
+                                component: () => import('@Pages/stores/store/settings/checkout/CheckoutSettings.vue')
+                            },
                         ]
                     },
                 ]
@@ -255,7 +336,15 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        // If there's a saved position (e.g., from browser back/forward), use it
+        if (savedPosition) {
+            return savedPosition;
+        }
+        // Otherwise, scroll to the top
+        return { top: 0 };
+    }
 });
 
 /**

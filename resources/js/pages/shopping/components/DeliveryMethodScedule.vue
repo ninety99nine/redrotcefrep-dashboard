@@ -95,10 +95,10 @@
         },
         watch: {
             'shoppingCartForm.deliveryDate'() {
-                this.inspectStoreShoppingCart();
+                this.inspectStoreShoppingCartWithDelay();
             },
             'shoppingCartForm.deliveryTimeslot'() {
-                this.inspectStoreShoppingCart();
+                this.inspectStoreShoppingCartWithDelay();
             }
         },
         computed: {
@@ -125,8 +125,8 @@
             },
         },
         methods: {
-            inspectStoreShoppingCart() {
-                return this.shoppingCartState.inspectStoreShoppingCart();
+            inspectStoreShoppingCartWithDelay() {
+                return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
             },
             setScheduleOptions(scheduleOptions) {
                 this.scheduleOptions = scheduleOptions;

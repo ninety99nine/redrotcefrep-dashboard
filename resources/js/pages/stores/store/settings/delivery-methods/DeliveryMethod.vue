@@ -84,8 +84,11 @@
             <!-- Additional Fields -->
             <AdditionalFields :form="form"></AdditionalFields>
 
-            <!-- Require Location Map Checkbox -->
-            <RequireLocationMapCheckbox :form="form"></RequireLocationMapCheckbox>
+            <!-- Ask For An Address Checkbox -->
+            <AskForAnAddressCheckbox :form="form"></AskForAnAddressCheckbox>
+
+            <!-- Pin Location On Map Checkbox -->
+            <PinLocationOnMapCheckbox :form="form"></PinLocationOnMapCheckbox>
 
             <!-- Charge Fee -->
             <ChargeFee :form="form"></ChargeFee>
@@ -139,8 +142,9 @@
     import ActiveToggleSwitch from '@Pages/stores/store/settings/delivery-methods/components/ActiveToggleSwitch.vue';
     import DescriptionTextarea from '@Pages/stores/store/settings/delivery-methods/components/DescriptionTextarea.vue';
     import DeleteDeliveryMethod from '@Pages/stores/store/settings/delivery-methods/components/DeleteDeliveryMethod.vue';
+    import AskForAnAddressCheckbox from '@Pages/stores/store/settings/delivery-methods/components/AskForAnAddressCheckbox.vue';
+    import PinLocationOnMapCheckbox from '@Pages/stores/store/settings/delivery-methods/components/PinLocationOnMapCheckbox.vue';
     import QualifyOnMinimumGrandTotal from '@Pages/stores/store/settings/delivery-methods/components/QualifyOnMinimumGrandTotal.vue';
-    import RequireLocationMapCheckbox from '@Pages/stores/store/settings/delivery-methods/components/RequireLocationMapCheckbox.vue';
     import SetDailyOrderLimitCheckbox from '@Pages/stores/store/settings/delivery-methods/components/SetDailyOrderLimitCheckbox.vue';
     import OfferFreeDeliveryOnMinimumGrandTotal from '@Pages/stores/store/settings/delivery-methods/components/OfferFreeDeliveryOnMinimumGrandTotal.vue';
 
@@ -149,7 +153,7 @@
         components: {
             Alert, TextHeader, BackButton, UndoButton, ShineEffect, PrimaryButton, LineSkeleton, MoreInfoPopover, BackdropLoader,
             FormErrorMessages, Schedule, ChargeFee, NameTextInput, ActiveToggleSwitch, AdditionalFields, DescriptionTextarea,
-            DeleteDeliveryMethod, QualifyOnMinimumGrandTotal, RequireLocationMapCheckbox, SetDailyOrderLimitCheckbox,
+            DeleteDeliveryMethod, AskForAnAddressCheckbox, PinLocationOnMapCheckbox, QualifyOnMinimumGrandTotal, SetDailyOrderLimitCheckbox,
             OfferFreeDeliveryOnMinimumGrandTotal
         },
         data() {
@@ -157,6 +161,7 @@
                 form: {
                     name: '',
                     active: true,
+                    weightZones: [],
                     description: '',
                     chargeFee: false,
                     distanceZones: [],
@@ -168,14 +173,15 @@
                     flatFeeRate: '10.00',
                     dailyOrderLimit: '1000',
                     percentageFeeRate: '10',
+                    askForAnAddress: false,
+                    pinLocationOnMap: false,
                     setDailyOrderLimit: false,
                     timeSlotIntervalValue: '1',
                     minimumGrandTotal: '100.00',
-                    requireLocationOnMap: false,
                     latestDeliveryTimeValue: '7',
                     timeSlotIntervalUnit: 'hour',
                     autoGenerateTimeSlots: false,
-                    showDistanceOnInvoice: false,
+                    showDistanceOnInvoice: true,
                     earliestDeliveryTimeValue: '3',
                     captureAdditionalFields: false,
                     earliestDeliveryTimeUnit: 'day',
@@ -235,6 +241,10 @@
             setFormFields() {
 
                 this.form = {
+                    distanceZones: [],
+                    postalCodeZones: [],
+                    weightCategories: [],
+                    additionalFields: [],
                     name: this.deliveryMethod.name,
                     active: this.deliveryMethod.active,
                     feeType: this.deliveryMethod.feeType,
@@ -243,10 +253,11 @@
                     description: this.deliveryMethod.description,
                     scheduleType: this.deliveryMethod.scheduleType,
                     sameDayDelivery: this.deliveryMethod.sameDayDelivery,
+                    askForAnAddress: this.deliveryMethod.askForAnAddress,
+                    pinLocationOnMap: this.deliveryMethod.pinLocationOnMap,
                     operationalHours: this.deliveryMethod.operationalHours,
                     setDailyOrderLimit: this.deliveryMethod.setDailyOrderLimit,
                     timeSlotIntervalUnit: this.deliveryMethod.timeSlotIntervalUnit,
-                    requireLocationOnMap: this.deliveryMethod.requireLocationOnMap,
                     dailyOrderLimit: this.deliveryMethod.dailyOrderLimit.toString(),
                     autoGenerateTimeSlots: this.deliveryMethod.autoGenerateTimeSlots,
                     showDistanceOnInvoice: this.deliveryMethod.showDistanceOnInvoice,
@@ -272,6 +283,11 @@
                     return distanceZone;
                 });
 
+                this.form.weightCategories = this.deliveryMethod.weightCategories.map((weightCategory) => {
+                    weightCategory.isEditable = false;
+                    return weightCategory;
+                });
+
                 this.form.postalCodeZones = this.deliveryMethod.postalCodeZones.map((postalCodeZone) => {
                     postalCodeZone.isEditable = false;
                     return postalCodeZone;
@@ -283,14 +299,10 @@
                     return additionalField;
                 });
 
-                //  Capture the original distance zones before editting
-                this.originalDistanceZones = cloneDeep(this.form.distanceZones);
-
-                //  Capture the original postal code zones before editting
-                this.originalPostalCodeZones = cloneDeep(this.form.postalCodeZones);
-
                 // Capture the original form before editing
                 this.originalForm = cloneDeep(this.form);
+
+                console.log('copy');
 
             },
             generateOperationalHours() {

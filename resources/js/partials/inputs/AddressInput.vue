@@ -111,7 +111,7 @@
 
                     <PrimaryButton
                         :action="submit"
-                        :disabled="!requireLocationOnMap && !mustSaveChanges" size="xs" type="success"
+                        :disabled="!pinLocationOnMap && !mustSaveChanges" size="xs" type="success"
                         class="w-full">
                         {{ submitText }}
                     </PrimaryButton>
@@ -153,10 +153,9 @@
                 <GoogleMaps
                     height="350px"
                     :gmpDraggable="false"
-                    :placeId="form.placeId"
-                    :latitude="form.latitude"
-                    :longitude="form.longitude"
-                    v-if="form.placeId || (form.latitude && form.longitude)">
+                    :latitude="previewLatitude"
+                    :longitude="previewLongitude"
+                    v-if="previewLatitude && previewLongitude">
                 </GoogleMaps>
 
             </div>
@@ -221,7 +220,7 @@
                 type: String,
                 default: 'Address used by customers to know your store location.'
             },
-            requireLocationOnMap: {
+            pinLocationOnMap: {
                 type: Boolean,
                 default: true
             },
@@ -231,38 +230,35 @@
             return {
                 step: 1,
                 form: {
-                    city: '',
-                    state: '',
+                    city: null,
+                    state: null,
                     country: 'BW',
                     placeId: null,
                     latitude: null,
                     longitude: null,
-                    postalCode: '',
-                    addressLine: '',
-                    addressLine2: '',
+                    postalCode: null,
+                    addressLine: null,
+                    addressLine2: null,
                 },
                 originalForm: null,
                 isSubmitting: false,
                 completeAddress: null,
+                previewLatitude: null,
+                previewLongitude: null,
                 apiState: useApiState(),
                 countryAddressOptions: [],
                 isLoadingCountryAddressOptions: false
             };
         },
         watch: {
-            'address'(newValue, oldValue) {
-                if(newValue) {
-                    this.setAddressFields();
-                    this.completeAddress = newValue._attributes.completeAddress;
-                }else{
-                    this.completeAddress = null;
-                    this.resetFormFields();
-                }
+            'address'(newValue) {
+                this.setFields(newValue);
+                this.completeAddress = newValue ? newValue._attributes.completeAddress : null;
             }
         },
         computed: {
             submitText() {
-                if(this.requireLocationOnMap && this.step == 1) {
+                if(this.pinLocationOnMap && this.step == 1) {
                     return 'Next';
                 }else if(this.completeAddress) {
                     return 'Save Address';
@@ -292,11 +288,11 @@
             googleMapsAddress() {
                 var googleMapsAddress = this.form.addressLine;
 
-                if(this.form.addressLine2.trim() !== '') googleMapsAddress += (', '+this.form.addressLine2);
-                if(this.form.city.trim() !== '') googleMapsAddress += (', '+this.form.city);
-                if(this.form.state.trim() !== '') googleMapsAddress += (', '+this.form.state);
-                if(this.form.postalCode.trim() !== '') googleMapsAddress += (', '+this.form.postalCode);
-                if(this.form.country.trim() !== '') googleMapsAddress += (', '+this.form.country);
+                if(this.form.addressLine2 && this.form.addressLine2.trim() !== '') googleMapsAddress += (', '+this.form.addressLine2);
+                if(this.form.city && this.form.city.trim() !== '') googleMapsAddress += (', '+this.form.city);
+                if(this.form.state && this.form.state.trim() !== '') googleMapsAddress += (', '+this.form.state);
+                if(this.form.postalCode && this.form.postalCode.trim() !== '') googleMapsAddress += (', '+this.form.postalCode);
+                if(this.form.country && this.form.country.trim() !== '') googleMapsAddress += (', '+this.form.country);
 
                 return googleMapsAddress;
             },
@@ -325,12 +321,10 @@
         methods: {
             showModal() {
                 this.step = 1;
-                this.resetFormFields();
+                this.copyOriginalForm();
                 this.$refs.modal.showModal();
             },
             hideModal() {
-                this.step = 1;
-                this.resetFormFields();
                 this.$refs.modal.hideModal();
             },
             markerMoved(location) {
@@ -343,26 +337,44 @@
                 this.form.latitude = location.latitude;
                 this.form.longitude = location.longitude;
             },
-            setAddressFields() {
-                this.form.city = this.address.city;
-                this.form.state = this.address.state;
-                this.form.placeId = this.address.placeId;
-                this.form.country = this.address.country;
-                this.form.latitude = this.address.latitude;
-                this.form.longitude = this.address.longitude;
-                this.form.postalCode = this.address.postalCode;
-                this.form.addressLine = this.address.addressLine;
-                this.form.addressLine2 = this.address.addressLine2;
+            setFields(address) {
+                if(address) {
+                    this.form.city = address.city;
+                    this.form.state = address.state;
+                    this.form.placeId = address.placeId;
+                    this.form.country = address.country;
+                    this.form.postalCode = address.postalCode;
+                    this.form.addressLine = address.addressLine;
+                    this.form.addressLine2 = address.addressLine2;
+                    this.form.latitude = address.latitude ? parseFloat(address.latitude) : null;
+                    this.form.longitude = address.longitude ? parseFloat(address.longitude) : null;
+
+                    this.previewLatitude = this.form.latitude;
+                    this.previewLongitude = this.form.longitude;
+                }else{
+                    this.form.city = null;
+                    this.form.state = null;
+                    this.form.country = 'BW';
+                    this.form.placeId = null;
+                    this.form.latitude = null;
+                    this.form.longitude = null;
+                    this.form.postalCode = null;
+                    this.form.addressLine = null;
+                    this.form.addressLine2 = null;
+
+                    this.previewLatitude = null;
+                    this.previewLongitude = null;
+                }
 
                 //  Capture the original form before editting.
                 this.originalForm = cloneDeep(this.form);
 
             },
-            resetFormFields() {
+            copyOriginalForm() {
                 this.form = cloneDeep(this.originalForm);
             },
             submit() {
-                if(this.requireLocationOnMap && this.step == 1) {
+                if(this.pinLocationOnMap && this.step == 1) {
                     this.step = 2;
                 }else if(this.validate) {
                     this.validateAddress();
@@ -406,8 +418,10 @@
                     if(response.status == 200) {
 
                         this.completeAddress = response.data.completeAddress;
+                        this.$emit('onValidated', cloneDeep(this.form));
+                        this.previewLongitude = this.form.longitude;
+                        this.previewLatitude = this.form.latitude;
                         this.originalForm = cloneDeep(this.form);
-                        this.$emit('onValidated', this.form);
                         this.hideModal();
 
                     }
@@ -448,7 +462,7 @@
 
                         this.showSuccessfulNotification('Address created');
                         this.$emit('onCreated', response.data.address);
-                        this.originalForm = cloneDeep(this.form);
+                        this.setFields(response.data.address);
                         this.hideModal();
 
                     }
@@ -479,7 +493,7 @@
 
                         this.showSuccessfulNotification('Address updated');
                         this.$emit('onUpdated', response.data.address);
-                        this.originalForm = cloneDeep(this.form);
+                        this.setFields(response.data.address);
                         this.hideModal();
 
                     }
@@ -502,6 +516,7 @@
                 if(!this.hasAddress) {
                     this.$emit('onDeleted', this.form);
                     this.completeAddress = null;
+                    this.setFields(null);
                     this.hideModal();
                     return;
                 }
@@ -517,7 +532,7 @@
 
                             this.showSuccessfulNotification('Address deleted');
                             this.$emit('onDeleted', response.data.address);
-                            this.originalForm = cloneDeep(this.form);
+                            this.setFields(null);
                             this.hideModal();
 
                         }else{
@@ -544,13 +559,9 @@
             },
         },
         created() {
-            if(this.address) {
-                this.setAddressFields();
-                this.completeAddress = this.address._attributes.completeAddress;
-            }else{
-                this.originalForm = cloneDeep(this.form);
-            }
+            this.setFields(this.address);
             this.showCountryAddressOptions();
+            this.completeAddress = this.address ? this.address._attributes.completeAddress : null;
         }
     };
 </script>

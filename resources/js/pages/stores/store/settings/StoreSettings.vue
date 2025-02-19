@@ -46,6 +46,10 @@
                         name: 'show-store-general-settings'
                     },
                     {
+                        label: 'Checkout',
+                        name: 'show-store-checkout-settings'
+                    },
+                    {
                         label: 'Workflows',
                         name: 'show-store-workflows'
                     },

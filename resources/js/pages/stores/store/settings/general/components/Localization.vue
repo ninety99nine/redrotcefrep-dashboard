@@ -23,6 +23,9 @@
         <!-- Distance Unit Select -->
         <DistanceUnitSelectInput></DistanceUnitSelectInput>
 
+        <!-- Weight Unit Select -->
+        <WeightUnitSelectInput></WeightUnitSelectInput>
+
     </div>
 
 </template>
@@ -32,11 +35,12 @@
     import CountrySelectInput from '@Pages/stores/store/settings/general/components/CountrySelectInput.vue';
     import CurrencySelectInput from '@Pages/stores/store/settings/general/components/CurrencySelectInput.vue';
     import LanguageSelectInput from '@Pages/stores/store/settings/general/components/LanguageSelectInput.vue';
+    import WeightUnitSelectInput from '@Pages/stores/store/settings/general/components/WeightUnitSelectInput.vue';
     import DistanceUnitSelectInput from '@Pages/stores/store/settings/general/components/DistanceUnitSelectInput.vue';
 
     export default {
         components: {
-            CountrySelectInput, CurrencySelectInput, LanguageSelectInput, DistanceUnitSelectInput
+            CountrySelectInput, CurrencySelectInput, LanguageSelectInput, WeightUnitSelectInput, DistanceUnitSelectInput
         }
     };
 

@@ -8,8 +8,8 @@
             <span class="text-sm">{{ getFormError('general') ?? 'Fix this' }}</span>
         </div>
         <div v-if="!hasGeneralError" class="space-y-2">
-            <div v-for="(formError, index) in formErrors" :key="index" class="px-2 border-l-4 border-red-300">
-                <p class="text-xs">{{ formError }}</p>
+            <div v-for="(formError, formErrorIndex) in formErrors" :key="formErrorIndex" class="px-2 border-l-4 border-red-300">
+                <p class="text-xs">{{ index == null ? formError : Object.values(formError)[0] }}</p>
             </div>
         </div>
     </div>
@@ -22,6 +22,12 @@
 
     export default {
         mixins: [FormMixin],
+        props: {
+            index: {
+                type: [Number, null],
+                default: null
+            }
+        },
         computed: {
 
         }

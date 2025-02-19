@@ -13,11 +13,11 @@
             <div class="flex items-center space-x-2">
 
                 <transition name="fade-1" mode="out-in">
-                    <svg v-if="isSelectedDeliveryMethod(deliveryMethod)" class="w-4 h-4 md:w-6 md:h-6 flex-shrink-0 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <svg v-if="isSelectedDeliveryMethod(deliveryMethod)" class="w-6 h-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
                     </svg>
 
-                    <div v-else class="w-4 h-4 md:w-6 md:h-6 flex-shrink-0 flex justify-center items-center">
+                    <div v-else class="w-6 h-6 flex justify-center items-center">
                         <div class="w-4 h-4 bg-gray-100 border rounded-full"></div>
                     </div>
                 </transition>
@@ -26,7 +26,7 @@
 
                     <!-- Name -->
                     <p
-                        class="font-bold text-xs md:text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
+                        class="font-bold text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
                         :style="{ '--product-name-color': storeForm.productNameColor, '--product-name-color-hover': storeForm.productHoverNameColor }">
                         {{ deliveryMethod.name }}
                     </p>
@@ -36,7 +36,7 @@
                         <!-- Flat Fee Rate -->
                         <p
                             v-if="usesFlatFee(deliveryMethod)"
-                            class="text-xs md:text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
+                            class="text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
                             :style="{ '--product-name-color': storeForm.productNameColor, '--product-name-color-hover': storeForm.productHoverNameColor }">
                             Flat fee of {{ deliveryMethod.flatFeeRate.amountWithCurrency }}
                         </p>
@@ -44,7 +44,7 @@
                         <!-- Percentage Fee Rate -->
                         <p
                             v-else-if="usesPercentageFee(deliveryMethod)"
-                            class="text-xs md:text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
+                            class="text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
                             :style="{ '--product-name-color': storeForm.productNameColor, '--product-name-color-hover': storeForm.productHoverNameColor }">
                             Percentage fee of {{ deliveryMethod.percentageFeeRate.valueSymbol }}
                         </p>
@@ -54,14 +54,14 @@
                     <!-- Qualify On Minimum Grand Total -->
                     <p
                         v-if="deliveryMethod.qualifyOnMinimumGrandTotal"
-                        class="text-xs md:text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
+                        class="text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
                         :style="{ '--product-name-color': storeForm.productNameColor, '--product-name-color-hover': storeForm.productHoverNameColor }">
                         Minimum order amount is {{ deliveryMethod.minimumGrandTotal.amountWithCurrency }}
                     </p>
 
                     <!-- Desctiption -->
                     <p
-                        class="text-xs md:text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
+                        class="text-sm text-[var(--product-name-color)] group-hover:text-[var(--product-name-color-hover)] transition-colors"
                         :style="{ '--product-name-color': storeForm.productNameColor, '--product-name-color-hover': storeForm.productHoverNameColor }">
                         {{ deliveryMethod.description }}
                     </p>
@@ -85,7 +85,7 @@
                 <svg class="w-4 h-4 md:w-6 md:h-6 flex-shrink-0 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                 </svg>
-                <span class="font-medium text-red-500 text-xs md:text-sm">{{ deliveryMethodUnavailabilityReason }}</span>
+                <span class="font-medium text-red-500 text-sm">{{ deliveryMethodUnavailabilityReason }}</span>
             </div>
         </div>
 
@@ -103,7 +103,7 @@
                     <svg class="w-4 h-4 md:w-6 md:h-6 flex-shrink-0 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                     </svg>
-                    <span class="font-medium text-green-500 text-xs md:text-sm">{{ deliveryMethodTip }}</span>
+                    <span class="font-medium text-green-500 text-sm">{{ deliveryMethodTip }}</span>
                 </div>
             </div>
         </template>
@@ -167,11 +167,8 @@ export default {
         }
     },
     methods: {
-        async showShoppingDeliveryMethods() {
-            await this.shoppingCartState.showShoppingDeliveryMethods();
-        },
-        inspectStoreShoppingCart() {
-            return this.shoppingCartState.inspectStoreShoppingCart();
+        showShoppingDeliveryMethods() {
+            this.shoppingCartState.showShoppingDeliveryMethods();
         },
         itemClasses(index) {
             if(this.isFirstItem(index)) {

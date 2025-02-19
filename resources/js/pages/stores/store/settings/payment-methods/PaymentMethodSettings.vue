@@ -215,7 +215,7 @@
                     <div v-if="isShowingNonAssociatedPaymentMethods && isLoadingNonAssociatedPaymentMethods" class="space-y-2">
 
                         <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                            <ShineEffect class="w-full flex items-center justify-between space-x-2">
+                            <ShineEffect class="w-full flex items-center justify-between">
                                 <div class="w-full flex items-center space-x-2">
                                     <RoundSkeleton size="w-8 h-8" class="flex-shrink-0"></RoundSkeleton>
                                     <LineSkeleton width="w-32"></LineSkeleton>

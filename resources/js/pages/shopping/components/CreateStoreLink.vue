@@ -1,6 +1,6 @@
 <template>
 
-    <div class="mx-auto mb-20">
+    <div class="w-fit mx-auto">
 
         <div @click="navigateToRegister" class="flex items-center p-2 pr-4 space-x-2 rounded-full cursor-pointer bg-white/10 border border-white/50 hover:opacity-90 active:opacity-80 hover:bg-white/5 hover:border-white/30 active:scale-95 transition-all">
 

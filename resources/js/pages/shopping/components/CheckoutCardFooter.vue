@@ -5,12 +5,12 @@
         <!-- Checkout Button -->
         <PrimaryButton
             type="custom"
-            :loading="isCreatingOrder"
+            :loading="isNavigating"
             :action="navigateToCheckout"
+            :disabled="!hasShoppingCartProducts"
             :bgColor="storeForm.primaryButtonColor"
-            :textColor="storeForm.primaryButtonTextColor"
-            :disabled="isInspectingShoppingCart || isCreatingOrder || !hasShoppingCartProducts">
-            Checkout
+            :textColor="storeForm.primaryButtonTextColor">
+            {{ isInspectingShoppingCart ? '...' : 'Checkout' }}
         </PrimaryButton>
 
     </div>
@@ -27,6 +27,7 @@ export default {
     components: { PrimaryButton },
     data() {
         return {
+            isNavigating: false,
             storeState: useStoreState(),
             shoppingCartState: useShoppingCartState()
         };
@@ -34,9 +35,6 @@ export default {
     computed: {
         storeForm() {
             return this.storeState.storeForm;
-        },
-        isCreatingOrder() {
-            return this.shoppingCartState.isCreatingOrder;
         },
         hasShoppingCartProducts() {
             return this.shoppingCartState.hasShoppingCartProducts;
@@ -53,6 +51,7 @@ export default {
             return this.shoppingCartState.closeShoppingCartDrawer();
         },
         navigateToCheckout() {
+            this.isNavigating = true;
             this.closeCustomizeDrawer();
             this.closeShoppingCartDrawer();
             this.$router.push({ name: 'checkout' });

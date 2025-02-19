@@ -5,10 +5,14 @@
         <!-- Label -->
         <label :for="_for" class="block text-sm font-medium leading-6 text-gray-900">
             <slot></slot>
+            <span v-if="secondaryLabel" class="font-normal text-gray-400 ml-1">{{ secondaryLabel }}</span>
         </label>
 
         <!-- More Info Popover -->
         <MoreInfoPopover v-if="labelPopoverTitle || labelPopoverDescription" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top"></MoreInfoPopover>
+
+        <!-- Asterisk -->
+        <span v-if="showAsterisk" class="text-red-500">*</span>
 
    </div>
 
@@ -21,9 +25,16 @@
     export default {
         props: {
             _for: {
-                type: String,
-                required: true,
-                validator: validateId   // Custom validator function to validate id format
+                type: [String, null],
+                default: null
+            },
+            showAsterisk: {
+                type: Boolean,
+                default: false
+            },
+            secondaryLabel: {
+                type: [String, null],
+                default: null
             },
             labelPopoverTitle: {
                 type: String
@@ -34,9 +45,4 @@
         },
         components: { MoreInfoPopover }
     };
-
-    function validateId(id) {
-        // Simple validation to check if the id starts with a letter or underscore
-        return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(id);
-    }
 </script>

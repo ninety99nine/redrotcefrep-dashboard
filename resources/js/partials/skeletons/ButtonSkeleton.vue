@@ -1,39 +1,15 @@
 <template>
-    <button type="submit" @click.prevent :class="btnClass">
+    <Button type="skeleton" v-bind="$props">
         <slot></slot>
-    </button>
+    </Button>
 </template>
 
-  <script>
+<script>
 
-    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
+    import Button from '@Partials/buttons/Button.vue';
 
     export default {
-        components: { SpinningLoader },
-        props: {
-            size: {
-                type: String,
-                default: 'base',
-                options: ['xs', 'sm', 'base', 'lg']
-            }
-        },
-        computed: {
-            btnClass() {
-                let classes = ['flex justify-center items-center rounded-md text-gray-300 bg-gray-100 cursor-default'];
-
-                if(this.size == 'xs') {
-                    classes.push('px-3 py-1.5 text-xs');
-                }else if(this.size == 'sm') {
-                    classes.push('px-3 py-1.5 text-sm');
-                }else if(this.size == 'base') {
-                    classes.push('px-3 py-1.5 text-base');
-                }else if(this.size == 'lg') {
-                    classes.push('px-3 py-2.5 text-base');
-                }
-
-                return classes;
-            }
-        }
+        components: { Button }
     };
 
-  </script>
+</script>

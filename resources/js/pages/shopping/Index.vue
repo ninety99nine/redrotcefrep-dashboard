@@ -25,7 +25,7 @@
     import { useApiState } from '@Stores/api-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import { postApi } from '@Repositories/api-repository.js';
-    import RightSideAlerts from '@Pages/dashboard/RightSideAlerts.vue';
+    import RightSideAlerts from '@Partials/alerts/RightSideAlerts.vue';
     import Storefront from '@Pages/shopping/storefront/Storefront.vue';
     import StoreNotFound from '@Pages/shopping/store-not-found/StoreNotFound.vue';
 

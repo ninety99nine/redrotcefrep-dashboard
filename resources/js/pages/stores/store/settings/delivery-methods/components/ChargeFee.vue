@@ -23,6 +23,9 @@
 
             </div>
 
+            <!-- Fee By Weight Settings -->
+            <FeeByWeight v-if="form.chargeFee && form.feeType == 'fee by weight'" :form="form"></FeeByWeight>
+
             <!-- Fee By Distance Settings -->
             <FeeByDistance v-if="form.chargeFee && form.feeType == 'fee by distance'" :form="form"></FeeByDistance>
 
@@ -36,6 +39,7 @@
 
 <script>
 
+    import FeeByWeight from '@Pages/stores/store/settings/delivery-methods/components/FeeByWeight.vue';
     import FeeByDistance from '@Pages/stores/store/settings/delivery-methods/components/FeeByDistance.vue';
     import FeeByPostalCode from '@Pages/stores/store/settings/delivery-methods/components/FeeByPostalCode.vue';
     import FlatFeeMoneyInput from '@Pages/stores/store/settings/delivery-methods/components/FlatFeeMoneyInput.vue';
@@ -45,7 +49,8 @@
 
     export default {
         components: {
-            FeeByDistance, FeeByPostalCode, FlatFeeMoneyInput, FeeTypeSelectInput, ChargeFeeToogleSwitch, PercentageFeeNumberInput
+            FeeByWeight, FeeByDistance, FeeByPostalCode, FlatFeeMoneyInput, FeeTypeSelectInput,
+            ChargeFeeToogleSwitch, PercentageFeeNumberInput
         },
         props: {
             form: {

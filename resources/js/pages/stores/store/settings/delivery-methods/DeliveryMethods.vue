@@ -28,7 +28,7 @@
             <div v-if="isLoadingDeliveryMethods" class="space-y-2">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between space-x-2">
+                    <ShineEffect class="w-full flex items-center justify-between">
                         <LineSkeleton width="w-32"></LineSkeleton>
                         <LineSkeleton width="w-16"></LineSkeleton>
                     </ShineEffect>
@@ -205,7 +205,6 @@
                 });
             },
             onAddDeliveryMethod() {
-                console.log('asd!!!');
                 this.$router.push({ name: 'create-store-delivery-method', params: { 'store_href': this.store._links.showStore } });
             },
             showDeleteConfirmationModal(deliveryMethod) {

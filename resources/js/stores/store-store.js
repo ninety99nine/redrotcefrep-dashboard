@@ -58,6 +58,7 @@ export const useStoreState = defineStore('store', {
                     country: store.country,
                     language: store.language,
                     taxMethod: store.taxMethod,
+                    weightUnit: store.weightUnit,
                     currency: store.currency.code,
                     description: store.description,
                     socialLinks: store.socialLinks,
@@ -66,10 +67,10 @@ export const useStoreState = defineStore('store', {
                     smsSenderName: store.smsSenderName,
                     offlineMessage: store.offlineMessage,
                     showOpeningHours: store.showOpeningHours,
-                    ussdMobileNumber: store.ussdMobileNumber.international,
+                    ussdMobileNumber: store.ussdMobileNumber?.international,
                     taxPercentageRate: store.taxPercentageRate.value.toString(),
                     allowCheckoutOnClosedHours: store.allowCheckoutOnClosedHours,
-                    whatsappMobileNumber: store.whatsappMobileNumber.international,
+                    whatsappMobileNumber: store.whatsappMobileNumber?.international,
 
                     secondaryButtonTextColor: '#ffffff',
                     secondaryButtonColor: '#1f87e8',
@@ -110,6 +111,7 @@ export const useStoreState = defineStore('store', {
                     socialLinks: [],
                     openingHours: [],
                     description: null,
+                    weightUnit: null,
                     distanceUnit: null,
                     smsSenderName: null,
                     offlineMessage: null,
@@ -220,12 +222,7 @@ export const useStoreState = defineStore('store', {
                 return: true
             }
 
-            data.socialLinks = data.socialLinks.map(link => {
-                return {
-                    name: link.name === '' ? null : link.name,
-                    link: link.link === '' ? null : link.link
-                };
-            });
+            data.socialLinks = data.socialLinks.filter((socialLink) => socialLink.link != null && socialLink.link.trim() != '');
 
             putApi(this.store._links.updateStore, data).then(response => {
 

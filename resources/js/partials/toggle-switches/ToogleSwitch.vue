@@ -1,6 +1,6 @@
 <template>
 
-     <div>
+     <div class="flex flex-col">
 
         <label class="inline-flex items-center cursor-pointer">
             <input v-model="localModelValue" type="checkbox" value="" class="sr-only peer">

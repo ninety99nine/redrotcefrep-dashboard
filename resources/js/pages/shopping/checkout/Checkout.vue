@@ -1,6 +1,6 @@
 <template>
 
-    <div :class="['flex flex-col justify-center relative']" :style="'background:'+storeForm.bgColor+';'">
+    <div class="pb-20" :style="'background:'+storeForm.bgColor+';'">
 
         <!-- Store Banner -->
         <StoreBanner></StoreBanner>
@@ -37,6 +37,12 @@
         <!-- Delivery Methods Card -->
         <DeliveryMethodsCard></DeliveryMethodsCard>
 
+        <!-- Tips Card -->
+        <TipsCard></TipsCard>
+
+        <!-- Promotion Code Card -->
+        <PromotionCodeCard></PromotionCodeCard>
+
         <!-- Order Summary Card -->
         <OrderSummaryCard></OrderSummaryCard>
 
@@ -60,6 +66,7 @@
 
 import debounce from 'lodash.debounce';
 import { useStoreState } from '@Stores/store-store.js';
+import TipsCard from '@Pages/shopping/components/TipsCard.vue';
 import ItemsCard from '@Pages/shopping/components/ItemsCard.vue';
 import StoreLogo from '@Pages/shopping/components/StoreLogo.vue';
 import StoreName from '@Pages/shopping/components/StoreName.vue';
@@ -70,6 +77,7 @@ import ReturnToShop from '@Pages/shopping/components/ReturnToShop.vue';
 import CustomerCard from '@Pages/shopping/components/CustomerCard.vue';
 import CheckoutHeading from '@Pages/shopping/components/CheckoutHeading.vue';
 import CreateStoreLink from '@Pages/shopping/components/CreateStoreLink.vue';
+import PromotionCodeCard from '@Pages/shopping/components/PromotionCodeCard.vue';
 import OrderSummaryCard from '@Pages/shopping/components/OrderSummaryCard.vue';
 import StoreFooterMenus from '@Pages/shopping/components/StoreFooterMenus.vue';
 import StoreDescription from '@Pages/shopping/components/StoreDescription.vue';
@@ -79,14 +87,13 @@ import ShoppingCartDrawer from '@Pages/shopping/components/ShoppingCartDrawer/In
 
 export default {
     components: {
-        ItemsCard, StoreLogo, StoreName, CheckoutHeading, GrandTotal, StoreBanner, ReturnToShop, CustomerCard,
-        CreateStoreLink, OrderSummaryCard, StoreFooterMenus, StoreDescription, CustomizeDrawer,
+        TipsCard, ItemsCard, StoreLogo, StoreName, CheckoutHeading, GrandTotal, StoreBanner, ReturnToShop, CustomerCard,
+        CreateStoreLink, PromotionCodeCard, OrderSummaryCard, StoreFooterMenus, StoreDescription, CustomizeDrawer,
         DeliveryMethodsCard, ShoppingCartDrawer
     },
     data() {
         return {
             storeState: useStoreState(),
-            delayedInspectStoreShoppingCart: null,
             shoppingCartState: useShoppingCartState()
         };
     },
@@ -99,8 +106,7 @@ export default {
                 }
 
                 if(!this.isInspectingShoppingCart) {
-                    this.setIsInspectingShoppingCart();
-                    this.delayedInspectStoreShoppingCart();
+                    this.inspectStoreShoppingCartWithDelay();
                 }
             },
             deep: true
@@ -130,20 +136,13 @@ export default {
         closeShoppingCartDrawer() {
             return this.shoppingCartState.closeShoppingCartDrawer();
         },
-        inspectStoreShoppingCart() {
-            return this.shoppingCartState.inspectStoreShoppingCart();
-        },
-        setIsInspectingShoppingCart() {
-            return this.shoppingCartState.setIsInspectingShoppingCart(true);
+        inspectStoreShoppingCartWithDelay() {
+            return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
         }
     },
     created() {
         this.setStoreForm();
         this.setShoppingCartForm();
-
-        this.delayedInspectStoreShoppingCart = debounce(() => {
-            this.inspectStoreShoppingCart();
-        }, 1000);
     }
 };
 </script>

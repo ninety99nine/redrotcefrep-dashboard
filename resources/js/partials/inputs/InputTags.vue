@@ -3,10 +3,16 @@
     <div>
 
         <!-- Input Label -->
-        <InputLabel v-if="label != ''" :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
+        <InputLabel v-if="label != ''" :_for="uniqueId" :showAsterisk="showAsterisk" :secondaryLabel="secondaryLabel" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
             {{ label }}
         </InputLabel>
 
+        <InputLabelDescription
+            v-if="description"
+            :description="description"
+            :learnMoreLabel="learnMoreLabel"
+            :learnMoreLink="learnMoreLink">
+        </InputLabelDescription>
         <div :class="[{ 'mt-2' : label != '' }]">
 
             <div class="flex">
@@ -33,6 +39,7 @@
     import Vue3TagsInput from 'vue3-tags-input';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
@@ -41,9 +48,26 @@
             tags: {
                 type: Array
             },
+            showAsterisk: {
+                type: Boolean,
+                default: false
+            },
             label: {
                 type: String,
                 default: ''
+            },
+            secondaryLabel: {
+                type: [String, null],
+                default: null
+            },
+            description: {
+                type: String
+            },
+            learnMoreLabel: {
+                type: [String, null]
+            },
+            learnMoreLink: {
+                type: [String, null]
             },
             labelPopoverTitle: {
                 type: String
@@ -64,7 +88,7 @@
             }
         },
         mixins: [UtilsMixin],
-        components: { Vue3TagsInput, InputLabel, MoreInfoPopover, InputErrorMessage },
+        components: { Vue3TagsInput, InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
         data() {
             return {
                 localTags: this.tags,

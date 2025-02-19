@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import isEqual from 'lodash/isEqual';
+import debounce from 'lodash/debounce';
 import cloneDeep from 'lodash/cloneDeep';
 import { useApiState } from '@Stores/api-store.js';
 import { useAuthState } from '@Stores/auth-store.js';
@@ -9,12 +10,19 @@ import { useStoreState } from '@Stores/store-store.js';
 import { getApi, postApi } from '@Repositories/api-repository.js';
 import { useNotificationState } from '@Stores/notification-store.js';
 
+export const TIP_TYPES = {
+    NONE: { type: 'none', value: 'none' },
+    FIXED: { type: 'fixed', value: 'specify' },
+    PERCENTAGE: (value) => ({ type: 'percentage', value }),
+};
+
 export const useShoppingCartState = defineStore('shoppingCart', {
     state: () => {
         return {
             products: [],
             searchTerm: '',
             shoppingCart: null,
+            tip: TIP_TYPES.NONE,
             deliveryMethod: null,
             deliveryMethods: [],
             customizeDrawer: null,
@@ -133,24 +141,52 @@ export const useShoppingCartState = defineStore('shoppingCart', {
         setDeliveryMethod(deliveryMethod) {
             this.deliveryMethod = deliveryMethod;
             this.shoppingCartForm.deliveryMethodId = deliveryMethod.id;
-            this.inspectStoreShoppingCart();
+            this.inspectStoreShoppingCartWithDelay();
+        },
+        setAddress(address) {
+            this.shoppingCartForm.address = address;
         },
         isSelectedDeliveryMethod(deliveryMethod) {
             return (this.deliveryMethod || {}).id == deliveryMethod.id;
+        },
+        setTip(tip) {
+            this.tip = tip;
+
+            switch (tip.type) {
+                case 'none':
+                    this.shoppingCartForm.tipFlatRate = null;
+                    this.shoppingCartForm.tipPercentageRate = null;
+                    break;
+                case 'fixed':
+                    this.shoppingCartForm.tipFlatRate = '0.00';
+                    this.shoppingCartForm.tipPercentageRate = null;
+                    break;
+                case 'percentage':
+                    this.shoppingCartForm.tipFlatRate = null;
+                    this.shoppingCartForm.tipPercentageRate = tip.value;
+                    break;
+            }
+
+            this.inspectStoreShoppingCartWithDelay();
+        },
+        isSelectedTip(tip) {
+            return this.tip && this.tip.value === tip.value;
         },
         setShoppingCartForm() {
 
             const store = useStoreState().store;
 
             this.shoppingCartForm = {
+                address: null,
                 cartProducts: [],
                 deliveryDate: '',
+                promotionCode: '',
                 storeId: store.id,
-                tipFlatRate: null,
-                cartCouponCode: '',
+                tipFlatRate: '0.00',
                 deliveryTimeslot: '',
                 deliveryMethodId: null,
                 tipPercentageRate: null,
+                tipType: TIP_TYPES.NONE.value,
                 customer: {
                     lastName: 'Tabona',
                     firstName: 'Julian',
@@ -322,11 +358,14 @@ export const useShoppingCartState = defineStore('shoppingCart', {
 
             return data;
         },
-        inspectStoreShoppingCart() {
-
-            //  Start loader
+        inspectStoreShoppingCartWithDelay() {
             this.setIsInspectingShoppingCart(true);
-
+            this.inspectStoreShoppingCartDelayed();
+        },
+        inspectStoreShoppingCartDelayed: debounce(function () {
+            this.inspectStoreShoppingCart();
+        }, 1000),
+        inspectStoreShoppingCart() {
             this.shoppingCartForm.cartProducts = this.cartProducts()
                 .map(product => ({
                     id: product.id,
@@ -334,25 +373,14 @@ export const useShoppingCartState = defineStore('shoppingCart', {
                 }));
 
             postApi(this.apiState.apiHome['_links']['inspectShoppingCart'], this.parseForm()).then(response => {
-
-                if(response.status == 200) {
-
+                if (response.status === 200) {
                     this.setShoppingCart(response.data);
-
                 }
-
-                //  Stop loader
                 this.setIsInspectingShoppingCart(false);
-
             }).catch(errorException => {
-
-                //  Stop loader
                 this.setIsInspectingShoppingCart(false);
-
                 useFormState().setServerFormErrors(errorException);
-
             });
-
         },
         createStoreOrder() {
 

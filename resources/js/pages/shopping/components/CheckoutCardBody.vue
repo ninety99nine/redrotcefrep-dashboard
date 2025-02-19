@@ -11,7 +11,7 @@
             <div v-if="isLoadingProducts || isSearchingProducts">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border-b shadow-sm py-6 px-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between space-x-2">
+                    <ShineEffect class="w-full flex items-center justify-between">
                         <LineSkeleton width="w-32"></LineSkeleton>
                         <LineSkeleton width="w-16"></LineSkeleton>
                     </ShineEffect>
@@ -153,6 +153,13 @@
 
         </div>
 
+        <!-- Detected Product Line Change -->
+        <div v-if="hasDetectedProductLineChanges" class="space-y-2 m-4">
+            <div v-for="(detectedProductLineChange, index) in detectedProductLineChanges" :key="index" class="flex space-x-2 p-2 border-l-8 border-yellow-300 bg-gray-50">
+                <p class="text-xs">{{ detectedProductLineChange.message }}</p>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -197,6 +204,12 @@ export default {
         },
         shoppingCart() {
             return this.shoppingCartState.shoppingCart;
+        },
+        hasDetectedProductLineChanges() {
+            return this.detectedProductLineChanges.length > 0;
+        },
+        detectedProductLineChanges() {
+            return (((this.shoppingCart || {}).changes || {}).detectedProductLineChanges || []);
         },
         isLoadingProducts() {
             return this.shoppingCartState.isLoadingProducts;

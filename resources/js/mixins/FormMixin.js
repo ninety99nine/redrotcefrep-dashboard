@@ -28,17 +28,17 @@ export const FormMixin = {
             const notificationState = useNotificationState();
             notificationState.addWarningNotification(notificationMessage);
         },
-        setServerFormErrors(errorException) {
-            this.formState.setServerFormErrors(errorException);
+        setServerFormErrors(errorException, index = null) {
+            this.formState.setServerFormErrors(errorException, index);
         },
-        setGeneralFormError(errorMessage) {
-            this.formState.setGeneralFormError(errorMessage);
+        setGeneralFormError(errorMessage, index = null) {
+            this.formState.setGeneralFormError(errorMessage, index);
         },
-        setFormError(errorName, errorMessage) {
-            this.formState.setFormError(errorName, errorMessage);
+        setFormError(errorName, errorMessage, index = null) {
+            this.formState.setFormError(errorName, errorMessage, index);
         },
-        getFormError(errorName) {
-            return this.formState.getFormError(errorName);
+        getFormError(errorName, index = null) {
+            return this.formState.getFormError(errorName, index);
         },
         hideFormErrors() {
             this.formState.hideFormErrors();

@@ -1,6 +1,6 @@
 <template>
 
-    <div :class="['flex flex-col justify-center relative']" :style="'background:'+storeForm.bgColor+';'">
+    <div class="pb-20" :style="'background:'+storeForm.bgColor+';'">
 
         <!-- Store Banner -->
         <StoreBanner></StoreBanner>
@@ -77,21 +77,18 @@ export default {
     data() {
         return {
             storeState: useStoreState(),
-            delayedInspectStoreShoppingCart: null,
             shoppingCartState: useShoppingCartState()
         };
     },
     watch: {
         'shoppingCartState.mappedCartProducts': {
             handler(newVal) {
-
                 if(Object.keys(this.mappedCartProducts).length === 0) {
                     this.closeShoppingCartDrawer();
                 }
 
                 if(!this.isInspectingShoppingCart) {
-                    this.setIsInspectingShoppingCart();
-                    this.delayedInspectStoreShoppingCart();
+                    this.inspectStoreShoppingCartWithDelay();
                 }
             },
             deep: true
@@ -121,20 +118,13 @@ export default {
         closeShoppingCartDrawer() {
             return this.shoppingCartState.closeShoppingCartDrawer();
         },
-        inspectStoreShoppingCart() {
-            return this.shoppingCartState.inspectStoreShoppingCart();
-        },
-        setIsInspectingShoppingCart() {
-            return this.shoppingCartState.setIsInspectingShoppingCart(true);
+        inspectStoreShoppingCartWithDelay() {
+            return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
         }
     },
     created() {
         this.setStoreForm();
         this.setShoppingCartForm();
-
-        this.delayedInspectStoreShoppingCart = debounce(() => {
-            this.inspectStoreShoppingCart();
-        }, 1000);
     }
 };
 </script>

@@ -24,7 +24,6 @@
      * Maps Reference: https://developers.google.com/maps/documentation/javascript/reference/map
      * AdvancedMarker Reference: https://developers.google.com/maps/documentation/javascript/reference/advanced-markers
      */
-    import { v4 as uuidv4 } from 'uuid';
     import settings from '@Js/settings.js';
     import { GoogleMap, AdvancedMarker } from 'vue3-google-map';
 

@@ -19,7 +19,7 @@
                     <div v-if="isLoadingNonSelectedProducts || isSearchingNonSelectedProducts">
 
                         <div v-for="(_, index) in [1,2,3]" :key="index" :class="[{ 'border-t' : index == 0 }, 'border-b border-l border-r shadow-sm py-6 px-4 bg-gray-50']">
-                            <ShineEffect class="w-full flex items-center justify-between space-x-2">
+                            <ShineEffect class="w-full flex items-center justify-between">
                                 <LineSkeleton width="w-32"></LineSkeleton>
                                 <LineSkeleton width="w-16"></LineSkeleton>
                             </ShineEffect>

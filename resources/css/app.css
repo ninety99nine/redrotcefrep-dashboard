@@ -53,6 +53,61 @@ input[type=number].remove-arrow {
     -moz-appearance: textfield;
 }
 
+/* Animated Gradient Border Effect - Part 1: Define border angle */
+@property --border-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+/* Animated Gradient Border Effect - Part 2: Define animation */
+@keyframes borderAnimation {
+    to {
+        --border-angle: 360deg;
+    }
+}
+
+.animated-border-cyan {
+    background: linear-gradient(45deg, #ffffff, #ffffff, #ffffff) padding-box,
+                conic-gradient(from var(--border-angle),
+                rgba(255, 255, 255, 0) 25%,     /* Start transparent (longer fade-in) */
+                #58d8ff 80%,                    /* Begin streak */
+                #26ccff 88%,                    /* Peak intensity */
+                #58d8ff 92%,                    /* Start fading */
+                rgba(255, 255, 255, 0) 100%) border-box;    /* End transparent (longer fade-out) */
+    border-radius: 16px;
+    border: 1px solid transparent; /* Ensure border is visible */
+    animation: borderAnimation 4s linear infinite;
+}
+
+/* Animated Gradient Border Effect - Part 3: Define border */
+.animated-border-blue {
+    background: linear-gradient(45deg, #ffffff, #ffffff, #ffffff) padding-box,
+                conic-gradient(from var(--border-angle),
+                rgba(255, 255, 255, 0) 25%,     /* Start transparent (longer fade-in) */
+                #48a8ff 80%,                    /* Begin streak */
+                #2692ff 88%,                    /* Peak intensity */
+                #48a8ff 92%,                    /* Start fading */
+                rgba(255, 255, 255, 0) 100%) border-box;    /* End transparent (longer fade-out) */
+    border-radius: 16px;
+    border: 1px solid transparent; /* Ensure border is visible */
+    animation: borderAnimation 4s linear infinite;
+}
+
+.animated-border-pink {
+    background: linear-gradient(45deg, #ffffff, #ffffff, #ffffff) padding-box,
+                conic-gradient(from var(--border-angle),
+                rgba(255, 255, 255, 0) 25%,     /* Start transparent (longer fade-in) */
+                #fc48ff 80%,                    /* Begin streak */
+                #fb26ff 88%,                    /* Peak intensity */
+                #fc48ff 92%,                    /* Start fading */
+                rgba(255, 255, 255, 0) 100%) border-box;    /* End transparent (longer fade-out) */
+    border-radius: 16px;
+    border: 1px solid transparent; /* Ensure border is visible */
+    animation: borderAnimation 4s linear infinite;
+}
+
+
 /*  Fade Transition Styles */
 .fade-1-enter-active,
 .fade-1-leave-active {

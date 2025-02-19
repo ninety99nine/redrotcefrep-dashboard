@@ -12,12 +12,12 @@
         <div class="flex items-center space-x-2">
 
             <!-- Undo Button -->
-            <UndoButton :action="undo" type="light" size="xs">
+            <UndoButton :action="undoChanges" type="light" size="xs">
                 <span class="ml-1">Undo</span>
             </UndoButton>
 
             <!-- Save Changes Button -->
-            <PrimaryButton :action="saveChanges" :loading="isSaving" class="w-40">
+            <PrimaryButton :action="saveChanges" :loading="isSaving" size="xs">
                 Save Changes
             </PrimaryButton>
 
@@ -50,7 +50,7 @@
                 type: Function,
                 default: null
             },
-            undo: {
+            undoChanges: {
                 type: Function,
                 default: null
             },

@@ -91,13 +91,6 @@
             </span>
         </div>
 
-        <!-- Detected Product Line Change -->
-        <div v-if="hasDetectedProductLineChanges" class="space-y-2 m-4">
-            <div v-for="(detectedProductLineChange, index) in detectedProductLineChanges" :key="index" class="flex space-x-2 p-2 border-l-8 border-yellow-300 bg-gray-50">
-                <p class="text-xs">{{ detectedProductLineChange.message }}</p>
-            </div>
-        </div>
-
         <!-- Detected Coupon Line Change -->
         <div v-if="hasDetectedCouponLineChanges" class="space-y-2 mt-4">
             <div v-for="(detectedCouponLineChange, index) in detectedCouponLineChanges" :key="index" class="flex space-x-2 p-2 border-l-8 border-yellow-300 bg-gray-50">

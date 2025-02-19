@@ -13,7 +13,7 @@ export const useFormState = defineStore('form', {
         }
     },
     actions: {
-        setServerFormErrors(errorException) {
+        setServerFormErrors(errorException, index) {
             // Clear any existing errors
             this.hideFormErrors();
 
@@ -21,10 +21,17 @@ export const useFormState = defineStore('form', {
                 const validationErrors = ((errorException.response ?? {}).data ?? {}).errors ?? {};
 
                 // Map the validation errors to the formErrors state
-                this.formErrors = Object.keys(validationErrors).reduce((acc, key) => {
+                const errors = Object.keys(validationErrors).reduce((acc, key) => {
                     acc[key] = validationErrors[key][0];
                     return acc;
                 }, {});
+
+                if(index != null) {
+                    this.formErrors[index] = errors;
+                }else{
+                    this.formErrors = errors;
+                }
+
             } else {
                 const errorMessage = ((errorException.response ?? {}).data ?? {}).message ?? errorException.message;
 
@@ -39,15 +46,24 @@ export const useFormState = defineStore('form', {
             // Set timeout to hide form errors
             this.setFormErrorsTimeout();
         },
-        setGeneralFormError(errorMessage) {
-            this.setFormError('general', errorMessage);
+        setGeneralFormError(errorMessage, index = null) {
+            this.setFormError('general', errorMessage, index);
         },
-        setFormError(errorName, errorMessage) {
-            this.formErrors[errorName] = errorMessage;
+        setFormError(errorName, errorMessage, index = null) {
+            if(index != null) {
+                this.formErrors[index] = {};
+                this.formErrors[index][errorName] = errorMessage;
+            }else{
+                this.formErrors[errorName] = errorMessage;
+            }
             this.setFormErrorsTimeout();
         },
-        getFormError(errorName) {
-            return this.formErrors[errorName] ?? null;
+        getFormError(errorName, index = null) {
+            if(index != null) {
+                return this.formErrors[index] ? this.formErrors[index][errorName] ?? null : null;
+            }else{
+                return this.formErrors[errorName] ?? null;
+            }
         },
         hideFormErrors() {
             this.formErrors = {};

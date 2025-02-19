@@ -61,7 +61,7 @@
             <div v-if="isInspectingShoppingCart">
 
                 <div v-for="(_, index) in productLinePlaceholders" :key="index" class="border-b shadow-sm py-6 px-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between space-x-2">
+                    <ShineEffect class="w-full flex items-center justify-between">
                         <LineSkeleton width="w-32"></LineSkeleton>
                         <LineSkeleton width="w-16"></LineSkeleton>
                     </ShineEffect>

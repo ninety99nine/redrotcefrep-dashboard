@@ -5,11 +5,9 @@
         <!-- Address Input -->
         <AddressInput
             title="Destination"
-            @onCreated="setAddress"
-            @onUpdated="setAddress"
-            :requireLocationOnMap="true"
-            @onDeleted="onDeletedAddress"
-            @onValidated="setValidatedAddressForm"
+            :pinLocationOnMap="true"
+            @onDeleted="unsetAddress"
+            @onValidated="setAddress"
             subtitle="Add the address to deliver your order">
         </AddressInput>
 
@@ -29,31 +27,10 @@
         },
         data() {
             return {
-                latitude: 40.689247,
-                longitude: -74.044502,
                 shoppingCartState: useShoppingCartState()
             }
         },
         computed: {
-            markers() {
-                return [
-                    {
-                        options: {
-                            position: {
-                                lat: this.latitude,
-                                lng: this.longitude
-                            },
-                            title: 'LADY LIBERTY',
-                            gmpDraggable: true
-                        },
-                        pinOptions: {
-                            background: '#1f87e8',
-                            borderColor: '#FBBC04',
-                            glyphColor: '#FBBC04'
-                        }
-                    }
-                ];
-            },
             deliveryMethod() {
                 return this.shoppingCartState.deliveryMethod;
             },
@@ -63,23 +40,24 @@
             deliveryMethodRequiresSchedule() {
                 return this.deliveryMethod && this.deliveryMethod.setSchedule;
             },
+            shoppingCartForm() {
+                return this.shoppingCartState.shoppingCartForm;
+            },
         },
         methods: {
             setAddress(address) {
-                //useDeliveryMethodState().deliveryMethod._relationships.address = address;
+                console.log('address');
+                console.log(address);
+                this.shoppingCartState.setAddress(address);
+                this.inspectStoreShoppingCartWithDelay();
             },
-            setValidatedAddressForm(addressForm) {
-                //this.form.address = addressForm;
+            unsetAddress() {
+                this.shoppingCartState.setAddress(null);
+                this.inspectStoreShoppingCartWithDelay();
             },
-            onDeletedAddress() {
-                /*
-                if(this.hasAddress) {
-                    useDeliveryMethodState().deliveryMethod._relationships.address = null;
-                }else{
-                    delete this.form.address;
-                }
-                */
-            },
+            inspectStoreShoppingCartWithDelay() {
+                return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
+            }
         }
     };
 

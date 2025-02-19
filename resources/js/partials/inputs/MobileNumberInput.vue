@@ -3,11 +3,18 @@
     <div>
 
         <!-- Input Label -->
-        <InputLabel v-if="label != ''" :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
+        <InputLabel v-if="label != ''" :_for="uniqueId" :showAsterisk="showAsterisk" :secondaryLabel="secondaryLabel" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
             {{ label }}
         </InputLabel>
 
-        <div :class="[{ 'mt-2' : label != '' }, 'w-full flex items-center space-x-2 rounded-md border-0 shadow-sm ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-blue-700 sm:text-sm sm:leading-6 text-gray-900']">
+        <InputLabelDescription
+            v-if="description"
+            :description="description"
+            :learnMoreLabel="learnMoreLabel"
+            :learnMoreLink="learnMoreLink">
+        </InputLabelDescription>
+
+        <div :class="[{ 'mt-2' : label != '' }, 'w-full flex items-center rounded-md border-0 shadow-sm ring-1 ring-gray-300 focus-within:ring-2 focus-within:ring-blue-700 sm:text-sm sm:leading-6 text-gray-900']">
 
             <!-- Prepend Slot -->
             <div v-if="$slots.prepend">
@@ -36,6 +43,7 @@
     import intlTelInput from 'intl-tel-input';
     import 'intl-tel-input/build/css/intlTelInput.css';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
@@ -44,9 +52,26 @@
                 type: String,
                 default: ''
             },
+            showAsterisk: {
+                type: Boolean,
+                default: false
+            },
             label: {
                 type: String,
                 default: 'Mobile Number'
+            },
+            secondaryLabel: {
+                type: [String, null],
+                default: null
+            },
+            description: {
+                type: String
+            },
+            learnMoreLabel: {
+                type: [String, null]
+            },
+            learnMoreLink: {
+                type: [String, null]
             },
             labelPopoverTitle: {
                 type: String
@@ -58,7 +83,7 @@
                 type: String
             }
         },
-        components: { InputLabel, InputErrorMessage },
+        components: { InputLabel, InputLabelDescription, InputErrorMessage },
         data() {
             return {
                 iti: null, // Instance of intlTelInput

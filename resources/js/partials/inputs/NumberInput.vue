@@ -3,9 +3,16 @@
     <div>
 
         <!-- Input Label -->
-        <InputLabel v-if="label != ''" :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
+        <InputLabel v-if="label != ''" :_for="uniqueId" :showAsterisk="showAsterisk" :secondaryLabel="secondaryLabel" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
             {{ label }}
         </InputLabel>
+
+        <InputLabelDescription
+            v-if="description"
+            :description="description"
+            :learnMoreLabel="learnMoreLabel"
+            :learnMoreLink="learnMoreLink">
+        </InputLabelDescription>
 
         <div :class="[{ 'mt-2' : label != '' }]">
 
@@ -16,9 +23,9 @@
                 <input v-else-if="size == 'sm'" v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="number" :min="min" :max="max" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :class="[$slots.suffix ? 'rounded-l-md' : 'rounded-md', 'w-full border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3']">
 
                 <!-- Suffix -->
-                <div v-if="$slots.suffix" class="flex items-center px-3 bg-gray-100 rounded-r-lg border text-xs">
+                <template v-if="$slots.suffix">
                     <slot name="suffix"></slot>
-                </div>
+                </template>
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
@@ -39,11 +46,12 @@
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
         mixins: [UtilsMixin],
-        components: { InputLabel, MoreInfoPopover, InputErrorMessage },
+        components: { InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
         props: {
             modelValue: {
                 type: String
@@ -56,9 +64,26 @@
                 type: String,
                 default: null
             },
+            showAsterisk: {
+                type: Boolean,
+                default: false
+            },
             label: {
                 type: String,
                 default: ''
+            },
+            secondaryLabel: {
+                type: [String, null],
+                default: null
+            },
+            description: {
+                type: String
+            },
+            learnMoreLabel: {
+                type: [String, null]
+            },
+            learnMoreLink: {
+                type: [String, null]
             },
             labelPopoverTitle: {
                 type: String
@@ -87,28 +112,23 @@
             }
         },
         data() {
-        return {
-            localModelValue: this.modelValue,
-            uniqueId: this.generateUniqueId('number')
-        };
+            return {
+                localModelValue: this.modelValue,
+                uniqueId: this.generateUniqueId('number')
+            };
         },
         watch: {
-        modelValue(newValue, oldValue) {
-            this.updateValue(newValue);
-        },
-        localModelValue(newValue, oldValue) {
-            if(newValue) {
-
+            modelValue(newValue, oldValue) {
+                this.updateValue(newValue);
+            },
+            localModelValue(newValue, oldValue) {
+                this.$emit('update:modelValue', newValue.toString());
             }
-
-            this.$emit('update:modelValue', newValue.toString());
-        }
         },
         methods: {
-        updateValue(newValue) {
-            if(this.nonNegative && newValue < 0) newValue = 0;
-            this.localModelValue = newValue;
-        }
+            updateValue(newValue) {
+                this.localModelValue = newValue;
+            }
         }
     };
 </script>

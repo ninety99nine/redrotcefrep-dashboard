@@ -33,6 +33,10 @@ export default {
             type: String,
             default: ''
         },
+        secondaryLabel: {
+            type: [String, null],
+            default: null
+        },
         labelPopoverTitle: {
             type: String
         },

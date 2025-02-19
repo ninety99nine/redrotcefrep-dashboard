@@ -3,7 +3,7 @@
     <div>
 
         <!-- Input Label -->
-        <InputLabel v-if="label != ''" :_for="uniqueId" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
+        <InputLabel v-if="label != ''" :_for="uniqueId" :showAsterisk="showAsterisk" :labelPopoverTitle="labelPopoverTitle" :labelPopoverDescription="labelPopoverDescription" >
             {{ label }}
         </InputLabel>
 
@@ -50,6 +50,10 @@
             },
             modelValue: {
                 type: String
+            },
+            showAsterisk: {
+                type: Boolean,
+                default: false
             },
             errorText: {
                 type: String

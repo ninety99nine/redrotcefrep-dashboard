@@ -2,7 +2,7 @@
 
     <footer class="flex justify-center items-center p-8 m-4 border-t">
         <Logo height="w-8" class="mr-2" />
-        <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2018 - {{ currentYear }} Optimum Quality. All Rights Reserved</span>
+        <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 - {{ currentYear }} Optimum Quality. All Rights Reserved</span>
     </footer>
 
 </template>
@@ -15,7 +15,7 @@
         components: { Logo },
         data() {
             return {
-                currentYear: new Date().getFullYear()   // 2022
+                currentYear: new Date().getFullYear()   // 2025
             };
         }
     };
