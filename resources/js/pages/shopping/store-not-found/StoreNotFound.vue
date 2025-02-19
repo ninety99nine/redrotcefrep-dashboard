@@ -28,7 +28,7 @@
 
             <!-- Register Link -->
              <div class="text-center">
-                <ExternalLink :url="websiteUrl" :openInNewTab="false" class="text-xs">
+                <ExternalLink :url="appWebsiteUrl" :openInNewTab="false" class="text-xs">
                     Visit our website to learn more
                 </ExternalLink>
              </div>
@@ -52,7 +52,7 @@ export default {
     components: { Logo, Alert, TextHeader, ExternalLink, PrimaryButton },
     data() {
         return {
-            websiteUrl: settings.websiteUrl
+            appWebsiteUrl: settings.appWebsiteUrl
         };
     },
     methods: {
