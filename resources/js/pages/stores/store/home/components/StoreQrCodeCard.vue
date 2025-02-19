@@ -52,7 +52,7 @@
         </ShineEffect>
 
         <a v-else href="https://www.canva.com/templates/?query=qr-code" target="_blank" class="w-full">
-            <Button @click="downloadQR" type="gradient" size="sm" class="w-full">
+            <Button type="gradient" size="sm" class="w-full">
                 <span>Create design with</span>
                 <img class="h-4 ml-1.5" src="/images/canva-logo-white.png">
             </Button>
