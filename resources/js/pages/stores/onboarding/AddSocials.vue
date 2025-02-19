@@ -255,7 +255,7 @@
                 return socialLinkValidationError ? socialLinkValidationError.message : null;
             },
             getMatchingSocialMediaIcon(name) {
-                return this.socialMediaIcons.find(socialMediaIcon => socialMediaIcon.name.toLowerCase() === name.toLowerCase());
+                return this.socialMediaIcons.find(socialMediaIcon => socialMediaIcon.name.toLowerCase() === name.toLowerCase()).toLowerCase();
             },
             showSocialMediaIcons() {
 

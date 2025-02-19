@@ -1,1 +1,0 @@
-import{o,c as t,n as r}from"./app-BcSPA593.js";import{_ as n}from"./_plugin-vue_export-helper-DlAUqK2U.js";const s={props:{size:{type:String,default:"w-12 h-12"},color:{type:String,default:"bg-gray-200"}}};function a(c,l,e,i,d,f){return o(),t("div",{class:r([e.size,e.color,"rounded-full"])},null,2)}const _=n(s,[["render",a]]);export{_ as R};
