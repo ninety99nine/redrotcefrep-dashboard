@@ -48,7 +48,7 @@
                                     <img
                                         alt="Social Media Logo"
                                         class="h-full object-contain"
-                                        :src="getMatchingSocialMediaIcon(socialLink.name).icon"
+                                        :src="getMatchingSocialMediaIcon(socialLink.name).icon.toLowerCase()"
                                     />
                                 </div>
 
@@ -255,7 +255,7 @@
                 return socialLinkValidationError ? socialLinkValidationError.message : null;
             },
             getMatchingSocialMediaIcon(name) {
-                return this.socialMediaIcons.find(socialMediaIcon => socialMediaIcon.name.toLowerCase() === name.toLowerCase()).toLowerCase();
+                return this.socialMediaIcons.find(socialMediaIcon => socialMediaIcon.name.toLowerCase() === name.toLowerCase());
             },
             showSocialMediaIcons() {
 
