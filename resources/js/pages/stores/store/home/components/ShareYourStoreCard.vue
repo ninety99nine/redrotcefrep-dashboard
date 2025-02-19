@@ -21,7 +21,7 @@
 
                         <!-- Social Platform Logo -->
                         <RoundSkeleton v-if="isLoadingStore" size="w-8 h-8 flex-shrink-0"></RoundSkeleton>
-                        <img v-else :src="`/images/social-icons/${socialPlatform.name.toLowerCase()}.png`" :alt="`${socialPlatform.name} Logo`" class="w-8 h-8" />
+                        <img v-else :src="`/images/social-icons/${socialPlatform.name}.png`" :alt="`${socialPlatform.name} Logo`" class="w-8 h-8" />
 
                         <!-- Social Platform Name -->
                         <div class="w-full space-y-1 text-sm">
