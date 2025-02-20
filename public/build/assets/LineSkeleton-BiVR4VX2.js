@@ -1,0 +1,1 @@
+import{o as t,c as r,n}from"./app-B1nu_-kd.js";import{_ as a}from"./_plugin-vue_export-helper-DlAUqK2U.js";const o={props:{width:{type:String,default:"w-full"},height:{type:String,default:"h-2"}}};function s(l,c,e,i,d,f){return t(),r("div",{class:n([e.width,e.height,"bg-gray-200 rounded-full dark:bg-gray-700"])},null,2)}const _=a(o,[["render",s]]);export{_ as L};

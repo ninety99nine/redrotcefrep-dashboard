@@ -23,7 +23,7 @@
 
             <template v-if="authState.authenticated">
 
-                <router-link :to="{ name: 'dashboard' }">Dashboard</router-link>
+                <router-link :to="{ name: 'show-stores'}">Dashboard</router-link>
 
             </template>
 

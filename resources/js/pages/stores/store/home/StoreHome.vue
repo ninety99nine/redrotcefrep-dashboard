@@ -4,7 +4,7 @@
 
         <h1 class="space-x-2 text-xl text-gray-700 font-semibold mb-8">
             <span>👋</span>
-            <span>Welcome back, {{ authUser.firstName }}</span>
+            <span>Welcome back, {{ authUser ? authUser.firstName : '' }}</span>
         </h1>
 
         <div class="grid grid-cols-3 gap-4 mb-8">

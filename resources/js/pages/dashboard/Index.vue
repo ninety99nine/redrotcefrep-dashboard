@@ -67,7 +67,9 @@
 
                     </div>
 
-                    <div @click.stop="navigateToManageStores" class="cursor-pointer animated-border-blue rounded-full overflow-hidden hover:shadow-sm active:scale-95 transition-all duration-250">
+                    <div
+                        v-if="authUser"
+                        @click.stop="navigateToManageStores" class="cursor-pointer animated-border-blue rounded-full overflow-hidden hover:shadow-sm active:scale-95 transition-all duration-250">
                         <h2 class="py-2 px-8 text-xs text-blue-500 bg-blue-50 font-semibold">Helping {{ authUser.firstName }} sell better</h2>
                     </div>
 
@@ -126,37 +128,51 @@
                             </div>
 
                             <!-- Profile Menu -->
-                            <div id="profile-dropdown" class="min-w-60 border z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
+                            <div id="profile-dropdown" class="w-72 border z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm">
 
                                 <div class="px-4 py-3" role="none">
 
-                                    <!-- Name -->
-                                    <p class="text-sm text-gray-900" role="none">
-                                        Neil Sims
-                                    </p>
+                                    <template v-if="authUser">
 
-                                    <!-- Email -->
-                                    <p class="text-sm font-medium text-gray-900 truncate" role="none">
-                                        neil.sims@flowbite.com
-                                    </p>
+                                        <!-- Name -->
+                                        <p class="text-sm text-gray-900 truncate w-4/5" role="none">
+                                            {{ authUser._attributes.name }}
+                                        </p>
+
+                                        <!-- Email -->
+                                        <p v-if="authUser.email" class="text-sm font-medium text-gray-900 truncate w-4/5" role="none">
+                                            {{ authUser.email }}
+                                        </p>
+
+                                        <!-- Mobile Number -->
+                                        <p v-if="authUser.mobileNumber" class="text-sm font-medium text-gray-900 truncate w-4/5" role="none">
+                                            {{ authUser.mobileNumber.national }}
+                                        </p>
+
+                                    </template>
 
                                 </div>
 
                                 <!-- Profile Menu Items -->
-                                <ul class="py-1" role="none">
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Dashboard</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Earnings</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
-                                    </li>
-                                </ul>
+                                <div class="py-1" role="none">
+
+                                    <template
+                                        :key="index"
+                                        v-for="(navMenu, index) in profileNavMenus">
+
+                                        <div @click="navMenu.name == 'Sign Out' ? attemptLogout() : null" class="cursor-pointer flex space-x-2 items-center py-3 px-4 text-gray-900 hover:bg-gray-100 group">
+
+                                            <SpinningLoader v-if="navMenu.name == 'Sign Out' && isLoggingOut"></SpinningLoader>
+
+                                            <span class="text-sm text-gray-500 group-hover:text-gray-900">
+                                                {{ navMenu.name }}
+                                            </span>
+
+                                        </div>
+
+                                    </template>
+
+                                </div>
 
                             </div>
 
@@ -236,13 +252,14 @@
 
                     </template>
 
-                    <div class="cursor-pointer">
+                    <div @click="attemptLogout" class="cursor-pointer">
 
                         <div class="flex items-center py-3 px-4 text-gray-900 hover:bg-gray-100 group">
 
                             <!-- Sign Out Icon -->
                             <RoundSkeleton v-if="isLoadingStore" size="w-5 h-5"></RoundSkeleton>
 
+                            <SpinningLoader v-else-if="isLoggingOut"></SpinningLoader>
                             <svg v-else class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                             </svg>
@@ -250,7 +267,9 @@
                             <ShineEffect v-if="isLoadingStore" class="ms-3">
                                 <LineSkeleton width="w-24"></LineSkeleton>
                             </ShineEffect>
-                            <span v-else class="text-sm ms-3 text-gray-500 group-hover:text-gray-900">Sign Out</span>
+                            <span v-else class="text-sm ms-3 text-gray-500 group-hover:text-gray-900">
+                                Sign Out
+                            </span>
 
                         </div>
 
@@ -284,22 +303,26 @@
     import settings from '@Js/settings.js';
     import Logo from '@Partials/logos/Logo.vue';
     import Footer from '@Pages/dashboard/Footer.vue';
+    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
     import { useAuthState } from '@Stores/auth-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import { getApi } from '@Repositories/api-repository.js';
+    import { logout } from '@Repositories/auth-repository.js';
     import PageLoader from '@Partials/loaders/PageLoader.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import RightSideAlerts from '@Partials/alerts/RightSideAlerts.vue';
     import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
 
     export default {
+        mixins: [FormMixin],
         components: {
             Logo, Footer, Button, PageLoader, ShineEffect, LineSkeleton,
-            StoreLogo, RoundSkeleton, RightSideAlerts, ButtonSkeleton
+            StoreLogo, RoundSkeleton, SpinningLoader, RightSideAlerts, ButtonSkeleton
         },
         data() {
             return {
@@ -337,8 +360,19 @@
                         routeName: 'show-store-settings',
                     }
                 ],
+                profileNavMenus: [
+                    {
+                        name: 'Manage Stores',
+                        routeName: 'show-stores',
+                    },
+                    {
+                        name: 'Sign Out',
+                        routeName: null,
+                    }
+                ],
                 storeHref: false,
                 isOnboarding: false,
+                isLoggingOut: false,
                 authState: useAuthState(),
                 appName: settings.appName,
                 storeState: useStoreState(),
@@ -346,7 +380,6 @@
         },
         watch: {
             '$route'(newValue, oldValue) {
-
                 this.storeHref = this.$route.params.store_href;
                 this.isOnboarding = this.$route.meta.onboarding === true;
 
@@ -417,7 +450,32 @@
 
                 });
 
-            }
+            },
+            attemptLogout() {
+
+                this.isLoggingOut = true;
+
+                logout().then(response => {
+
+                    if(response.status == 200) {
+
+                        //  Stop loader
+                        this.isLoggingOut = false;
+
+                        // Redirect to login
+                        this.$router.replace({ name: 'login' });
+
+                    }
+
+                }).catch(errorException => {
+
+                    //  Stop loader
+                    this.isLoggingOut = false;
+
+                    this.showErrors(errorException, 'attemptLogout');
+
+                });
+            },
         },
         mounted() {
 

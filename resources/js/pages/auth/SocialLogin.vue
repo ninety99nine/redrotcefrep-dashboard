@@ -109,7 +109,7 @@
                     if(response.status == 200) {
 
                         // Redirect to the dashboard
-                        this.$router.replace({ name: 'dashboard' });
+                        this.$router.replace({ name: 'show-stores'});
                         this.showSuccessfulNotification('Welcome back '+this.authState.user.firstName);
                     }
 

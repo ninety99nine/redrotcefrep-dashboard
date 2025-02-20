@@ -259,7 +259,7 @@
                             } else {
 
                                 // Redirect to the dashboard
-                                this.$router.replace({ name: 'dashboard' });
+                                this.$router.replace({ name: 'show-stores'});
 
                                 /**
                                  *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
