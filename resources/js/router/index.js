@@ -402,8 +402,8 @@ router.beforeEach(async (to, from, next) => {
 
                 if(restrictedRouteNames.includes(to.name)) {
 
-                    //  Navigate to the dashboard page
-                    next({ name: 'dashboard', replace: true });
+                    //  Navigate to the show stores page
+                    next({ name: 'show-stores', replace: true });
 
                 }else{
 
