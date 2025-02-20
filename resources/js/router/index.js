@@ -42,6 +42,11 @@ const routes = [
                 component: () => import('@Pages/profile/Profile.vue')
             },
             {
+                name: 'show-transaction-status',
+                path: 'transaction-status',
+                component: () => import('@Pages/transactions/TransactionStatus.vue')
+            },
+            {
                 name: 'show-stores',
                 path: 'stores',
                 component: () => import('@Pages/stores/Stores.vue')
