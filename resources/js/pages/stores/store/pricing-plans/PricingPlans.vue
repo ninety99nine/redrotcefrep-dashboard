@@ -244,6 +244,7 @@
                     }else{
 
                         this.isGeneratingPaymentLink = false;
+                        this.setFormError('general', response.data.message);
 
                     }
 

@@ -94,6 +94,19 @@ input[type=number].remove-arrow {
     animation: borderAnimation 4s linear infinite;
 }
 
+.animated-border-green {
+    background: linear-gradient(45deg, #ffffff, #ffffff, #ffffff) padding-box,
+                conic-gradient(from var(--border-angle),
+                rgba(255, 255, 255, 0) 25%,     /* Start transparent (longer fade-in) */
+                #37ff6c 80%,                    /* Begin streak */
+                #26ff60 88%,                    /* Peak intensity */
+                #37ff6c 92%,                    /* Start fading */
+                rgba(255, 255, 255, 0) 100%) border-box;    /* End transparent (longer fade-out) */
+    border-radius: 16px;
+    border: 1px solid transparent; /* Ensure border is visible */
+    animation: borderAnimation 4s linear infinite;
+}
+
 .animated-border-pink {
     background: linear-gradient(45deg, #ffffff, #ffffff, #ffffff) padding-box,
                 conic-gradient(from var(--border-angle),
@@ -101,6 +114,19 @@ input[type=number].remove-arrow {
                 #fc48ff 80%,                    /* Begin streak */
                 #fb26ff 88%,                    /* Peak intensity */
                 #fc48ff 92%,                    /* Start fading */
+                rgba(255, 255, 255, 0) 100%) border-box;    /* End transparent (longer fade-out) */
+    border-radius: 16px;
+    border: 1px solid transparent; /* Ensure border is visible */
+    animation: borderAnimation 4s linear infinite;
+}
+
+.animated-border-red {
+    background: linear-gradient(45deg, #ffffff, #ffffff, #ffffff) padding-box,
+                conic-gradient(from var(--border-angle),
+                rgba(255, 255, 255, 0) 25%,     /* Start transparent (longer fade-in) */
+                #ff3a4a 80%,                    /* Begin streak */
+                #ff2638 88%,                    /* Peak intensity */
+                #ff3a4a 92%,                    /* Start fading */
                 rgba(255, 255, 255, 0) 100%) border-box;    /* End transparent (longer fade-out) */
     border-radius: 16px;
     border: 1px solid transparent; /* Ensure border is visible */

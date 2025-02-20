@@ -1,0 +1,1 @@
+import{o as e,c as o,y as r}from"./app-Clb7lIWV.js";import{_ as s}from"./_plugin-vue_export-helper-DlAUqK2U.js";const c={},n={class:"text-2xl font-bold tracking-tight text-gray-900"};function a(t,_){return e(),o("h2",n,[r(t.$slots,"default")])}const d=s(c,[["render",a]]);export{d as T};
