@@ -152,8 +152,8 @@
                                 size="xs"
                                 icon="delete"
                                 type="danger"
-                                :action="removeProduct"
-                                v-if="!isCreatingProducts">
+                                v-if="!isCreatingProducts"
+                                :action="() => removeProduct(index)">
                                 <span>Remove Product</span>
                             </Button>
 
