@@ -11,8 +11,7 @@
             Start by stocking your store with products your customers will love
         </p>
 
-        <Button type="primary" size="xs">
-            <span>+</span>
+        <Button type="primary" size="xs" icon="add" :skeleton="isLoadingStore" :action="onAddProduct">
             <span>Add Products</span>
         </Button>
 
@@ -23,10 +22,29 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
+    import { useStoreState } from '@Stores/store-store.js';
 
     export default {
         components: {
             Button
+        },
+        data() {
+            return {
+                storeState: useStoreState()
+            };
+        },
+        computed: {
+            store() {
+                return this.storeState.store;
+            },
+            isLoadingStore() {
+                return this.storeState.isLoadingStore;
+            }
+        },
+        methods: {
+            onAddProduct() {
+                this.$router.push({ name: 'create-store-product', params: { 'store_href': this.store._links.showStore } });
+            }
         }
     };
 

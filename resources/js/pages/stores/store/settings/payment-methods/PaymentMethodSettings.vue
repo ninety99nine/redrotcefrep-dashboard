@@ -65,7 +65,7 @@
                         <!-- Filter Badges (All, Manual & Automated) -->
                         <div class="flex items-center space-x-2">
 
-                            <BadgeIndicator
+                            <Pill
                                 :key="index"
                                 :showDot="false"
                                 size="px-4 py-1"
@@ -74,7 +74,7 @@
                                 :action="() => changePaymentCategory(paymentCategory)"
                                 v-for="(paymentCategory, index) in paymentCategories"
                                 :type="selectedPaymentCategory == paymentCategory ? 'primary' : 'info'">
-                            </BadgeIndicator>
+                            </Pill>
 
                             <span class="text-4xl pl-8">👈</span>
 
@@ -215,13 +215,13 @@
                     <div v-if="isShowingNonAssociatedPaymentMethods && isLoadingNonAssociatedPaymentMethods" class="space-y-2">
 
                         <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                            <ShineEffect class="w-full flex items-center justify-between">
+                            <div class="w-full flex items-center justify-between">
                                 <div class="w-full flex items-center space-x-2">
-                                    <RoundSkeleton size="w-8 h-8" class="flex-shrink-0"></RoundSkeleton>
-                                    <LineSkeleton width="w-32"></LineSkeleton>
+                                    <LineSkeleton width="w-8" height="h-8" :shine="true"></LineSkeleton>
+                                    <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
                                 </div>
-                                <LineSkeleton width="w-16"></LineSkeleton>
-                            </ShineEffect>
+                                <LineSkeleton width="w-16" :shine="true"></LineSkeleton>
+                            </div>
                         </div>
 
                     </div>
@@ -283,12 +283,12 @@
                         <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
                             <ShineEffect class="w-full flex items-center justify-between">
                                 <div class="w-full flex items-center space-x-2">
-                                    <RoundSkeleton size="w-8 h-8" class="flex-shrink-0"></RoundSkeleton>
+                                    <LineSkeleton width="w-8" height="h-8"></LineSkeleton>
                                     <LineSkeleton width="w-32"></LineSkeleton>
                                 </div>
                                 <div class="flex items-center">
-                                    <LineSkeleton width="w-24 mr-4"></LineSkeleton>
-                                    <LineSkeleton width="w-4 mr-2"></LineSkeleton>
+                                    <LineSkeleton width="w-24" class="mr-4"></LineSkeleton>
+                                    <LineSkeleton width="w-4" class="mr-2"></LineSkeleton>
                                     <LineSkeleton width="w-4"></LineSkeleton>
                                 </div>
                             </ShineEffect>
@@ -323,14 +323,14 @@
                                     <div class="flex items-center space-x-2">
 
                                         <!-- Category Badge (Manual / Automated) -->
-                                        <BadgeIndicator :type="paymentMethod.category.toLowerCase() === 'automated' ? 'primary' : 'info'" :text="capitalize(paymentMethod.category)" :showDot="false">
+                                        <Pill :type="paymentMethod.category.toLowerCase() === 'automated' ? 'primary' : 'info'" :text="capitalize(paymentMethod.category)" :showDot="false">
                                             <svg v-if="paymentMethod.category.toLowerCase() === 'automated'" class="w-3 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
                                             </svg>
-                                        </BadgeIndicator>
+                                        </Pill>
 
                                         <!-- Active Status Badge -->
-                                        <BadgeIndicator :type="paymentMethod.active ? 'success' : 'warning'" :text="paymentMethod.active ? 'Active' : 'Inactive'" :showDot="false"></BadgeIndicator>
+                                        <Pill :type="paymentMethod.active ? 'success' : 'warning'" :text="paymentMethod.active ? 'Active' : 'Inactive'" :showDot="false"></Pill>
 
                                     </div>
                                 </div>
@@ -364,7 +364,7 @@
                                 </svg>
                                 <div class="space-y-2">
                                     <p v-if="hasSearchTerm" class="font-bold">No payment methods found.</p>
-                                    <p>Click the <BadgeIndicator type="primary" text="+ Add Payment Method" :showDot="false" :clickable="true" :action="() => openNonAssociatedPaymentMethods()"></BadgeIndicator> button to offer your customers convenient payment methods on your store</p>
+                                    <p>Click the <Pill type="primary" text="+ Add Payment Method" :showDot="false" :clickable="true" :action="() => openNonAssociatedPaymentMethods()"></Pill> button to offer your customers convenient payment methods on your store</p>
                                 </div>
                             </div>
 
@@ -374,18 +374,10 @@
 
                     <template v-if="!paymentMethod && !isShowingNonAssociatedPaymentMethods">
 
-                        <!-- Add Payment Method Button Skeleton -->
-                        <ShineEffect v-if="isLoadingPaymentMethods">
-                            <ButtonSkeleton size="sm" class="w-full">
-                                <span class="leading-none text-sm">&#65291;</span>
-                                <span class="ml-2">Add Payment Method</span>
-                            </ButtonSkeleton>
-                        </ShineEffect>
-
                         <!-- Add Payment Method Button -->
-                        <AddButton v-else :action="() => openNonAssociatedPaymentMethods()" size="sm" type="light">
+                        <Button type="light" size="sm" :skeleton="isLoadingPaymentMethods" :action="() => openNonAssociatedPaymentMethods()">
                             <span class="ml-2">Add Payment Method</span>
-                        </AddButton>
+                        </Button>
 
                     </template>
 
@@ -421,14 +413,15 @@
     import isEqual from 'lodash/isEqual';
     import settings from '@Js/settings.js';
     import cloneDeep from 'lodash/cloneDeep';
+    import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import BackButton from '@Partials/buttons/BackButton.vue';
@@ -436,13 +429,10 @@
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
-    import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import { getApi, putApi, postApi, postFileApi, deleteApi } from '@Repositories/api-repository.js';
     import PaymentMethodMetadataSettings from '@Pages/stores/store/settings/payment-methods/payment-method-metadata-settings/PaymentMethodMetadataSettings.vue';
@@ -450,10 +440,9 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            Alert, draggable: VueDraggableNext, TextInput, AddButton, Checkbox, UndoButton, BackButton,
+            Pill, Alert, Button, draggable: VueDraggableNext, TextInput, Checkbox, UndoButton, BackButton,
             SearchInput, ConfirmModal, ShineEffect, TextareaInput, PrimaryButton, SpinningLoader,
-            LineSkeleton, RoundSkeleton, ButtonSkeleton, ToogleSwitch, BadgeIndicator,
-            FormErrorMessages, PaymentMethodMetadataSettings
+            LineSkeleton, ToogleSwitch, FormErrorMessages, PaymentMethodMetadataSettings
         },
         data() {
             return {

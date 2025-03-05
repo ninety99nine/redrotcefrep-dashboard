@@ -4,7 +4,7 @@
 
         <div :class="['flex flex-wrap gap-2 justify-center bg-blue-50 py-4', selectedTab == 'settings' ? 'rounded-lg mb-4' : 'rounded-t-lg']">
 
-            <BadgeIndicator
+            <Pill
                 :text="tab"
                 :key="index"
                 size="px-4 py-2"
@@ -24,7 +24,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
 
-            </BadgeIndicator>
+            </Pill>
 
         </div>
 
@@ -61,7 +61,7 @@
 <script>
 
     import { useStoreState } from '@Stores/store-store.js';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import TipsSection from '@Pages/stores/store/settings/checkout/sections/TipsSection.vue';
     import ItemsSection from '@Pages/stores/store/settings/checkout/sections/ItemsSection.vue';
     import CustomerSection from '@Pages/stores/store/settings/checkout/sections/CustomerSection.vue';
@@ -71,7 +71,7 @@
 
     export default {
         components: {
-            BadgeIndicator, TipsSection, ItemsSection, CustomerSection, PromotionsSection,
+            Pill, TipsSection, ItemsSection, CustomerSection, PromotionsSection,
             CostBreakdownSection, DeliveryMethodsSection
         },
         data() {

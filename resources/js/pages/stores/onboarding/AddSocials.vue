@@ -23,10 +23,10 @@
                 <div v-if="isLoadingSocialMediaIcons" class="space-y-2">
 
                     <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                        <ShineEffect class="w-full flex items-center space-x-2">
-                                <LineSkeleton width="w-8"></LineSkeleton>
-                                <LineSkeleton width="w-40"></LineSkeleton>
-                        </ShineEffect>
+                        <div class="w-full flex items-center space-x-2">
+                            <LineSkeleton width="w-8" :shine="true"></LineSkeleton>
+                            <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                        </div>
                     </div>
 
                 </div>
@@ -141,26 +141,27 @@
                 <transition name="fade-1" mode="out-in">
 
                     <!-- Continue -->
-                    <PrimaryButton
+                    <Button
+                        size="md"
                         class="w-full"
+                        type="primary"
                         :action="updateStore"
                         :loading="isSubmittingStore"
                         v-if="socialLinksHaveChanged || hasSelectedSocialLinks"
                         :disabled="isSubmittingStore || hasSocialLinkValidationErrors">
-                        Continue
-                    </PrimaryButton>
+                        <span>Continue</span>
+                    </Button>
 
                     <!-- Skip -->
-                    <PrimaryButton
+                    <Button
                         v-else
-                        type="light"
+                        size="md"
                         class="w-40"
+                        type="light"
+                        icon="short-right-arrow"
                         :action="navigateToAddAdvancedFeatures">
                         <span>Skip</span>
-                        <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                        </svg>
-                    </PrimaryButton>
+                    </Button>
 
                 </transition>
 
@@ -177,14 +178,13 @@
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { getApi, putApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -192,8 +192,7 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            TextInput, StoreLogo, ShineEffect, LineSkeleton, PrimaryButton,
-            ToogleSwitch, FormErrorMessages
+            Button, TextInput, StoreLogo, LineSkeleton, ToogleSwitch, FormErrorMessages
         },
         data() {
             return {

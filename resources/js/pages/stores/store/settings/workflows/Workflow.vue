@@ -13,10 +13,10 @@
                 <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
                 <div v-if="isLoadingWorkflow" class="flex items-center space-x-2">
-                    <ShineEffect class="flex space-x-2">
-                        <LineSkeleton width="w-40 mt-2"></LineSkeleton>
-                        <LineSkeleton width="w-4 mt-2"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="flex space-x-2">
+                        <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
                 <template v-else>
@@ -115,7 +115,6 @@
     import BackButton from '@Partials/buttons/BackButton.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import { useWorkflowState } from '@Stores/workflow-store.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
@@ -131,7 +130,7 @@
     export default {
         mixins: [FormMixin],
         components: {
-            Alert, TextHeader, BackButton, UndoButton, ShineEffect, PrimaryButton, LineSkeleton, BackdropLoader, MoreInfoPopover,
+            Alert, TextHeader, BackButton, UndoButton, PrimaryButton, LineSkeleton, BackdropLoader, MoreInfoPopover,
             FormErrorMessages, Trigger, NameTextInput, WorkflowSteps, DeleteWorkflow, ActiveToggleSwitch
         },
         data() {

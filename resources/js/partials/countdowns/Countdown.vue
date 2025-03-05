@@ -1,7 +1,7 @@
 <template>
     <vue-countdown :time="timeLeftInMilliSeconds" v-slot="{ days, hours, minutes, seconds }" class="flex items-center space-x-1">
 
-        <slot name="suffix" :hasExpired="hasExpired"></slot>
+        <slot name="prefix" :hasExpired="hasExpired"></slot>
 
         <span v-if="days > 0 || hours > 0 || minutes > 0 || seconds > 0" :class="textClass">
             <template v-if="days > 0">
@@ -27,6 +27,8 @@
             </template>
         </span>
         <slot v-else>Expired</slot>
+
+        <slot name="suffix" :hasExpired="hasExpired"></slot>
 
         <MoreInfoPopover v-if="showMoreInfoPopover && !hasExpired" placement="top" :class="moreInfoPopoverClass">
             <template #description>

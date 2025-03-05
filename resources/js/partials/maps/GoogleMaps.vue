@@ -250,6 +250,14 @@
                     this.findByAddress();
                 }
 
+                /**
+                 *  Add Map options
+                 *  Reference: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions
+                 */
+                this.$refs.map.map.setOptions({
+                    controlSize: 30     //  Change the size of the Map controls
+                });
+
             });
         },
         unmounted() {

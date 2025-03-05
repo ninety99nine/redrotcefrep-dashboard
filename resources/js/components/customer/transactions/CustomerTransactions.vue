@@ -103,7 +103,7 @@
                     <!-- Verifyer -->
                     <td class="text-xs text-center text-gray-300">
                         <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                        <BadgeIndicator v-else type="info" :text="appName" :showDot="false"></BadgeIndicator>
+                        <Pill v-else type="info" :text="appName" :showDot="false"></Pill>
                     </td>
 
                     <!-- Payment Link -->
@@ -112,7 +112,7 @@
                             <div v-if="transaction.metadata.canPayUsingDpo" class="max-w-80">
                                 <ExternalLink :url="transaction.metadata.dpoPaymentUrl" class="text-xs">{{ transaction.metadata.dpoPaymentUrl }}</ExternalLink>
                             </div>
-                            <BadgeIndicator v-else-if="transaction.metadata.dpoPaymentLinkHasExpired == true" type="warning" text="Expired" :showDot="false"></BadgeIndicator>
+                            <Pill v-else-if="transaction.metadata.dpoPaymentLinkHasExpired == true" type="warning" text="Expired" :showDot="false"></Pill>
                             <span v-else class="text-xs text-center text-gray-300">---</span>
 
                             <MoreInfoPopover v-if="transaction.metadata.canPayUsingDpo" title="Expires In" placement="top" class="opacity-0 group-hover:opacity-100 mt-1">
@@ -229,14 +229,14 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import TransactionPaymentStatus from '@Components/transaction/TransactionPaymentStatus.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
             AddButton, TextHeader, BasicTable, Checkbox, Countdown, ExternalLink, ConfirmModal, SpinningLoader,
-            PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
+            PrimaryButton, MoreInfoPopover, ToogleSwitch, Pill, TransactionPaymentStatus
         },
         props: {
             customer: {

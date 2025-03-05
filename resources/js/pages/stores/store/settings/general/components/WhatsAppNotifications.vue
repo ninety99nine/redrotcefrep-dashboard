@@ -15,12 +15,12 @@
         <p class="text-sm text-gray-500">
             Set the primary WhatsApp number that your store will use
             to automatically send updates and notifications using
-            <BadgeIndicator
+            <Pill
                 type="primary"
                 text="workflows"
                 :showDot="false"
                 :clickable="true" @action="() => {}">
-            </BadgeIndicator>,
+            </Pill>,
             ensuring clear and timely communication
         </p>
 
@@ -42,11 +42,11 @@
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { MobileNumberInput, BadgeIndicator },
+        components: { MobileNumberInput, Pill },
         data() {
             return {
                 storeState: useStoreState(),

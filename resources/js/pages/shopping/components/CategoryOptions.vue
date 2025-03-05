@@ -1,16 +1,16 @@
 <template>
 
     <div class="flex flex-wrap gap-2">
-        <BadgeIndicator type="primary" text="Todays Menu" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Breakfast" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Lunch" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Dinner" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Breakfast" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Lunch" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Dinner" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Breakfast" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Lunch" :clickable="true" :showDot="false"></BadgeIndicator>
-        <BadgeIndicator type="info" text="Dinner" :clickable="true" :showDot="false"></BadgeIndicator>
+        <Pill type="primary" text="Todays Menu" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Breakfast" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Lunch" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Dinner" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Breakfast" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Lunch" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Dinner" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Breakfast" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Lunch" :clickable="true" :showDot="false"></Pill>
+        <Pill type="info" text="Dinner" :clickable="true" :showDot="false"></Pill>
     </div>
 
 </template>
@@ -18,10 +18,10 @@
 <script>
 
 import { useStoreState } from '@Stores/store-store.js';
-import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+import Pill from '@Partials/pills/Pill.vue';
 
 export default {
-    components: { BadgeIndicator },
+    components: { Pill },
     data() {
         return {
             storeState: useStoreState()

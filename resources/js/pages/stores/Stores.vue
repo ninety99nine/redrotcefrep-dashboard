@@ -97,6 +97,12 @@
                         this.pagination = response.data;
                         this.stores = this.pagination.data;
 
+                        if(this.stores.length == 0) {
+
+                            this.navigateToCreateStore();
+
+                        }
+
                     }
 
                     this.isLoadingStores = false;
@@ -109,6 +115,11 @@
 
                 });
 
+            },
+            navigateToCreateStore() {
+                this.$router.push({
+                    name: 'create-store'
+                });
             }
         },
         created() {

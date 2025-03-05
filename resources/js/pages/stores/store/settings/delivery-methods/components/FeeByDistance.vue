@@ -85,10 +85,10 @@
                         </svg>
                         <span>Zone {{ index + 1 }}</span>
                     </div>
-                    <BadgeIndicator v-if="form.distanceZones[index].distance" type="info" :text="form.distanceZones[index].distance+' '+store.distanceUnit" :showDot="false"></BadgeIndicator>
+                    <Pill v-if="form.distanceZones[index].distance" type="info" :text="form.distanceZones[index].distance+' '+store.distanceUnit" :showDot="false"></Pill>
                     <InputErrorMessage v-else errorText="No distance" margin="mt-0"></InputErrorMessage>
 
-                    <BadgeIndicator v-if="form.distanceZones[index].fee" type="primary" :text="store.currency.symbol+form.distanceZones[index].fee" :showDot="false"></BadgeIndicator>
+                    <Pill v-if="form.distanceZones[index].fee" type="primary" :text="store.currency.symbol+form.distanceZones[index].fee" :showDot="false"></Pill>
                     <InputErrorMessage v-else errorText="No fee" margin="mt-0"></InputErrorMessage>
 
                 </div>
@@ -114,7 +114,7 @@
                 </svg>
 
                 <div class="text-sm space-y-2">
-                    <BadgeIndicator type="primary" text="+ Add Zone" :showDot="false" :clickable="true" :action="onAddDistanceZone"></BadgeIndicator> to offer delivery within specific distances for a fee
+                    <Pill type="primary" text="+ Add Zone" :showDot="false" :clickable="true" :action="onAddDistanceZone"></Pill> to offer delivery within specific distances for a fee
                 </div>
             </div>
 
@@ -160,7 +160,7 @@
     import AddressInput from '@Partials/inputs/AddressInput.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
     import { useDeliveryMethodState } from '@Stores/delivery-method-store.js';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import ShowDistanceInInvoiceCheckbox from '@Pages/stores/store/settings/delivery-methods/components/ShowDistanceInInvoiceCheckbox.vue';
 
@@ -168,7 +168,7 @@
         mixins: [FormMixin],
         components: {
             AddButton, MoneyInput, UndoButton, NumberInput, AddressInput, DeleteButton,
-            BadgeIndicator, InputErrorMessage, ShowDistanceInInvoiceCheckbox
+            Pill, InputErrorMessage, ShowDistanceInInvoiceCheckbox
         },
         props: {
             form: {

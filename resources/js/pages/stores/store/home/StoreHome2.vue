@@ -48,15 +48,11 @@
                     <div class="space-y-3">
 
                         <!-- Insight Title -->
-                        <ShineEffect v-if="isLoadingStoreInsights">
-                            <LineSkeleton width="w-24"></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingStoreInsights" width="w-24" :shine="true"></LineSkeleton>
                         <h1 v-else class="text-lg font-bold">{{ insight.title }}</h1>
 
                         <!-- Insight Description -->
-                        <ShineEffect v-if="isLoadingStoreInsights">
-                            <LineSkeleton width="w-60"></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingStoreInsights" width="w-60" :shine="true"></LineSkeleton>
                         <p v-else class="text-sm text-gray-400">{{ insight.description }}</p>
 
                     </div>
@@ -69,9 +65,7 @@
                             <!-- Category Insight -->
                             <div class="flex flex-col items-center space-y-2">
 
-                                <ShineEffect v-if="isLoadingStoreInsights">
-                                    <RoundSkeleton size="w-8 h-8"></RoundSkeleton>
-                                </ShineEffect>
+                                <LineSkeleton v-if="isLoadingStoreInsights" width="w-8" height="h-8" :shine="true"></LineSkeleton>
 
                                 <!-- Icon -->
                                 <svg v-else-if="categoryInsight.type == 'total_sales'" class="w-8 h-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -138,19 +132,17 @@
                                 </svg>
 
                                 <!-- Name -->
-                                <ShineEffect v-if="isLoadingStoreInsights" class="flex space-x-1">
-                                    <LineSkeleton width="w-24"></LineSkeleton>
-                                    <LineSkeleton width="w-4"></LineSkeleton>
-                                </ShineEffect>
+                                <div v-if="isLoadingStoreInsights" class="flex space-x-1">
+                                    <LineSkeleton width="w-24" :shine="true"></LineSkeleton>
+                                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                                </div>
                                 <div v-else class="flex space-x-1 items-center">
                                     <p class="text-gray-500 text-sm">{{ capitalizeAllWords(categoryInsight.name) }}</p>
                                     <MoreInfoPopover title="What Is This?" :description="categoryInsight.description" placement="top"></MoreInfoPopover>
                                 </div>
 
                                 <!-- Metric -->
-                                <ShineEffect v-if="isLoadingStoreInsights">
-                                    <LineSkeleton width="w-16"></LineSkeleton>
-                                </ShineEffect>
+                                <LineSkeleton v-if="isLoadingStoreInsights" width="w-16" :shine="true"></LineSkeleton>
                                 <p v-else class="font-bold text-xl">{{ categoryInsight.metric }}</p>
 
                             </div>
@@ -202,12 +194,12 @@
                                 <StoreQuickStartGuideProgress></StoreQuickStartGuideProgress>
 
                                 <!-- Milestone Skeletons -->
-                                <ShineEffect v-if="isLoadingQuickStartGuide" class="space-y-4">
+                                <div v-if="isLoadingQuickStartGuide" class="space-y-4">
                                     <div v-for="(item, index) in 5" :key="index" class="flex items-center space-x-2">
-                                        <RoundSkeleton size="w-3 h-3"></RoundSkeleton>
-                                        <LineSkeleton :width="['w-40', 'w-48', 'w-60', 'w-80', 'w-72'][index]"></LineSkeleton>
+                                        <LineSkeleton width="w-3" height="h-3" :shine="true"></LineSkeleton>
+                                        <LineSkeleton :width="['w-40', 'w-48', 'w-60', 'w-80', 'w-72'][index]" :shine="true"></LineSkeleton>
                                     </div>
-                                </ShineEffect>
+                                </div>
 
                                 <!-- Milestones -->
                                 <div v-else-if="!completedQuickStartGuide" class="text-sm space-y-3">
@@ -447,6 +439,7 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useAuthState } from '@Stores/auth-store.js';
@@ -457,34 +450,31 @@
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import Countdown from '@Partials/countdowns/Countdown.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
-    import OrderStatus from '@Components/order/OrderStatus.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import VirtualPhone from '@Components/virtual-phone/VirtualPhone.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import OrderPaymentStatus from '@Components/order/OrderPaymentStatus.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import StoreSubscribeButton from '@Components/store/StoreSubscribeButton.vue';
     import MobileNumberShortcode from '@Components/user/MobileNumberShortcode.vue';
-    import OrderCollectionStatus from '@Components/order/OrderCollectionStatus.vue';
+    import Status from '@Pages/stores/store/orders/order/components/OrderHeader/Status.vue';
     import StoreQuickStartGuideProgress from '@Components/store/StoreQuickStartGuideProgress.vue';
     import UserStoreSubscriptionCountdown from '@Components/store/UserStoreSubscriptionCountdown.vue';
+    import PaymentStatus from '@Pages/stores/store/orders/order/components/OrderHeader/PaymentStatus.vue';
+    import CollectionStatus from '@Pages/stores/store/orders/order/components/OrderHeader/CollectionStatus.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            TextHeader, AddButton, BasicTable, Checkbox, Countdown, SelectInput, OrderStatus, ConfirmModal, ShineEffect,
-            OtpInput, LineSkeleton, SpinningLoader, PrimaryButton, RoundSkeleton, SelectInputTags, MoreInfoPopover,
-            ToogleSwitch, VirtualPhone, OrderPaymentStatus, BadgeIndicator, StoreSubscribeButton, MobileNumberShortcode,
-            OrderCollectionStatus, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown
+            Pill, TextHeader, AddButton, BasicTable, Checkbox, Countdown, SelectInput, Status, ConfirmModal,
+            OtpInput, LineSkeleton, SpinningLoader, PrimaryButton, SelectInputTags, MoreInfoPopover, ToogleSwitch,
+            VirtualPhone, PaymentStatus, StoreSubscribeButton, MobileNumberShortcode, CollectionStatus,
+            StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown
         },
         data() {
             return {

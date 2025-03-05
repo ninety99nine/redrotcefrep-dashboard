@@ -143,8 +143,8 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             this.shoppingCartForm.deliveryMethodId = deliveryMethod.id;
             this.inspectStoreShoppingCartWithDelay();
         },
-        setAddress(address) {
-            this.shoppingCartForm.address = address;
+        setDeliveryAddress(deliveryAddress) {
+            this.shoppingCartForm.deliveryAddress = deliveryAddress;
         },
         isSelectedDeliveryMethod(deliveryMethod) {
             return (this.deliveryMethod || {}).id == deliveryMethod.id;
@@ -177,13 +177,13 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             const store = useStoreState().store;
 
             this.shoppingCartForm = {
-                address: null,
                 cartProducts: [],
                 deliveryDate: '',
                 promotionCode: '',
                 storeId: store.id,
                 tipFlatRate: '0.00',
                 deliveryTimeslot: '',
+                deliveryAddress: null,
                 deliveryMethodId: null,
                 tipPercentageRate: null,
                 tipType: TIP_TYPES.NONE.value,
@@ -471,12 +471,12 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             return this.hasShoppingCart && Object.keys(this.shoppingCart.totals.additionalFees).length > 0;
         },
         hasShoppingCartProducts() {
-            return this.hasShoppingCart && this.shoppingCart.totalsSummary.productLines.totalUncancelled > 0;
+            return this.hasShoppingCart && this.shoppingCart.totalsSummary.orderProducts.totalUncancelled > 0;
         },
         matchingShoppingCartProductLines() {
             if(!this.hasShoppingCart) return [];
             const productIds = Object.keys(this.mappedCartProducts);
-            return this.shoppingCart.productLines.filter((productLine) => productIds.includes(productLine.productId));
+            return this.shoppingCart.orderProducts.filter((productLine) => productIds.includes(productLine.productId));
         },
         totalMatchingShoppingCartProductLines() {
             return this.matchingShoppingCartProductLines.length;

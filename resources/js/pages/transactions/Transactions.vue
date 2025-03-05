@@ -111,7 +111,7 @@
 
                     <!-- Payment Status -->
                     <td class="whitespace-nowrap px-4 py-4">
-                        <BadgeIndicator :type="transaction.paymentStatus.name.toLowerCase() == 'paid' ? 'success' : 'warning'" :text="transaction.paymentStatus.name"></BadgeIndicator>
+                        <Pill :type="transaction.paymentStatus.name.toLowerCase() == 'paid' ? 'success' : 'warning'" :text="transaction.paymentStatus.name"></Pill>
                     </td>
 
                     <!-- Amount -->
@@ -132,7 +132,7 @@
                     <!-- Verified By -->
                     <td class="text-xs text-center text-gray-300">
                         <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                        <BadgeIndicator v-else type="info" :text="appName" :showDot="false"></BadgeIndicator>
+                        <Pill v-else type="info" :text="appName" :showDot="false"></Pill>
                     </td>
 
                     <!-- Requested By -->
@@ -152,7 +152,7 @@
                     <!-- DPO Expiry Date -->
                     <td class="text-xs text-center text-gray-300">
                         <span v-if="transaction._attributes.dpoPaymentLinkHasExpired == null" class="text-xs text-center text-gray-300">---</span>
-                        <BadgeIndicator v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></BadgeIndicator>
+                        <Pill v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></Pill>
                     </td>
 
                     <!-- DPO Expiry Date -->

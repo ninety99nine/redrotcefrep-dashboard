@@ -135,39 +135,40 @@
 
                         <div v-if="productHasFailedUploads(index)" :class="['flex justify-end pt-2', { 'pb-4' : index == products.length - 1 }]">
 
-                            <RetryButton
+                            <Button
                                 size="xs"
-                                class="w-40"
+                                type="warning"
+                                icon="refresh"
                                 :disabled="productIsUploading(index)"
                                 :action="() => uploadProductImages(product)">
-                                <span class="ml-2">Retry Uplaods</span>
-                            </RetryButton>
+                                <span>Retry Uplaods</span>
+                            </Button>
 
                         </div>
 
                         <div v-if="products.length > 1 && !hasCompletedSteps" :class="['flex justify-end pt-2', { 'pb-4' : index == products.length - 1 }]">
 
-                            <DeleteButton
+                            <Button
                                 size="xs"
-                                class="w-40"
+                                icon="delete"
                                 type="danger"
                                 :action="removeProduct"
                                 v-if="!isCreatingProducts">
-                                <span class="ml-2">Remove Product</span>
-                            </DeleteButton>
+                                <span>Remove Product</span>
+                            </Button>
 
                         </div>
 
                         <div v-if="(index == products.length - 1) && !hasReachedProductLimit && !hasCompletedSteps" :class="['flex justify-center pt-4', { 'border-t-2 border-dashed' : products.length > 1 }]">
 
-                            <AddButton
+                            <Button
                                 size="sm"
-                                class="w-40"
-                                type="primary"
+                                icon="add"
+                                type="light"
                                 :action="addProduct"
                                 v-if="index == products.length - 1 && !isCreatingProducts">
-                                Add Product
-                            </AddButton>
+                                <span>Add Product</span>
+                            </Button>
 
                         </div>
 
@@ -239,14 +240,16 @@
                     </p>
                 </div>
 
-                <!-- Continues -->
-                <PrimaryButton
+                <!-- Continue -->
+                <Button
+                    size="md"
                     class="w-full"
+                    type="primary"
                     :action="submit"
                     :loading="isCreatingProducts"
                     :disabled="isCreatingProducts">
-                    Continue
-                </PrimaryButton>
+                    <span>Continue</span>
+                </Button>
 
             </form>
 
@@ -259,22 +262,20 @@
 <script>
 
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { useApiState } from '@Stores/api-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import { useStoreState } from '@Stores/store-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import { postApi } from '@Repositories/api-repository.js';
     import RetryButton from '@Partials/buttons/RetryButton.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
         mixins: [FormMixin],
         components: {
-            TextInput, AddButton, StoreLogo, MoneyInput, RetryButton, DeleteButton, PrimaryButton, FormErrorMessages
+            Button, TextInput, StoreLogo, MoneyInput, RetryButton, FormErrorMessages
         },
         data() {
             return {

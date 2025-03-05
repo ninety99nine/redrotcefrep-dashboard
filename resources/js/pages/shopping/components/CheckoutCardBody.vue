@@ -11,10 +11,10 @@
             <div v-if="isLoadingProducts || isSearchingProducts">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border-b shadow-sm py-6 px-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between">
-                        <LineSkeleton width="w-32"></LineSkeleton>
-                        <LineSkeleton width="w-16"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="w-full flex items-center justify-between">
+                        <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-16" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
             </div>
@@ -39,11 +39,11 @@
                             </span>
                             <div class="space-x-1">
                                 <template v-if="product.allowVariations.name.toLowerCase() == 'yes'">
-                                    <BadgeIndicator type="success" :text="product.totalVisibleVariations+(product.totalVisibleVariations == 1 ? ' option' : ' options')" :showDot="false"></BadgeIndicator>
+                                    <Pill type="success" :text="product.totalVisibleVariations+(product.totalVisibleVariations == 1 ? ' option' : ' options')" :showDot="false"></Pill>
                                 </template>
                                 <template v-else>
-                                    <BadgeIndicator v-if="product.isFree.status" type="success" text="free" :showDot="false"></BadgeIndicator>
-                                    <BadgeIndicator v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></BadgeIndicator>
+                                    <Pill v-if="product.isFree.status" type="success" text="free" :showDot="false"></Pill>
+                                    <Pill v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
                                     <span
                                         v-if="!product.isFree.status"
                                         class="text-sm text-[var(--product-price-color)] group-hover:text-[var(--product-price-color-hover)] transition-colors"
@@ -166,20 +166,19 @@
 
 <script>
 
+import Pill from '@Partials/pills/Pill.vue';
 import { useStoreState } from '@Stores/store-store.js';
-import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
 import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 import { ShoppingCartMixin } from '@Mixins/ShoppingCartMixin.js';
 import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
 import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
 import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
 import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
 
 export default {
     mixins: [ShoppingCartMixin],
-    components: { ShineEffect, LineSkeleton, PrimaryButton, BackdropLoader, BadgeIndicator, CategoryHeading, CategoryOptions },
+    components: { Pill, LineSkeleton, PrimaryButton, BackdropLoader, CategoryHeading, CategoryOptions },
     data() {
         return {
             storeState: useStoreState(),

@@ -18,18 +18,10 @@
 
             <template v-if="hasSearchTerm || hasPages">
 
-                <!-- Add Page Button Skeleton -->
-                <ShineEffect v-if="isLoadingPages">
-                    <ButtonSkeleton class="w-40" size="sm">
-                        <span class="leading-none text-sm">&#65291;</span>
-                        <span class="ml-2">Add Page</span>
-                    </ButtonSkeleton>
-                </ShineEffect>
-
                 <!-- Add Page Button -->
-                <AddButton v-else :action="() => onAddPage()" class="w-40" size="sm">
-                    <span class="ml-2">Add Page</span>
-                </AddButton>
+                <Button type="primary" size="sm" icon="add" :skeleton="isLoadingPages" :action="() => onAddPage()" class="w-40">
+                    <span>Add Page</span>
+                </Button>
 
             </template>
 
@@ -44,10 +36,10 @@
             <div v-if="isLoadingPages" class="space-y-2">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between">
+                    <div class="w-full flex items-center justify-between">
                         <LineSkeleton width="w-32"></LineSkeleton>
                         <LineSkeleton width="w-16"></LineSkeleton>
-                    </ShineEffect>
+                    </div>
                 </div>
 
             </div>
@@ -92,7 +84,7 @@
                             <div class="flex items-center space-x-2">
 
                                 <!-- Visible Status Badge -->
-                                <BadgeIndicator :type="page.visible ? 'success' : 'warning'" :text="page.visible ? 'visible' : 'hidden'" :showDot="false"></BadgeIndicator>
+                                <Pill :type="page.visible ? 'success' : 'warning'" :text="page.visible ? 'visible' : 'hidden'" :showDot="false"></Pill>
 
                             </div>
 
@@ -130,7 +122,7 @@
                                 <p class="text-2xl font-bold">Pages help build your shop</p>
                                 <p class="text-sm">Home, about us, terms and conditions and more are created using pages</p>
                             </div>
-                            <BadgeIndicator type="primary" text="+ Add Page" size="px-8 py-2" :showDot="false" :clickable="true" :action="() => onAddPage()"></BadgeIndicator>
+                            <Pill type="primary" text="+ Add Page" size="px-8 py-2" :showDot="false" :clickable="true" :action="() => onAddPage()"></Pill>
                         </div>
 
                     </div>
@@ -164,26 +156,23 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import { useStoreState } from '@Stores/store-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
         mixins: [FormMixin],
         components: {
-            draggable: VueDraggableNext, AddButton, SearchInput, ConfirmModal, ShineEffect,
-            SpinningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
+            Pill, draggable: VueDraggableNext, SearchInput, ConfirmModal,
+            SpinningLoader, LineSkeleton, PrimaryButton
         },
         props: {
             form: {
@@ -226,9 +215,6 @@
                 this.$router.push({
                     name: 'show-store-page',
                     params: { 'page_href': page._links.showPage }
-                }).then(() => {
-                    // Ensure scroll to top after route navigation
-                    window.scrollTo(0, 0);
                 });
             },
             onAddPage() {

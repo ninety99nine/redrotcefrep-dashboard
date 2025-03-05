@@ -54,16 +54,15 @@
         <div
             :key="index"
             v-for="(deliveryMethodScheduleIncompleteReason, index) in deliveryMethodScheduleIncompleteReasons">
-            <ShineEffect v-if="isInspectingShoppingCart">
-                <LineSkeleton width="w-1/3"></LineSkeleton>
-            </ShineEffect>
 
+            <LineSkeleton v-if="isInspectingShoppingCart" width="w-1/3" :shine="true"></LineSkeleton>
             <div v-else class="flex items-center space-x-1 md:space-x-2">
                 <svg class="w-4 h-4 md:w-6 md:h-6 flex-shrink-0 text-red-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                 </svg>
                 <span class="font-medium text-red-500 text-xs md:text-sm">{{ deliveryMethodScheduleIncompleteReason }}</span>
             </div>
+
         </div>
 
     </div>
@@ -73,7 +72,6 @@
 <script>
 
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
     import DeliveryDatePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryDatePicker.vue';
@@ -82,7 +80,7 @@
     export default {
         mixins: [UtilsMixin],
         components: {
-            ShineEffect, LineSkeleton, DeliveryDatePicker, DeliveryTimePicker
+            LineSkeleton, DeliveryDatePicker, DeliveryTimePicker
         },
         data() {
             return {

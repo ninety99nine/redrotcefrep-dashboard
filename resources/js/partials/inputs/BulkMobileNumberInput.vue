@@ -71,7 +71,7 @@
                             <!-- Prefix content -->
                             <slot name="prefix"></slot>
 
-                            <BadgeIndicator
+                            <Pill
                                 class="h-6"
                                 :key="index"
                                 type="primary"
@@ -87,7 +87,7 @@
                                     </svg>
                                 </div>
 
-                            </BadgeIndicator>
+                            </Pill>
 
                             <AddButton :action="() => showMobileNumber(triggerProps.showModal, null, null)" size="xs" type="light" class="w-48" rounding="rounded-full">
                                 <span class="text-xs">Add Mobile Number</span>
@@ -122,12 +122,12 @@
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { AddButton, BasicModal, DeleteButton, PrimaryButton, MobileNumberInput, BadgeIndicator, FormErrorMessages },
+        components: { AddButton, BasicModal, DeleteButton, PrimaryButton, MobileNumberInput, Pill, FormErrorMessages },
         props: {
             isSubmitting: {
                 type: Boolean,

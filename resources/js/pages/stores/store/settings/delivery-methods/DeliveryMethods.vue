@@ -28,10 +28,10 @@
             <div v-if="isLoadingDeliveryMethods" class="space-y-2">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between">
-                        <LineSkeleton width="w-32"></LineSkeleton>
-                        <LineSkeleton width="w-16"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="w-full flex items-center justify-between">
+                        <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-16" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
             </div>
@@ -56,7 +56,7 @@
                             <div class="flex items-center space-x-2">
 
                                 <!-- Active Status Badge -->
-                                <BadgeIndicator :type="deliveryMethod.active ? 'success' : 'warning'" :text="deliveryMethod.active ? 'Active' : 'Inactive'" :showDot="false"></BadgeIndicator>
+                                <Pill :type="deliveryMethod.active ? 'success' : 'warning'" :text="deliveryMethod.active ? 'Active' : 'Inactive'" :showDot="false"></Pill>
 
                             </div>
                         </div>
@@ -91,7 +91,7 @@
 
                         <div class="space-y-2">
                             <p v-if="hasSearchTerm" class="font-bold">No delivery methods found.</p>
-                            <p>Click the <BadgeIndicator type="primary" text="+ Add Delivery Method" :showDot="false" :clickable="true" :action="() => onAddDeliveryMethod()"></BadgeIndicator> button to offer your customers convenient delivery methods on your store</p>
+                            <p>Click the <Pill type="primary" text="+ Add Delivery Method" :showDot="false" :clickable="true" :action="() => onAddDeliveryMethod()"></Pill> button to offer your customers convenient delivery methods on your store</p>
                         </div>
                     </div>
 
@@ -99,18 +99,10 @@
 
             </template>
 
-            <!-- Add Delivery Method Button Skeleton -->
-            <ShineEffect v-if="isLoadingDeliveryMethods">
-                <ButtonSkeleton size="sm" class="w-full">
-                    <span class="leading-none text-sm">&#65291;</span>
-                    <span class="ml-2">Add Delivery Method</span>
-                </ButtonSkeleton>
-            </ShineEffect>
-
             <!-- Add Delivery Method Button -->
-            <AddButton v-else :action="() => onAddDeliveryMethod()" size="sm" type="light">
+            <Button type="light" size="sm" :skeleton="isLoadingDeliveryMethods" :action="() => onAddDeliveryMethod()" >
                 <span class="ml-2">Add Delivery Method</span>
-            </AddButton>
+            </Button>
 
             <!-- Confirm Delete Delivery Method -->
             <ConfirmModal v-if="deletableDeliveryMethod" approveText="Delete" :approveAction="(hideModal) => deleteDeliveryMethod(hideModal)" :isLoading="isDeleting(deleteDeliveryMethod)">
@@ -137,26 +129,24 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import { useStoreState } from '@Stores/store-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
         mixins: [FormMixin],
         components: {
-            draggable: VueDraggableNext, AddButton, SearchInput, ConfirmModal, ShineEffect,
-            SpinningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
+            Pill, Button, draggable: VueDraggableNext, SearchInput, ConfirmModal,
+            SpinningLoader, LineSkeleton, PrimaryButton
         },
         props: {
             form: {

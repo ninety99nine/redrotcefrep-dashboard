@@ -15,9 +15,7 @@
                 </svg>
             </transition>
         </div>
-        <ShineEffect v-if="isInspectingShoppingCart && shoppingCartForm.promotionCode">
-            <LineSkeleton width="w-1/3"></LineSkeleton>
-        </ShineEffect>
+        <LineSkeleton v-if="isInspectingShoppingCart && shoppingCartForm.promotionCode" width="w-1/3" :shine="true"></LineSkeleton>
         <div v-else-if="hasShoppingCart && promotionCode.applied" class="p-2 border-l-4 border-green-300 bg-green-50">
             <p class="text-sm">{{ promotionCode.message }}</p>
         </div>
@@ -30,15 +28,13 @@
 import { FormMixin } from '@Mixins/FormMixin.js';
 import { useStoreState } from '@Stores/store-store.js';
 import TextInput from '@Partials/inputs/TextInput.vue';
-import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
 import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
 
 
 export default {
     mixins: [FormMixin],
-    components: { TextInput, PrimaryButton, ShineEffect, LineSkeleton },
+    components: { TextInput, LineSkeleton },
     data() {
         return {
             storeState: useStoreState(),

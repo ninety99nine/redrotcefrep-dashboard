@@ -78,10 +78,10 @@
                         </svg>
                         <span>Zone {{ index + 1 }}</span>
                     </div>
-                    <BadgeIndicator v-if="form.postalCodeZones[index].name" type="info" :text="form.postalCodeZones[index].name" :showDot="false"></BadgeIndicator>
+                    <Pill v-if="form.postalCodeZones[index].name" type="info" :text="form.postalCodeZones[index].name" :showDot="false"></Pill>
                     <InputErrorMessage v-else errorText="No name" margin="mt-0"></InputErrorMessage>
 
-                    <BadgeIndicator v-if="form.postalCodeZones[index].fee" type="primary" :text="store.currency.symbol+form.postalCodeZones[index].fee" :showDot="false"></BadgeIndicator>
+                    <Pill v-if="form.postalCodeZones[index].fee" type="primary" :text="store.currency.symbol+form.postalCodeZones[index].fee" :showDot="false"></Pill>
                     <InputErrorMessage v-else errorText="No fee" margin="mt-0"></InputErrorMessage>
                 </div>
 
@@ -113,7 +113,7 @@
                 </svg>
 
                 <div class="text-sm space-y-2">
-                    <p><BadgeIndicator type="primary" text="+ Add Zone" :showDot="false" :clickable="true" :action="onAddPostalCodeZone"></BadgeIndicator> to offer delivery to specific postal codes for a fee</p>
+                    <p><Pill type="primary" text="+ Add Zone" :showDot="false" :clickable="true" :action="onAddPostalCodeZone"></Pill> to offer delivery to specific postal codes for a fee</p>
                 </div>
             </div>
 
@@ -158,13 +158,13 @@
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
         mixins: [FormMixin],
         components: {
-            TextInput, InputTags, AddButton, MoneyInput, UndoButton, DeleteButton, BadgeIndicator, InputErrorMessage
+            TextInput, InputTags, AddButton, MoneyInput, UndoButton, DeleteButton, Pill, InputErrorMessage
         },
         props: {
             form: {

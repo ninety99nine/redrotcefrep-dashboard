@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div v-if="!isLoadingStore">
 
         <!-- General -->
         <General></General>
@@ -46,7 +46,10 @@
         computed: {
             store() {
                 return this.storeState.store;
-            }
+            },
+            isLoadingStore() {
+                return this.storeState.isLoadingStore;
+            },
         },
         methods: {
             setStoreForm() {

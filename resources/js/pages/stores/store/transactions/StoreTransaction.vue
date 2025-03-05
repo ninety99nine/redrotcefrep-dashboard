@@ -11,10 +11,10 @@
 
                 <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
                     <span class="text-2xl font-bold tracking-tight text-gray-300 animate-pulse">Transaction #</span>
-                    <ShineEffect class="flex space-x-2">
-                        <LineSkeleton width="w-12 mt-2"></LineSkeleton>
-                        <LineSkeleton width="w-4 mt-2"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="flex space-x-2">
+                        <LineSkeleton width="w-12" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
                 <div v-else class="flex items-center">
@@ -29,11 +29,11 @@
             </div>
 
             <div v-if="isEditting" class="flex space-x-1 items-center">
-                <ShineEffect v-if="isLoadingTransaction" class="flex space-x-2">
-                    <LineSkeleton width="w-20"></LineSkeleton>
-                    <LineSkeleton width="w-32"></LineSkeleton>
-                    <LineSkeleton width="w-4"></LineSkeleton>
-                </ShineEffect>
+                <div v-if="isLoadingTransaction" class="flex space-x-2">
+                    <LineSkeleton width="w-20" :shine="true"></LineSkeleton>
+                    <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                </div>
                 <template v-else>
                     <span>Created:</span>
                     <span class="font-bold">{{ formattedDatetime(transaction.createdAt) }}</span>
@@ -57,9 +57,9 @@
                 </div>
 
                 <!-- Create Transaction / Save Changes Button -->
-                <PrimaryButton :action="isCreating ? createTransaction : updateTransaction" :loading="isSubmitting">
+                <Button type="primary" size="sm" :action="isCreating ? createTransaction : updateTransaction" :loading="isSubmitting">
                     {{ isCreating ? 'Create Transaction' : 'Save Changes' }}
-                </PrimaryButton>
+                </Button>
 
             </Alert>
 
@@ -77,10 +77,10 @@
                             <!-- Status -->
                             <div class="flex items-center space-x-2">
                                 <span class="text-xs">Status:</span>
-                                <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
-                                    <LineSkeleton width="w-24"></LineSkeleton>
-                                    <LineSkeleton width="w-4"></LineSkeleton>
-                                </ShineEffect>
+                                <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                    <LineSkeleton width="w-20" :shine="true"></LineSkeleton>
+                                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                                </div>
                                 <TransactionPaymentStatus v-else :transaction="transaction"></TransactionPaymentStatus>
                             </div>
 
@@ -90,10 +90,10 @@
                             <!-- Payment Method (When We Don't Have A Failure Reason) -->
                             <div v-if="isLoadingTransaction || !transaction.failureReason" class="flex items-center space-x-2">
                                 <span class="text-xs">Payment Method:</span>
-                                <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
                                     <LineSkeleton width="w-24"></LineSkeleton>
                                     <LineSkeleton width="w-4"></LineSkeleton>
-                                </ShineEffect>
+                                </div>
                                 <div v-else class="flex space-x-1 items-center">
                                     <span class="text-xs font-bold">{{ paymentMethod.name }}</span>
                                     <MoreInfoPopover title="What Is This?" description="This is the payment method used for this transaction" placement="top"></MoreInfoPopover>
@@ -104,13 +104,13 @@
 
                         <div>
 
-                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2 w-full">
-                                <RoundSkeleton size="w-8 h-8 flex-shrink-0"></RoundSkeleton>
+                            <div v-if="isLoadingTransaction" class="flex items-center space-x-2 w-full">
+                                <LineSkeleton width="w-8" height="h-8" :shine="true"></LineSkeleton>
                                 <div class="w-full space-y-2">
-                                    <LineSkeleton width="w-2/3"></LineSkeleton>
-                                    <LineSkeleton width="w-1/3"></LineSkeleton>
+                                    <LineSkeleton width="w-2/3" :shine="true"></LineSkeleton>
+                                    <LineSkeleton width="w-1/3" :shine="true"></LineSkeleton>
                                 </div>
-                            </ShineEffect>
+                            </div>
 
                             <div v-else>
 
@@ -143,10 +143,10 @@
 
                             <!-- Amount & Percentage -->
                             <div class="flex items-end space-x-2">
-                                <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
-                                    <LineSkeleton width="w-40 h-8"></LineSkeleton>
-                                    <LineSkeleton width="w-12 h-6"></LineSkeleton>
-                                </ShineEffect>
+                                <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                    <LineSkeleton width="w-40" height="h-8" :shine="true"></LineSkeleton>
+                                    <LineSkeleton width="w-12" height="h-6" :shine="true"></LineSkeleton>
+                                </div>
                                 <template v-else>
                                     <span class="text-4xl font-bold">{{ transaction.amount.amountWithCurrency }}</span>
                                     <span v-if="transaction.percentage.value != 100" class="text-2xl text-gray-400">({{ transaction.percentage.valueSymbol }})</span>
@@ -166,11 +166,11 @@
 
                                 <!-- Payment Link Expires In -->
                                 <div>
-                                    <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
-                                        <LineSkeleton width="w-40"></LineSkeleton>
-                                        <LineSkeleton width="w-20"></LineSkeleton>
-                                        <LineSkeleton width="w-4"></LineSkeleton>
-                                    </ShineEffect>
+                                    <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                        <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                                        <LineSkeleton width="w-20" :shine="true"></LineSkeleton>
+                                        <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                                    </div>
                                     <div v-else class="flex items-center space-x-2">
                                         <span>Payment Link Expires In: </span>
                                         <Countdown :showMoreInfoPopover="false" :time="transaction.metadata.dpoPaymentUrlExpiresAt" textClass="text-yellow-500 font-bold underline decoration-dashed underline-offset-4"></Countdown>
@@ -179,44 +179,22 @@
                                 </div>
 
                                 <!-- Copy Payment Link & Pay Now Buttons -->
-                                <template v-if="isLoadingTransaction || transaction.metadata.canPayUsingDpo">
-                                    <ShineEffect v-if="isLoadingTransaction" class="flex space-x-2">
-                                        <ButtonSkeleton size="sm">
-                                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" />
-                                            </svg>
-                                            <span class="ml-1">Copy Payment Link</span>
-                                        </ButtonSkeleton>
-                                        <ButtonSkeleton size="sm">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                                            </svg>
-                                            <span>Pay Now</span>
-                                        </ButtonSkeleton>
-                                    </ShineEffect>
-                                    <div v-else class="flex space-x-2">
-                                        <CopyButton type="light" size="sm" :content="transaction.metadata.dpoPaymentUrl">
-                                            <span class="ml-1">Copy Payment Link</span>
-                                        </CopyButton>
-                                        <PrimaryButton :action="openPaymentLinkInNewTab()" type="primary" size="sm">
-                                            <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                                            </svg>
-                                            <span>Pay Now</span>
-                                        </PrimaryButton>
-                                    </div>
-                                </template>
+                                <div v-if="isLoadingTransaction || transaction.metadata.canPayUsingDpo" class="flex space-x-2">
+                                    <Button type="light" size="sm" :skeleton="isLoadingTransaction" :copyContent="transaction.metadata.dpoPaymentUrl">
+                                        <span>Copy Payment Link</span>
+                                    </Button>
+                                    <Button type="primary" size="sm" :skeleton="isLoadingTransaction" :action="openPaymentLinkInNewTab()">
+                                        <span>Pay Now</span>
+                                    </Button>
+                                </div>
 
                             </div>
 
                             <!-- Renew Payment Link Buttons -->
                             <div v-else-if="transaction.metadata && transaction.metadata.dpoPaymentLinkHasExpired" class="flex justify-end">
-                                <PrimaryButton :action="renewTransactionPaymentLink()" type="primary" size="sm" :loading="isRenewingPaymentLink">
-                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                    </svg>
+                                <Button type="primary" size="sm" :action="renewTransactionPaymentLink()" :loading="isRenewingPaymentLink">
                                     <span>Renew Payment Link</span>
-                                </PrimaryButton>
+                                </Button>
                             </div>
 
                         </div>
@@ -243,10 +221,10 @@
                     <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border space-y-2 p-4">
                         <div class="flex items-center space-x-2 text-sm">
                             <span class="whitespace-nowrap">Requester: </span>
-                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
-                                <LineSkeleton width="w-20"></LineSkeleton>
-                                <LineSkeleton width="w-4"></LineSkeleton>
-                            </ShineEffect>
+                            <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <LineSkeleton width="w-20" :shine="true"></LineSkeleton>
+                                <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                            </div>
                             <template v-else>
                                 <span class="font-bold">{{ requestedByUser._attributes.name }}</span>
                                 <MoreInfoPopover title="What Is This?" description="This is the person that requested this transaction" placement="top"></MoreInfoPopover>
@@ -255,10 +233,10 @@
 
                         <div class="flex items-center space-x-2 text-sm">
                             <span class="whitespace-nowrap">Verifyer: </span>
-                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
-                                <LineSkeleton width="w-32"></LineSkeleton>
-                                <LineSkeleton width="w-4"></LineSkeleton>
-                            </ShineEffect>
+                            <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                                <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                            </div>
                             <template v-else>
                                 <span v-if="manuallyVerifiedByUser" class="font-bold">{{ manuallyVerifiedByUser._attributes.name }}</span>
                                 <span v-else class="font-bold">{{ appName }}</span>
@@ -268,12 +246,12 @@
 
                         <div class="flex items-center space-x-2 text-sm">
                             <span class="whitespace-nowrap">Verification Method: </span>
-                            <ShineEffect v-if="isLoadingTransaction" class="flex items-center space-x-2">
-                                <LineSkeleton width="w-20"></LineSkeleton>
-                                <LineSkeleton width="w-4"></LineSkeleton>
-                            </ShineEffect>
+                            <div v-if="isLoadingTransaction" class="flex items-center space-x-2">
+                                <LineSkeleton width="w-20" :shine="true"></LineSkeleton>
+                                <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                            </div>
                             <template v-else>
-                                <BadgeIndicator :type="transaction.verificationType.toLowerCase() == 'automatic' ? 'success' : 'info'" :text="transaction.verificationType" :showDot="false"></BadgeIndicator>
+                                <Pill :type="transaction.verificationType.toLowerCase() == 'automatic' ? 'success' : 'info'" :text="transaction.verificationType" :showDot="false"></Pill>
                                 <MoreInfoPopover title="What Is This?" description="This indicates whether the transaction was verified manually by a person or automatically by the application" placement="top"></MoreInfoPopover>
                             </template>
                         </div>
@@ -289,18 +267,16 @@
                 <!-- Delete Transaction Info -->
                 <div class="flex items-center whitespace-pre">
                     <span>Do you want to permanently delete</span>
-                    <ShineEffect v-if="isLoadingTransaction">
-                        <LineSkeleton width="w-20 mx-2"></LineSkeleton>
-                    </ShineEffect>
+                    <div v-if="isLoadingTransaction">
+                        <LineSkeleton width="w-20 mx-2" :shine="true"></LineSkeleton>
+                    </div>
                     <span v-else class="font-bold text-black"> Transaction #{{ transaction._attributes.number }} </span>
                     <span>? Once this transaction is deleted you will not be able to recover it.</span>
                 </div>
 
                 <div class="flex justify-end">
 
-                    <ButtonSkeleton v-if="isEditting && isLoadingTransaction">Delete Transaction</ButtonSkeleton>
-
-                    <ConfirmModal v-else approveText="Delete Order" :approveAction="deleteTransaction" :isLoading="isDeleting">
+                    <ConfirmModal approveText="Delete Order" :approveAction="deleteTransaction" :isLoading="isDeleting">
 
                         <template #content>
                             <p class="text-lg font-bold border-b border-dashed pb-4 mb-4">Confirm Delete</p>
@@ -310,9 +286,9 @@
                         <template #trigger="triggerProps">
 
                             <!-- Delete Transaction Button - Triggers Confirmation Modal -->
-                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" type="danger">
+                            <Button type="danger" size="sm" :skeleton="isEditting && isLoadingTransaction" :action="triggerProps.showModal" :loading="isDeleting">
                                 Delete Transaction
-                            </PrimaryButton>
+                            </Button>
 
                         </template>
 
@@ -333,6 +309,7 @@
     import isEqual from 'lodash/isEqual';
     import settings from '@Js/settings.js';
     import cloneDeep from 'lodash/cloneDeep';
+    import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
@@ -344,26 +321,21 @@
     import Countdown from '@Partials/countdowns/Countdown.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
-    import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import TransactionOwner from '@Components/transaction/TransactionOwner.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
+    import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import TransactionCustomer from '@Components/transaction/TransactionCustomer.vue';
-    import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import TransactionFailureType from '@Components/transaction/TransactionFailureType.vue';
     import TransactionPaymentStatus from '@Components/transaction/TransactionPaymentStatus.vue';
 
     export default {
         mixins: [UtilsMixin, FormMixin],
         components: {
-            Alert, TextHeader, BackButton, CopyButton, Countdown, ExternalLink, ConfirmModal, ShineEffect, LineSkeleton, PrimaryButton,
-            RoundSkeleton, ButtonSkeleton, MoreInfoPopover, BadgeIndicator, TransactionOwner,
-            FormErrorMessages, TransactionFailureType, TransactionCustomer, TransactionPaymentStatus
+            Pill, Alert, TextHeader, BackButton, CopyButton, Countdown, ExternalLink, ConfirmModal, LineSkeleton,
+            MoreInfoPopover, TransactionOwner, FormErrorMessages, TransactionFailureType, TransactionCustomer,
+            TransactionPaymentStatus
         },
         data() {
             return {

@@ -1,16 +1,13 @@
 <template>
 
-    <nav :class="['flex items-center flex-column flex-wrap md:flex-row', showResultTotals ? 'justify-between' : 'justify-end']" aria-label="Table navigation">
-        <span v-if="showResultTotals" class="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.from }}-{{ pagination.to }}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.total }}</span></span>
-        <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
-            <li v-for="(link, index) in pagination.links" :key="index">
-                <a :href="link.url ?? '#'" @click.prevent="onClick(link)" :disabled="isDisabled(link)" :class="getLinkClass(index, link)">
-                    <span v-html="link.label"></span>
-                </a>
-            </li>
+    <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+        <li v-for="(link, index) in pagination.links" :key="index">
+            <a :href="link.url ?? '#'" @click.prevent="onClick(link)" :disabled="isDisabled(link)" :class="getLinkClass(index, link)">
+                <span v-html="link.label"></span>
+            </a>
+        </li>
 
-        </ul>
-    </nav>
+    </ul>
 
 </template>
 
@@ -22,11 +19,6 @@
         props: {
             pagination: {
                 type: Object
-            }
-        },
-        computed: {
-            showResultTotals() {
-                return this.pagination.from && this.pagination.to && this.pagination.total;
             }
         },
         methods: {
@@ -45,17 +37,17 @@
                 //  If first link
                 if(index == 0) {
 
-                    classes = 'flex items-center justify-center px-3 h-8 ms-0 leading-tight border rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+                    classes = 'flex items-center justify-center whitespace-nowrap px-3 h-8 ms-0 leading-tight border rounded-s-lg dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
 
                 //  If last link
                 }else if(index == this.pagination.links.length - 1) {
 
-                    classes = 'flex items-center justify-center px-3 h-8 leading-tight border rounded-e-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+                    classes = 'flex items-center justify-center whitespace-nowrap px-3 h-8 leading-tight border rounded-e-lg hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
 
                 //  If in-between link
                 }else{
 
-                    classes = 'flex items-center justify-center px-3 h-8 leading-tight border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+                    classes = 'flex items-center justify-center whitespace-nowrap px-3 h-8 leading-tight border dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
 
                 }
 

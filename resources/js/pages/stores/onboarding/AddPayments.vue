@@ -152,26 +152,27 @@
                 <transition name="fade-1" mode="out-in">
 
                     <!-- Continue -->
-                    <PrimaryButton
+                    <Button
+                        size="md"
                         class="w-full"
+                        type="primary"
                         :action="submitPaymentMethods"
                         :loading="isSubmittingPaymentMethods"
                         v-if="hasSelectedPaymentMethods || hasAssociatedPaymentMethods"
                         :disabled="isLoadingAssociatedPaymentMethods || isLoadingUnassociatedPaymentMethods || isSubmittingPaymentMethods || hasPaymentMethodValidationErrors">
-                        Continue
-                    </PrimaryButton>
+                        <span>Continue</span>
+                    </Button>
 
                     <!-- Skip -->
-                    <PrimaryButton
+                    <Button
                         v-else
-                        type="light"
+                        size="md"
                         class="w-40"
+                        type="light"
+                        icon="short-right-arrow"
                         :action="navigateToAddSocials">
                         <span>Skip</span>
-                        <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                        </svg>
-                    </PrimaryButton>
+                    </Button>
 
                 </transition>
 
@@ -185,14 +186,14 @@
 
 <script>
 
+    import Button from '@Partials/buttons/Button.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useOnboardingState } from '@Stores/onboarding-store.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import PaymentMethodConfigInputs from '@Pages/stores/onboarding/PaymentMethodConfigInputs/Index.vue';
 
     export default {
-        components: { StoreLogo, PrimaryButton, ToogleSwitch, PaymentMethodConfigInputs },
+        components: { Button, StoreLogo, ToogleSwitch, PaymentMethodConfigInputs },
         data() {
             return {
                 uploadsFailedBefore: false,

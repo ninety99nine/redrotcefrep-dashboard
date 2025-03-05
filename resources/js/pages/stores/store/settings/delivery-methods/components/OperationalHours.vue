@@ -3,8 +3,8 @@
 
         <!-- Tools -->
         <div class="flex justify-end space-x-2 p-4 border rounded-lg bg-white">
-            <BadgeIndicator type="primary" text="+ Bulk Add Timeslots" :showDot="false" :clickable="true" :action="showBulkAddTimeslotsModal"></BadgeIndicator>
-            <BadgeIndicator type="primary" text="Reset Timeslots" :showDot="false" :clickable="true" :action="showBulkResetTimeslotsModal"></BadgeIndicator>
+            <Pill type="primary" text="+ Bulk Add Timeslots" :showDot="false" :clickable="true" :action="showBulkAddTimeslotsModal"></Pill>
+            <Pill type="primary" text="Reset Timeslots" :showDot="false" :clickable="true" :action="showBulkResetTimeslotsModal"></Pill>
         </div>
 
         <div v-for="(operationalHour, index) in form.operationalHours" :key="index" :class="[{ 'border-t' : index != 0 }, index == form.operationalHours.length - 1 ? 'border-b pb-4' : 'pb-4', 'border-blue-200 border-dashed hover:bg-blue-100 pt-4 grid grid-cols-2 gap-4 items-start']">
@@ -50,12 +50,12 @@
                 <div class="flex space-x-1 items-center mt-2">
 
                     <!-- Total Timeslots Badge -->
-                    <BadgeIndicator
+                    <Pill
                         type="success"
                         :showDot="false"
                         class="border border-green-200"
                         :text="timeslots[index].length+' '+(timeslots[index].length == 1 ? 'timeslot' : 'timeslots')">
-                    </BadgeIndicator>
+                    </Pill>
 
                     <!-- Timeslot Options -->
                     <MoreInfoPopover :title="days[index]+' timeslots'" placement="top">
@@ -191,12 +191,12 @@
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
 
     export default {
         mixins: [FormMixin],
         components: {
-            TimeInput, Checkbox, ConfirmModal, PrimaryButton, MoreInfoPopover, BadgeIndicator
+            TimeInput, Checkbox, ConfirmModal, PrimaryButton, MoreInfoPopover, Pill
         },
         props: {
             form: {

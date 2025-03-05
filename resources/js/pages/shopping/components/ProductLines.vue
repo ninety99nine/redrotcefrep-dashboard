@@ -10,8 +10,8 @@
                 <div class="w-full">
                     <p class="text-sm">{{ productLine.name }}</p>
                     <div class="space-x-1">
-                        <BadgeIndicator v-if="productLine.isFree.status" type="success" text="free" :showDot="false"></BadgeIndicator>
-                        <BadgeIndicator v-if="productLine.onSale.status" type="success" text="on sale" :showDot="false"></BadgeIndicator>
+                        <Pill v-if="productLine.isFree.status" type="success" text="free" :showDot="false"></Pill>
+                        <Pill v-if="productLine.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
                         <span v-if="!productLine.isFree.status" class="text-sm text-gray-500">{{ productLine.unitPrice.amountWithCurrency }}</span>
                     </div>
                 </div>
@@ -61,10 +61,10 @@
             <div v-if="isInspectingShoppingCart">
 
                 <div v-for="(_, index) in productLinePlaceholders" :key="index" class="border-b shadow-sm py-6 px-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between">
-                        <LineSkeleton width="w-32"></LineSkeleton>
-                        <LineSkeleton width="w-16"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="w-full flex items-center justify-between">
+                        <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-16" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
             </div>
@@ -83,15 +83,14 @@
 
 <script>
 
-import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
+import Pill from '@Partials/pills/Pill.vue';
 import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 import { ShoppingCartMixin } from '@Mixins/ShoppingCartMixin.js';
 import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
 
 export default {
     mixins: [ShoppingCartMixin],
-    components: { ShineEffect, LineSkeleton, BadgeIndicator },
+    components: { Pill, LineSkeleton },
     data() {
         return {
             shoppingCartState: useShoppingCartState(),

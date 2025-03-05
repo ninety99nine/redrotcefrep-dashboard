@@ -7,15 +7,11 @@
             <div class="col-span-1">
 
                 <!-- Text Heading -->
-                <ShineEffect v-if="isLoadingStore">
-                    <LineSkeleton width="w-32" height="h-4"></LineSkeleton>
-                </ShineEffect>
+                <LineSkeleton v-if="isLoadingStore" width="w-32" height="h-4" :shine="true"></LineSkeleton>
                 <TextHeader v-else>{{ store._attributes.nameWithEmoji }}</TextHeader>
 
                 <!-- Description -->
-                <ShineEffect v-if="isLoadingStore" class="mt-4">
-                    <LineSkeleton width="w-40"></LineSkeleton>
-                </ShineEffect>
+                <LineSkeleton v-if="isLoadingStore" width="w-40" :shine="true"></LineSkeleton>
                 <p v-else-if="store.description" class="mt-2">{{ store.description }}</p>
 
                 <template v-if="$route.name != 'show-store-home'">
@@ -32,9 +28,7 @@
                                 <!-- Quick Start Guide (Instructions) -->
                                 <p class="text-sm text-gray-500">Let's continue setting up your store</p>
 
-                                <ShineEffect v-if="isLoadingStore">
-                                    <LineSkeleton width="w-32" height="h-4"></LineSkeleton>
-                                </ShineEffect>
+                                <LineSkeleton v-if="isLoadingStore" width="w-32" height="h-4" :shine="true"></LineSkeleton>
 
                                 <!-- Quick Start Guide (Progress) -->
                                 <StoreQuickStartGuideProgress v-else></StoreQuickStartGuideProgress>
@@ -90,7 +84,6 @@
     import { useStoreState } from '@Stores/store-store.js';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import { getApi } from '@Repositories/api-repository.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
@@ -99,7 +92,7 @@
 
     export default {
         mixins: [FormMixin],
-        components: { Alert, TextHeader, ShineEffect, LineSkeleton, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
+        components: { Alert, TextHeader, LineSkeleton, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
         data() {
             return {
                 storeState: useStoreState(),

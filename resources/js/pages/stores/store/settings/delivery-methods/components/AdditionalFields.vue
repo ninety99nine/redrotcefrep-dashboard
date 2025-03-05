@@ -287,7 +287,7 @@
                                 <span v-if="additionalField.question">{{ additionalField.question }}</span>
                                 <InputErrorMessage v-else errorText="No question asked" margin="mt-0"></InputErrorMessage>
 
-                                <BadgeIndicator v-if="additionalField.required" type="primary" text="required" :showDot="false"></BadgeIndicator>
+                                <Pill v-if="additionalField.required" type="primary" text="required" :showDot="false"></Pill>
 
                             </div>
 
@@ -362,7 +362,7 @@
                     <span>{{ deletableAdditionalField.question }}</span>
 
                 </div>
-                <p class="mb-8">Are you sure you want to delete this <BadgeIndicator type="primary" :text="deletableAdditionalField.type" :showDot="false"></BadgeIndicator> field?</p>
+                <p class="mb-8">Are you sure you want to delete this <Pill type="primary" :text="deletableAdditionalField.type" :showDot="false"></Pill> field?</p>
             </template>
 
             <template #trigger="triggerProps">
@@ -395,7 +395,7 @@
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import CaptureAdditionalFieldsToogleSwitch from '@Pages/stores/store/settings/delivery-methods/components/CaptureAdditionalFieldsToogleSwitch.vue';
 
@@ -403,7 +403,7 @@
         mixins: [FormMixin],
         components: {
             draggable: VueDraggableNext, TextInput, AddButton, MoneyInput, Checkbox, UndoButton,
-            SelectInput, ConfirmModal, NumberInput, TextareaInput, PrimaryButton, BadgeIndicator,
+            SelectInput, ConfirmModal, NumberInput, TextareaInput, PrimaryButton, Pill,
             InputErrorMessage, CaptureAdditionalFieldsToogleSwitch
         },
         props: {

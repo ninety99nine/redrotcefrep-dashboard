@@ -20,27 +20,23 @@
                     <div class="w-full flex items-center space-x-4">
 
                         <!-- Social Platform Logo -->
-                        <RoundSkeleton v-if="isLoadingStore" size="w-8 h-8 flex-shrink-0"></RoundSkeleton>
+                        <LineSkeleton v-if="isLoadingStore" width="w-8" height="h-8" :shine="true"></LineSkeleton>
                         <img v-else :src="`/images/social-icons/${socialPlatform.name.toLowerCase()}.png`" :alt="`${socialPlatform.name} Logo`" class="w-8 h-8" />
 
                         <!-- Social Platform Name -->
                         <div class="w-full space-y-1 text-sm">
 
-                            <ShineEffect v-if="isLoadingStore" class="w-full">
-                                <LineSkeleton width="w-1/3"></LineSkeleton>
-                            </ShineEffect>
+                            <LineSkeleton v-if="isLoadingStore" width="w-1/3" :shine="true"></LineSkeleton>
                             <p v-else class="font-bold">{{ socialPlatform.name }}</p>
 
-                            <ShineEffect v-if="isLoadingStore">
-                                <LineSkeleton width="w-4/5"></LineSkeleton>
-                            </ShineEffect>
+                            <LineSkeleton v-if="isLoadingStore" width="w-4/5" :shine="true"></LineSkeleton>
                             <p v-else class="text-xs">{{ socialPlatform.description }}</p>
 
                         </div>
 
                     </div>
 
-                    <RoundSkeleton v-if="isLoadingStore" size="w-5 h-5 flex-shrink-0"></RoundSkeleton>
+                    <LineSkeleton v-if="isLoadingStore" width="w-5" height="h-5" :shine="true"></LineSkeleton>
                     <div v-else class="rounded-md border p-1 border-transparent hover:border-gray-300 hover:bg-gray-50">
                         <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
@@ -59,13 +55,11 @@
 <script>
 
     import { useStoreState } from '@Stores/store-store.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
 
     export default {
         components: {
-            ShineEffect, LineSkeleton, RoundSkeleton
+            LineSkeleton
         },
         data() {
             return {

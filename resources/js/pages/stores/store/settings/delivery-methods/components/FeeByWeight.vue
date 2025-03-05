@@ -76,7 +76,7 @@
                         </svg>
                         <span>Category {{ index + 1 }}</span>
                     </div>
-                    <BadgeIndicator v-if="form.weightCategories[index].name" type="info" :text="form.weightCategories[index].name" :showDot="false"></BadgeIndicator>
+                    <Pill v-if="form.weightCategories[index].name" type="info" :text="form.weightCategories[index].name" :showDot="false"></Pill>
                     <InputErrorMessage v-else errorText="No name" margin="mt-0"></InputErrorMessage>
                 </div>
 
@@ -102,7 +102,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
                 <div class="text-sm space-y-2">
-                    <p><BadgeIndicator type="primary" text="+ Add Category" :showDot="false" :clickable="true" :action="onAddWeightCategory"></BadgeIndicator> to define weight categories.</p>
+                    <p><Pill type="primary" text="+ Add Category" :showDot="false" :clickable="true" :action="onAddWeightCategory"></Pill> to define weight categories.</p>
                 </div>
             </div>
         </div>
@@ -141,13 +141,13 @@
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
         mixins: [FormMixin],
         components: {
-            TextInput, InputTags, AddButton, MoneyInput, UndoButton, DeleteButton, BadgeIndicator, InputErrorMessage
+            TextInput, InputTags, AddButton, MoneyInput, UndoButton, DeleteButton, Pill, InputErrorMessage
         },
         props: {
             form: {

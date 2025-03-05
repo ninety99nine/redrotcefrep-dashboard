@@ -7,7 +7,7 @@
             <span class="text-xs text-white sm:font-bold px-1">
                 <transition name="fade-1" mode="out-in">
                     <span v-if="isInspectingShoppingCart">...</span>
-                    <span v-else>{{ shoppingCart.totalsSummary.productLines.totalUncancelledQuantities }}</span>
+                    <span v-else>{{ shoppingCart.totalsSummary.orderProducts.totalUncancelledQuantities }}</span>
                 </transition>
             </span>
         </div>

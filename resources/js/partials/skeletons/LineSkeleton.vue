@@ -1,18 +1,41 @@
 <template>
-    <div :class="[width, height, 'bg-gray-200 rounded-full dark:bg-gray-700']"></div>
+
+    <component :is="shine ? 'ShineEffect' : 'div'" :class="[width, height, rounded, $attrs.class, 'overflow-hidden']">
+
+        <div :class="['w-full h-full', color]"></div>
+
+    </component>
+
 </template>
 
 <script>
-export default {
-    props: {
-        width: {
-            type: String,
-            default: 'w-full'
-        },
-        height: {
-            type: String,
-            default: 'h-2'
+
+    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
+
+    export default {
+        components: { ShineEffect },
+        props: {
+            width: {
+                type: String,
+                default: 'w-full'
+            },
+            height: {
+                type: String,
+                default: 'h-2'
+            },
+            color: {
+                type: String,
+                default: 'bg-gray-200'
+            },
+            rounded: {
+                type: String,
+                default: 'rounded-full'
+            },
+            shine: {
+                type: Boolean,
+                default: true
+            }
         }
-    }
-};
+    };
+
 </script>

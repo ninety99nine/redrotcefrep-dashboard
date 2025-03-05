@@ -7,6 +7,7 @@ const settings = {
     appApiHomeUrl: 'https://api.perfectorder.shop/api/v1',
     ipInfoToken: '5ba07135c66b10',   //  https://ipinfo.io
     googleMapsApiKey: 'AIzaSyCPngHv_IoenvkBbb3xoUNBcikiyUZiaxg',
+    telcofloLaunchUssdUrl: 'https://www.telcoflo.dev/api/launch/ussd',
     tinyMceApiKey: 'ax4qmwxf45omdfc49tc3onybsivglnuer9won3nuaidigr9k',
 }
 

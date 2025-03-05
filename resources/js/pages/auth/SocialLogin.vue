@@ -11,9 +11,7 @@
             <transition name="fade-1" mode="out-in">
 
                 <!-- Logo Placeholder -->
-                <ShineEffect v-if="isLoadingLogo" class="rounded-full">
-                    <RoundSkeleton color="bg-gray-200" size="w-20 h-20" class="border border-gray-300"></RoundSkeleton>
-                </ShineEffect>
+                <LineSkeleton v-if="isLoadingLogo" width="w-20" height="h-20" color="bg-gray-200" class="border border-gray-300"></LineSkeleton>
 
                 <!-- Logo -->
                 <img v-else :src="logoUrl" alt="Social Logo" class="w-20 h-20 relative" />
@@ -47,14 +45,12 @@
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useAuthState } from '@Stores/auth-store.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import { socialLogin } from '@Repositories/auth-repository.js';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { ShineEffect, RoundSkeleton, FormErrorMessages },
+        components: { FormErrorMessages },
         data() {
             return {
                 countdown: 5,
@@ -107,10 +103,7 @@
                 socialLogin(this.accessToken).then(response => {
 
                     if(response.status == 200) {
-
-                        // Redirect to the dashboard
                         this.$router.replace({ name: 'show-stores'});
-                        this.showSuccessfulNotification('Welcome back '+this.authState.user.firstName);
                     }
 
                 }).catch(errorException => {

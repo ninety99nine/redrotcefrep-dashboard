@@ -24,10 +24,10 @@
             <div v-if="isLoadingSocialMediaIcons" class="space-y-2">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center space-x-2">
-                            <LineSkeleton width="w-8"></LineSkeleton>
-                            <LineSkeleton width="w-40"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="w-full flex items-center space-x-2">
+                        <LineSkeleton width="w-8" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
             </div>
@@ -143,7 +143,6 @@
     import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicModal from '@Partials/modals/BasicModal.vue';
     import { getApi } from '@Repositories/api-repository.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
@@ -153,8 +152,7 @@
         mixins: [FormMixin, UtilsMixin],
         components: {
             draggable: VueDraggableNext, TextInput, AddButton, BasicModal,
-            ShineEffect, LineSkeleton, PrimaryButton, FormErrorMessages,
-            SaveChangesAlert
+            LineSkeleton, PrimaryButton, FormErrorMessages, SaveChangesAlert
         },
         data() {
             return {

@@ -13,10 +13,8 @@
                 <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
                 <div v-if="isLoadingDeliveryMethod" class="flex items-center space-x-2">
-                    <ShineEffect class="flex space-x-2">
-                        <LineSkeleton width="w-40 mt-2"></LineSkeleton>
-                        <LineSkeleton width="w-4 mt-2"></LineSkeleton>
-                    </ShineEffect>
+                    <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
                 </div>
 
                 <template v-else>
@@ -127,7 +125,6 @@
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import BackButton from '@Partials/buttons/BackButton.vue';
     import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
@@ -151,7 +148,7 @@
     export default {
         mixins: [FormMixin],
         components: {
-            Alert, TextHeader, BackButton, UndoButton, ShineEffect, PrimaryButton, LineSkeleton, MoreInfoPopover, BackdropLoader,
+            Alert, TextHeader, BackButton, UndoButton, PrimaryButton, LineSkeleton, MoreInfoPopover, BackdropLoader,
             FormErrorMessages, Schedule, ChargeFee, NameTextInput, ActiveToggleSwitch, AdditionalFields, DescriptionTextarea,
             DeleteDeliveryMethod, AskForAnAddressCheckbox, PinLocationOnMapCheckbox, QualifyOnMinimumGrandTotal, SetDailyOrderLimitCheckbox,
             OfferFreeDeliveryOnMinimumGrandTotal

@@ -7,7 +7,7 @@
         <template v-else>
             <div class="flex flex-wrap gap-2 justify-center py-8">
                 <!-- Modes -->
-                <BadgeIndicator
+                <Pill
                     :key="index"
                     size="px-4 py-2"
                     :showDot="false"
@@ -21,7 +21,7 @@
                             <path :d="modeIcons[mode.value].path" />
                         </svg>
                     </template>
-                </BadgeIndicator>
+                </Pill>
             </div>
 
             <!-- Undo, Redo, and History -->
@@ -132,14 +132,14 @@ import { UtilsMixin } from '@Mixins/UtilsMixin.js';
 import { usePageState } from "@Stores/page-store.js";
 import Dropdown from "@Partials/dropdowns/Dropdown.vue";
 import SaveChanges from '@Partials/save-changes/SaveChanges.vue';
-import BadgeIndicator from "@Partials/badge-indicators/BadgeIndicator.vue";
+import Pill from "@Partials/pills/Pill.vue";
 import PageSections from "@Pages/stores/store/pages/components/page-sections/PageSections.vue";
 import PageEditorDrawer from "@Pages/stores/store/pages/components/page-editor-drawer/PageEditorDrawer.vue";
 
 export default {
     mixins: [UtilsMixin],
     components: {
-        Dropdown, SaveChanges, BadgeIndicator, PageSections, PageEditorDrawer
+        Dropdown, SaveChanges, Pill, PageSections, PageEditorDrawer
     },
     data() {
         return {

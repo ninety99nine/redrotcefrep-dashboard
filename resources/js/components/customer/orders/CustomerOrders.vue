@@ -90,17 +90,17 @@
 
                     <!-- Status -->
                     <td class="whitespace-nowrap px-4 py-4">
-                        <OrderStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></OrderStatus>
+                        <Status :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></Status>
                     </td>
 
                     <!-- Payment Status -->
                     <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
-                        <OrderPaymentStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></OrderPaymentStatus>
+                        <PaymentStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></PaymentStatus>
                     </td>
 
                     <!-- Collection Status -->
                     <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
-                        <OrderCollectionStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></OrderCollectionStatus>
+                        <CollectionStatus :order="order" moreInfoPopoverClasses="opacity-0 group-hover:opacity-100"></CollectionStatus>
                     </td>
 
                     <!-- Grand Total -->
@@ -246,23 +246,23 @@
     import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
-    import OrderStatus from '@Components/order/OrderStatus.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import OrderPaymentStatus from '@Components/order/OrderPaymentStatus.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
-    import OrderCollectionStatus from '@Components/order/OrderCollectionStatus.vue';
+    import Status from '@Pages/stores/store/orders/order/components/OrderHeader/Status.vue';
+    import PaymentStatus from '@Pages/stores/store/orders/order/components/OrderHeader/PaymentStatus.vue';
+    import CollectionStatus from '@Pages/stores/store/orders/order/components/OrderHeader/CollectionStatus.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            TextHeader, AddButton, BasicTable, Checkbox, OrderStatus, ConfirmModal, SpinningLoader,
-            PrimaryButton, MoreInfoPopover, ToogleSwitch, OrderPaymentStatus, NoDataPlaceholder,
-            OrderCollectionStatus
+            TextHeader, AddButton, BasicTable, Checkbox, Status, ConfirmModal, SpinningLoader,
+            PrimaryButton, MoreInfoPopover, ToogleSwitch, PaymentStatus, NoDataPlaceholder,
+            CollectionStatus
         },
         props: {
             customer: {

@@ -79,12 +79,12 @@
 
     import { usePageState } from '@Stores/page-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import SectionRows from '@Pages/stores/store/pages/components/section-rows/SectionRows.vue';
 
     export default {
         components: {
-            draggable: VueDraggableNext, BadgeIndicator, SectionRows
+            draggable: VueDraggableNext, Pill, SectionRows
         },
         data() {
             return {

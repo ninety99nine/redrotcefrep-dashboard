@@ -30,13 +30,13 @@
 
         <div v-if="totalWorkflowSteps < maxWorkflowSteps" class="flex justify-center mb-16">
 
-            <BadgeIndicator
+            <Pill
                 type="primary"
                 :showDot="false"
                 size="px-8 py-2"
                 :clickable="true" :action="() => addWorkflowStep()"
                 :text="hasWorkflowSteps ? (totalWorkflowSteps == (maxWorkflowSteps - 1) ? '+ Finally this' : '+ Then this') : '+ Do this'">
-            </BadgeIndicator>
+            </Pill>
 
         </div>
 
@@ -66,12 +66,12 @@
     import { VueDraggableNext } from 'vue-draggable-next';
     import { useWorkflowState } from '@Stores/workflow-store.js';
     import { getApi, postApi } from '@Repositories/api-repository.js';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import WorkflowStep from '@Pages/stores/store/settings/workflows/components/workflow-step/WorkflowStep.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { Alert, draggable: VueDraggableNext, BadgeIndicator, WorkflowStep },
+        components: { Alert, draggable: VueDraggableNext, Pill, WorkflowStep },
         data() {
             return {
                 maxWorkflowSteps: 5,

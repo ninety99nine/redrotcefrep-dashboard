@@ -5,13 +5,11 @@
         <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
-            <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
+            <Button type="light" size="sm" class="w-16 mr-4" :action="goBack"></Button>
 
             <div v-if="isLoadingProduct" class="flex items-center space-x-2">
-                <ShineEffect class="flex space-x-2">
-                    <LineSkeleton width="w-40 mt-2"></LineSkeleton>
-                    <LineSkeleton width="w-4 mt-2"></LineSkeleton>
-                </ShineEffect>
+                <LineSkeleton width="w-40"></LineSkeleton>
+                <LineSkeleton width="w-4"></LineSkeleton>
             </div>
 
             <template v-else>
@@ -219,9 +217,9 @@
                                         <template v-else-if="form.allowVariations">Add Options</template>
                                         <template v-else>Have Options?</template>
                                     </h1>
-                                    <p v-if="hasVariantAttributes">Click the <BadgeIndicator type="primary" text="Create Variations" :showDot="false"></BadgeIndicator> button to create different variations of your product e.g different sizes, materials, colors, etc</p>
-                                    <p v-else-if="form.allowVariations">Click the <BadgeIndicator type="primary" text="+ Add Option" :showDot="false"></BadgeIndicator> button to add different variations of your product e.g different sizes, materials, colors, etc</p>
-                                    <p v-else>Turn on <BadgeIndicator type="primary" text="Allow variations" :showDot="false"></BadgeIndicator> if you want your product to support variations (different versions of itself e.g different sizes, materials, colors, etc)</p>
+                                    <p v-if="hasVariantAttributes">Click the <Pill type="primary" text="Create Variations" :showDot="false"></Pill> button to create different variations of your product e.g different sizes, materials, colors, etc</p>
+                                    <p v-else-if="form.allowVariations">Click the <Pill type="primary" text="+ Add Option" :showDot="false"></Pill> button to add different variations of your product e.g different sizes, materials, colors, etc</p>
+                                    <p v-else>Turn on <Pill type="primary" text="Allow variations" :showDot="false"></Pill> if you want your product to support variations (different versions of itself e.g different sizes, materials, colors, etc)</p>
 
                                     <!-- Allow Variations Toggle Switch -->
                                     <ToogleSwitch
@@ -256,7 +254,7 @@
                                     </svg>
 
                                     <!-- Delete Product Button -->
-                                    <DeleteButton :action="() => onRemoveVariantAttribute(index)" size="xs" type="danger"></DeleteButton>
+                                    <Button type="danger" size="xs" :action="() => onRemoveVariantAttribute(index)"></Button>
 
                                 </div>
 
@@ -325,9 +323,9 @@
                             <div class="flex justify-end space-x-2">
 
                                 <!-- Undo Button -->
-                                <UndoButton v-if="variantAttributesHaveChanged && hasOriginalVariantAttributes" :action="onResetVariantAttributes" size="xs">
-                                    <span class="ml-1">Undo</span>
-                                </UndoButton>
+                                <Button primary="light" size="xs" v-if="variantAttributesHaveChanged && hasOriginalVariantAttributes" :action="onResetVariantAttributes">
+                                    <span>Undo</span>
+                                </Button>
 
                                 <div class="flex justify-end">
 
@@ -336,9 +334,9 @@
                                         <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                                             <div v-if="!hasVariantAttributes" class="animate-bounce text-4xl">👆</div>
                                         </div>
-                                        <AddButton :action="onAddVariantAttribute" :class="hasVariantAttributes ? 'w-48' : 'w-40'" size="xs">
+                                        <Button type="primary" size="xs" :action="onAddVariantAttribute" :class="hasVariantAttributes ? 'w-48' : 'w-40'">
                                             <span class="ml-2">{{ hasVariantAttributes ? 'Add Another Option' : 'Add Option' }}</span>
-                                        </AddButton>
+                                        </Button>
                                     </div>
 
                                 </div>
@@ -348,12 +346,9 @@
                                     <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                                         <div v-if="!isCreatingVariations" class="animate-bounce text-4xl">👆</div>
                                     </div>
-                                    <PrimaryButton :action="() => product ? createProductVariations() : createProduct()" :loading="isCreatingVariations" class="w-40" size="xs" type="primary">
-                                        <svg class="w-3 h-3 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
-                                        </svg>
+                                    <Button type="primary" size="xs" :action="() => product ? createProductVariations() : createProduct()" :loading="isCreatingVariations" class="w-40">
                                         Create Variations
-                                    </PrimaryButton>
+                                    </Button>
                                 </div>
 
                             </div>
@@ -505,6 +500,7 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
+    import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
@@ -512,25 +508,18 @@
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import TextHeader from '@Partials/texts/TextHeader.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
-    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
-    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
@@ -539,9 +528,9 @@
     export default {
         mixins: [UtilsMixin, FormMixin],
         components: {
-            Alert, TextInput, TextHeader, MoneyInput, InputTags, AddButton, UndoButton, BackButton, NumberInput, SelectInput,
-            ConfirmModal, ShineEffect, DeleteButton, TextareaInput, SpinningLoader, PrimaryButton, LineSkeleton, MoreInfoPopover,
-            BackdropLoader, ToogleSwitch, BadgeIndicator, FormErrorMessages, InputErrorMessage, ProductVariations
+            Pill, Alert, TextInput, TextHeader, MoneyInput, InputTags, NumberInput, SelectInput,ConfirmModal,
+            TextareaInput, SpinningLoader, PrimaryButton, LineSkeleton, MoreInfoPopover, BackdropLoader,
+            ToogleSwitch, FormErrorMessages, InputErrorMessage, ProductVariations
         },
         data() {
             return {

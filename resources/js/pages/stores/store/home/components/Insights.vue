@@ -42,15 +42,11 @@
             <div class="flex flex-col items-center space-y-1 mb-8">
 
                 <!-- Insight Title -->
-                <ShineEffect v-if="isLoadingStoreInsights">
-                    <LineSkeleton width="w-24"></LineSkeleton>
-                </ShineEffect>
+                <LineSkeleton v-if="isLoadingStoreInsights" width="w-24" :shine="true"></LineSkeleton>
                 <h1 v-else class="font-bold">{{ insight.title }}</h1>
 
                 <!-- Insight Description -->
-                <ShineEffect v-if="isLoadingStoreInsights">
-                    <LineSkeleton width="w-60"></LineSkeleton>
-                </ShineEffect>
+                <LineSkeleton v-if="isLoadingStoreInsights" width="w-60" :shine="true"></LineSkeleton>
                 <p v-else class="text-sm text-gray-400">{{ insight.description }}</p>
 
             </div>
@@ -63,9 +59,7 @@
                     <!-- Category Insight -->
                     <div class="flex flex-col items-center space-y-2">
 
-                        <ShineEffect v-if="isLoadingStoreInsights">
-                            <RoundSkeleton size="w-8 h-8"></RoundSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingStoreInsights" width="w-8" height="h-8" :shine="true"></LineSkeleton>
 
                         <!-- Icon -->
                         <svg v-else-if="categoryInsight.type == 'total_sales'" class="w-8 h-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -132,19 +126,17 @@
                         </svg>
 
                         <!-- Name -->
-                        <ShineEffect v-if="isLoadingStoreInsights" class="flex space-x-1">
-                            <LineSkeleton width="w-24"></LineSkeleton>
-                            <LineSkeleton width="w-4"></LineSkeleton>
-                        </ShineEffect>
+                        <div v-if="isLoadingStoreInsights" class="flex space-x-1">
+                            <LineSkeleton width="w-24" :shine="true"></LineSkeleton>
+                            <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                        </div>
                         <div v-else class="flex space-x-1 items-center">
                             <p class="text-gray-500 text-xs">{{ capitalizeAllWords(categoryInsight.name) }}</p>
                             <MoreInfoPopover title="What Is This?" :description="categoryInsight.description" placement="top"></MoreInfoPopover>
                         </div>
 
                         <!-- Metric -->
-                        <ShineEffect v-if="isLoadingStoreInsights">
-                            <LineSkeleton width="w-16"></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingStoreInsights" width="w-16" :shine="true"></LineSkeleton>
                         <p v-else class="font-bold text-lg">{{ categoryInsight.metric }}</p>
 
                     </div>
@@ -155,19 +147,8 @@
 
             <div v-if="index == insights.length - 1" class="flex justify-center items-center border-t border-dashed pt-8">
 
-                <Button :action="showingAllInsights ? showLessInsights : showMoreInsights" type="outline" size="sm">
-                    <template v-if="showingAllInsights">
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                        </svg>
-                        <span>show less</span>
-                    </template>
-                    <template v-else>
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                        </svg>
-                        <span>show more</span>
-                    </template>
+                <Button :action="showingAllInsights ? showLessInsights : showMoreInsights" type="outline" size="sm" :icon="showingAllInsights ? 'short-up-arrow' : 'short-down-arrow'">
+                    <span>{{ showingAllInsights ? 'show less' : 'show more' }}</span>
                 </Button>
 
             </div>
@@ -185,16 +166,14 @@
     import { useStoreState } from '@Stores/store-store.js';
     import { getApi } from '@Repositories/api-repository.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
         mixins: [UtilsMixin],
         components: {
-            Button, SelectInput, ShineEffect, LineSkeleton, RoundSkeleton, SelectInputTags, MoreInfoPopover
+            Button, SelectInput, LineSkeleton, SelectInputTags, MoreInfoPopover
         },
         data() {
             return {

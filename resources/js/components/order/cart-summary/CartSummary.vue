@@ -21,18 +21,16 @@
                 <template v-if="isLoadingOrder">
                     <tr v-for="(row, rowIndex) in 3" :key="rowIndex" class="border-b">
                         <td v-for="(cell, cellIndex) in 5" :key="cellIndex" class="whitespace-nowrap px-4 py-3">
-                            <ShineEffect>
-                                <LineSkeleton v-if="isLoadingOrder"></LineSkeleton>
-                            </ShineEffect>
+                            <LineSkeleton v-if="isLoadingOrder" :shine="true"></LineSkeleton>
                         </td>
                     </tr>
                 </template>
 
                 <template v-else>
                     <tr
-                        v-for="(productLine, index) in order._relationships.cart._relationships.productLines" :key="index"
-                        @click="() => onViewProduct(productLine)"
-                        :class="['border-b cursor-pointer', canViewProduct(productLine) ? 'hover:bg-gray-50' : 'hover:bg-red-50']">
+                        v-for="(orderProduct, index) in order._relationships.cart._relationships.orderProducts" :key="index"
+                        @click="() => onViewProduct(orderProduct)"
+                        :class="['border-b cursor-pointer', canViewProduct(orderProduct) ? 'hover:bg-gray-50' : 'hover:bg-red-50']">
 
                         <!-- Image -->
                         <td class="whitespace-nowrap px-4 py-3">
@@ -41,22 +39,22 @@
 
                         <!-- Name -->
                         <td class="w-80 whitespace-nowrap px-4 py-3">
-                            <span>{{ productLine.name }}</span>
+                            <span>{{ orderProduct.name }}</span>
                         </td>
 
                         <!-- Unit Price -->
                         <td class="whitespace-nowrap px-4 py-3">
-                            <span>{{ productLine.unitPrice.amountWithCurrency }}</span>
+                            <span>{{ orderProduct.unitPrice.amountWithCurrency }}</span>
                         </td>
 
                         <!-- Quantity -->
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            <span>{{ productLine.quantity }}</span>
+                            <span>{{ orderProduct.quantity }}</span>
                         </td>
 
                         <!-- Grand Total -->
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            <span>{{ productLine.grandTotal.amountWithCurrency}}</span>
+                            <span>{{ orderProduct.grandTotal.amountWithCurrency}}</span>
                         </td>
 
                     </tr>
@@ -66,9 +64,7 @@
                 <tr class="text-xs text-right">
                     <td colspan="4" class="whitespace-nowrap px-4 py-2">Subtotal</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
-                        <ShineEffect v-if="isLoadingOrder">
-                            <LineSkeleton></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingOrder" :shine="true"></LineSkeleton>
                         <span v-else>{{ order._relationships.cart.subTotal.amountWithCurrency }}</span>
                     </td>
                 </tr>
@@ -77,9 +73,7 @@
                 <tr class="text-xs text-right">
                     <td colspan="4" class="whitespace-nowrap px-4 py-2">Sale Discount Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
-                        <ShineEffect v-if="isLoadingOrder">
-                            <LineSkeleton></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingOrder" :shine="true"></LineSkeleton>
                         <span v-else>
                             {{ order._relationships.cart.saleDiscountTotal.amount > 0 ? '-' : '' }}
                             {{ order._relationships.cart.saleDiscountTotal.amountWithCurrency }}
@@ -91,9 +85,7 @@
                 <tr class="text-xs text-right">
                     <td colspan="4" class="whitespace-nowrap px-4 py-2">Coupon Discount Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-2">
-                        <ShineEffect v-if="isLoadingOrder">
-                            <LineSkeleton></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingOrder" :shine="true"></LineSkeleton>
                         <span v-else>
                             {{ order._relationships.cart.couponDiscountTotal.amount > 0 ? '-' : '' }}
                             {{ order._relationships.cart.couponDiscountTotal.amountWithCurrency }}
@@ -105,9 +97,7 @@
                 <tr class="text-right text-black text-lg font-bold border-t">
                     <td colspan="4" class="whitespace-nowrap px-4 py-3">Grand Total</td>
                     <td colspan="1" class="whitespace-nowrap px-4 py-3">
-                        <ShineEffect v-if="isLoadingOrder">
-                            <LineSkeleton></LineSkeleton>
-                        </ShineEffect>
+                        <LineSkeleton v-if="isLoadingOrder" :shine="true"></LineSkeleton>
                         <span v-else>{{ order._relationships.cart.grandTotal.amountWithCurrency }}</span>
                     </td>
                 </tr>
@@ -132,18 +122,17 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { Alert, ShineEffect, LineSkeleton, MoreInfoPopover, BadgeIndicator, NoDataPlaceholder },
+        components: { Pill, Alert, LineSkeleton, MoreInfoPopover, NoDataPlaceholder },
         props: {
             order: {
                 type: Object
@@ -163,16 +152,16 @@
             }
         },
         methods: {
-            canViewProduct(productLine) {
-                if(productLine._links.showProduct) {
-                    return productLine._links.showProduct;
+            canViewProduct(orderProduct) {
+                if(orderProduct._links.showProduct) {
+                    return orderProduct._links.showProduct;
                 }else{
                     return false;
                 }
             },
-            onViewProduct(productLine) {
-                if(this.canViewProduct(productLine)) {
-                    this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': productLine._links.showProduct } });
+            onViewProduct(orderProduct) {
+                if(this.canViewProduct(orderProduct)) {
+                    this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': orderProduct._links.showProduct } });
                 }else{
                     this.showUnsuccessfulNotification('This product does not exist anymore. It might be deleted');
                 }

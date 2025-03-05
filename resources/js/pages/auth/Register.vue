@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-gray-100">
+    <div class="w-full flex flex-col justify-center bg-gradient-to-b from-blue-100 to-white-100 min-h-screen overflow-x-hidden px-6 py-12 lg:px-8">
 
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
 
@@ -73,10 +73,17 @@
                 <!-- Create Account Button -->
                 <div class="flex">
                     <BackButton v-if="showVerificationCode" :action="backToRegistrationForm" class="w-16 mr-2"></BackButton>
-                    <PrimaryButton :action="handleRegistration" :loading="isSubmitting" class="w-full">
+
+                <Button
+                    size="sm"
+                    class="w-full"
+                    type="primary"
+                    :loading="isSubmitting"
+                    :disabled="isSubmitting"
+                    :action="handleRegistration">
                         <template v-if="showVerificationCode">Create Account</template>
                         <template v-else>Continue</template>
-                    </PrimaryButton>
+                    </Button>
                 </div>
 
             </form>
@@ -104,6 +111,7 @@
     import Logo from '@Partials/logos/Logo.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
@@ -118,10 +126,11 @@
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import { validateRegister, register } from '@Repositories/auth-repository.js';
+
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            Logo, Alert, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput,
+            Logo, Alert, Button, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput,
             PrimaryButton, SocialLinks, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
         },
         data() {

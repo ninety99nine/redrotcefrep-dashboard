@@ -2,9 +2,9 @@
 
     <slot name="trigger" :showModal="showModal" :hideModal="hideModal"></slot>
 
-    <div :id="modalUniqueId" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div :id="modalUniqueId" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
-            <div class="relative bg-white rounded-lg shadow">
+            <div class="bg-white rounded-xl relative">
 
                 <!-- Close Modal Icon Button -->
                 <button @click="hideModal" type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
@@ -21,11 +21,15 @@
 
                     <div class="flex justify-end space-x-2">
 
-                        <!-- No Button -->
-                        <PrimaryButton :action="hideModal" :type="declineType">{{ declineText }}</PrimaryButton>
+                        <!-- (No) Button -->
+                        <Button :action="hideModal" :type="declineType" size="sm" :icon="declineIcon">
+                            <span>{{ declineText }}</span>
+                        </Button>
 
-                        <!-- Yes Button -->
-                        <PrimaryButton :action="() => approveAction(hideModal)" :type="approveType" :disabled="approveDisabled" :loading="isLoading">{{ approveText }}</PrimaryButton>
+                        <!-- (Yes) Button -->
+                        <Button :action="() => approveAction(hideModal)" :type="approveType" size="sm" :icon="approveIcon" :disabled="approveDisabled" :loading="isLoading">
+                            <span>{{ approveText }}</span>
+                        </Button>
 
                     </div>
 
@@ -41,11 +45,11 @@
      * Component Reference: https://flowbite.com/docs/components/modal/
      */
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
 
     export default {
         mixins: [UtilsMixin],
-        components: { PrimaryButton },
+        components: { Button },
         props: {
             isLoading: {
                 type: Boolean,
@@ -55,17 +59,25 @@
                 type: String,
                 default: 'Cancel'
             },
+            declineType: {
+                type: String,
+                default: 'light'
+            },
+            declineIcon: {
+                type: [String, null],
+                default: null
+            },
             approveText: {
                 type: String,
                 default: 'Yes'
             },
-            declineType: {
-                type: String,
-                default: 'dark'
-            },
             approveType: {
                 type: String,
                 default: 'danger'
+            },
+            approveIcon: {
+                type: [String, null],
+                default: null
             },
             approveDisabled: {
                 type: Boolean,

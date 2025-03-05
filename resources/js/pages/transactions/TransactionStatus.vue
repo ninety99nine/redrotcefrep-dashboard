@@ -1,6 +1,6 @@
 <template>
 
-    <div class="min-h-screen relative">
+    <div class="min-h-screen relative overflow-hidden pb-80">
 
         <div class="z-10 pt-32 px-20 relative">
 
@@ -145,6 +145,10 @@
 
         </div>
 
+        <!-- Confetti Image -->
+        <img src="/images/confetti.png" class="absolute top-1/2 opacity-10">
+
+        <!-- Clouds Image -->
         <img src="/images/clouds.png" class="absolute top-32">
 
     </div>

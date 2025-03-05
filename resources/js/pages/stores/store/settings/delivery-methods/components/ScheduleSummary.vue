@@ -21,12 +21,13 @@
 
             <template v-if="showScheduleSummary">
                 <template v-if="isLoadingDateOptions || isLoadingTimeOptions">
-                    <ShineEffect v-for="(_, index) in [1,2,3]" :key="index">
-                        <div class="flex space-x-2">
-                            <LineSkeleton width="w-2"></LineSkeleton>
-                            <LineSkeleton width="w-1/2"></LineSkeleton>
-                        </div>
-                    </ShineEffect>
+                    <div
+                        :key="index"
+                        class="flex space-x-2"
+                        v-for="(_, index) in [1,2,3]">
+                        <LineSkeleton width="w-2"></LineSkeleton>
+                        <LineSkeleton width="w-1/2"></LineSkeleton>
+                    </div>
                 </template>
 
                 <template v-else>
@@ -84,7 +85,6 @@
 <script>
 
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import DeliveryDatePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryDatePicker.vue';
     import DeliveryTimePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryTimePicker.vue';
@@ -92,7 +92,7 @@
     export default {
         mixins: [UtilsMixin],
         components: {
-            ShineEffect, LineSkeleton, DeliveryDatePicker, DeliveryTimePicker
+            LineSkeleton, DeliveryDatePicker, DeliveryTimePicker
         },
         props: {
             form: {

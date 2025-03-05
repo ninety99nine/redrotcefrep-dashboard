@@ -179,7 +179,6 @@
     import BasicModal from '@Partials/modals/BasicModal.vue';
     import BackButton from '@Partials/buttons/BackButton.vue';
     import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import CountrySelectInput from '@Partials/inputs/CountrySelectInput.vue';
@@ -189,7 +188,7 @@
         mixins: [FormMixin],
         components: {
             TextInput, GoogleMaps, AddButton, BasicModal, BackButton, DeleteButton,
-            ShineEffect, PrimaryButton, LineSkeleton, CountrySelectInput
+            PrimaryButton, LineSkeleton, CountrySelectInput
         },
         props: {
             address: {

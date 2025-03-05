@@ -46,13 +46,11 @@
         },
         methods: {
             setAddress(address) {
-                console.log('address');
-                console.log(address);
-                this.shoppingCartState.setAddress(address);
+                this.shoppingCartState.setDeliveryAddress(address);
                 this.inspectStoreShoppingCartWithDelay();
             },
             unsetAddress() {
-                this.shoppingCartState.setAddress(null);
+                this.shoppingCartState.setDeliveryAddress(null);
                 this.inspectStoreShoppingCartWithDelay();
             },
             inspectStoreShoppingCartWithDelay() {

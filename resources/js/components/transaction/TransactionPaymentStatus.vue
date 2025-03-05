@@ -1,6 +1,6 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <BadgeIndicator :type="type" :text="transaction.paymentStatus.name" :showDot="false"></BadgeIndicator>
+        <Pill :type="type" :text="transaction.paymentStatus.name" :showDot="false"></Pill>
         <MoreInfoPopover :description="transaction.paymentStatus.description" placement="top"></MoreInfoPopover>
     </div>
 </template>
@@ -8,10 +8,10 @@
 <script>
 
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
 
     export default {
-        components: { MoreInfoPopover, BadgeIndicator },
+        components: { MoreInfoPopover, Pill },
         props: {
             transaction: {
                 type: Object

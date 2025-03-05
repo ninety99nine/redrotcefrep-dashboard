@@ -57,9 +57,7 @@
                 <template v-if="isLoadingTransactions">
                     <tr v-for="(row, rowIndex) in 3" :key="rowIndex" class="border-b">
                         <td v-for="(cell, cellIndex) in tableHeaders" :key="cellIndex" class="whitespace-nowrap px-4 py-3">
-                            <ShineEffect>
-                                <LineSkeleton></LineSkeleton>
-                            </ShineEffect>
+                            <LineSkeleton :shine="true"></LineSkeleton>
                         </td>
                     </tr>
                 </template>
@@ -105,7 +103,7 @@
                         <!-- Verified By -->
                         <td class="text-xs text-center text-gray-300">
                             <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                            <BadgeIndicator v-else type="info" :text="appName" :showDot="false"></BadgeIndicator>
+                            <Pill v-else type="info" :text="appName" :showDot="false"></Pill>
                         </td>
 
                         <!-- Requested By -->
@@ -125,7 +123,7 @@
                         <!-- DPO Link Status -->
                         <td class="text-xs text-center text-gray-300">
                             <span v-if="transaction._attributes.dpoPaymentLinkHasExpired == null" class="text-xs text-center text-gray-300">---</span>
-                            <BadgeIndicator v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></BadgeIndicator>
+                            <Pill v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></Pill>
                         </td>
 
                         <!-- DPO Expiry Date -->
@@ -225,6 +223,7 @@
 <script>
 
     import settings from '@Js/settings.js';
+    import Pill from '@Partials/pills/Pill.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
@@ -233,21 +232,19 @@
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import TransactionPaymentStatus from '@Components/transaction/TransactionPaymentStatus.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            AddButton, TextHeader, BasicTable, ExternalLink, ConfirmModal, ShineEffect, LineSkeleton, SpinningLoader,
-            PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
+            Pill, AddButton, TextHeader, BasicTable, ExternalLink, ConfirmModal, LineSkeleton, SpinningLoader,
+            PrimaryButton, MoreInfoPopover, ToogleSwitch, TransactionPaymentStatus
         },
         props: {
             order: {

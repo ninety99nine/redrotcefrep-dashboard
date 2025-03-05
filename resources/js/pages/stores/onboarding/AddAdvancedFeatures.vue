@@ -25,15 +25,13 @@
                     <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
                         <div class="flex justify-between">
                             <div>
-                                <ShineEffect class="w-full flex items-center space-x-2">
-                                    <LineSkeleton width="w-4"></LineSkeleton>
-                                    <LineSkeleton width="w-40"></LineSkeleton>
-                                </ShineEffect>
+                                <div class="w-full flex items-center space-x-2">
+                                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                                    <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                                </div>
                             </div>
                             <div>
-                                <ShineEffect class="w-full flex items-center space-x-2">
-                                    <LineSkeleton width="w-8"></LineSkeleton>
-                                </ShineEffect>
+                                <LineSkeleton width="w-8" :shine="true"></LineSkeleton>
                             </div>
                         </div>
                     </div>
@@ -325,25 +323,27 @@
                 <transition name="fade-1" mode="out-in">
 
                     <!-- Continue -->
-                    <PrimaryButton
+                    <Button
+                        size="md"
                         class="w-full"
+                        type="primary"
+                        :loading="isSubmitting"
                         :disabled="isSubmitting"
                         :action="addAdvancedFeatures"
                         v-if="additionalFeaturesHaveChanged">
-                        Continue
-                    </PrimaryButton>
+                        <span>Continue</span>
+                    </Button>
 
                     <!-- Skip -->
-                    <PrimaryButton
+                    <Button
                         v-else
-                        type="light"
+                        size="md"
                         class="w-40"
+                        type="light"
+                        icon="short-right-arrow"
                         :action="navigateToShare">
                         <span>Skip</span>
-                        <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                        </svg>
-                    </PrimaryButton>
+                    </Button>
 
                 </transition>
 
@@ -361,15 +361,14 @@
     import settings from '@Js/settings.js';
     import cloneDeep from 'lodash/cloneDeep';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { useApiState } from '@Stores/api-store.js';
     import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import { parsePhoneNumberFromString } from 'libphonenumber-js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import PercentageInput from '@Partials/inputs/PercentageInput.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
@@ -380,7 +379,7 @@
     export default {
         mixins: [FormMixin],
         components: {
-            TextInput, StoreLogo, MoneyInput, ShineEffect, LineSkeleton, PrimaryButton, PercentageInput,
+            Button, TextInput, StoreLogo, MoneyInput, LineSkeleton, PercentageInput,
             ToogleSwitch, MobileNumberInput, FormErrorMessages, BulkMobileNumberInput
         },
         data() {

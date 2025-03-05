@@ -8,11 +8,11 @@
             <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
 
             <div v-if="isLoadingTeamMember" class="flex items-center space-x-2">
-                <ShineEffect class="flex space-x-2">
-                    <LineSkeleton width="w-20 mt-2"></LineSkeleton>
-                    <LineSkeleton width="w-16 mt-2"></LineSkeleton>
-                    <LineSkeleton width="w-4 mt-2"></LineSkeleton>
-                </ShineEffect>
+                <div class="flex space-x-2">
+                    <LineSkeleton width="w-20" :shine="true"></LineSkeleton>
+                    <LineSkeleton width="w-16" :shine="true"></LineSkeleton>
+                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+                </div>
             </div>
 
             <template v-else>
@@ -20,8 +20,8 @@
                 <div class="flex items-center space-x-2">
 
                     <TextHeader>{{ isInviting ? 'Add Team Member' : teamMember._attributes.name }}</TextHeader>
-                    <BadgeIndicator v-if="isEditting" :type="isCreator ? 'success' : 'info'" :text="teamMemberRole" :showDot="isCreator"></BadgeIndicator>
-                    <BadgeIndicator v-if="isEditting" :type="isInvited ? 'warning' : 'info'" :text="teamMemberStatus" :showDot="isCreator"></BadgeIndicator>
+                    <Pill v-if="isEditting" :type="isCreator ? 'success' : 'info'" :text="teamMemberRole" :showDot="isCreator"></Pill>
+                    <Pill v-if="isEditting" :type="isInvited ? 'warning' : 'info'" :text="teamMemberStatus" :showDot="isCreator"></Pill>
 
                 </div>
 
@@ -83,9 +83,7 @@
                         <div v-else>
                             <div class="flex items-center space-x-2">
                                 <span>Mobile Number: </span>
-                                <ShineEffect v-if="isLoadingTeamMember">
-                                    <LineSkeleton width="w-24"></LineSkeleton>
-                                </ShineEffect>
+                                <LineSkeleton v-if="isLoadingTeamMember" width="w-24" :shine="true"></LineSkeleton>
                                 <span v-else class="font-bold">{{ (teamMember.mobileNumber || {}).national || teamMember._relationships.userStoreAssociation.mobileNumber.national }}</span>
                             </div>
                         </div>
@@ -94,10 +92,10 @@
 
                     <div class="bg-white shadow-lg rounded-lg border p-4">
 
-                        <ShineEffect v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions || isLoadingAvailableTeamMemberPermissions" class="space-y-4">
-                            <LineSkeleton width="w-24"></LineSkeleton>
-                            <LineSkeleton width="w-60"></LineSkeleton>
-                        </ShineEffect>
+                        <div v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions || isLoadingAvailableTeamMemberPermissions" class="space-y-4">
+                            <LineSkeleton width="w-24" :shine="true"></LineSkeleton>
+                            <LineSkeleton width="w-60" :shine="true"></LineSkeleton>
+                        </div>
 
                         <div v-else class="space-y-2">
 
@@ -166,17 +164,17 @@
                                 <p class="font-bold text-lg">Permissions</p>
                             </div>
 
-                            <BadgeIndicator type="primary" :text="form.hasFullPermissions ? 'All' : totalPermissions" :showDot="false"></BadgeIndicator>
+                            <Pill type="primary" :text="form.hasFullPermissions ? 'All' : totalPermissions" :showDot="false"></Pill>
                         </div>
 
                         <!-- Permissions Description -->
                         <p class="text-sm text-gray-400 border-b border-dashed pb-2 mb-4">See permissions granted</p>
 
                         <!-- Instructions Loader -->
-                        <ShineEffect v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions" class="space-y-4">
-                            <LineSkeleton width="w-32"></LineSkeleton>
-                            <LineSkeleton width="w-60"></LineSkeleton>
-                        </ShineEffect>
+                        <div v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions" class="space-y-4">
+                            <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                            <LineSkeleton width="w-60" :shine="true"></LineSkeleton>
+                        </div>
 
                         <!-- Instructions -->
                         <div v-else-if="hasPermissions" class="space-y-2">
@@ -233,6 +231,7 @@
 <script>
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
+    import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
@@ -246,25 +245,23 @@
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
         mixins: [UtilsMixin, FormMixin],
         components: {
-            Alert, TextInput, TextHeader, Checkbox, InputTags, BackButton, NumberInput,
-            SelectInput, ConfirmModal, ShineEffect, PrimaryButton, LineSkeleton,
-            SpinningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader,
-            MobileNumberInput, BadgeIndicator, FormErrorMessages
+            Pill, Alert, TextInput, TextHeader, Checkbox, InputTags, BackButton, NumberInput,
+            SelectInput, ConfirmModal, PrimaryButton, LineSkeleton, SpinningLoader,
+            SelectInputTags, MoreInfoPopover, BackdropLoader, MobileNumberInput,
+            FormErrorMessages
         },
         data() {
             return {

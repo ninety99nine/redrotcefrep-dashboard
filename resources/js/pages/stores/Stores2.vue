@@ -94,7 +94,7 @@
                     <!-- Status -->
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
-                            <BadgeIndicator :type="store.online ? 'success' : 'warning'" :text="store.online ? 'Online' : 'Offline'" :showDot="false"></BadgeIndicator>
+                            <Pill :type="store.online ? 'success' : 'warning'" :text="store.online ? 'Online' : 'Offline'" :showDot="false"></Pill>
                             <MoreInfoPopover v-if="store.online" class="opacity-0 group-hover:opacity-100" title="Status" description="This store is online" placement="top"></MoreInfoPopover>
                             <MoreInfoPopover v-else-if="store.offlineMessage" class="opacity-0 group-hover:opacity-100" title="Offline Message" :description="store.offlineMessage" placement="top"></MoreInfoPopover>
                         </div>
@@ -182,7 +182,7 @@
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
                             <template v-if="store.orangeMoneyPaymentEnabled">
-                                <BadgeIndicator :type="store.orangeMoneyPaymentEnabled ? 'success' : 'info'" :text="store.orangeMoneyPaymentEnabled ? 'Enabled' : 'Disabled'" :showDot="false"></BadgeIndicator>
+                                <Pill :type="store.orangeMoneyPaymentEnabled ? 'success' : 'info'" :text="store.orangeMoneyPaymentEnabled ? 'Enabled' : 'Disabled'" :showDot="false"></Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Orange Money Merchant Code" :description="store.orangeMoneyMerchantCode" placement="top"></MoreInfoPopover>
                             </template>
                             <NoDataPlaceholder v-else></NoDataPlaceholder>
@@ -193,7 +193,7 @@
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
                             <template v-if="store.dpoPaymentEnabled">
-                                <BadgeIndicator :type="store.dpoPaymentEnabled ? 'success' : 'info'" :text="store.dpoPaymentEnabled ? 'Enabled' : 'Disabled'" :showDot="false"></BadgeIndicator>
+                                <Pill :type="store.dpoPaymentEnabled ? 'success' : 'info'" :text="store.dpoPaymentEnabled ? 'Enabled' : 'Disabled'" :showDot="false"></Pill>
                                 <MoreInfoPopover v-if="store.dpoPaymentEnabled" class="opacity-0 group-hover:opacity-100" title="DPO Company Token" :description="store.dpoCompanyToken" placement="top"></MoreInfoPopover>
                             </template>
                             <NoDataPlaceholder v-else></NoDataPlaceholder>
@@ -213,7 +213,7 @@
                                         <div v-if="store.allowFreeDelivery == false" class="flex items-center space-x-1 mt-2 mb-4">
                                             <span class="text-xs">Flat Fee: </span>
                                             <span v-if="store.deliveryFlatFee.amount > 0">{{ store.deliveryFlatFee.amountWithCurrency }}</span>
-                                            <BadgeIndicator v-else type="info" text="None" :showDot="false"></BadgeIndicator>
+                                            <Pill v-else type="info" text="None" :showDot="false"></Pill>
                                         </div>
 
                                         <div v-if="store.deliveryDestinations.length">
@@ -254,7 +254,7 @@
                                                             <template v-else>
 
                                                                 <!-- Delivery Destination Allow Free Delivery -->
-                                                                <BadgeIndicator v-if="deliveryDestination.allowFreeDelivery" type="success" text="Free Delivery" :showDot="false"></BadgeIndicator>
+                                                                <Pill v-if="deliveryDestination.allowFreeDelivery" type="success" text="Free Delivery" :showDot="false"></Pill>
 
                                                                 <!-- Delivery Destination Cost -->
                                                                 <p v-else class="text-xs">{{ deliveryDestination.cost.amountWithCurrency }}</p>
@@ -461,14 +461,14 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
             AddButton, TextHeader, StoreLogo, BasicTable, Countdown, Checkbox, ConfirmModal, PrimaryButton,
-            SpinningLoader, MoreInfoPopover, ToogleSwitch, BadgeIndicator, NoDataPlaceholder
+            SpinningLoader, MoreInfoPopover, ToogleSwitch, Pill, NoDataPlaceholder
 
         },
         data() {

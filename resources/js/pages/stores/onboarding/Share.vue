@@ -46,9 +46,7 @@
                     </div>
 
                     <!-- Copy & Share Link -->
-                    <div
-                        @click="copyToClipboard(store._attributes.webLink)"
-                        class="bg-white space-y-4 py-3 px-4 shadow-sm rounded-xl transition-all duration-300 border border-transparent hover:border-gray-300 hover:shadow-lg cursor-pointer relative">
+                    <div class="bg-white space-y-4 py-3 px-4 shadow-sm rounded-xl transition-all duration-300 border border-transparent hover:border-gray-300 hover:shadow-lg relative">
 
                         <div class="flex items-center gap-8">
 
@@ -65,31 +63,10 @@
                                 <!-- Instruction -->
                                 <p class="text-xs">Copy your store link and share it anywhere you want</p>
 
-                                <div class="w-full flex justify-between items-center p-2 border rounded-md">
+                                <CopyToClipboard
+                                    :text="store._attributes.webLink">
+                                </CopyToClipboard>
 
-                                    <!-- Store Link -->
-                                    <div class="text-xs w-4/5 truncate">{{ store._attributes.webLink }}</div>
-
-                                    <!-- Copy Icon -->
-                                    <svg
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke-width="1.5"
-                                        stroke="currentColor"
-                                        class="w-5 h-5 cursor-pointer"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        @click.stop="copyToClipboard(store._attributes.webLink)">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
-                                    </svg>
-
-                                </div>
-
-                            </div>
-
-                            <!-- Copied Hint -->
-                            <div v-if="copied" class="absolute top-2 right-4 bg-green-500 text-white text-xs px-4 py-1 rounded-md">
-                                Copied!
-                                <div class="absolute left-1/2 -bottom-1 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-green-500"></div>
                             </div>
 
                         </div>
@@ -103,6 +80,8 @@
                         </div>
 
                     </div>
+
+                    <h2 class="text-sm font-semibold text-center mb-2">Share On Social Media</h2>
 
                     <!-- Share On Social Platforms -->
                     <a
@@ -162,11 +141,14 @@
             </div>
 
             <!-- Continue -->
-            <PrimaryButton
+            <Button
+                size="md"
                 class="w-full"
+                type="primary"
                 :action="navigateToStoreHome">
-                Continue
-            </PrimaryButton>
+                <span>Go To Dashboard</span>
+            </Button>
+
         </div>
 
     </div>
@@ -174,20 +156,21 @@
 </template>
 
 <script>
+
+    import Button from '@Partials/buttons/Button.vue';
     import { useStoreState } from '@Stores/store-store.js';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import CopyToClipboard from '@Partials/clipboards/CopyToClipboard.vue';
 
     export default {
         components: {
-            StoreLogo, PrimaryButton
+            Button, StoreLogo, CopyToClipboard
         },
         data() {
             return {
-                copied: false,
                 showMore: false,
-                storeState: useStoreState(),
-                copyToClipboardTimeout: null
+                storeState: useStoreState()
             };
         },
         watch: {
@@ -271,24 +254,6 @@
             }
         },
         methods: {
-            async copyToClipboard(text) {
-                try {
-
-                    if (this.copyToClipboardTimeout) {
-                        clearTimeout(this.copyToClipboardTimeout);
-                    }
-
-                    await navigator.clipboard.writeText(text);
-                    this.copied = true;
-
-                    this.copyToClipboardTimeout = setTimeout(() => {
-                        this.copied = false;
-                    }, 2000);
-
-                } catch (err) {
-                    console.error('Failed to copy:', err);
-                }
-            },
             async downloadQR() {
 
                 try {

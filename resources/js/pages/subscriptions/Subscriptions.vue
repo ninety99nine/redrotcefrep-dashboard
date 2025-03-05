@@ -161,7 +161,7 @@
 
                     <!-- Status -->
                     <td class="whitespace-nowrap px-4 py-4">
-                        <BadgeIndicator :type="subscription.hasExpired == false ? 'success' : 'warning'" :text="subscription.hasExpired ? 'Inactive' : 'Active'" :showDot="false"></BadgeIndicator>
+                        <Pill :type="subscription.hasExpired == false ? 'success' : 'warning'" :text="subscription.hasExpired ? 'Inactive' : 'Active'" :showDot="false"></Pill>
                     </td>
 
                     <!-- Start At -->

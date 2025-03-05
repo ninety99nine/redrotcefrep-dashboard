@@ -67,12 +67,12 @@
                                         <p>
                                             <span>SKU: </span>
                                             <span  v-if="product.sku" class="text-black"></span>
-                                            <BadgeIndicator v-else type="info" text="None" :showDot="false"></BadgeIndicator>
+                                            <Pill v-else type="info" text="None" :showDot="false"></Pill>
                                         </p>
                                         <p>
                                             <span>Barcode: </span>
                                             <span  v-if="product.barcode" class="text-black"></span>
-                                            <BadgeIndicator v-else type="info" text="None" :showDot="false"></BadgeIndicator>
+                                            <Pill v-else type="info" text="None" :showDot="false"></Pill>
                                         </p>
                                         <template v-if="product.showDescription.status && product.description != null">
                                             <hr>
@@ -88,7 +88,7 @@
                         <!-- Properties -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 ">
-                                <BadgeIndicator v-for="(variable, index) in product._relationships.variables" :key="index" type="info" :text="variable.value" :showDot="false"></BadgeIndicator>
+                                <Pill v-for="(variable, index) in product._relationships.variables" :key="index" type="info" :text="variable.value" :showDot="false"></Pill>
                             </div>
                         </td>
 
@@ -110,7 +110,7 @@
                         <!-- Visible -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 items-center">
-                                <BadgeIndicator :type="product.visible.status ? 'success' : 'warning'" :text="product.visible.name" :showDot="false"></BadgeIndicator>
+                                <Pill :type="product.visible.status ? 'success' : 'warning'" :text="product.visible.name" :showDot="false"></Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="product.visible.name" :description="product.visible.description" placement="top"></MoreInfoPopover>
                             </div>
                         </td>
@@ -119,10 +119,10 @@
                         <td class="whitespace-nowrap px-4 py-4">
                             <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <BadgeIndicator v-if="product.isFree.status" type="info" text="Free" :showDot="false"></BadgeIndicator>
+                                <Pill v-if="product.isFree.status" type="info" text="Free" :showDot="false"></Pill>
                                 <template v-else>
                                     <span>{{ product.unitPrice.amountWithCurrency }}</span>
-                                    <BadgeIndicator v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></BadgeIndicator>
+                                    <Pill v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
                                 </template>
 
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Pricing" placement="top">
@@ -149,7 +149,7 @@
                         <td class="whitespace-nowrap px-4 py-4">
                             <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <BadgeIndicator :type="product.hasStock.status ? 'info' : 'danger'" :text="product.hasStock.status ? (product.stockQuantityType.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.stockQuantity.description) : product.hasStock.name" :showDot="false"></BadgeIndicator>
+                                <Pill :type="product.hasStock.status ? 'info' : 'danger'" :text="product.hasStock.status ? (product.stockQuantityType.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.stockQuantity.description) : product.hasStock.name" :showDot="false"></Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Stock" placement="top">
 
                                     <template #description>
@@ -166,7 +166,7 @@
                         <!-- Allow Variations -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 items-center">
-                                <BadgeIndicator type="info" :text="product.allowVariations.name.toLowerCase() == 'yes' ? (product.totalVisibleVariations) : 'None'" :showDot="false"></BadgeIndicator>
+                                <Pill type="info" :text="product.allowVariations.name.toLowerCase() == 'yes' ? (product.totalVisibleVariations) : 'None'" :showDot="false"></Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Allow Variations" placement="top">
 
                                     <template #description>
@@ -189,7 +189,7 @@
                             <!-- Allowed Quantity Per Order -->
                             <td class="whitespace-nowrap px-4 py-4">
                                 <div class="flex space-x-1 items-center">
-                                    <BadgeIndicator type="info" :text="product.allowedQuantityPerOrder.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.maximumAllowedQuantityPerOrder.value" :showDot="false"></BadgeIndicator>
+                                    <Pill type="info" :text="product.allowedQuantityPerOrder.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.maximumAllowedQuantityPerOrder.value" :showDot="false"></Pill>
                                     <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Quantity Per Order" placement="top">
 
                                         <template #description>
@@ -248,12 +248,12 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
     import { getApi, putApi, postApi } from '@Repositories/api-repository.js';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { MoreInfoPopover, ToogleSwitch, BasicTable, SpinningLoader, BadgeIndicator, NoDataPlaceholder },
+        components: { MoreInfoPopover, ToogleSwitch, BasicTable, SpinningLoader, Pill, NoDataPlaceholder },
         props: {
             product: {
                 type: Object

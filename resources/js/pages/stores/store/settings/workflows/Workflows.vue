@@ -28,10 +28,10 @@
             <div v-if="isLoadingWorkflows" class="space-y-2">
 
                 <div v-for="(_, index) in [1,2,3]" :key="index" class="border shadow-sm rounded-lg p-4 bg-gray-50">
-                    <ShineEffect class="w-full flex items-center justify-between">
-                        <LineSkeleton width="w-32"></LineSkeleton>
-                        <LineSkeleton width="w-16"></LineSkeleton>
-                    </ShineEffect>
+                    <div class="w-full flex items-center justify-between">
+                        <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-16" :shine="true"></LineSkeleton>
+                    </div>
                 </div>
 
             </div>
@@ -68,7 +68,7 @@
                             <div class="flex items-center space-x-2">
 
                                 <!-- Active Status Badge -->
-                                <BadgeIndicator :type="workflow.active ? 'success' : 'warning'" :text="workflow.active ? 'Active' : 'Inactive'" :showDot="false"></BadgeIndicator>
+                                <Pill :type="workflow.active ? 'success' : 'warning'" :text="workflow.active ? 'Active' : 'Inactive'" :showDot="false"></Pill>
 
                             </div>
                         </div>
@@ -103,7 +103,7 @@
 
                         <div class="space-y-2">
                             <p v-if="hasSearchTerm" class="font-bold">No workflows found.</p>
-                            <p>Click the <BadgeIndicator type="primary" text="+ Add Workflow" :showDot="false" :clickable="true" :action="() => onAddWorkflow()"></BadgeIndicator> button to set up automations that will handle time-consuming tasks for you</p>
+                            <p>Click the <Pill type="primary" text="+ Add Workflow" :showDot="false" :clickable="true" :action="() => onAddWorkflow()"></Pill> button to set up automations that will handle time-consuming tasks for you</p>
                         </div>
                     </div>
 
@@ -111,18 +111,10 @@
 
             </template>
 
-            <!-- Add Workflow Button Skeleton -->
-            <ShineEffect v-if="isLoadingWorkflows">
-                <ButtonSkeleton size="sm" class="w-full">
-                    <span class="leading-none text-sm">&#65291;</span>
-                    <span class="ml-2">Add Workflow</span>
-                </ButtonSkeleton>
-            </ShineEffect>
-
             <!-- Add Workflow Button -->
-            <AddButton v-else :action="() => onAddWorkflow()" size="sm" type="light">
+            <Button type="light" size="sm" :skeleton="isLoadingWorkflows" v-else :action="() => onAddWorkflow()">
                 <span class="ml-2">Add Workflow</span>
-            </AddButton>
+            </Button>
 
             <!-- Confirm Delete Workflow -->
             <ConfirmModal v-if="deletableWorkflow" approveText="Delete" :approveAction="(hideModal) => deleteWorkflow(hideModal)" :isLoading="isDeleting(deleteWorkflow)">
@@ -149,27 +141,25 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import { useStoreState } from '@Stores/store-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import { useWorkflowState } from '@Stores/workflow-store.js';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
-    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import ButtonSkeleton from '@Partials/skeletons/ButtonSkeleton.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
         mixins: [FormMixin],
         components: {
-            draggable: VueDraggableNext, AddButton, SearchInput, ConfirmModal, ShineEffect,
-            SpinningLoader, LineSkeleton, PrimaryButton, ButtonSkeleton, BadgeIndicator
+            Pill, Button, draggable: VueDraggableNext, SearchInput, ConfirmModal,
+            SpinningLoader, LineSkeleton, PrimaryButton
         },
         props: {
             form: {

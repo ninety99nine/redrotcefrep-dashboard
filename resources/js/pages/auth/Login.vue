@@ -1,6 +1,6 @@
 <template>
 
-    <div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-gray-100">
+    <div class="w-full flex flex-col justify-center bg-gradient-to-b from-blue-100 to-white-100 min-h-screen overflow-x-hidden px-6 py-12 lg:px-8">
 
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
 
@@ -50,11 +50,17 @@
                 </template>
 
                 <!-- Sign In Button -->
-                <PrimaryButton :action="handleLogin" :loading="isSubmitting" class="w-full">
+                <Button
+                    size="sm"
+                    class="w-full"
+                    type="primary"
+                    :action="handleLogin"
+                    :loading="isSubmitting"
+                    :disabled="isSubmitting">
                     <template v-if="accountExists && requiresPassword">Set Password</template>
                     <template v-else-if="accountExists && !requiresPassword">Sign In</template>
                     <template v-else-if="!accountExists && !requiresPassword">Continue</template>
-                </PrimaryButton>
+                </Button>
 
             </form>
 
@@ -79,6 +85,7 @@
     import Logo from '@Partials/logos/Logo.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useApiState } from '@Stores/api-store.js';
     import { useAuthState } from '@Stores/auth-store.js';
@@ -87,7 +94,6 @@
     import { postApi } from '@Repositories/api-repository.js';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SocialLinks from '@Pages/auth/components/SocialLinks.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { useNotificationState } from '@Stores/notification-store.js';
@@ -98,7 +104,7 @@
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
-            Logo, Alert, RouterLink, TextHeader, PasswordInput, OtpInput, PrimaryButton, SocialLinks,
+            Logo, Alert, Button, RouterLink, TextHeader, PasswordInput, OtpInput, SocialLinks,
             SpinningLoader, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
         },
         data() {
@@ -258,13 +264,7 @@
 
                             } else {
 
-                                // Redirect to the dashboard
                                 this.$router.replace({ name: 'show-stores'});
-
-                                /**
-                                 *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                                 */
-                                this.showSuccessfulNotification('Welcome back '+this.authState.user.firstName);
 
                             }
 

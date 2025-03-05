@@ -33,7 +33,7 @@
                     <td class="whitespace-nowrap px-4 py-4">{{ subscriptionPlan.service }}</td>
                     <td class="whitespace-nowrap px-4 py-4">{{ subscriptionPlan.type }}</td>
                     <td class="whitespace-nowrap px-4 py-4">
-                        <BadgeIndicator :type="subscriptionPlan.status ? 'success' : 'info'" :text="subscriptionPlan ? 'Active' : 'Inactive'"></BadgeIndicator>
+                        <Pill :type="subscriptionPlan.status ? 'success' : 'info'" :text="subscriptionPlan ? 'Active' : 'Inactive'"></Pill>
                     </td>
                     <td class="opacity-0 group-hover:opacity-100 transition-opacity px-4 py-4 space-x-4">
                         <a href="#" @click.stop.prevent="onEdit(subscriptionPlan)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>

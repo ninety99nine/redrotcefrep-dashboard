@@ -1,174 +1,182 @@
 <template>
 
-    <div>
+    <div class="pt-24 pb-80 px-8 relative">
 
-        <div class="flex justify-between items-center border-dashed py-6">
+        <!-- Clouds Image -->
+        <img src="/images/clouds.png" class="absolute top-0">
 
-            <div class="flex items-center">
+        <div class="relative">
 
-                <!-- Text Heading -->
-                <TextHeader><span class="mr-2">💵</span> Transactions</TextHeader>
-
-                <!-- More Info Popover -->
-                <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Transactions are detailed records of payments made by customers for purchasing products or services from your store." placement="top"></MoreInfoPopover>
-
-
+            <div class="flex flex-col items-center mb-8">
+                <h1 class="space-x-2 text-xl text-gray-700 font-semibold bg-white rounded-full py-2 px-8 mb-4">
+                    <span>💵</span>
+                    <span>Transactions</span>
+                </h1>
+                <img src="/images/store-rooftop.png" class="w-96">
             </div>
 
-            <template v-if="(pagination ?? {}).total > 0">
+            <!-- Transactions Table -->
+            <BasicTable v-if="isLoadingTransactions || (pagination ?? {}).total > 0 || hasSearchTerm" :pagination="pagination" :isLoading="isLoadingTransactions" @paginate="paginate" @search="search" @refresh="getTransactions" :totalHeaders="tableHeaders.length">
 
-                <!-- Show Everything Toggle Switch -->
-                <ToogleSwitch
-                    v-model="showEverything" size="md"
-                    labelPopoverTitle="What Is This?"
-                    labelPopoverDescription="Turn on if you want to show more information about your transactions">
-                    Show Everything
-                </ToogleSwitch>
+                <template #header v-if="(pagination ?? {}).total > 0">
 
-                <!-- Add Transaction Button -->
-                <AddButton :action="onAddTransaction">
-                    <span class="ml-2">Add Transaction</span>
-                </AddButton>
+                    <div class="flex justify-center my-4">
 
-            </template>
+                        <!-- Show Everything Toggle Switch -->
+                        <ToogleSwitch
+                            v-model="showEverything" size="md"
+                            labelPopoverTitle="What Is This?"
+                            labelPopoverDescription="Turn on if you want to show more information about your transactions">
+                            Show Everything
+                        </ToogleSwitch>
 
-        </div>
+                    </div>
 
-        <!-- Transactions Table -->
-        <BasicTable v-if="isLoadingTransactions || (pagination ?? {}).total > 0 || hasSearchTerm" :pagination="pagination" :isLoading="isLoadingTransactions" @paginate="paginate" @search="search" @refresh="getTransactions" :totalHeaders="tableHeaders.length">
+                </template>
 
-            <!-- Table Head -->
-            <template #head>
-                <tr>
+                <template #afterRefreshButton>
 
-                    <!-- Table Header -->
-                    <th v-for="(tableHeader, index) in tableHeaders" :key="index" scope="col" class="whitespace-nowrap px-4 py-3">
-                        {{ tableHeader }}
-                    </th>
+                    <!-- Add Transaction Button -->
+                    <Button :action="onAddTransaction" type="primary" size="sm" icon="add">
+                        <span>Add Transaction</span>
+                    </Button>
 
-                </tr>
-            </template>
+                </template>
 
-            <!-- Table Body -->
-            <template #body>
-                <tr @click.stop="onView(transaction)" v-for="(transaction, index) in transactions" :key="transaction.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
+                <!-- Table Head -->
+                <template #head>
+                    <tr>
 
-                    <!-- Checkbox -->
-                    <td @click.stop class="whitespace-nowrap pl-4">
+                        <!-- Table Header -->
+                        <th v-for="(tableHeader, index) in tableHeaders" :key="index" scope="col" class="whitespace-nowrap px-4 py-3">
+                            {{ tableHeader }}
+                        </th>
 
-                        <Checkbox
-                            size="xs"
-                            v-model="checkedRowIds[index]">
-                        </Checkbox>
+                    </tr>
+                </template>
 
-                    </td>
+                <!-- Table Body -->
+                <template #body>
+                    <tr @click.stop="onView(transaction)" v-for="(transaction, index) in transactions" :key="transaction.id" :class="['group cursor-pointer border-b', checkedRowIds[index] ? 'bg-blue-100' : 'bg-white hover:bg-gray-50']">
 
-                    <!-- Number -->
-                    <td class="whitespace-nowrap px-4 py-4">
+                        <!-- Checkbox -->
+                        <td @click.stop class="whitespace-nowrap pl-4">
 
-                        <div class="flex space-x-1 items-center">
-                            <span>#{{ transaction._attributes.number }}</span>
-                            <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'#'+transaction._attributes.number" :description="transaction.description" placement="top"></MoreInfoPopover>
-                        </div>
+                            <Checkbox
+                                size="xs"
+                                v-model="checkedRowIds[index]">
+                            </Checkbox>
 
-                    </td>
+                        </td>
 
-                    <!-- Description -->
-                    <td v-if="showEverything" class="px-4 py-4">
-                        <div class="min-w-80">{{ transaction.description }}</div>
-                    </td>
+                        <!-- Number -->
+                        <td class="whitespace-nowrap px-4 py-4">
 
-                    <!-- Payment Status -->
-                    <td class="whitespace-nowrap px-4 py-4">
-                        <TransactionPaymentStatus :transaction="transaction"></TransactionPaymentStatus>
-                    </td>
-
-                    <!-- Amount -->
-                    <td class="whitespace-nowrap px-4 py-4 text-center">{{ transaction.amount.amountWithCurrency }}</td>
-
-                    <!-- Percentage -->
-                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4 text-center">{{ transaction.percentage.valueSymbol }}</td>
-
-                    <!-- Payment Method -->
-                    <td class="whitespace-nowrap px-4 py-4 text-center">{{ transaction._relationships.paymentMethod.name }}</td>
-
-                    <!-- Requester -->
-                    <td class="whitespace-nowrap px-4 py-4">
-                        <span v-if="transaction._relationships.requestedByUser">{{ transaction._relationships.requestedByUser._attributes.name }}</span>
-                        <span v-else class="text-xs text-center text-gray-300">---</span>
-                    </td>
-
-                    <!-- Verifyer -->
-                    <td class="text-xs text-center text-gray-300">
-                        <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                        <BadgeIndicator v-else type="info" :text="appName" :showDot="false"></BadgeIndicator>
-                    </td>
-
-                    <!-- Payment Link -->
-                    <td class="px-4 py-4" @click.stop>
-                        <div v-if="transaction.metadata" class="flex items-start space-x-2">
-                            <div v-if="transaction.metadata.canPayUsingDpo" class="max-w-80">
-                                <ExternalLink :url="transaction.metadata.dpoPaymentUrl" class="text-xs">{{ transaction.metadata.dpoPaymentUrl }}</ExternalLink>
+                            <div class="flex space-x-1 items-center">
+                                <span>#{{ transaction._attributes.number }}</span>
+                                <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'#'+transaction._attributes.number" :description="transaction.description" placement="top"></MoreInfoPopover>
                             </div>
-                            <BadgeIndicator v-else-if="transaction.metadata.dpoPaymentLinkHasExpired == true" type="warning" text="Expired" :showDot="false"></BadgeIndicator>
+
+                        </td>
+
+                        <!-- Description -->
+                        <td v-if="showEverything" class="px-4 py-4">
+                            <div class="min-w-80">{{ transaction.description }}</div>
+                        </td>
+
+                        <!-- Payment Status -->
+                        <td class="whitespace-nowrap px-4 py-4">
+                            <TransactionPaymentStatus :transaction="transaction"></TransactionPaymentStatus>
+                        </td>
+
+                        <!-- Amount -->
+                        <td class="whitespace-nowrap px-4 py-4 text-center">{{ transaction.amount.amountWithCurrency }}</td>
+
+                        <!-- Percentage -->
+                        <td v-if="showEverything" class="whitespace-nowrap px-4 py-4 text-center">{{ transaction.percentage.valueSymbol }}</td>
+
+                        <!-- Payment Method -->
+                        <td class="whitespace-nowrap px-4 py-4 text-center">{{ transaction._relationships.paymentMethod.name }}</td>
+
+                        <!-- Requester -->
+                        <td class="whitespace-nowrap px-4 py-4">
+                            <span v-if="transaction._relationships.requestedByUser">{{ transaction._relationships.requestedByUser._attributes.name }}</span>
                             <span v-else class="text-xs text-center text-gray-300">---</span>
+                        </td>
 
-                            <MoreInfoPopover v-if="transaction.metadata.canPayUsingDpo" title="Expires In" placement="top" class="opacity-0 group-hover:opacity-100 mt-1">
-                                <template #description>
-                                    <div class="border-t border-dashed my-2"></div>
-                                    <Countdown
-                                        :showMoreInfoPopover="false"
-                                        :time="transaction.metadata.dpoPaymentUrlExpiresAt">
-                                    </Countdown>
-                                </template>
-                            </MoreInfoPopover>
-                        </div>
-                        <span v-else class="text-xs text-center text-gray-300">---</span>
-                    </td>
+                        <!-- Verifyer -->
+                        <td class="text-xs text-center text-gray-300">
+                            <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
+                            <Pill v-else type="info" :text="appName" :showDot="false"></Pill>
+                        </td>
 
-                    <!-- Created At -->
-                    <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
-                        <div class="flex space-x-1 items-center">
-                            <span>{{ formattedDatetime(transaction.createdAt) }}</span>
-                            <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="formattedRelativeDate(transaction.createdAt)" placement="top"></MoreInfoPopover>
-                        </div>
-                    </td>
+                        <!-- Payment Link -->
+                        <td class="px-4 py-4" @click.stop>
+                            <div v-if="transaction.metadata" class="flex items-start space-x-2">
+                                <div v-if="transaction.metadata.canPayUsingDpo" class="max-w-80">
+                                    <ExternalLink :url="transaction.metadata.dpoPaymentUrl" class="text-xs">{{ transaction.metadata.dpoPaymentUrl }}</ExternalLink>
+                                </div>
+                                <Pill v-else-if="transaction.metadata.dpoPaymentLinkHasExpired == true" type="warning" text="Expired" :showDot="false"></Pill>
+                                <span v-else class="text-xs text-center text-gray-300">---</span>
 
-                    <!-- Action -->
-                    <td class="px-4 py-4 flex items-center space-x-4">
+                                <MoreInfoPopover v-if="transaction.metadata.canPayUsingDpo" title="Expires In" placement="top" class="opacity-0 group-hover:opacity-100 mt-1">
+                                    <template #description>
+                                        <div class="border-t border-dashed my-2"></div>
+                                        <Countdown
+                                            :showMoreInfoPopover="false"
+                                            :time="transaction.metadata.dpoPaymentUrlExpiresAt">
+                                        </Countdown>
+                                    </template>
+                                </MoreInfoPopover>
+                            </div>
+                            <span v-else class="text-xs text-center text-gray-300">---</span>
+                        </td>
 
-                        <!-- View Button -->
-                        <a v-if="!isDeleting(transaction)" href="#" @click.stop.prevent="onView(transaction)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
+                        <!-- Created At -->
+                        <td v-if="showEverything" class="whitespace-nowrap px-4 py-4">
+                            <div class="flex space-x-1 items-center">
+                                <span>{{ formattedDatetime(transaction.createdAt) }}</span>
+                                <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="formattedRelativeDate(transaction.createdAt)" placement="top"></MoreInfoPopover>
+                            </div>
+                        </td>
 
-                        <!-- Deleting Loader -->
-                        <SpinningLoader v-if="isDeleting(transaction)" type="danger">
-                            <span class="text-xs ml-2">Deleting...</span>
-                        </SpinningLoader>
+                        <!-- Action -->
+                        <td class="px-4 py-4 flex items-center space-x-4">
 
-                        <!-- Delete Button -->
-                        <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(transaction)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
+                            <!-- View Button -->
+                            <a v-if="!isDeleting(transaction)" href="#" @click.stop.prevent="onView(transaction)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
 
-                    </td>
+                            <!-- Deleting Loader -->
+                            <SpinningLoader v-if="isDeleting(transaction)" type="danger">
+                                <span class="text-xs ml-2">Deleting...</span>
+                            </SpinningLoader>
 
-                </tr>
-            </template>
+                            <!-- Delete Button -->
+                            <a v-else href="#" @click.stop.prevent="showDeleteConfirmationModal(transaction)" class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
 
-        </BasicTable>
+                        </td>
 
-        <!-- No Transactions -->
-        <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
-            <div class="space-y-4">
-                <h1 class="text-2xl font-bold">No Transactions Yet</h1>
-                <p>Your transactions will appear here once <BadgeIndicator type="primary" text="customers" :showDot="false" :clickable="true" :action="navigateToShowCustomers"></BadgeIndicator> start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
+                    </tr>
+                </template>
 
-                <!-- Add Transaction Button -->
-                <AddButton :action="onAddTransaction" class="w-40" size="sm">
-                    <span class="ml-2">Add Transaction</span>
-                </AddButton>
+            </BasicTable>
+
+            <!-- No Transactions -->
+            <div v-else class="flex justify-between space-x-20 bg-white shadow-lg rounded-lg border p-20">
+                <div class="space-y-4">
+                    <h1 class="text-2xl font-bold">No Transactions Yet</h1>
+                    <p>Your transactions will appear here once <Pill type="primary" text="customers" :showDot="false" :clickable="true" :action="navigateToShowCustomers"></Pill> start paying. Start promoting your store to attract buyers and generate sales. Promote your store on as many platforms as possible.</p>
+
+                    <!-- Add Transaction Button -->
+                    <AddButton :action="onAddTransaction" class="w-40" size="sm">
+                        <span class="ml-2">Add Transaction</span>
+                    </AddButton>
+                </div>
+                <div>
+                    <span class="text-8xl">💵</span>
+                </div>
             </div>
-            <div>
-                <span class="text-8xl">💵</span>
-            </div>
+
         </div>
 
         <!-- Confirm Delete Transaction -->
@@ -213,14 +221,14 @@
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import TransactionPaymentStatus from '@Components/transaction/TransactionPaymentStatus.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
         components: {
             AddButton, TextHeader, BasicTable, Checkbox, Countdown, ExternalLink, ConfirmModal, SpinningLoader,
-            PrimaryButton, MoreInfoPopover, ToogleSwitch, BadgeIndicator, TransactionPaymentStatus
+            PrimaryButton, MoreInfoPopover, ToogleSwitch, Pill, TransactionPaymentStatus
         },
         data() {
             return {

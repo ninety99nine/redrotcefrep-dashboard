@@ -125,12 +125,12 @@ const routes = [
                     {
                         path: 'orders/:order_href',
                         name: 'show-store-order',
-                        component: () => import('@Pages/stores/store/orders/StoreOrder.vue')
+                        component: () => import('@Pages/stores/store/orders/order/StoreOrder.vue')
                     },
                     {
                         path: 'orders/create',
                         name: 'create-store-order',
-                        component: () => import('@Pages/stores/store/orders/StoreOrder.vue')
+                        component: () => import('@Pages/stores/store/orders/order/StoreOrder.vue')
                     },
                     {
                         path: 'reviews',
@@ -173,19 +173,24 @@ const routes = [
                         component: () => import('@Pages/stores/store/pages/StorePage.vue')
                     },
                     {
-                        path: 'coupons',
-                        name: 'show-store-coupons',
-                        component: () => import('@Pages/stores/store/coupons/StoreCoupons.vue')
+                        path: 'offline',
+                        name: 'show-offline-store',
+                        component: () => import('@Pages/stores/store/offline/OfflineStore.vue')
                     },
                     {
-                        path: 'coupons/:coupon_href',
-                        name: 'show-store-coupon',
-                        component: () => import('@Pages/stores/store/coupons/StoreCoupon.vue')
+                        path: 'promotions',
+                        name: 'show-store-promotions',
+                        component: () => import('@Pages/stores/store/promotions/StorePromotions.vue')
                     },
                     {
-                        path: 'coupons/create',
-                        name: 'create-store-coupon',
-                        component: () => import('@Pages/stores/store/coupons/StoreCoupon.vue')
+                        path: 'promotions/:promotion_href',
+                        name: 'show-store-promotion',
+                        component: () => import('@Pages/stores/store/promotions/StorePromotion.vue')
+                    },
+                    {
+                        path: 'promotions/create',
+                        name: 'create-store-promotion',
+                        component: () => import('@Pages/stores/store/promotions/StorePromotion.vue')
                     },
                     {
                         path: 'customers',
@@ -201,6 +206,16 @@ const routes = [
                         path: 'customers/create',
                         name: 'create-store-customer',
                         component: () => import('@Pages/stores/store/customers/StoreCustomer.vue')
+                    },
+                    {
+                        path: 'subscriptions',
+                        name: 'show-store-subscriptions',
+                        component: () => import('@Pages/stores/store/subscriptions/StoreSubscriptions.vue')
+                    },
+                    {
+                        path: 'subscriptions/:subscription_href',
+                        name: 'show-store-subscription',
+                        component: () => import('@Pages/stores/store/subscriptions/StoreSubscription.vue')
                     },
                     {
                         path: 'transactions',

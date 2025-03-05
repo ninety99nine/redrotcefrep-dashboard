@@ -11,12 +11,12 @@
                 <!-- Amount Paid -->
                 <div class="flex items-center space-x-2 text-sm">
                     <span>Amount Paid: </span>
-                    <LineSkeleton v-if="isLoadingOrder" width="w-32"></LineSkeleton>
+                    <LineSkeleton v-if="isLoadingOrder" width="w-32" :shine="false"></LineSkeleton>
                     <span v-else class="font-bold">{{ order.paidTotal.amountWithCurrency }}</span>
                 </div>
 
                 <!-- Amount Paid Progress Bar -->
-                <LineSkeleton v-if="isLoadingOrder" width="w-full"></LineSkeleton>
+                <LineSkeleton v-if="isLoadingOrder" width="w-full" :shine="false"></LineSkeleton>
                 <div v-else class="w-3/4 flex items-center space-x-4">
                     <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-green-500 h-2.5 rounded-full" :style="'width: '+order.paidPercentage.value+'%'"></div>
@@ -49,15 +49,15 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
     import OrderTransactions from '@Components/order/transactions/OrderTransactions.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { LineSkeleton, MoreInfoPopover, BadgeIndicator, OrderTransactions },
+        components: { Pill, LineSkeleton, MoreInfoPopover, OrderTransactions },
         props: {
             order: {
                 type: Object

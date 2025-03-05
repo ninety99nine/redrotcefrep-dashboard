@@ -7,6 +7,8 @@
             <span>Welcome back, {{ authUser ? authUser.firstName : '' }}</span>
         </h1>
 
+        <UpgradeBannerCard></UpgradeBannerCard>
+
         <div class="grid grid-cols-3 gap-4 mb-8">
 
             <StoreQrCodeCard></StoreQrCodeCard>
@@ -59,13 +61,14 @@
     import AddCouponsCard from '@Pages/stores/store/home/components/AddCouponsCard.vue';
     import AddProductsCard from '@Pages/stores/store/home/components/AddProductsCard.vue';
     import StoreQrCodeCard from '@Pages/stores/store/home/components/StoreQrCodeCard.vue';
+    import UpgradeBannerCard from '@Pages/stores/store/home/components/UpgradeBannerCard.vue';
     import ShareYourStoreCard from '@Pages/stores/store/home/components/ShareYourStoreCard.vue';
     import GettingStartedCard from '@Pages/stores/store/home/components/GettingStartedCard.vue';
 
     export default {
         components: {
             Insights, AddTeamCard, UpgradeCard, TutorialsCard, StoreLinkCard, AddCouponsCard,
-            AddProductsCard, StoreQrCodeCard, ShareYourStoreCard, GettingStartedCard
+            AddProductsCard, StoreQrCodeCard, UpgradeBannerCard, ShareYourStoreCard, GettingStartedCard
         },
         data() {
             return {

@@ -17,11 +17,11 @@
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { Alert, Checkbox, BadgeIndicator },
+        components: { Alert, Checkbox, Pill },
         props: {
             form: {
                 type: Object

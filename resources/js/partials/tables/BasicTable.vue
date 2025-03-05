@@ -1,136 +1,80 @@
 <template>
 
-    <div>
+    <!-- Table -->
+    <div class="bg-white py-4 px-4 shadow-sm rounded-xl overflow-y-auto relative">
+
+        <slot name="header"></slot>
 
         <div class="flex justify-between items-center mb-4">
 
-            <div class="flex justify-center items-center space-x-4">
+            <div class="w-1/3 flex justify-center items-center space-x-4">
 
                 <!-- Search Input -->
-                <SearchInput v-model="searchTerm" :isSearching="isSearching"></SearchInput>
-
-                <!-- Primary Filters -->
-                <slot name="primaryFilters"></slot>
+                <SearchInput v-model="searchTerm" :isSearching="isSearching" class="w-full"></SearchInput>
 
             </div>
 
-            <!-- Refresh Button -->
-            <button @click.prevent="refresh" type="button" class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-                <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>
-            </button>
+            <div v-if="pagination" class="flex justify-center items-center space-x-2">
+
+                <!-- Filter Drawer Button -->
+                <FilterDrawer ref="filterDrawer" :filterExpressions="filterExpressions" @updatedFilters="updatedFilters"></FilterDrawer>
+
+                <!-- Sorting Drawer Button -->
+                <SortingDrawer ref="sortingDrawer" :sortingExpressions="sortingExpressions" @updatedSorting="updatedSorting"></SortingDrawer>
+
+                <!-- Columns Drawer Button -->
+                <ColumnsDrawer ref="columnsDrawer" :columns="columns" @updatedColumns="updatedColumns"></ColumnsDrawer>
+
+                <!-- Refresh Button -->
+                <Button :action="refresh" type="outline" size="sm" icon="refresh"></Button>
+
+                <!-- Slot After Refresh Button -->
+                <slot name="afterRefreshButton"></slot>
+
+            </div>
 
         </div>
 
-        <template v-if="showAddFilter">
-
-            <div class="flex justify-start items-center bg-gray-50 rounded-lg p-4 mb-4">
-
-                <!-- Add Filter Button -->
-                <button @click="showFilterModal" type="button" class="text-xs text-blue-500 rounded-lg py-1 px-4 whitespace-nowrap cursor-pointer border border-blue-300 bg-blue-50 hover:text-blue-400 hover:border-blue-200 active:text-blue-300 active:border-blue-100">
-                    + Add Filter
-                </button>
-
-                <!-- Separator -->
-                <div class="h-4 border-r border-gray-300 mx-4"></div>
-
-                <!-- Selected Filters -->
-                <div class="flex flex-wrap">
-
-                    <button @click.self="showSelectedFilter(filter)" type="button" class="flex items-center mr-2 text-xs text-white rounded-lg py-1 px-2 whitespace-nowrap cursor-pointer border border-white bg-blue-500"
-                        v-for="(filter, filterIndex) in filters" :key="filterIndex">
-
-                        <!-- Filter Display Name -->
-                        <span @click.self="showSelectedFilter(filter, filterIndex)">{{ filter.displayName }}</span>
-
-                        <!-- Remove Filter Button -->
-                        <svg @click.self="removeFilter(filterIndex)" class="w-4 h-4 ml-2 hover:text-blue-400 hover:border-blue-200 active:text-blue-300 active:border-blue-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path  @click.self="removeFilter(filterIndex)" stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-
-                    </button>
-
+        <transition name="fade-1" mode="out-in">
+            <div v-if="hasFilterExpressions && !hasFilters" class="flex flex-col items-center mb-4">
+                <div class="flex items-center space-x-2">
+                    <SpinningLoader></SpinningLoader>
+                    <span class="text-sm text-gray-500">Preparing filters</span>
                 </div>
-
             </div>
-
-            <!-- Add Filter Modal -->
-            <div :id="uniqueModalId" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-
-                <div class="relative p-4 w-full max-w-md max-h-full">
-
-                    <!-- Modal content -->
-                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-
-                        <!-- Modal header -->
-                        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-
-                            <!-- Modal Title -->
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                {{ filter == null ? '+ Add Filter' : 'Edit Filter' }}
-                            </h3>
-
-                            <!-- Modal Close Icon Button -->
-                            <button @click="hideFilterModal" type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                                <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                                </svg>
-                                <span class="sr-only">Close modal</span>
-                            </button>
-
-                        </div>
-
-                        <!-- Modal body -->
-                        <div class="grid grid-col-12 lg:gap-4 gap-4 p-4">
-
-                            <!-- Modal Filters -->
-                            <slot name="modalFilters"></slot>
-
-                            <div class="col-span-12 flex justify-end">
-
-                                <!-- Modal Add Filter Button -->
-                                <button @click.prevent="addOrUpdateFilter" @click="hideFilterModal" type="button" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    <svg v-if="filter == null" class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
-                                    {{ filter == null ? 'Add Filter' : 'Done' }}
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
+            <div v-else-if="hasSortingExpressions && !hasSorting" class="flex flex-col items-center mb-4">
+                <div class="flex items-center space-x-2">
+                    <SpinningLoader></SpinningLoader>
+                    <span class="text-sm text-gray-500">Preparing sorting</span>
                 </div>
-
             </div>
-
-        </template>
-
-        <!-- Top Pagination -->
-        <Pagination v-if="pagination && pagination.total > 5" :pagination="pagination" @paginate="paginate" class="mb-4"></Pagination>
-
-        <!-- Table -->
-        <div class="relative overflow-y-auto bg-white border rounded-lg shadow">
-
-            <!-- Table Loader -->
-            <div v-if="pagination && isLoading && !isSearching" class="absolute top-0 bottom-0 left-0 right-0 bg-white/50 flex justify-center items-center">
-                <SpinningLoader v-if="!isSearching"></SpinningLoader>
+            <div v-else-if="hasFilters || hasSorting" class="flex flex-wrap gap-2 mb-4">
+                <Pill :key="index" v-for="(filter, index) in filters" type="primary" size="xs" :closableAction="() => removeAppliedFilter(filter)">{{ filter.label }}</Pill>
+                <Pill :key="index" v-for="(sort, index) in sorting" type="info" size="xs" :closableAction="() => removeAppliedSort(sort)">{{ sort.label }}</Pill>
             </div>
+        </transition>
 
+        <!-- Table Loader -->
+        <div v-if="pagination && isLoading && !isSearching" class="absolute top-0 bottom-0 left-0 right-0 bg-white/50 flex justify-center items-center">
+            <SpinningLoader v-if="!isSearching"></SpinningLoader>
+        </div>
+
+        <!-- Below Toolbar -->
+        <slot name="belowToolbar"></slot>
+
+        <div class="w-full overflow-x-auto rounded-lg">
             <table class="w-full text-sm text-left rtl:text-right text-gray-500">
 
                 <!-- Table Head -->
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                     <slot name="head"></slot>
-
                 </thead>
 
                 <!-- Pulsing Placeholder Rows -->
-                <tbody v-if="!pagination && isLoading && totalHeaders > 0">
+                <tbody v-if="!pagination && isLoading && totalActiveColumns > 0">
 
                     <tr v-for="(row, index) in [1,2,3]" :key="index" class="animate-pulse">
-                        <td v-for="(count, index) in totalHeaders" :key="index">
+                        <td v-for="(column, index) in totalActiveColumns" :key="index">
                             <div class="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mx-4 my-4"></div>
                         </td>
                     </tr>
@@ -191,16 +135,34 @@
                 </tbody>
 
             </table>
+        </div>
 
-            <!-- No Results Desclaimer -->
-            <div v-if="pagination && pagination.total == 0" class="text-xs text-gray-700 text-center py-16 bg-gray-50 border-t">
-                No results found
+        <!-- No Results Desclaimer -->
+        <div v-if="pagination && pagination.total == 0" class="text-xs text-gray-700 text-center py-16 bg-gray-50 border-t">
+            No results found
+        </div>
+
+        <div v-if="pagination && pagination.total > 0" class="flex justify-between items-center mt-4">
+
+            <!-- Results -->
+            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.from }}-{{ pagination.to }}</span> of <span class="font-semibold text-gray-900 dark:text-white">{{ pagination.total }}</span></span>
+
+            <div class="flex items-center space-x-4">
+
+                <SelectInput
+                    width="w-fit"
+                    v-model="localPerPage">
+                    <option v-for="(perPage, index) in perPageOptions" :value="perPage" :key="index">
+                        {{ perPage }} per page
+                    </option>
+                </SelectInput>
+
+                <!-- Bottom Pagination -->
+                <Pagination v-if="pagination" :pagination="pagination" @paginate="paginate"></Pagination>
+
             </div>
 
         </div>
-
-        <!-- Bottom Pagination -->
-        <Pagination v-if="pagination" :pagination="pagination" @paginate="paginate" class="mt-4"></Pagination>
 
     </div>
 
@@ -210,15 +172,21 @@
     /**
      * Component Reference: https://flowbite.com/docs/components/tables/
      */
+    import Pill from '@Partials/pills/Pill.vue';
     import { Modal, initFlowbite } from "flowbite";
+    import Button from '@Partials/buttons/Button.vue';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
+    import SelectInput from '@Partials/inputs/SelectInput.vue';
     import Pagination from '@Partials/paginations/Pagination.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
+    import FilterDrawer from '@Partials/tables/components/FilterDrawer.vue';
+    import ColumnsDrawer from '@Partials/tables/components/ColumnsDrawer.vue';
+    import SortingDrawer from '@Partials/tables/components/SortingDrawer.vue';
 
     export default {
         mixins: [UtilsMixin],
-        components: { SearchInput, Pagination, SpinningLoader },
+        components: { Pill, Button, SearchInput, SelectInput, Pagination, SpinningLoader, FilterDrawer, ColumnsDrawer, SortingDrawer },
         props: {
             isLoading: {
                 type: Boolean,
@@ -227,32 +195,51 @@
             pagination: {
                 type: Object
             },
-            totalHeaders: {
-                type: Number,
-                default: 0
+            perPage: {
+                type: String,
+                default: '15'
             },
-            showAddFilter: {
-                type: Boolean,
-                default: false
+            columns: {
+                type: Array,
+                default: () => []
             },
-            filters: {
+            filterExpressions: {
+                type: Array,
+                default: () => []
+            },
+            sortingExpressions: {
                 type: Array,
                 default: () => []
             }
         },
+        emits: ['search', 'refresh', 'paginate', 'updatedColumns', 'updatedFilters', 'updatedSorting', 'updatedPerPage'],
         data() {
             return {
                 modal: null,
-                filter: null,
+                filters: [],
+                sorting: [],
                 searchTerm: '',
-                filterIndex: null,
-                selectedFilter: null,
+                filterDrawer: null,
+                sortingDrawer: null,
+                localPerPage: this.perPage,
+                perPageOptions: ['15', '50', '100', '200'],
                 uniqueModalId: this.generateUniqueId('modal'),
             }
         },
         watch: {
-            searchTerm(newValue, oldValue) {
+            searchTerm(newValue) {
                 this.$emit('search', newValue);
+            },
+            localPerPage(newValue) {
+                this.$emit('updatedPerPage', newValue);
+            },
+            pagination(newValue) {
+                if(newValue) {
+                    this.$nextTick(() => {
+                        this.filterDrawer = this.$refs.filterDrawer;
+                        this.sortingDrawer = this.$refs.sortingDrawer;
+                    });
+                }
             }
         },
         computed: {
@@ -262,6 +249,21 @@
             hasSearchTerm() {
                 return this.searchTerm.length > 0;
             },
+            hasFilters() {
+                return this.filters.length > 0;
+            },
+            hasSorting() {
+                return this.sorting.length > 0;
+            },
+            hasFilterExpressions() {
+                return this.filterExpressions.length > 0;
+            },
+            hasSortingExpressions() {
+                return this.sortingExpressions.length > 0;
+            },
+            totalActiveColumns() {
+                return this.columns.filter((tableHeader) => tableHeader.active).length;
+            }
         },
         methods: {
             refresh() {
@@ -270,29 +272,23 @@
             paginate(url) {
                 this.$emit('paginate', url);
             },
-            addOrUpdateFilter() {
-                this.$emit('addOrUpdateFilter', this.filterIndex);
-                this.filterIndex = null;
-                this.filter = null;
+            updatedColumns(columns) {
+                this.$emit('updatedColumns', columns);
             },
-            removeFilter(filterIndex) {
-                this.filters.splice(filterIndex, 1);
-                this.$emit('removeFilter');
+            updatedFilters(filters) {
+                this.filters = filters;
+                this.$emit('updatedFilters', filters);
             },
-            showFilterModal() {
-                this.modal.show();
-                this.$emit('showFilterModal');
+            updatedSorting(sorting) {
+                this.sorting = sorting;
+                this.$emit('updatedSorting', sorting);
             },
-            hideFilterModal() {
-                this.modal.hide();
-                this.$emit('hideFilterModal');
+            removeAppliedFilter(filter) {
+                this.filterDrawer.removeAppliedFilter(filter);
             },
-            showSelectedFilter(filter, filterIndex) {
-                this.showFilterModal();
-                this.filter = filter;
-                this.filterIndex = filterIndex;
-                this.$emit('showSelectedFilter', filter);
-            },
+            removeAppliedSort(sort) {
+                this.sortingDrawer.removeAppliedSort(sort);
+            }
         },
         mounted() {
 

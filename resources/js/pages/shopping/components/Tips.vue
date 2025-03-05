@@ -1,7 +1,7 @@
 <template>
     <div v-if="hasTips" class="space-y-4 px-4 pb-4">
         <div class="flex flex-wrap gap-2">
-            <BadgeIndicator
+            <Pill
                 :key="index"
                 size="px-4 py-1"
                 :showDot="false"
@@ -25,12 +25,12 @@
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import { useShoppingCartState, TIP_TYPES } from '@Stores/shopping-cart-store.js';
 
     export default {
         mixins: [FormMixin],
-        components: { MoneyInput, BadgeIndicator },
+        components: { MoneyInput, Pill },
         data() {
             return {
                 storeState: useStoreState(),

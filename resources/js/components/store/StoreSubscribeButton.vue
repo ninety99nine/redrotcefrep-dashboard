@@ -15,16 +15,16 @@
 
             <!-- Payment Shortcode Skeleton-->
             <div v-if="isGeneratingPaymentShortcode" class="flex justify-center my-4">
-                <ShineEffect>
+                <div>
                     <div class="flex items-center space-x-2 mb-4">
                         <span class="text-gray-300 text-4xl inline-block h-8">*</span>
-                        <SquareSkeleton v-for="(item, index) in 3" :key="index" size="w-8 h-8"></SquareSkeleton>
+                        <LineSkeleton v-for="(item, index) in 3" :key="index" width="w-8" height="h-8" rounded="rounded-sm"></LineSkeleton>
                         <span class="text-gray-300 text-4xl inline-block h-8">*</span>
-                        <SquareSkeleton v-for="(item, index) in 3" :key="index" size="w-8 h-8"></SquareSkeleton>
+                        <LineSkeleton v-for="(item, index) in 3" :key="index" width="w-8" height="h-8" rounded="rounded-sm"></LineSkeleton>
                         <span class="text-gray-300 text-2xl inline-block">#</span>
                     </div>
                     <div class="text-center text-gray-500">creating shortcode</div>
-                </ShineEffect>
+                </div>
             </div>
 
             <template v-else>
@@ -91,17 +91,15 @@
 
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
+    import BasicModal from '@Partials/modals/BasicModal.vue';
     import { postApi } from '@Repositories/api-repository.js';
     import Countdown from '@Partials/countdowns/Countdown.vue';
-    import BasicModal from '@Partials/modals/BasicModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import SquareSkeleton from '@Partials/skeletons/SquareSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
         mixins: [FormMixin],
-        components: { Countdown, BasicModal, ShineEffect, PrimaryButton, SquareSkeleton, MoreInfoPopover },
+        components: { Countdown, BasicModal, ShineEffect, PrimaryButton, MoreInfoPopover },
         data() {
             return {
                 paymentShortcode: null,

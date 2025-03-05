@@ -134,9 +134,15 @@
                 </div>
 
                 <!-- Create Store Button -->
-                <PrimaryButton :action="createStore" :loading="isCreatingStore" class="w-full">
-                    Create Store
-                </PrimaryButton>
+                <Button
+                    size="md"
+                    class="w-full"
+                    type="primary"
+                    :action="createStore"
+                    :loading="isCreatingStore"
+                    :disabled="isCreatingStore">
+                    <span>Create Store</span>
+                </Button>
 
             </form>
         </div>
@@ -148,11 +154,11 @@
 <script>
 
     import { FormMixin } from '@Mixins/FormMixin.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { useApiState } from '@Stores/api-store.js';
     import { useAuthState } from '@Stores/auth-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import { postApi } from '@Repositories/api-repository.js';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import CountrySelectInput from '@Partials/inputs/CountrySelectInput.vue';
     import CurrencySelectInput from '@Partials/inputs/CurrencySelectInput.vue';
@@ -161,7 +167,7 @@
     export default {
         mixins: [FormMixin],
         components: {
-            TextInput, PrimaryButton, MobileNumberInput, CountrySelectInput, CurrencySelectInput, FormErrorMessages
+            Button, TextInput, MobileNumberInput, CountrySelectInput, CurrencySelectInput, FormErrorMessages
         },
         data() {
             return {

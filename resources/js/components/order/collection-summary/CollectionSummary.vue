@@ -3,9 +3,7 @@
     <div class="bg-white shadow-lg rounded-lg border space-y-3 p-4 mb-4">
 
         <div v-if="isLoadingOrder" class="flex items-center space-x-2">
-            <ShineEffect>
-                <RoundSkeleton size="w-6 h-6"></RoundSkeleton>
-            </ShineEffect>
+            <LineSkeleton width="w-6" height="h-6"></LineSkeleton>
             <p class="font-bold text-lg">Collection</p>
         </div>
 
@@ -43,9 +41,9 @@
         <!-- Pickup/Delivery information (Collection Type) Skeleton -->
         <template v-if="isLoadingOrder">
             <div class="flex space-x-1">
-                <LineSkeleton width="w-12"></LineSkeleton>
-                <LineSkeleton width="w-24"></LineSkeleton>
-                <LineSkeleton width="w-4"></LineSkeleton>
+                <LineSkeleton width="w-12" :shine="false"></LineSkeleton>
+                <LineSkeleton width="w-24" :shine="false"></LineSkeleton>
+                <LineSkeleton width="w-4" :shine="false"></LineSkeleton>
             </div>
         </template>
 
@@ -175,24 +173,22 @@
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
     import { FormMixin } from '@Mixins/FormMixin.js';
     import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import { useStoreState } from '@Stores/store-store.js';
     import { postApi } from '@Repositories/api-repository.js';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import RoundSkeleton from '@Partials/skeletons/RoundSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import BadgeIndicator from '@Partials/badge-indicators/BadgeIndicator.vue';
 
     export default {
         mixins: [FormMixin, UtilsMixin],
-        components: { Alert, ConfirmModal, ShineEffect, TextareaInput, OtpInput, LineSkeleton, PrimaryButton, RoundSkeleton, MoreInfoPopover, BadgeIndicator },
+        components: { Pill, Alert, ConfirmModal, TextareaInput, OtpInput, LineSkeleton, PrimaryButton, MoreInfoPopover },
         props: {
             order: {
                 type: Object
