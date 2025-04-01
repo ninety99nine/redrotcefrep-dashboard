@@ -51,11 +51,11 @@
 
 <script>
 
-import Button from '@Partials/buttons/Button.vue';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
     export default {
+        inject: ['storeState'],
         components: { Button, LineSkeleton },
         props: {
             transaction: {
@@ -63,11 +63,6 @@ import Button from '@Partials/buttons/Button.vue';
             },
             isLoadingTransaction: {
                 type: Boolean
-            }
-        },
-        data() {
-            return {
-                storeState: useStoreState()
             }
         },
         computed: {

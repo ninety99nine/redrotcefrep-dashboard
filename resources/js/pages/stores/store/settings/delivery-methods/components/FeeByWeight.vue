@@ -14,7 +14,7 @@
                 </svg>
 
                 <!-- Delete Category Button -->
-                <DeleteButton :action="() => onRemoveWeightCategory(index)" size="xs" type="danger"></DeleteButton>
+                <Button type="danger" size="xs" :action="() => onRemoveWeightCategory(index)"></Button>
 
             </div>
 
@@ -37,7 +37,7 @@
                             placeholder="Lightweight"
                             labelPopoverTitle="What Is This?"
                             v-model="form.weightCategories[index].name"
-                            :errorText="getFormError('weightCategories'+index+'name')"
+                            :errorText="formState.getFormError('weightCategories'+index+'name')"
                             labelPopoverDescription="Set the name for this weight category">
                         </TextInput>
 
@@ -46,7 +46,7 @@
                             label="Category fee"
                             labelPopoverTitle="What Is This?"
                             v-model="form.weightCategories[index].fee"
-                            :errorText="getFormError('weightCategories'+index+'fee')"
+                            :errorText="formState.getFormError('weightCategories'+index+'fee')"
                             labelPopoverDescription="Specify the fee charged for deliveries within this weight category">
                         </MoneyInput>
 
@@ -58,7 +58,7 @@
                             :key="form.weightCategories[index].weights"
                             :tags="form.weightCategories[index].weights"
                             :label="'Weight Range ('+store.weightUnit+')'"
-                            :errorText="getFormError('weightCategories'+index+'weights')"
+                            :errorText="formState.getFormError('weightCategories'+index+'weights')"
                             @onTagsChanged="(newValues) => form.weightCategories[index].weights = newValues"
                             labelPopoverDescription="Specify the weight range for this category, e.g., 2.5, 5-10">
                         </InputTags>
@@ -76,7 +76,7 @@
                         </svg>
                         <span>Category {{ index + 1 }}</span>
                     </div>
-                    <Pill v-if="form.weightCategories[index].name" type="info" :text="form.weightCategories[index].name" :showDot="false"></Pill>
+                    <Pill v-if="form.weightCategories[index].name" type="info" size="xs" :showDot="false">{{ form.weightCategories[index].name }}</Pill>
                     <InputErrorMessage v-else errorText="No name" margin="mt-0"></InputErrorMessage>
                 </div>
 
@@ -88,7 +88,7 @@
                 <InputErrorMessage v-else errorText="No weight range" margin="mt-0"></InputErrorMessage>
 
                 <!-- Category Name Error Message -->
-                <InputErrorMessage v-if="getFormError('weightCategories'+index+'name')" :errorText="getFormError('weightCategories'+index+'name')"></InputErrorMessage>
+                <InputErrorMessage v-if="formState.getFormError('weightCategories'+index+'name')" :errorText="formState.getFormError('weightCategories'+index+'name')"></InputErrorMessage>
 
             </div>
 
@@ -102,7 +102,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
                 <div class="text-sm space-y-2">
-                    <p><Pill type="primary" text="+ Add Category" :showDot="false" :clickable="true" :action="onAddWeightCategory"></Pill> to define weight categories.</p>
+                    <p><Pill type="primary" size="xs" :showDot="false" :action="onAddWeightCategory">+ Add Category</Pill> to define weight categories.</p>
                 </div>
             </div>
         </div>
@@ -110,16 +110,16 @@
         <div class="flex justify-end space-x-2">
 
             <!-- Undo Button -->
-            <UndoButton v-if="weightCategoriesHaveChanged && hasOriginalWeightCategories" :action="onResetWeightCategories" size="xs">
-                <span class="ml-1">Undo</span>
-            </UndoButton>
+            <Button v-if="weightCategoriesHaveChanged && hasOriginalWeightCategories" :action="onResetWeightCategories" type="light" size="xs">
+                <span>Undo</span>
+            </Button>
 
             <div class="flex justify-end">
 
                 <!-- Add Option Button -->
-                <AddButton :action="onAddWeightCategory" class="w-40" size="xs">
-                    <span class="ml-2">Add Category</span>
-                </AddButton>
+                <Button :action="onAddWeightCategory" class="w-40" type="primary" size="xs">
+                    <span>Add Category</span>
+                </Button>
 
             </div>
 
@@ -133,21 +133,17 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: {
-            TextInput, InputTags, AddButton, MoneyInput, UndoButton, DeleteButton, Pill, InputErrorMessage
+            Pill, Button, TextInput, InputTags, MoneyInput, InputErrorMessage
         },
         props: {
             form: {
@@ -156,8 +152,7 @@
         },
         data() {
             return {
-                originalWeightCategories: [],
-                storeState: useStoreState()
+                originalWeightCategories: []
             };
         },
         computed: {

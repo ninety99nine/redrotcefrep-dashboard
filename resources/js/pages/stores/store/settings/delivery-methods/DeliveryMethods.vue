@@ -56,7 +56,7 @@
                             <div class="flex items-center space-x-2">
 
                                 <!-- Active Status Badge -->
-                                <Pill :type="deliveryMethod.active ? 'success' : 'warning'" :text="deliveryMethod.active ? 'Active' : 'Inactive'" :showDot="false"></Pill>
+                                <Pill :type="deliveryMethod.active ? 'success' : 'warning'" size="xs" :showDot="false">{{ deliveryMethod.active ? 'Active' : 'Inactive' }}</Pill>
 
                             </div>
                         </div>
@@ -91,7 +91,7 @@
 
                         <div class="space-y-2">
                             <p v-if="hasSearchTerm" class="font-bold">No delivery methods found.</p>
-                            <p>Click the <Pill type="primary" text="+ Add Delivery Method" :showDot="false" :clickable="true" :action="() => onAddDeliveryMethod()"></Pill> button to offer your customers convenient delivery methods on your store</p>
+                            <p>Click the <Pill type="primary" size="xs" :showDot="false" :action="() => onAddDeliveryMethod()">+ Add Delivery Method</Pill> button to offer your customers convenient delivery methods on your store</p>
                         </div>
                     </div>
 
@@ -112,13 +112,6 @@
                     <p class="mb-8">Are you sure you want to delete <span class="font-bold text-black">{{ deletableDeliveryMethod.name }}</span>?</p>
                 </template>
 
-                <template #trigger="triggerProps">
-
-                    <!-- Delete Delivery Method Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
-
-                </template>
-
             </ConfirmModal>
 
         </div>
@@ -130,23 +123,19 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
         components: {
             Pill, Button, draggable: VueDraggableNext, SearchInput, ConfirmModal,
-            SpinningLoader, LineSkeleton, PrimaryButton
+            SpinningLoader, LineSkeleton
         },
         props: {
             form: {
@@ -157,11 +146,9 @@
             return {
                 searchTerm: '',
                 deliveryMethods: [],
-                apiState: useApiState(),
-                storeState: useStoreState(),
                 deletableDeliveryMethod: null,
-                isDeletingDeliveryMethodIds: [],
                 isLoadingDeliveryMethods: false,
+                isDeletingDeliveryMethodIds: [],
                 isUpdatingDeliveryMethodArrangement: false,
             }
         },
@@ -178,7 +165,7 @@
                 return this.hasSearchTerm && this.isLoadingDeliveryMethods;
             },
             hasSearchTerm() {
-                return this.searchTerm.length > 0;
+                return this.searchTerm != null && this.searchTerm.trim() != '';
             },
             hasDeliveryMethods() {
                 return this.deliveryMethods.length > 0;
@@ -239,7 +226,7 @@
                     //  Stop loader
                     this.isLoadingDeliveryMethods = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -261,15 +248,12 @@
 
                         if(response.data.updated) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Delivery method arrangement updated');
+                            this.notificationState.showSuccessNotification('Delivery method arrangement updated');
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -283,7 +267,7 @@
                     //  Stop loader
                     this.isUpdatingDeliveryMethodArrangement = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -304,18 +288,15 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Delivery method deleted');
+                            this.notificationState.showSuccessNotification('Delivery method deleted');
 
                             //  If we are not deleting any other delivery method, then refresh the delivery method list
                             if(this.isDeletingDeliveryMethodIds.length == 0) this.showDeliveryMethods();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -326,7 +307,7 @@
                     //  Stop loader
                     this.isDeletingDeliveryMethodIds.splice(this.isDeletingDeliveryMethodIds.findIndex((id) => id == this.deleteDeliveryMethod.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

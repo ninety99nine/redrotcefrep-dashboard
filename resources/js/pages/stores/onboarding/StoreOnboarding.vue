@@ -17,17 +17,14 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import RightSideAlerts from '@Partials/alerts/RightSideAlerts.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { RightSideAlerts },
         data() {
             return {
-                storeHref: null,
-                storeState: useStoreState()
+                storeHref: null
             }
         },
         watch: {

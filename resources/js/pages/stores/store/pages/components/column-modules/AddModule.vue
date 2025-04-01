@@ -52,11 +52,10 @@
 <script>
 
     import { initFlowbite, Dropdown } from "flowbite";
-    import { UtilsMixin } from "@Mixins/UtilsMixin.js";
-    import { usePageState } from '@Stores/page-store.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
+        inject: ['pageState'],
         props: {
             rowIndex: Number,
             columnIndex: Number,
@@ -65,9 +64,8 @@
         data() {
             return {
                 dropdown: null,
-                pageState: usePageState(),
-                dropdownUniqueId: this.generateUniqueId("dropdown"),
-                triggerUniqueId: this.generateUniqueId("dropdown-trigger"),
+                dropdownUniqueId: generateUniqueId("dropdown"),
+                triggerUniqueId: generateUniqueId("dropdown-trigger"),
             };
         },
         methods: {

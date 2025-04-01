@@ -50,13 +50,12 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import OrderTransactions from '@Components/order/transactions/OrderTransactions.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Pill, LineSkeleton, MoreInfoPopover, OrderTransactions },
         props: {
             order: {

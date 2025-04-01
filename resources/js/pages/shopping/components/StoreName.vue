@@ -8,24 +8,19 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
+    export default {
+        inject: ['storeState'],
+        props: {
+            size: {
+                type: String,
+                default: 'text-xl sm:text-2xl md:text-3xl'
+            }
+        },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            }
+        }
+    };
 
-export default {
-    props: {
-        size: {
-            type: String,
-            default: 'text-xl sm:text-2xl md:text-3xl'
-        }
-    },
-    data() {
-        return {
-            storeState: useStoreState()
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        }
-    }
-};
 </script>

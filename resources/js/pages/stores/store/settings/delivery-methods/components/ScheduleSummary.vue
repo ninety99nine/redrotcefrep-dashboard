@@ -74,7 +74,7 @@
 
             </div>
 
-            <p v-if="testDeliveryDate" class="text-sm text-green-500">Your order will be delivered on <span class="font-bold">{{ testDeliveryDate }} ({{ customFormattedDate(testDeliveryDate, 'ddd') }})</span>, just {{ formattedRelativeDate(testDeliveryDate, true) }} from now.</p>
+            <p v-if="testDeliveryDate" class="text-sm text-green-500">Your order will be delivered on <span class="font-bold">{{ testDeliveryDate }} ({{ formattedShortWeekday(testDeliveryDate) }})</span>, just {{ formattedRelativeDate(testDeliveryDate, true) }} from now.</p>
 
         </div>
 
@@ -84,13 +84,12 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import { formattedShortWeekday, formattedRelativeDate } from '@Utils/dateUtils.js';
     import DeliveryDatePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryDatePicker.vue';
     import DeliveryTimePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryTimePicker.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: {
             LineSkeleton, DeliveryDatePicker, DeliveryTimePicker
         },
@@ -115,6 +114,8 @@
             }
         },
         methods: {
+            formattedRelativeDate: formattedRelativeDate,
+            formattedShortWeekday: formattedShortWeekday,
             onIsLoadingDateOptions(isLoading) {
                 this.testDeliveryDate = null;
                 this.testDeliveryTimeslot = null;

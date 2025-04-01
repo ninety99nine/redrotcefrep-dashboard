@@ -58,26 +58,25 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
-    import { useStoreState } from '@Stores/store-store.js';
     import Countdown from '@Partials/countdowns/Countdown.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             Button, Countdown, LineSkeleton
         },
         data() {
             return {
-                storeState: useStoreState(),
                 upgradeButtonAnimationTimeout: null
             };
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue && !this.activeSubscription) {
+            store(newValue) {
+                if(newValue && !this.activeSubscription) {
                     this.manageUpgradeButtonAnimation();
                 }
-            }
+            },
         },
         computed: {
             store() {

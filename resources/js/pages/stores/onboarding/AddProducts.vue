@@ -18,240 +18,236 @@
         <div class="w-full max-w-lg">
 
             <!-- Form -->
-            <form @submit.prevent="submit">
+            <div class="space-y-2 mb-4">
 
-                <div class="space-y-2 mb-4">
+                <div
+                    :key="index"
+                    v-for="(product, index) in products"
+                    :class="['space-y-3 bg-white p-4 shadow-lg rounded-xl']">
 
-                    <div
-                        :key="index"
-                        v-for="(product, index) in products"
-                        :class="['space-y-3 bg-white p-4 shadow-lg rounded-xl']">
+                    <div class="flex items-center space-x-1 font-bold mb-4">
+                        <span class="text-sm">Product</span>
+                        <div class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded-full text-xs">{{ index + 1}}</div>
+                    </div>
 
-                        <div class="flex items-center space-x-1 font-bold mb-4">
-                            <span class="text-sm">Product</span>
-                            <div class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded-full text-xs">{{ index + 1}}</div>
+                    <!-- Name Input -->
+                    <TextInput
+                        v-model="product.name"
+                        placeholder="Standard Ticket"
+                        :errorText="formState.getFormError('name', index)">
+                    </TextInput>
+
+                    <!-- Unit Regular Price Money Input -->
+                    <MoneyInput
+                        v-model="product.unitRegularPrice"
+                        :currencySymbol="store.currency.symbol"
+                        :errorText="formState.getFormError('unitRegularPrice', index)">
+                    </MoneyInput>
+
+                    <!-- Image Upload Area -->
+                    <div>
+
+                        <!-- Title -->
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
+                            Images
+                            <span class="font-normal text-gray-500">(Optional)</span>
+                        </label>
+
+                        <!-- Drag & Drop or Clickable Area -->
+                        <div
+                            @dragover.prevent
+                            @click="() => triggerFileInput(index)"
+                            @drop="(event) => handleDrop(event, index)"
+                            v-if="product.photos.length < maxPhotosPerProduct"
+                            class="mt-2 w-full h-20 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                            <p v-if="!product.photos.length">Click or Drag & Drop Images</p>
+                            <p v-else>Upload More Images</p>
+                            <input
+                                multiple
+                                type="file"
+                                class="hidden"
+                                accept="image/*"
+                                :ref="(el) => setFileInputRef(el, index)"
+                                @change="(event) => handleFileUpload(event, index)"
+                            />
                         </div>
 
-                        <!-- Name Input -->
-                        <TextInput
-                            v-model="product.name"
-                            placeholder="Standard Ticket"
-                            :errorText="getFormError('name', index)">
-                        </TextInput>
+                    </div>
 
-                        <!-- Unit Regular Price Money Input -->
-                        <MoneyInput
-                            v-model="product.unitRegularPrice"
-                            :currencySymbol="store.currency.symbol"
-                            :errorText="getFormError('unitRegularPrice', index)">
-                        </MoneyInput>
+                    <!-- Image Previews -->
+                    <div v-if="product.photos.length" class="grid grid-cols-3 gap-2">
+                        <div v-for="(photo, photoIndex) in product.photos" :key="photoIndex" class="relative group">
 
-                        <!-- Image Upload Area -->
-                        <div>
+                            <template v-if="!photo.uploading">
 
-                            <!-- Title -->
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-200">
-                                Images
-                                <span class="font-normal text-gray-500">(Optional)</span>
-                            </label>
-
-                            <!-- Drag & Drop or Clickable Area -->
-                            <div
-                                @dragover.prevent
-                                @click="() => triggerFileInput(index)"
-                                @drop="(event) => handleDrop(event, index)"
-                                v-if="product.photos.length < maxPhotosPerProduct"
-                                class="mt-2 w-full h-20 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                                <p v-if="!product.photos.length">Click or Drag & Drop Images</p>
-                                <p v-else>Upload More Images</p>
-                                <input
-                                    multiple
-                                    type="file"
-                                    class="hidden"
-                                    accept="image/*"
-                                    :ref="(el) => setFileInputRef(el, index)"
-                                    @change="(event) => handleFileUpload(event, index)"
-                                />
-                            </div>
-
-                        </div>
-
-                        <!-- Image Previews -->
-                        <div v-if="product.photos.length" class="grid grid-cols-3 gap-2">
-                            <div v-for="(photo, photoIndex) in product.photos" :key="photoIndex" class="relative group">
-
-                                <template v-if="!photo.uploading">
-
-                                    <!-- Success Tick -->
-                                    <div v-if="photo.uploaded === true" class="absolute z-10 top-1 right-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                        </svg>
-                                    </div>
-
-                                    <!-- Failure Cross -->
-                                    <div v-if="photo.uploaded === false" class="absolute z-10 top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-
-                                    <!-- Retry Button -->
-                                    <button
-                                        v-if="photo.uploaded === false"
-                                        @click="() => uploadProductImages(product, photoIndex)"
-                                        class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white hover:bg-yellow-600 active:scale-95 absolute z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-
-                                    <!-- Remove Image Button -->
-                                    <button
-                                        v-if="(!photo.uploaded && !photo.uploading)"
-                                        @click.stop="(event) => removePhoto(event, index, photoIndex)"
-                                        class="absolute z-10 top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">
-                                        ✕
-                                    </button>
-
-                                    <!-- Failed Indicator -->
-                                    <div v-if="photo.uploaded === false" class="absolute inset-0 bg-white bg-opacity-80 border border-red-500 rounded-lg flex items-center justify-center"></div>
-
-                                </template>
-
-                                <!-- Uploading Indicator -->
-                                <div v-if="photo.uploading" class="absolute inset-0 bg-gray-900 bg-opacity-50 rounded-lg flex items-center justify-center">
-                                    <span class="text-white text-xs font-bold">Uploading...</span>
+                                <!-- Success Tick -->
+                                <div v-if="photo.uploaded === true" class="absolute z-10 top-1 right-1 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                    </svg>
                                 </div>
 
-                                <!-- Image -->
-                                <img
-                                    :src="photo.filePath"
-                                    class="w-full h-24 p-4 object-contain rounded-lg border border-gray-300 dark:border-gray-700"
-                                />
+                                <!-- Failure Cross -->
+                                <div v-if="photo.uploaded === false" class="absolute z-10 top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
 
+                                <!-- Retry Button -->
+                                <button
+                                    v-if="photo.uploaded === false"
+                                    @click="() => uploadProductImages(product, photoIndex)"
+                                    class="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white hover:bg-yellow-600 active:scale-95 absolute z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+
+                                <!-- Remove Image Button -->
+                                <button
+                                    v-if="(!photo.uploaded && !photo.uploading)"
+                                    @click.stop="(event) => removePhoto(event, index, photoIndex)"
+                                    class="absolute z-10 top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">
+                                    ✕
+                                </button>
+
+                                <!-- Failed Indicator -->
+                                <div v-if="photo.uploaded === false" class="absolute inset-0 bg-white bg-opacity-80 border border-red-500 rounded-lg flex items-center justify-center"></div>
+
+                            </template>
+
+                            <!-- Uploading Indicator -->
+                            <div v-if="photo.uploading" class="absolute inset-0 bg-gray-900 bg-opacity-50 rounded-lg flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">Uploading...</span>
                             </div>
-                        </div>
 
-                        <div v-if="productHasFailedUploads(index)" :class="['flex justify-end pt-2', { 'pb-4' : index == products.length - 1 }]">
-
-                            <Button
-                                size="xs"
-                                type="warning"
-                                icon="refresh"
-                                :disabled="productIsUploading(index)"
-                                :action="() => uploadProductImages(product)">
-                                <span>Retry Uplaods</span>
-                            </Button>
+                            <!-- Image -->
+                            <img
+                                :src="photo.filePath"
+                                class="w-full h-24 p-4 object-contain rounded-lg border border-gray-300 dark:border-gray-700"
+                            />
 
                         </div>
+                    </div>
 
-                        <div v-if="products.length > 1 && !hasCompletedSteps" :class="['flex justify-end pt-2', { 'pb-4' : index == products.length - 1 }]">
+                    <div v-if="productHasFailedUploads(index)" :class="['flex justify-end pt-2', { 'pb-4' : index == products.length - 1 }]">
 
-                            <Button
-                                size="xs"
-                                icon="delete"
-                                type="danger"
-                                v-if="!isCreatingProducts"
-                                :action="() => removeProduct(index)">
-                                <span>Remove Product</span>
-                            </Button>
+                        <Button
+                            size="xs"
+                            type="warning"
+                            icon="refresh"
+                            :disabled="productIsUploading(index)"
+                            :action="() => uploadProductImages(product)">
+                            <span>Retry Uplaods</span>
+                        </Button>
 
-                        </div>
+                    </div>
 
-                        <div v-if="(index == products.length - 1) && !hasReachedProductLimit && !hasCompletedSteps" :class="['flex justify-center pt-4', { 'border-t-2 border-dashed' : products.length > 1 }]">
+                    <div v-if="products.length > 1 && !hasCompletedSteps" :class="['flex justify-end pt-2', { 'pb-4' : index == products.length - 1 }]">
 
-                            <Button
-                                size="sm"
-                                icon="add"
-                                type="light"
-                                :action="addProduct"
-                                v-if="index == products.length - 1 && !isCreatingProducts">
-                                <span>Add Product</span>
-                            </Button>
+                        <Button
+                            size="xs"
+                            icon="delete"
+                            type="danger"
+                            v-if="!isCreatingProducts"
+                            :action="() => removeProduct(index)">
+                            <span>Remove Product</span>
+                        </Button>
 
-                        </div>
+                    </div>
+
+                    <div v-if="(index == products.length - 1) && !hasReachedProductLimit && !hasCompletedSteps" :class="['flex justify-center pt-4', { 'border-t-2 border-dashed' : products.length > 1 }]">
+
+                        <Button
+                            size="sm"
+                            icon="add"
+                            type="light"
+                            :action="addProduct"
+                            v-if="index == products.length - 1 && !isCreatingProducts">
+                            <span>Add Product</span>
+                        </Button>
 
                     </div>
 
                 </div>
 
-                <div v-if="hasReachedProductLimit || hasFailedUploads || hasErrors" class="space-y-2 mb-4">
+            </div>
 
-                    <p
-                        v-if="hasReachedProductLimit"
-                        class="text-sm text-blue-600 font-semibold bg-blue-100 border border-blue-300 p-3 rounded-lg shadow-md text-center">
-                        Let's work with <span class="underline"><span class="font-bold">{{ maxProducts }}</span> products</span> for now! 🚀
-                    </p>
+            <div v-if="hasReachedProductLimit || hasFailedUploads || formState.hasErrors" class="space-y-2 mb-4">
 
+                <p
+                    v-if="hasReachedProductLimit"
+                    class="text-sm text-blue-600 font-semibold bg-blue-100 border border-blue-300 p-3 rounded-lg shadow-md text-center">
+                    Let's work with <span class="underline"><span class="font-bold">{{ maxProducts }}</span> products</span> for now! 🚀
+                </p>
+
+                <div
+                    v-if="hasFailedUploads"
+                    class="text-xs text-blue-600 font-semibold bg-blue-100 border border-blue-300 p-3 rounded-lg shadow-md">
+
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+                        </svg>
+                        <div>
+                            <p>
+                                We could not upload
+                                <span v-if="totalFailedUploads">
+                                    {{ totalFailedUploads }} {{ totalFailedUploads == 1 ? 'photo' : 'photos' }}.
+                                </span>
+                            </p>
+                            <p>But no worries—you can always add more later! 😊</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 p-2 border-t border-dotted border-blue-300">
+                        <ul class="font-normal space-y-1">
+                            <li>✅ Make sure you’re uploading images (jpeg, jpg, png, gif or svg).</li>
+                            <li>✅ Ensure your images are not too large (we accept up to 5MB).</li>
+                            <li>✅ Use
+                                <a href="https://tinypng.com/" target="_blank" class="underline inline-flex items-center">
+                                    tinypng.com
+                                    <svg class="w-3 h-3 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>
+                                </a>
+                                to reduce image size (it’s free).
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- Form Error Messages -->
+                <FormErrorMessages :index="formErrorMessagesIndex"></FormErrorMessages>
+
+            </div>
+
+            <!-- Global Upload Progress Bar -->
+            <div v-if="isCreatingProducts || isUploading || (progressPercentage === 100)" class="mb-4">
+                <div class="w-full max-w-lg bg-gray-200 rounded-full h-2 mb-2">
                     <div
-                        v-if="hasFailedUploads"
-                        class="text-xs text-blue-600 font-semibold bg-blue-100 border border-blue-300 p-3 rounded-lg shadow-md">
-
-                        <div class="flex items-center space-x-2">
-                            <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
-                            </svg>
-                            <div>
-                                <p>
-                                    We could not upload
-                                    <span v-if="totalFailedUploads">
-                                        {{ totalFailedUploads }} {{ totalFailedUploads == 1 ? 'photo' : 'photos' }}.
-                                    </span>
-                                </p>
-                                <p>But no worries—you can always add more later! 😊</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-2 p-2 border-t border-dotted border-blue-300">
-                            <ul class="font-normal space-y-1">
-                                <li>✅ Make sure you’re uploading images (jpeg, jpg, png, gif or svg).</li>
-                                <li>✅ Ensure your images are not too large (we accept up to 5MB).</li>
-                                <li>✅ Use
-                                    <a href="https://tinypng.com/" target="_blank" class="underline inline-flex items-center">
-                                        tinypng.com
-                                        <svg class="w-3 h-3 ml-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                        </svg>
-                                    </a>
-                                    to reduce image size (it’s free).
-                                </li>
-                            </ul>
-                        </div>
-
+                        class="h-2 rounded-full transition-all duration-500"
+                        :class="progressPercentage === 100 ? 'bg-green-500' : 'bg-blue-500'"
+                        :style="{ width: progressPercentage + '%' }">
                     </div>
-
-                    <!-- Form Error Messages -->
-                    <FormErrorMessages :index="formErrorMessagesIndex"></FormErrorMessages>
-
                 </div>
+                <p class="text-xs text-center mt-2 font-bold">
+                    {{ progressPercentage === 100 ? 'Upload Complete 🎉' : `${uploadMessage} (${progressPercentage}%)` }}
+                </p>
+            </div>
 
-                <!-- Global Upload Progress Bar -->
-                <div v-if="isCreatingProducts || isUploading || (progressPercentage === 100)" class="mb-4">
-                    <div class="w-full max-w-lg bg-gray-200 rounded-full h-2 mb-2">
-                        <div
-                            class="h-2 rounded-full transition-all duration-500"
-                            :class="progressPercentage === 100 ? 'bg-green-500' : 'bg-blue-500'"
-                            :style="{ width: progressPercentage + '%' }">
-                        </div>
-                    </div>
-                    <p class="text-xs text-center mt-2 font-bold">
-                        {{ progressPercentage === 100 ? 'Upload Complete 🎉' : `${uploadMessage} (${progressPercentage}%)` }}
-                    </p>
-                </div>
-
-                <!-- Continue -->
-                <Button
-                    size="md"
-                    class="w-full"
-                    type="primary"
-                    :action="submit"
-                    :loading="isCreatingProducts"
-                    :disabled="isCreatingProducts">
-                    <span>Continue</span>
-                </Button>
-
-            </form>
+            <!-- Continue -->
+            <Button
+                size="md"
+                class="w-full"
+                type="primary"
+                :action="submit"
+                :loading="isCreatingProducts"
+                :disabled="isCreatingProducts">
+                <span>Continue</span>
+            </Button>
 
         </div>
 
@@ -261,21 +257,17 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useApiState } from '@Stores/api-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import { useStoreState } from '@Stores/store-store.js';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import { postApi } from '@Repositories/api-repository.js';
-    import RetryButton from '@Partials/buttons/RetryButton.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
         components: {
-            Button, TextInput, StoreLogo, MoneyInput, RetryButton, FormErrorMessages
+            Button, TextInput, StoreLogo, MoneyInput, FormErrorMessages
         },
         data() {
             return {
@@ -295,10 +287,8 @@
                 isUploading: false,
                 totalCompletedSteps: 0,
                 maxPhotosPerProduct: 5,
-                apiState: useApiState(),
                 totalCompletedUploads: 0,
                 isCreatingProducts: false,
-                storeState: useStoreState(),
                 formErrorMessagesIndex: null
             };
         },
@@ -363,7 +353,7 @@
             },
             triggerFileInput(index) {
                 if(this.isCreatingProducts || this.isUploading) {
-                    this.showUnsuccessfulNotification(`Still creating products`);
+                    this.notificationState.showWarningNotification(`Still creating products`);
                     return;
                 }
 
@@ -402,7 +392,7 @@
                 const remainingSlots = this.maxPhotosPerProduct - currentPhotosCount;
 
                 if (remainingSlots <= 0) {
-                    this.showUnsuccessfulNotification(`You can only upload up to ${this.maxPhotosPerProduct} photos per product.`);
+                    this.notificationState.showWarningNotification(`You can only upload up to ${this.maxPhotosPerProduct} photos per product.`);
                     return;
                 }
 
@@ -453,15 +443,15 @@
                 // Check if any product is missing required fields
                 for (const [index, product] of this.products.entries()) {
                     if (product.name.trim() === '') {
-                        this.setFormError('name', 'The product name is required', index);
-                        this.showUnsuccessfulNotification(`The product name is required`);
+                        this.formState.setFormError('name', 'The product name is required', index);
+                        this.notificationState.showWarningNotification(`The product name is required`);
                         this.formErrorMessagesIndex = index;
                         return;
                     }
 
                     if (product.unitRegularPrice.trim() === '') {
-                        this.setFormError('unitRegularPrice', 'The product price is required', index);
-                        this.showUnsuccessfulNotification(`The product price is required`);
+                        this.formState.setFormError('unitRegularPrice', 'The product price is required', index);
+                        this.notificationState.showWarningNotification(`The product price is required`);
                         this.formErrorMessagesIndex = index;
                         return;
                     }
@@ -504,24 +494,24 @@
                         results.forEach((result, index) => {
                             if (result.status === 'fulfilled') {
                                 successCount++;
-                                this.showSuccessfulNotification(`${this.products[index].name} created successfully`);
+                                this.notificationState.showSuccessNotification(`${this.products[index].name} created successfully`);
                             } else {
                                 errors.push(`Product ${index + 1}: ${result.reason?.message || 'An error occurred'}`);
                                 this.formErrorMessagesIndex = index;
-                                this.setServerFormErrors(result.reason, index);
+                                this.formState.setServerFormErrors(result.reason, index);
                             }
                         });
 
                         if (successCount) {
-                            this.showSuccessfulNotification('Products added!');
+                            this.notificationState.showSuccessNotification('Products added!');
                         }
 
                         if (errors.length > 0) {
-                            this.showUnsuccessfulNotification(errors.join('\n'));
+                            this.notificationState.showWarningNotification(errors.join('\n'));
                         }
                     })
                     .catch((error) => {
-                        this.showUnsuccessfulNotification('An unexpected error occurred while submitting products.');
+                        this.notificationState.showWarningNotification('An unexpected error occurred while submitting products.');
                         console.error(error);
                     })
                     .finally(() => {
@@ -559,7 +549,7 @@
 
                     let failedUploads = results.filter(result => result.status === 'rejected').length;
                     if (failedUploads > 0) {
-                        this.showUnsuccessfulNotification(`⚠️ ${failedUploads} image(s) failed to upload. You can retry manually.`);
+                        this.notificationState.showWarningNotification(`⚠️ ${failedUploads} image(s) failed to upload. You can retry manually.`);
                     }
 
                     this.isUploading = false; // ✅ All images uploaded (successful or failed)

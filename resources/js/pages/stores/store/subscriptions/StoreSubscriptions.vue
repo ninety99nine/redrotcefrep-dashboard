@@ -137,41 +137,35 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
+    import { formattedDatetime } from '@Utils/dateUtils.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState'],
         components: {
-            Button, TextHeader, AddButton, BasicTable, Checkbox, ProfilePhoto, ConfirmModal,
-            PrimaryButton, SpinningLoader, MoreInfoPopover, ToogleSwitch, Pill,
+            Pill, Button, BasicTable, Checkbox, ProfilePhoto, ConfirmModal,
+            SpinningLoader, MoreInfoPopover, ToggleSwitch,
         },
         data() {
             return {
                 pagination: null,
                 searchTerm: null,
                 subscriptions: [],
-                storeState: useStoreState(),
                 isLoadingSubscriptions: false,
                 tableHeaders: ['Plan Name', 'Status', 'Start At', 'End At', 'Amount', '']
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getSubscriptions();
                 }
             }
@@ -180,14 +174,12 @@
             store() {
                 return this.storeState.store;
             },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
-            },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
             onView(subscription) {
                 this.$router.push({
                     name: 'show-store-subscription',
@@ -250,7 +242,7 @@
                     //  Stop loader
                     this.isLoadingSubscriptions = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

@@ -23,12 +23,12 @@
                     <div class="flex justify-center my-4">
 
                         <!-- Show Everything Toggle Switch -->
-                        <ToogleSwitch
+                        <ToggleSwitch
                             v-model="showEverything" size="md"
                             labelPopoverTitle="What Is This?"
                             labelPopoverDescription="Turn on if you want to show more information about your promotions">
                             Show Everything
-                        </ToogleSwitch>
+                        </ToggleSwitch>
 
                     </div>
 
@@ -111,8 +111,8 @@
 
                                 <template v-if="promotion.offerDiscount.status">
                                     <Pill type="success" size="xs">
-                                        <template v-if="promotion.discountType.toLowerCase() == 'fixed'">
-                                            {{ `${promotion.discountFixedRate.amountWithCurrency} Discount` }}
+                                        <template v-if="promotion.discountType.toLowerCase() == RATE_TYPES.FLAT">
+                                            {{ `${promotion.discountFlatRate.amountWithCurrency} Discount` }}
                                         </template>
                                         <template v-else-if="promotion.discountType.toLowerCase() == 'percentage'">
                                             {{ `${promotion.discountPercentageRate.valueSymbol} Discount` }}
@@ -210,24 +210,23 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
+    import { RATE_TYPES } from '@Enums/enums.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState', 'notificationState'],
         components: {
             Pill, Button, BasicTable, Checkbox, ConfirmModal, SpinningLoader,
-            MoreInfoPopover, ToogleSwitch, NoDataPlaceholder
+            MoreInfoPopover, ToggleSwitch, NoDataPlaceholder
         },
         data() {
             return {
@@ -239,12 +238,11 @@
                 deletablePromotion: null,
                 isDeletingPromotionIds: [],
                 isLoadingPromotions: false,
-                storeState: useStoreState(),
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getPromotions();
                 }
             }
@@ -252,9 +250,6 @@
         computed: {
             store() {
                 return this.storeState.store;
-            },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
             },
             tableHeaders() {
                 return this.showEverything
@@ -266,6 +261,8 @@
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(promotion) {
 
                 if(this.isDeletingPromotionIds.length) return;
@@ -323,7 +320,7 @@
                     //  Stop loader
                     this.isLoadingPromotions = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -342,13 +339,13 @@
 
                         if(response.data.deleted) {
 
-                            this.showSuccessfulNotification('Promotion deleted');
+                            this.notificationState.showSuccessNotification('Promotion deleted');
                             if(this.isDeletingPromotionIds.length == 0) this.getPromotions();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -359,7 +356,7 @@
                     //  Stop loader
                     this.isDeletingPromotionIds.splice(this.isDeletingPromotionIds.findIndex((id) => id == this.deletablePromotion.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

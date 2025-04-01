@@ -14,15 +14,14 @@
 
 <script>
 
-    import { usePageState } from '@Stores/page-store.js';
     import Tinymce from '@Partials/wizwig-editor/Tinymce.vue';
 
     export default {
+        inject: ['pageState'],
         components: { Tinymce },
         data() {
             return {
-                localModule: null,
-                pageState: usePageState()
+                localModule: null
             };
         },
         methods: {

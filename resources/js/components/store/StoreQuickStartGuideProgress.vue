@@ -16,16 +16,11 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
     export default {
+        inject: ['storeState'],
         components: { ShineEffect, LineSkeleton },
-        data() {
-            return {
-                storeState: useStoreState()
-            };
-        },
         computed: {
             quickStartGuide() {
                 return this.storeState.quickStartGuide;

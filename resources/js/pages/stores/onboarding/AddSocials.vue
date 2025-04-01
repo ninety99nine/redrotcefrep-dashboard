@@ -60,10 +60,10 @@
                             </div>
 
                             <!-- Active Toogle Switch -->
-                            <ToogleSwitch
+                            <ToggleSwitch
                                 size="md"
                                 v-model="socialLink.active">
-                            </ToogleSwitch>
+                            </ToggleSwitch>
 
                         </div>
 
@@ -74,8 +74,8 @@
                             <TextInput
                                 placeholder="https://"
                                 v-model="socialLink.link"
-                                :label="`${capitalize(socialLink.name)} link`"
-                                :errorText="getFormError('socialLinks'+index+'Link')">
+                                :label="`${socialLink.name} link`"
+                                :errorText="formState.getFormError('socialLinks'+index+'Link')">
                             </TextInput>
 
                             <!-- Validation Error Message -->
@@ -177,31 +177,27 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import capitalize from '@Directives/capitalize.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import { getApi, putApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
+        directives: { capitalize },
         components: {
-            Button, TextInput, StoreLogo, LineSkeleton, ToogleSwitch, FormErrorMessages
+            Button, TextInput, StoreLogo, LineSkeleton, ToggleSwitch, FormErrorMessages
         },
         data() {
             return {
                 socialLinks: [],
                 socialMediaIcons: [],
                 originalSocialLinks: [],
-                apiState: useApiState(),
                 isSubmittingStore: false,
-                storeState: useStoreState(),
                 isLoadingSocialMediaIcons: false,
             }
         },
@@ -293,7 +289,7 @@
                     //  Stop loader
                     this.isLoadingSocialMediaIcons = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -313,15 +309,15 @@
 
                     if(response.status == 200 && response.data['updated'] == true) {
 
-                        this.showSuccessfulNotification('Social links updated');
+                        this.notificationState.showSuccessNotification('Social links updated');
                         this.originalSocialLinks = cloneDeep(this.socialLinks);
                         this.storeState.setStore(response.data.store);
                         this.navigateToAddAdvancedFeatures();
 
                     }else{
 
-                        this.showUnsuccessfulNotification(response.data.message ?? 'Social link update failed');
-                        useNotificationState().addWarningNotification(response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message ?? 'Social link update failed');
+                        useNotificationState().showWarningNotification(response.data.message);
 
                     }
 
@@ -330,7 +326,7 @@
                 }).catch(errorException => {
 
                     this.isSubmittingStore = false;
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

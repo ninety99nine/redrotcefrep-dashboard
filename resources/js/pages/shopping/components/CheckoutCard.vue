@@ -19,22 +19,18 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import CheckoutCardBody from '@Pages/shopping/components/CheckoutCardBody.vue';
-import CheckoutCardFooter from '@Pages/shopping/components/CheckoutCardFooter.vue';
-import CheckoutCardHeading from '@Pages/shopping/components/CheckoutCardHeading.vue';
+    import CheckoutCardBody from '@Pages/shopping/components/CheckoutCardBody.vue';
+    import CheckoutCardFooter from '@Pages/shopping/components/CheckoutCardFooter.vue';
+    import CheckoutCardHeading from '@Pages/shopping/components/CheckoutCardHeading.vue';
 
-export default {
-    components: { CheckoutCardBody, CheckoutCardFooter, CheckoutCardHeading },
-    data() {
-        return {
-            storeState: useStoreState(),
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        }
-    },
-};
+    export default {
+        inject: ['storeState'],
+        components: { CheckoutCardBody, CheckoutCardFooter, CheckoutCardHeading },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            }
+        },
+    };
+
 </script>

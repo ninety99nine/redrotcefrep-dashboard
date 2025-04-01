@@ -52,8 +52,8 @@
     /**
      * Component Reference: https://vue3-tags-input.netlify.app/documents
      */
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import Vue3TagsInput from 'vue3-tags-input';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -109,13 +109,12 @@
                 type: String
             }
         },
-        mixins: [UtilsMixin],
         components: { Vue3TagsInput, InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
         data() {
             return {
                 tag: '',
                 localTags: this.tags,
-                uniqueId: this.generateUniqueId('input_tags')
+                uniqueId: generateUniqueId('input_tags')
             };
         },
         watch: {

@@ -44,9 +44,9 @@
                         <div class="flex items-center space-x-2">
 
                             <!-- Time Input -->
-                            <TimeInput v-model="hour[0]" :errorText="getFormError('openingHours')" class="w-24"></TimeInput>
+                            <TimeInput v-model="hour[0]" :errorText="formState.getFormError('openingHours')" class="w-24"></TimeInput>
                             <span>-</span>
-                            <TimeInput v-model="hour[1]" :errorText="getFormError('openingHours')" class="w-24"></TimeInput>
+                            <TimeInput v-model="hour[1]" :errorText="formState.getFormError('openingHours')" class="w-24"></TimeInput>
 
                             <div v-if="index2 == 0" @click="() => addOpeningHour(index)" class="flex-shrink-0 cursor-pointer rounded-md border p-1 hover:bg-blue-50 transition-all">
                                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -75,21 +75,18 @@
 <script>
 
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TimeInput from '@Partials/inputs/TimeInput.vue';
-    import { useStoreState } from '@Stores/store-store.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ShowOpeningHoursToggleSwitch from '@Pages/stores/store/settings/general/components/ShowOpeningHoursToggleSwitch.vue';
     import AllowCheckoutOnClosedHoursToggleSwitch from '@Pages/stores/store/settings/general/components/AllowCheckoutOnClosedHoursToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: {
             Alert, TimeInput, Checkbox, ShowOpeningHoursToggleSwitch, AllowCheckoutOnClosedHoursToggleSwitch
         },
         data() {
             return {
-                storeState: useStoreState(),
                 days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
             }
         },

@@ -5,11 +5,9 @@
         <div :class="['flex flex-wrap gap-2 justify-center bg-blue-50 py-4', selectedTab == 'settings' ? 'rounded-lg mb-4' : 'rounded-t-lg']">
 
             <Pill
-                :text="tab"
+                size="md"
                 :key="index"
-                size="px-4 py-2"
                 :showDot="false"
-                :clickable="true"
                 v-for="(tab, index) in tabs"
                 :action="() => selectedTab = tab"
                 :type="selectedTab == tab ? 'primary' : 'info'">
@@ -23,6 +21,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                 </svg>
+
+                <span>{{ tab }}</span>
 
             </Pill>
 
@@ -60,7 +60,6 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import Pill from '@Partials/pills/Pill.vue';
     import TipsSection from '@Pages/stores/store/settings/checkout/sections/TipsSection.vue';
     import ItemsSection from '@Pages/stores/store/settings/checkout/sections/ItemsSection.vue';
@@ -70,6 +69,7 @@
     import DeliveryMethodsSection from '@Pages/stores/store/settings/checkout/sections/DeliveryMethodsSection.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             Pill, TipsSection, ItemsSection, CustomerSection, PromotionsSection,
             CostBreakdownSection, DeliveryMethodsSection
@@ -77,7 +77,6 @@
         data() {
             return {
                 selectedTab: 'settings',
-                storeState: useStoreState(),
                 tabs: ['settings', 'preview'],
             }
         },

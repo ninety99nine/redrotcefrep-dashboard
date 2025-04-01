@@ -1,19 +1,19 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <Pill type="danger" :text="transaction.failureType" :showDot="false"></Pill>
+        <Pill type="danger" size="xs" :showDot="false">{{ transaction.failureType }}</Pill>
         <MoreInfoPopover :description="transaction.failureReason" placement="top"></MoreInfoPopover>
     </div>
 </template>
 
 <script>
 
+    import Pill from '@Partials/pills/Pill.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import Pill from '@Partials/pills/Pill.vue';
 
 
     export default {
-        components: { LineSkeleton, MoreInfoPopover, Pill },
+        components: { Pill, LineSkeleton, MoreInfoPopover },
         props: {
             transaction: {
                 type: Object

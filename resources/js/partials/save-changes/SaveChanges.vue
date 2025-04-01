@@ -12,14 +12,14 @@
         <div class="flex items-center space-x-2">
 
             <!-- Undo Button -->
-            <UndoButton :action="undoChanges" type="light" size="xs">
+            <Button type="light" size="xs" :action="undoChanges">
                 <span class="ml-1">Undo</span>
-            </UndoButton>
+            </Button>
 
             <!-- Save Changes Button -->
-            <PrimaryButton :action="saveChanges" :loading="isSaving" size="xs">
+            <Button type="light" size="xs" :action="saveChanges" :loading="isSaving">
                 Save Changes
-            </PrimaryButton>
+            </Button>
 
         </div>
 
@@ -30,12 +30,11 @@
 <script>
 
     import Alert from '@Partials/alerts/Alert.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
 
     export default {
         components: {
-            Alert, UndoButton, PrimaryButton
+            Alert, Button
         },
         props: {
             mustSaveChanges: {

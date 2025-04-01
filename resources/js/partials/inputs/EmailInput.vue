@@ -2,7 +2,6 @@
 
     <TextInput
         :label="label"
-        :required="required"
         :errorText="errorText"
         v-model="localModelValue"
         :placeholder="placeholder"
@@ -21,61 +20,56 @@
 
 <script>
 
-import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-import TextInput from '@Partials/inputs/TextInput.vue';
+    import TextInput from '@Partials/inputs/TextInput.vue';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
-export default {
-    props: {
-        modelValue: {
-            type: String
+    export default {
+        props: {
+            modelValue: {
+                type: String
+            },
+            label: {
+                type: String,
+                default: ''
+            },
+            secondaryLabel: {
+                type: [String, null],
+                default: null
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            placeholder: {
+                type: String,
+                default: ''
+            },
+            errorText: {
+                type: String
+            }
         },
-        label: {
-            type: String,
-            default: ''
+        components: { TextInput },
+        data() {
+            return {
+                localModelValue: this.modelValue,
+                uniqueId: generateUniqueId('email')
+            };
         },
-        secondaryLabel: {
-            type: [String, null],
-            default: null
+        watch: {
+            modelValue(newValue, oldValue) {
+                this.updateValue(newValue);
+            },
+            localModelValue(newValue, oldValue) {
+                this.$emit('update:modelValue', newValue);
+            }
         },
-        labelPopoverTitle: {
-            type: String
-        },
-        labelPopoverDescription: {
-            type: String
-        },
-        placeholder: {
-            type: String,
-            default: ''
-        },
-        required: {
-            type: Boolean,
-            default: true
-        },
-        errorText: {
-            type: String
+        methods: {
+            updateValue(newValue) {
+                this.localModelValue = newValue;
+            }
         }
-    },
-    mixins: [UtilsMixin],
-    components: { TextInput },
-    data() {
-        return {
-            localModelValue: this.modelValue,
-            uniqueId: this.generateUniqueId('email')
-        };
-    },
-    watch: {
-        modelValue(newValue, oldValue) {
-            this.updateValue(newValue);
-        },
-        localModelValue(newValue, oldValue) {
-            this.$emit('update:modelValue', newValue);
-        }
-    },
-    methods: {
-        updateValue(newValue) {
-            this.localModelValue = newValue;
-        }
-    }
-};
+    };
 
 </script>

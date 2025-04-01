@@ -7,7 +7,10 @@
             <div class="flex items-center">
 
                 <!-- Text Heading -->
-                <TextHeader><span class="mr-2">🎁</span> Orders</TextHeader>
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+                    <span class="mr-2">🎁</span>
+                    <span>Orders</span>
+                </h1>
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Orders are requests placed by customers to purchase products or services from your store." placement="top"></MoreInfoPopover>
@@ -29,12 +32,12 @@
             <template #primaryFilters>
 
                 <!-- Show Everything Toggle Switch -->
-                <ToogleSwitch
+                <ToggleSwitch
                     v-model="showEverything" size="md"
                     labelPopoverTitle="What Is This?"
                     labelPopoverDescription="Turn on if you want to show more information about your orders">
                     Show Everything
-                </ToogleSwitch>
+                </ToggleSwitch>
 
             </template>
 
@@ -224,9 +227,9 @@
             <template #trigger="triggerProps">
 
                 <!-- Delete Order Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
+                <Button ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
                     Delete Order
-                </PrimaryButton>
+                </Button>
 
             </template>
 
@@ -239,29 +242,25 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
-    import Status from '@Pages/stores/store/orders/order/components/OrderHeader/Status.vue';
-    import PaymentStatus from '@Pages/stores/store/orders/order/components/OrderHeader/PaymentStatus.vue';
-    import CollectionStatus from '@Pages/stores/store/orders/order/components/OrderHeader/CollectionStatus.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
+    import Status from '@Pages/stores/store/orders/order/components/order-header/Status.vue';
+    import PaymentStatus from '@Pages/stores/store/orders/order/components/order-header/PaymentStatus.vue';
+    import CollectionStatus from '@Pages/stores/store/orders/order/components/order-header/CollectionStatus.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState', 'notificationState'],
         components: {
-            TextHeader, AddButton, BasicTable, Checkbox, Status, ConfirmModal, SpinningLoader,
-            PrimaryButton, MoreInfoPopover, ToogleSwitch, PaymentStatus, NoDataPlaceholder,
+            Button, BasicTable, Checkbox, Status, ConfirmModal, SpinningLoader,
+            MoreInfoPopover, ToggleSwitch, PaymentStatus, NoDataPlaceholder,
             CollectionStatus
         },
         props: {
@@ -285,7 +284,6 @@
                 deletableOrder: null,
                 isDeletingOrderIds: [],
                 isLoadingOrders: false,
-                storeState: useStoreState(),
             }
         },
         watch: {
@@ -311,6 +309,8 @@
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(order) {
                 this.$router.push({
                     name: 'show-store-order',
@@ -355,7 +355,7 @@
 
                 //  Set the query params
                 const params = {
-                    'association': 'teamMember',
+                    'association': 'team member',
                     '_relationships': 'cart'
                 }
 
@@ -381,7 +381,7 @@
                     //  Stop loader
                     this.isLoadingOrders = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -400,10 +400,7 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Order deleted');
+                            this.notificationState.showSuccessNotification('Order deleted');
 
                             //  If we are not deleting any other orders, then refresh the order list
                             if(this.isDeletingOrderIds.length == 0) this.getOrders();
@@ -412,8 +409,8 @@
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -424,7 +421,7 @@
                     //  Stop loader
                     this.isDeletingOrderIds.splice(this.isDeletingOrderIds.findIndex((id) => id == this.deletableOrder.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

@@ -19,16 +19,11 @@
 
     import GoogleMaps from '@Partials/maps/GoogleMaps.vue';
     import AddressInput from '@Partials/inputs/AddressInput.vue';
-    import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
 
     export default {
+        inject: ['shoppingCartState'],
         components: {
             GoogleMaps, AddressInput
-        },
-        data() {
-            return {
-                shoppingCartState: useShoppingCartState()
-            }
         },
         computed: {
             deliveryMethod() {

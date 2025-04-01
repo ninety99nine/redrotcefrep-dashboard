@@ -16,7 +16,7 @@
             label="Confirm"
             v-model="storeName"
             :placeholder="storeForm.name"
-            :errorText="getFormError('name')"
+            :errorText="formState.getFormError('name')"
             labelPopoverTitle="What Is This?"
             :labelPopoverDescription="'Type the store name ('+storeForm.name+') to confirm deleting this store'">
         </TextInput>
@@ -24,9 +24,13 @@
         <div class="flex justify-end">
 
             <!-- Delete Store Button -->
-            <PrimaryButton :action="deleteStore" :loading="isDeletingStore" :disabled="storeName != storeForm.name || isDeletingStore" class="w-40" type="danger">
+            <Button
+                size="xs"
+                class="w-40"
+                type="danger"
+                :action="deleteStore" :loading="isDeletingStore" :disabled="storeName != storeForm.name || isDeletingStore">
                 Delete Store
-            </PrimaryButton>
+            </Button>
 
         </div>
 
@@ -36,20 +40,17 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: {
-            TextInput, PrimaryButton
+            Button, TextInput
         },
         data() {
             return {
-                storeName: '',
-                storeState: useStoreState(),
+                storeName: ''
             }
         },
         computed: {

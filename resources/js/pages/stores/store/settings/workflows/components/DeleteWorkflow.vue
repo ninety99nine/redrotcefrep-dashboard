@@ -17,9 +17,9 @@
                 <template #trigger="triggerProps">
 
                     <!-- Delete Workflow Button - Triggers Confirmation Modal -->
-                    <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
+                    <Button type="danger" size="xs" :action="triggerProps.showModal" :loading="isDeleting" class="w-60">
                         Delete Workflow
-                    </PrimaryButton>
+                    </Button>
 
                 </template>
 
@@ -33,21 +33,16 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { deleteApi } from '@Repositories/api-repository.js';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { ConfirmModal, PrimaryButton },
+        inject: ['formState', 'storeState', 'workflowState', 'notificationState'],
+        components: { Button, ConfirmModal },
         data() {
             return {
-                isDeleting: false,
-                storeState: useStoreState(),
-                workflowState: useWorkflowState()
+                isDeleting: false
             }
         },
         computed: {
@@ -85,22 +80,19 @@
                                 window.scrollTo(0, 0);
                             });
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Workflow deleted');
+                            this.notificationState.showSuccessNotification('Workflow deleted');
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
@@ -112,7 +104,7 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

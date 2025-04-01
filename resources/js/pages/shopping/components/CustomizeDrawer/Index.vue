@@ -28,26 +28,21 @@
 
 <script>
 
-import Drawer from '@Partials/drawers/Drawer.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import Body from '@Pages/shopping/components/CustomizeDrawer/Body.vue';
-import Header from '@Pages/shopping/components/CustomizeDrawer/Header.vue';
+    import Drawer from '@Partials/drawers/Drawer.vue';
+    import Body from '@Pages/shopping/components/CustomizeDrawer/Body.vue';
+    import Header from '@Pages/shopping/components/CustomizeDrawer/Header.vue';
 
-export default {
-    components: { Drawer, Body, Header },
-    data() {
-        return {
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    methods: {
-        openCustomizeDrawer() {
-            return this.shoppingCartState.openCustomizeDrawer();
-        }
-    },
-    mounted() {
-        this.shoppingCartState.customizeDrawer = this.$refs.customizeDrawer;
-    },
-};
+    export default {
+        inject: ['shoppingCartState'],
+        components: { Drawer, Body, Header },
+        methods: {
+            openCustomizeDrawer() {
+                return this.shoppingCartState.openCustomizeDrawer();
+            }
+        },
+        mounted() {
+            this.shoppingCartState.customizeDrawer = this.$refs.customizeDrawer;
+        },
+    };
 
 </script>

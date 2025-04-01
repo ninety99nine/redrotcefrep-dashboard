@@ -141,23 +141,18 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { getApi, postApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState'],
         components: { Button, SpinningLoader },
         data() {
             return {
                 pagination: null,
                 pricingPlans: [],
                 pricingPlanIndex: null,
-                apiState: useApiState(),
-                storeState: useStoreState(),
                 isLoadingPricingPlans: false,
                 isGeneratingPaymentLink: false,
                 activePricingPlan: 'monthly',
@@ -215,7 +210,7 @@
                 }).catch(errorException => {
 
                     this.isLoadingPricingPlans = false;
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -244,7 +239,7 @@
                     }else{
 
                         this.isGeneratingPaymentLink = false;
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
@@ -252,7 +247,7 @@
                 }).catch(errorException => {
 
                     this.isGeneratingPaymentLink = false;
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

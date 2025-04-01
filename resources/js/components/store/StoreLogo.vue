@@ -46,12 +46,10 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import { postApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         props: {
             size: {
                 type: String,
@@ -70,8 +68,7 @@
             return {
                 localStore: null,
                 logoFilePath: null,
-                isUploading: false,
-                storeState: useStoreState()
+                isUploading: false
             }
         },
         methods: {
@@ -111,14 +108,14 @@
 
                     } else {
 
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
                         console.error(error);
 
                     }
 
                 } catch (error) {
                     this.isUploading = false;
-                    if(error.message) this.showUnsuccessfulNotification(error.message);
+                    if(error.message) this.notificationState.showWarningNotification(error.message);
                     console.error(error);
                 }
             }

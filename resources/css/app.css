@@ -9,7 +9,7 @@
 .iti { width: 100% !important; }
 
 .iti .iti__selected-dial-code {
-    font-size: 0.875rem;
+    @apply text-sm leading-6 font-medium text-gray-700;
 }
 
 /**
@@ -132,7 +132,6 @@ input[type=number].remove-arrow {
     border: 1px solid transparent; /* Ensure border is visible */
     animation: borderAnimation 4s linear infinite;
 }
-
 
 /*  Fade Transition Styles */
 .fade-1-enter-active,

@@ -47,7 +47,7 @@
                             <TextInput
                                 placeholder="https://"
                                 v-model="storeForm.socialLinks[index].link"
-                                :errorText="getFormError('socialLinks'+index+'Name') || getFormError('socialLinks'+index+'Link')">
+                                :errorText="formState.getFormError('socialLinks'+index+'Name') || formState.getFormError('socialLinks'+index+'Link')">
 
                                 <template #prepend>
                                     <div class="flex items-center py-1.5 pl-4 pr-4 rounded-l-md bg-gray-50 text-gray-500 border-r whitespace-nowrap">
@@ -104,9 +104,9 @@
 
                         </div>
 
-                        <PrimaryButton v-if="canAddSocialLink" :action="() => addSocialLink(slotProps.hideModal)" size="sm" type="success" class="mt-4">
+                        <Button v-if="canAddSocialLink" :action="() => addSocialLink(slotProps.hideModal)" type="primary" size="xs" class="mt-4">
                             Add
-                        </PrimaryButton>
+                        </Button>
 
                     </template>
 
@@ -114,9 +114,9 @@
 
                         <!-- Add Button - Triggers Modal -->
                         <slot name="trigger" :showModal="triggerProps.showModal">
-                            <AddButton :action="triggerProps.showModal" size="sm">
-                                <span class="ml-2">Add</span>
-                            </AddButton>
+                            <Button type="primary" size="sm" :action="triggerProps.showModal">
+                                <span>Add</span>
+                            </Button>
                         </slot>
 
                     </template>
@@ -134,25 +134,20 @@
 <script>
 
     import settings from '@Js/settings.js';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicModal from '@Partials/modals/BasicModal.vue';
     import { getApi } from '@Repositories/api-repository.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import SaveChangesAlert from '@Pages/stores/store/settings/general/components/SaveChangesAlert.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'storeState'],
         components: {
-            draggable: VueDraggableNext, TextInput, AddButton, BasicModal,
-            LineSkeleton, PrimaryButton, FormErrorMessages, SaveChangesAlert
+            Button, draggable: VueDraggableNext, TextInput, BasicModal,
+            LineSkeleton, FormErrorMessages, SaveChangesAlert
         },
         data() {
             return {
@@ -162,8 +157,6 @@
                 },
                 settings: settings,
                 socialMediaIcons: [],
-                apiState: useApiState(),
-                storeState: useStoreState(),
                 isLoadingSocialMediaIcons: false,
             }
         },
@@ -227,7 +220,7 @@
                     //  Stop loader
                     this.isLoadingSocialMediaIcons = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

@@ -5,7 +5,7 @@
         <div :class="[{ 'bg-blue-50 p-4 rounded-lg': form.captureAdditionalFields }, 'transition-all duration-500']">
 
             <!-- Capture Additional Fields Toggle Switch -->
-            <CaptureAdditionalFieldsToogleSwitch :form="form"></CaptureAdditionalFieldsToogleSwitch>
+            <CaptureAdditionalFieldsToggleSwitch :form="form"></CaptureAdditionalFieldsToggleSwitch>
 
             <div v-if="form.captureAdditionalFields" class="space-y-4 mt-4">
 
@@ -93,7 +93,7 @@
                                     width="w-60"
                                     labelPopoverTitle="What Is This?"
                                     v-model="form.additionalFields[index].type"
-                                    :errorText="getFormError('additionalFields'+index+'type')"
+                                    :errorText="formState.getFormError('additionalFields'+index+'type')"
                                     labelPopoverDescription="Select the field type">
                                     <option value="short answer">Short answer</option>
                                     <option value="time">Time</option>
@@ -112,7 +112,7 @@
                                 labelPopoverTitle="What Is This?"
                                 v-model="form.additionalFields[index].question"
                                 labelPopoverDescription="The question to ask the customer"
-                                :errorText="getFormError('additionalFields'+index+'question')">
+                                :errorText="formState.getFormError('additionalFields'+index+'question')">
                             </TextInput>
 
                             <!-- Description Textarea Input -->
@@ -122,7 +122,7 @@
                                 labelPopoverTitle="What Is This?"
                                 v-model="form.additionalFields[index].description"
                                  v-if="form.additionalFields[index].addDescription"
-                                :errorText="getFormError('additionalFields'+index+'description')"
+                                :errorText="formState.getFormError('additionalFields'+index+'description')"
                                 labelPopoverDescription="Additional information related to the question">
                             </TextareaInput>
                             <span
@@ -158,13 +158,13 @@
                                                 class="w-full"
                                                 placeholder="Option"
                                                 v-model="form.additionalFields[index].options[index2].name"
-                                                :errorText="getFormError('additionalFields'+index+'options'+index2+'name')">
+                                                :errorText="formState.getFormError('additionalFields'+index+'options'+index2+'name')">
                                             </TextInput>
 
                                             <!-- Option Fee Input -->
                                             <MoneyInput
                                                 v-model="form.additionalFields[index].options[index2].fee"
-                                                :errorText="getFormError('additionalFields'+index+'options'+index2+'fee')">
+                                                :errorText="formState.getFormError('additionalFields'+index+'options'+index2+'fee')">
                                             </MoneyInput>
 
                                         </div>
@@ -192,9 +192,9 @@
                                         <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                                             <div v-if="!hasOptions(index)" class="animate-bounce text-4xl">👆</div>
                                         </div>
-                                        <AddButton :action="() => onAddOption(index)" class="w-40" size="xs">
-                                            <span class="ml-2">Add Option</span>
-                                        </AddButton>
+                                        <Button type="primary" size="xs" :action="() => onAddOption(index)" class="w-40">
+                                            <span>Add Option</span>
+                                        </Button>
                                     </div>
 
                                 </div>
@@ -211,7 +211,7 @@
                                         label="Validation"
                                         labelPopoverTitle="What Is This?"
                                         v-model="form.additionalFields[index].validation"
-                                        :errorText="getFormError('additionalFields'+index+'validation')"
+                                        :errorText="formState.getFormError('additionalFields'+index+'validation')"
                                         labelPopoverDescription="Select the type of validation to be applied">
                                         <option value="not applicable">Not applicable</option>
                                         <option value="select at least">Select at least</option>
@@ -224,7 +224,7 @@
                                         min="0"
                                         class="w-24"
                                         v-model="form.additionalFields[index].min"
-                                        :errorText="getFormError('additionalFields'+index+'min')"
+                                        :errorText="formState.getFormError('additionalFields'+index+'min')"
                                         :label="form.additionalFields[index].validation == 'select at least' ? '' : 'Min'"
                                         v-if="form.additionalFields[index].validation == 'select at least' || form.additionalFields[index].validation == 'select between'">
                                     </NumberInput>
@@ -234,7 +234,7 @@
                                         min="0"
                                         class="w-24"
                                         v-model="form.additionalFields[index].max"
-                                        :errorText="getFormError('additionalFields'+index+'max')"
+                                        :errorText="formState.getFormError('additionalFields'+index+'max')"
                                         :label="form.additionalFields[index].validation == 'select at most' ? '' : 'Max'"
                                         v-if="form.additionalFields[index].validation == 'select at most' || form.additionalFields[index].validation == 'select between'">
                                     </NumberInput>
@@ -245,7 +245,7 @@
                                 <Checkbox
                                     size="xs"
                                     v-model="form.additionalFields[index].required"
-                                    :errorText="getFormError('additionalFields'+index+'required')"
+                                    :errorText="formState.getFormError('additionalFields'+index+'required')"
                                     labelPopoverDescription="Whether this field is always required">
                                     <p class="text-sm mt-0.5 mx-2">Required</p>
                                 </Checkbox>
@@ -287,7 +287,7 @@
                                 <span v-if="additionalField.question">{{ additionalField.question }}</span>
                                 <InputErrorMessage v-else errorText="No question asked" margin="mt-0"></InputErrorMessage>
 
-                                <Pill v-if="additionalField.required" type="primary" text="required" :showDot="false"></Pill>
+                                <Pill v-if="additionalField.required" type="primary" size="xs" :showDot="false">required</Pill>
 
                             </div>
 
@@ -303,9 +303,9 @@
                 <div class="flex justify-end space-x-2">
 
                     <!-- Undo Button -->
-                    <UndoButton v-if="fieldsHaveChanged && hasOriginalFields" :action="onResetFields" size="xs">
-                        <span class="ml-1">Undo</span>
-                    </UndoButton>
+                    <Button v-if="fieldsHaveChanged && hasOriginalFields" type="primary" size="xs" :action="onResetFields">
+                        <span>Undo</span>
+                    </Button>
 
                     <div class="flex justify-end">
 
@@ -314,9 +314,9 @@
                             <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                                 <div v-if="!hasFields" class="animate-bounce text-4xl">👆</div>
                             </div>
-                            <AddButton :action="onAddField" class="w-40" size="xs">
-                                <span class="ml-2">Add Field</span>
-                            </AddButton>
+                            <Button type="primary" size="xs" :action="onAddField" class="w-40">
+                                <span>Add Field</span>
+                            </Button>
                         </div>
 
                     </div>
@@ -362,14 +362,7 @@
                     <span>{{ deletableAdditionalField.question }}</span>
 
                 </div>
-                <p class="mb-8">Are you sure you want to delete this <Pill type="primary" :text="deletableAdditionalField.type" :showDot="false"></Pill> field?</p>
-            </template>
-
-            <template #trigger="triggerProps">
-
-                <!-- Delete Field Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
-
+                <p class="mb-8">Are you sure you want to delete this <Pill type="primary" size="xs" :showDot="false">{{ deletableAdditionalField.type }}</Pill> field?</p>
             </template>
 
         </ConfirmModal>
@@ -382,29 +375,25 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
-    import CaptureAdditionalFieldsToogleSwitch from '@Pages/stores/store/settings/delivery-methods/components/CaptureAdditionalFieldsToogleSwitch.vue';
+    import CaptureAdditionalFieldsToggleSwitch from '@Pages/stores/store/settings/delivery-methods/components/CaptureAdditionalFieldsToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: {
-            draggable: VueDraggableNext, TextInput, AddButton, MoneyInput, Checkbox, UndoButton,
-            SelectInput, ConfirmModal, NumberInput, TextareaInput, PrimaryButton, Pill,
-            InputErrorMessage, CaptureAdditionalFieldsToogleSwitch
+            Pill, Button, draggable: VueDraggableNext, TextInput, MoneyInput, Checkbox,
+            SelectInput, ConfirmModal, NumberInput, TextareaInput, InputErrorMessage,
+            CaptureAdditionalFieldsToggleSwitch
         },
         props: {
             form: {
@@ -415,7 +404,6 @@
             return {
                 originalFields: [],
                 deletableIndex: null,
-                storeState: useStoreState(),
                 deletableAdditionalField: null,
             }
         },

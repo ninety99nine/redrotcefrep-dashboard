@@ -21,12 +21,11 @@
 <script>
 
 import settings from '@Js/settings.js';
-import { useStoreState } from '@Stores/store-store.js';
 
 export default {
+    inject: ['storeState'],
     data() {
         return {
-            storeState: useStoreState(),
             appApiUrl: settings.appApiUrl,
         };
     },

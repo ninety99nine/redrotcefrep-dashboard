@@ -68,7 +68,7 @@
                             <div class="flex items-center space-x-2">
 
                                 <!-- Active Status Badge -->
-                                <Pill :type="workflow.active ? 'success' : 'warning'" :text="workflow.active ? 'Active' : 'Inactive'" :showDot="false"></Pill>
+                                <Pill :type="workflow.active ? 'success' : 'warning'" size="xs" :showDot="false">{{ workflow.active ? 'Active' : 'Inactive' }}</Pill>
 
                             </div>
                         </div>
@@ -103,18 +103,18 @@
 
                         <div class="space-y-2">
                             <p v-if="hasSearchTerm" class="font-bold">No workflows found.</p>
-                            <p>Click the <Pill type="primary" text="+ Add Workflow" :showDot="false" :clickable="true" :action="() => onAddWorkflow()"></Pill> button to set up automations that will handle time-consuming tasks for you</p>
+                            <p>Click the <Pill type="primary" size="xs" :showDot="false" :action="() => onAddWorkflow()">+ Add Workflow</Pill> button to set up automations that will handle time-consuming tasks for you</p>
                         </div>
                     </div>
 
                 </div>
 
-            </template>
+                <!-- Add Workflow Button -->
+                <Button type="light" size="sm" :skeleton="isLoadingWorkflows" v-else :action="() => onAddWorkflow()">
+                    <span class="ml-2">Add Workflow</span>
+                </Button>
 
-            <!-- Add Workflow Button -->
-            <Button type="light" size="sm" :skeleton="isLoadingWorkflows" v-else :action="() => onAddWorkflow()">
-                <span class="ml-2">Add Workflow</span>
-            </Button>
+            </template>
 
             <!-- Confirm Delete Workflow -->
             <ConfirmModal v-if="deletableWorkflow" approveText="Delete" :approveAction="(hideModal) => deleteWorkflow(hideModal)" :isLoading="isDeleting(deleteWorkflow)">
@@ -122,13 +122,6 @@
                 <template #content>
                     <p class="text-lg font-bold border-b border-dashed pb-4 mb-4">Confirm Delete</p>
                     <p class="mb-8">Are you sure you want to delete <span class="font-bold text-black">{{ deletableWorkflow.name }}</span>?</p>
-                </template>
-
-                <template #trigger="triggerProps">
-
-                    <!-- Delete Workflow Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
-
                 </template>
 
             </ConfirmModal>
@@ -142,24 +135,19 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'workflowState', 'notificationState'],
         components: {
             Pill, Button, draggable: VueDraggableNext, SearchInput, ConfirmModal,
-            SpinningLoader, LineSkeleton, PrimaryButton
+            SpinningLoader, LineSkeleton
         },
         props: {
             form: {
@@ -170,12 +158,9 @@
             return {
                 workflows: [],
                 searchTerm: '',
-                apiState: useApiState(),
                 deletableWorkflow: null,
                 isDeletingWorkflowIds: [],
                 isLoadingWorkflows: false,
-                storeState: useStoreState(),
-                workflowState: useWorkflowState()
             }
         },
         watch: {
@@ -191,7 +176,7 @@
                 return this.hasSearchTerm && this.isLoadingWorkflows;
             },
             hasSearchTerm() {
-                return this.searchTerm.length > 0;
+                return this.searchTerm != null && this.searchTerm.trim() != '';
             },
             hasWorkflows() {
                 return this.workflows.length > 0;
@@ -252,7 +237,7 @@
                     //  Stop loader
                     this.isLoadingWorkflows = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -274,15 +259,12 @@
 
                         if(response.data.updated) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Workflow arrangement updated');
+                            this.notificationState.showSuccessNotification('Workflow arrangement updated');
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -296,7 +278,7 @@
                     //  Stop loader
                     this.workflowState.setIsUpdatingWorkflowArrangement(false);
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -317,18 +299,15 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Workflow deleted');
+                            this.notificationState.showSuccessNotification('Workflow deleted');
 
                             //  If we are not deleting any other workflow, then refresh the workflow list
                             if(this.isDeletingWorkflowIds.length == 0) this.showWorkflows();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -339,7 +318,7 @@
                     //  Stop loader
                     this.isDeletingWorkflowIds.splice(this.isDeletingWorkflowIds.findIndex((id) => id == this.deleteWorkflow.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

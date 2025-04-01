@@ -4,7 +4,7 @@
         size="xs"
         :disabled="disabled"
         v-model="askForAnAddress"
-        :errorText="getFormError('askForAnAddress')">
+        :errorText="formState.getFormError('askForAnAddress')">
         <div class="space-y-1 mt-0.5">
             <div class="flex items-center space-x-1 font-bold text-sm mx-2">
                 <span>Capture address information</span>
@@ -25,11 +25,10 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Checkbox },
         props: {
             form: {

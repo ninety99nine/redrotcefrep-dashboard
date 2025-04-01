@@ -17,7 +17,7 @@
 
             <div class="flex">
                 <!-- Input Tags Field -->
-                <vue3-tags-input :id="uniqueId" :name="uniqueId" :required="required" :placeholder="placeholder" :tags="localTags" @on-tags-changed="newTags => localTags = newTags" />
+                <vue3-tags-input :id="uniqueId" :placeholder="placeholder" :tags="localTags" @on-tags-changed="newTags => localTags = newTags" />
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
@@ -37,7 +37,7 @@
      * Component Reference: https://vue3-tags-input.netlify.app/documents
      */
     import Vue3TagsInput from 'vue3-tags-input';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -79,20 +79,15 @@
                 type: String,
                 default: 'Separate with comma , or press Enter ⏎'
             },
-            required: {
-                type: Boolean,
-                default: true
-            },
             errorText: {
                 type: String
             }
         },
-        mixins: [UtilsMixin],
         components: { Vue3TagsInput, InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
         data() {
             return {
                 localTags: this.tags,
-                uniqueId: this.generateUniqueId('input_tags')
+                uniqueId: generateUniqueId('input_tags')
             };
         },
         watch: {

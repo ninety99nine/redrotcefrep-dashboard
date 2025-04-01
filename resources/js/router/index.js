@@ -62,7 +62,7 @@ const routes = [
                         component: () => import('@Pages/stores/onboarding/CreateStore.vue'),
                     },
                     {
-                        path: '/:store_href',
+                        path: ':store_href',
                         children: [
                             {
                                 path: 'add/products',
@@ -119,18 +119,40 @@ const routes = [
                     },
                     {
                         path: 'orders',
-                        name: 'show-store-orders',
-                        component: () => import('@Pages/stores/store/orders/StoreOrders.vue')
-                    },
-                    {
-                        path: 'orders/:order_href',
-                        name: 'show-store-order',
-                        component: () => import('@Pages/stores/store/orders/order/StoreOrder.vue')
-                    },
-                    {
-                        path: 'orders/create',
-                        name: 'create-store-order',
-                        component: () => import('@Pages/stores/store/orders/order/StoreOrder.vue')
+                        children: [
+                            {
+                                path: '',
+                                name: 'show-store-orders',
+                                component: () => import('@Pages/stores/store/orders/StoreOrders.vue')
+                            },
+                            {
+                                path: 'create',
+                                component: () => import('@Pages/stores/store/orders/order/StoreOrder.vue'),
+                                children: [
+                                    {
+                                        path: '',
+                                        name: 'create-store-order',
+                                        component: () => import('@Pages/stores/store/orders/order/editable/Content.vue')
+                                    }
+                                ]
+                            },
+                            {
+                                path: ':order_href',
+                                component: () => import('@Pages/stores/store/orders/order/StoreOrder.vue'),
+                                children: [
+                                    {
+                                        path: '',
+                                        name: 'show-store-order',
+                                        component: () => import('@Pages/stores/store/orders/order/viewable/Content.vue'),
+                                    },
+                                    {
+                                        path: 'edit',
+                                        name: 'edit-store-order',
+                                        component: () => import('@Pages/stores/store/orders/order/editable/Content.vue'),
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         path: 'reviews',
@@ -249,7 +271,6 @@ const routes = [
                     },
                     {
                         path: 'settings',
-                        name: 'show-store-settings',
                         component: () => import('@Pages/stores/store/settings/StoreSettings.vue'),
                         children: [
                             {
@@ -344,6 +365,33 @@ const routes = [
                 path: 'checkout',
                 component: () => import('@Pages/shopping/checkout/Checkout.vue')
             },
+            {
+                name: 'order',
+                path: 'orders/:order_href',
+                component: () => import('@Pages/shopping/order/Order.vue'),
+                children: [
+                    {
+                        path: '',
+                        name: 'show-order',
+                        component: () => import('@Pages/shopping/order/show/Content.vue'),
+                    },
+                    {
+                        path: 'pay',
+                        children: [
+                            {
+                                path: '',
+                                name: 'show-store-payment-methods',
+                                component: () => import('@Pages/shopping/order/payment-methods/Content.vue')
+                            },
+                            {
+                                path: ':store_payment_method_href',
+                                name: 'show-store-payment-method',
+                                component: () => import('@Pages/shopping/order/payment-method/Content.vue')
+                            }
+                        ]
+                    }
+                ]
+            }
         ]
     },
     {

@@ -3,15 +3,16 @@
     <div class="px-4 mt-8">
 
         <!-- Checkout Button -->
-        <PrimaryButton
-            type="custom"
+        <Button
+            size="sm"
+            type="primary"
             :loading="isCreatingOrder"
             :action="navigateToCheckout"
             :bgColor="storeForm.primaryButtonColor"
             :textColor="storeForm.primaryButtonTextColor"
             :disabled="isInspectingShoppingCart || isCreatingOrder || !hasShoppingCartProducts">
             Checkout
-        </PrimaryButton>
+        </Button>
 
     </div>
 
@@ -19,38 +20,32 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
+    import Button from '@Partials/buttons/Button.vue';
 
-export default {
-    components: { PrimaryButton },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState(),
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        components: { Button },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            isCreatingOrder() {
+                return this.shoppingCartState.isCreatingOrder;
+            },
+            hasShoppingCartProducts() {
+                return this.shoppingCartState.hasShoppingCartProducts;
+            },
+            isInspectingShoppingCart() {
+                return this.shoppingCartState.isInspectingShoppingCart;
+            },
         },
-        isCreatingOrder() {
-            return this.shoppingCartState.isCreatingOrder;
+        methods: {
+            navigateToCheckout() {
+                this.closeCustomizeDrawer();
+                this.closeShoppingCartDrawer();
+                this.$router.push({ name: 'checkout' });
+            },
         },
-        hasShoppingCartProducts() {
-            return this.shoppingCartState.hasShoppingCartProducts;
-        },
-        isInspectingShoppingCart() {
-            return this.shoppingCartState.isInspectingShoppingCart;
-        },
-    },
-    methods: {
-        navigateToCheckout() {
-            this.closeCustomizeDrawer();
-            this.closeShoppingCartDrawer();
-            this.$router.push({ name: 'checkout' });
-        },
-    },
-};
+    };
+
 </script>

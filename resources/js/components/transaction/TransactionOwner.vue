@@ -35,10 +35,10 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
-    import { useStoreState } from '@Stores/store-store.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
     export default {
+        inject: ['storeState'],
         components: { Button, LineSkeleton },
         props: {
             transaction: {
@@ -46,11 +46,6 @@
             },
             isLoadingTransaction: {
                 type: Boolean
-            }
-        },
-        data() {
-            return {
-                storeState: useStoreState()
             }
         },
         computed: {

@@ -23,6 +23,7 @@
                 :perPage="perPage"
                 @paginate="paginate"
                 @refresh="getOrders"
+                :searchTerm="searchTerm"
                 :pagination="pagination"
                 :isLoading="isLoadingOrders"
                 @updatedColumns="updatedColumns"
@@ -166,7 +167,11 @@
 
                                     <div class="flex space-x-1 items-center">
                                         <span>#{{ order._attributes.number }}</span>
-                                        <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="`#${order._attributes.number}`" :description="order.summary" placement="top"></MoreInfoPopover>
+                                        <CustomPopover
+                                            placement="top"
+                                            :content="order.summary"
+                                            class="opacity-0 group-hover:opacity-100">
+                                        </CustomPopover>
                                     </div>
 
                                 </td>
@@ -205,23 +210,28 @@
                                 <td v-else-if="column.name == 'Grand Total'" class="whitespace-nowrap align-top pr-4 py-4">
                                     <div class="flex space-x-1 items-center">
                                         <span class="font-bold">{{ order.grandTotal.amountWithCurrency }}</span>
-                                        <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Cost Breakdown" placement="top">
+                                        <CustomPopover
+                                            placement="top"
+                                            class="opacity-0 group-hover:opacity-100">
 
-                                            <template #description>
+                                            <template #content>
 
-                                                <hr class="my-2">
+                                                <div class="p-4 space-y-2 text-xs">
 
-                                                <div class="space-y-2">
-                                                    <p>Subtotal: <span class="text-black">{{ order.subtotal.amountWithCurrency }}</span></p>
-                                                    <p>Discount: <span class="text-black">{{ order.discountTotal.amountWithCurrency }}</span></p>
-                                                    <hr>
+                                                    <p class="text-black font-bold">Cost Breakdown</p>
+
+                                                    <div class="space-y-2 border-t border-b border-gray-100 py-2">
+                                                        <p>Subtotal: <span>{{ order.subtotal.amountWithCurrency }}</span></p>
+                                                        <p>Discount: <span>{{ order.discountTotal.amountWithCurrency }}</span></p>
+                                                    </div>
+
                                                     <p class=" text-black">Grand Total: <span class="font-bold">{{ order.grandTotal.amountWithCurrency }}</span></p>
 
                                                 </div>
 
                                             </template>
 
-                                        </MoreInfoPopover>
+                                        </CustomPopover>
                                     </div>
                                 </td>
 
@@ -229,7 +239,11 @@
                                 <td v-else-if="column.name == 'Paid'" class="whitespace-nowrap align-top pr-4 py-4">
                                     <div class="flex space-x-1 items-center">
                                         <span>{{ order.paidTotal.amountWithCurrency }}</span>
-                                        <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'Paid: '+order.paidPercentage.valueSymbol" placement="top"></MoreInfoPopover>
+                                        <CustomPopover
+                                            placement="top"
+                                            class="opacity-0 group-hover:opacity-100"
+                                            :content="'Paid: '+order.paidPercentage.valueSymbol">
+                                        </CustomPopover>
                                     </div>
                                 </td>
 
@@ -237,7 +251,11 @@
                                 <td v-else-if="column.name == 'Pending'" class="whitespace-nowrap align-top pr-4 py-4">
                                     <div class="flex space-x-1 items-center">
                                         <span>{{ order.pendingTotal.amountWithCurrency }}</span>
-                                        <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'Pending: '+order.pendingPercentage.valueSymbol" placement="top"></MoreInfoPopover>
+                                        <CustomPopover
+                                            placement="top"
+                                            class="opacity-0 group-hover:opacity-100"
+                                            :content="'Pending: '+order.pendingPercentage.valueSymbol">
+                                        </CustomPopover>
                                     </div>
                                 </td>
 
@@ -245,7 +263,11 @@
                                 <td v-else-if="column.name == 'Outstanding'" class="whitespace-nowrap align-top pr-4 py-4">
                                     <div class="flex space-x-1 items-center">
                                         <span>{{ order.outstandingTotal.amountWithCurrency }}</span>
-                                        <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="'Outstanding: '+order.outstandingPercentage.valueSymbol" placement="top"></MoreInfoPopover>
+                                        <CustomPopover
+                                            placement="top"
+                                            class="opacity-0 group-hover:opacity-100"
+                                            :content="'Outstanding: '+order.outstandingPercentage.valueSymbol">
+                                        </CustomPopover>
                                     </div>
                                 </td>
 
@@ -261,7 +283,11 @@
                                 <td v-else-if="column.name == 'Created Date'" class="whitespace-nowrap align-top pr-4 py-4">
                                     <div class="flex space-x-1 items-center">
                                         <span>{{ formattedDatetime(order.createdAt) }}</span>
-                                        <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="formattedRelativeDate(order.createdAt)" placement="top"></MoreInfoPopover>
+                                        <CustomPopover
+                                            placement="top"
+                                            class="opacity-0 group-hover:opacity-100"
+                                            :content="formattedRelativeDate(order.createdAt)">
+                                        </CustomPopover>
                                     </div>
                                 </td>
 
@@ -491,11 +517,11 @@
                                 <div class="flex items-center justify-between p-4">
 
                                     <!-- Active Toogle Switch -->
-                                    <ToogleSwitch
+                                    <ToggleSwitch
                                         size="md"
                                         v-model="whatsappField.active">
                                         {{ whatsappField.name }}
-                                    </ToogleSwitch>
+                                    </ToggleSwitch>
 
                                     <div class="flex items-center space-x-4">
 
@@ -609,30 +635,26 @@
 
     import axios from 'axios';
     import isEqual from 'lodash/isEqual';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
+    import CustomPopover from '@Partials/inputs/CustomPopover.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
-    import Status from '@Pages/stores/store/orders/order/components/OrderHeader/Status.vue';
-    import PaymentStatus from '@Pages/stores/store/orders/order/components/OrderHeader/PaymentStatus.vue';
-    import CollectionStatus from '@Pages/stores/store/orders/order/components/OrderHeader/CollectionStatus.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
+    import Status from '@Pages/stores/store/orders/order/components/order-header/Status.vue';
+    import PaymentStatus from '@Pages/stores/store/orders/order/components/order-header/PaymentStatus.vue';
+    import CollectionStatus from '@Pages/stores/store/orders/order/components/order-header/CollectionStatus.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
         components: {
-            Button, draggable: VueDraggableNext, BasicTable, Checkbox, SelectInput, ConfirmModal,
-            SpinningLoader, MoreInfoPopover, ToogleSwitch, NoDataPlaceholder, Status, PaymentStatus,
-            CollectionStatus
+            Button, draggable: VueDraggableNext, BasicTable, Checkbox, SelectInput, ConfirmModal, CustomPopover,
+            SpinningLoader, ToggleSwitch, NoDataPlaceholder, Status, PaymentStatus, CollectionStatus
         },
         data() {
             return {
@@ -647,6 +669,7 @@
                 exportLimit: '100',
                 exportFormat: 'csv',
                 status: 'No change',
+                printPdfModal: null,
                 actionDropdown: null,
                 deletableOrder: null,
                 filterExpressions: [],
@@ -657,7 +680,6 @@
                 deleteOrderModal: null,
                 exportOrdersModal: null,
                 changeStatusModal: null,
-                apiState: useApiState(),
                 isUpdatingOrders: false,
                 exportWithFilters: true,
                 exportWithSorting: true,
@@ -666,7 +688,6 @@
                 sendToWhatsappModal: null,
                 paymentStatus: 'No change',
                 isDownloadingOrders: false,
-                storeState: useStoreState(),
                 isLoadingTeamMembers: false,
                 assignTeamMemberModal: null,
                 includeOrderFieldNames: true,
@@ -732,8 +753,8 @@
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getOrders();
                 }
             },
@@ -747,9 +768,6 @@
         computed: {
             store() {
                 return this.storeState.store;
-            },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
             },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
@@ -768,6 +786,8 @@
             },
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             prepareColumns() {
                 const columnNames = ['Number', 'Customer', 'Summary', 'Status', 'Payment Status', 'Collection Status', 'Grand Total', 'Paid', 'Pending', 'Outstanding', 'Customer Note', 'Created Date'];
                 const defaultColumnNames  = ['Number', 'Customer', 'Summary', 'Status', 'Grand Total', 'Created Date'];
@@ -831,6 +851,11 @@
                     params: {
                         'store_href': this.store._links.showStore,
                         'order_href': order._links.showOrder
+                    },
+                    query: {
+                        searchTerm: this.searchTerm,
+                        filterExpressions: this.filterExpressions.join('|'),
+                        sortingExpressions: this.sortingExpressions.join('|'),
                     }
                 });
             },
@@ -876,7 +901,7 @@
 
                 let config = {
                     params: {
-                        'association': 'teamMember',
+                        'association': 'team member',
                         'per_page': this.perPage
                     }
                 }
@@ -904,13 +929,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isLoadingOrders = false;
@@ -926,7 +951,7 @@
                 let config = {
                     params:  {
                         '_export': '1',
-                        'association': 'teamMember',
+                        'association': 'team member',
                         'export_mode': this.exportMode,
                         'export_limit': this.exportLimit,
                         'export_format': this.exportFormat
@@ -962,7 +987,7 @@
 
                 }).catch(errorException => {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -1001,21 +1026,21 @@
                         this.getOrders();
 
                         if(isChangingStatus) {
-                            this.showSuccessfulNotification('Order status updated');
+                            this.notificationState.showSuccessNotification('Order status updated');
                         }else if(isAssigningTeamMember) {
                             const teamMember = this.teamMembers.find(member => member.id === this.teamMemberId);
-                            if (teamMember) this.showSuccessfulNotification(`Orders assigned to ${teamMember.firstName}`);
+                            if (teamMember) this.notificationState.showSuccessNotification(`Orders assigned to ${teamMember.firstName}`);
                         }
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isUpdatingOrders = false;
@@ -1061,13 +1086,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isDownloadingOrders = false;
@@ -1116,13 +1141,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isDownloadingOrders = false;
@@ -1156,19 +1181,19 @@
 
                     if (response.status === 200 && response.data['deleted'] == true) {
 
-                        this.showSuccessfulNotification(orderIds == 1 ? 'Order deleted' : 'Orders deleted');
+                        this.notificationState.showSuccessNotification(orderIds == 1 ? 'Order deleted' : 'Orders deleted');
                         this.orders = this.orders.filter(order => !orderIds.includes(order.id));
                         if(this.orders.length == 0) this.getOrders();
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isDeletingOrderIds = this.isDeletingOrderIds.filter(id => !orderIds.includes(id));
@@ -1192,19 +1217,19 @@
 
                     if (response.status === 200 && response.data['deleted'] == true) {
 
-                        this.showSuccessfulNotification('Order deleted');
+                        this.notificationState.showSuccessNotification('Order deleted');
                         this.orders = this.orders.filter(order => order.id != this.deletableOrder.id);
                         if(this.orders.length == 0) this.getOrders();
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isDeletingOrderIds.splice(this.isDeletingOrderIds.findIndex((id) => id == this.deletableOrder.id, 1));
@@ -1222,13 +1247,13 @@
                         this.teamMemberId = this.teamMembers[0].id;
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
                 }).catch(errorException => {
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
                 });
 
                 this.isLoadingTeamMembers = false;
@@ -1330,7 +1355,7 @@
             this.printPdfModal = this.$refs.printPdfModal;
             this.deleteOrderModal = this.$refs.deleteOrderModal;
             this.downloadPdfModal = this.$refs.downloadPdfModal;
-            this.eberxportOrdersModal = this.$refs.exportOrdersModal;
+            this.exportOrdersModal = this.$refs.exportOrdersModal;
             this.changeStatusModal = this.$refs.changeStatusModal;
             this.deleteOrdersModal = this.$refs.deleteOrdersModal;
             this.sendToWhatsappModal = this.$refs.sendToWhatsappModal;
@@ -1353,6 +1378,9 @@
         },
         created() {
             this.isLoadingOrders = true;
+            this.searchTerm = this.$route.query.searchTerm;
+            if(this.$route.query.filterExpressions) this.filterExpressions = this.$route.query.filterExpressions.split('|');
+            if(this.$route.query.sortingExpressions) this.sortingExpressions = this.$route.query.sortingExpressions.split('|');
         }
     };
 

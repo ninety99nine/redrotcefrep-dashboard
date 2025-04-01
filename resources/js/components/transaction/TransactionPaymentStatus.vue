@@ -1,14 +1,14 @@
 <template>
     <div class="flex space-x-1 items-center">
-        <Pill :type="type" :text="transaction.paymentStatus.name" :showDot="false"></Pill>
+        <Pill :type="type" size="xs" :showDot="false">{{ transaction.paymentStatus.name }}</Pill>
         <MoreInfoPopover :description="transaction.paymentStatus.description" placement="top"></MoreInfoPopover>
     </div>
 </template>
 
 <script>
 
-    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import Pill from '@Partials/pills/Pill.vue';
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
         components: { MoreInfoPopover, Pill },

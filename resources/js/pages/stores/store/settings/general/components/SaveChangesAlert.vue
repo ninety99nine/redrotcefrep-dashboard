@@ -11,16 +11,11 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import SaveChanges from '@Partials/save-changes/SaveChanges.vue';
 
     export default {
+        inject: ['storeState'],
         components: { SaveChanges },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             isSubmittingStore() {
                 return this.storeState.isSubmittingStore;

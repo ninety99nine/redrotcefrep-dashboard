@@ -11,17 +11,12 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import CustomerLastNameOptionalCheckbox from '@Pages/stores/store/settings/checkout/components/CustomerLastNameOptionalCheckbox.vue';
     import ShowCustomerLastNameToggleSwitch from '@Pages/stores/store/settings/checkout/components/ShowCustomerLastNameToggleSwitch.vue';
 
     export default {
+        inject: ['storeState'],
         components: { CustomerLastNameOptionalCheckbox, ShowCustomerLastNameToggleSwitch },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

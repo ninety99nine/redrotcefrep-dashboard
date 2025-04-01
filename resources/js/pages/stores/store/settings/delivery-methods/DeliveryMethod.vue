@@ -1,115 +1,112 @@
 <template>
 
-    <div class="bg-white shadow-lg border p-8 rounded-lg relative">
+    <div class="bg-white shadow-lg border p-8 rounded-lg relative space-y-4">
 
         <!-- Loading Backdrop -->
         <BackdropLoader v-if="isLoadingDeliveryMethod || isSubmitting" class="rounded-lg"></BackdropLoader>
 
-        <form class="space-y-4" action="#" method="POST">
+        <div class="flex justify-start items-center border-dashed py-6">
 
-            <div class="flex justify-start items-center border-dashed py-6">
+            <!-- Back Button -->
+            <Button type="light" size="xs" icon="short-left-arrow" class="w-16 mr-4" :action="goBack"></Button>
 
-                <!-- Back Button -->
-                <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
+            <div v-if="isLoadingDeliveryMethod" class="flex items-center space-x-2">
+                <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+            </div>
 
-                <div v-if="isLoadingDeliveryMethod" class="flex items-center space-x-2">
-                    <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
-                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
+            <template v-else>
+
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ isCreating ? 'Add Delivery Method' : form.name }}</h1>
+
+                <!-- More Info Popover -->
+                <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Delivery methods are the ways you get products to your customers, such as home delivery, in-store pickup, or courier services. Configure them to match your store's logistics and customer preferences." placement="top"></MoreInfoPopover>
+
+            </template>
+
+        </div>
+
+        <div :class="[mustSaveChanges || mustCreate ? 'h-20 mb-8' : 'h-0 mb-0 p-0', 'transition-all duration-500 overflow-hidden']">
+
+            <!-- Save Changes Info Alert -->
+            <Alert type="warning" class="flex justify-between items-center border border-dashed">
+
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                    </svg>
+                    <span>{{ isEditting ? 'Please save your changes' : 'Create your delivery method' }}</span>
                 </div>
 
-                <template v-else>
+                <div class="flex items-center space-x-2">
 
-                    <TextHeader>{{ isCreating ? 'Add Delivery Method' : form.name }}</TextHeader>
+                    <!-- Undo Button -->
+                    <Button type="light" size="xs" :action="setFormFields">
+                        <span class="ml-1">Undo</span>
+                    </Button>
 
-                    <!-- More Info Popover -->
-                    <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Delivery methods are the ways you get products to your customers, such as home delivery, in-store pickup, or courier services. Configure them to match your store's logistics and customer preferences." placement="top"></MoreInfoPopover>
+                    <!-- Create / Save Changes Button -->
+                    <Button type="primary" size="xs" :action="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :loading="isSubmitting">
+                        <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
+                    </Button>
 
-                </template>
+                </div>
 
-            </div>
+            </Alert>
 
-            <div :class="[mustSaveChanges || mustCreate ? 'h-20 mb-8' : 'h-0 mb-0 p-0', 'transition-all duration-500 overflow-hidden']">
+        </div>
 
-                <!-- Save Changes Info Alert -->
-                <Alert type="warning" class="flex justify-between items-center border border-dashed">
+        <!-- Form Error Messages -->
+        <FormErrorMessages></FormErrorMessages>
 
-                    <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                        </svg>
-                        <span>{{ isEditting ? 'Please save your changes' : 'Create your delivery method' }}</span>
-                    </div>
+        <!-- Active Toggle Switch -->
+        <ActiveToggleSwitch :form="form"></ActiveToggleSwitch>
 
-                    <div class="flex items-center space-x-2">
+        <!-- Name Input -->
+        <NameTextInput :form="form"></NameTextInput>
 
-                        <!-- Undo Button -->
-                        <UndoButton :action="setFormFields" type="light" size="xs">
-                            <span class="ml-1">Undo</span>
-                        </UndoButton>
+        <!-- Description Textarea -->
+        <DescriptionTextarea :form="form"></DescriptionTextarea>
 
-                        <!-- Create / Save Changes Button -->
-                        <PrimaryButton :action="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :loading="isSubmitting" type="dark">
-                            <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
-                        </PrimaryButton>
+        <!-- Qualify On Minimum Grand Total -->
+        <QualifyOnMinimumGrandTotal :form="form"></QualifyOnMinimumGrandTotal>
 
-                    </div>
+        <!-- Offer Free Delivery On Minimum Grand Total -->
+        <OfferFreeDeliveryOnMinimumGrandTotal :form="form"></OfferFreeDeliveryOnMinimumGrandTotal>
 
-                </Alert>
+        <!-- Set Daily Order Limit Checkbox -->
+        <SetDailyOrderLimitCheckbox :form="form"></SetDailyOrderLimitCheckbox>
 
-            </div>
+        <!-- Additional Fields -->
+        <AdditionalFields :form="form"></AdditionalFields>
 
-            <!-- Form Error Messages -->
-            <FormErrorMessages></FormErrorMessages>
+        <!-- Ask For An Address Checkbox -->
+        <AskForAnAddressCheckbox :form="form"></AskForAnAddressCheckbox>
 
-            <!-- Active Toggle Switch -->
-            <ActiveToggleSwitch :form="form"></ActiveToggleSwitch>
+        <!-- Pin Location On Map Checkbox -->
+        <PinLocationOnMapCheckbox :form="form"></PinLocationOnMapCheckbox>
 
-            <!-- Name Input -->
-            <NameTextInput :form="form"></NameTextInput>
+        <!-- Charge Fee -->
+        <ChargeFee :form="form"></ChargeFee>
 
-            <!-- Description Textarea -->
-            <DescriptionTextarea :form="form"></DescriptionTextarea>
+        <!-- Schedule -->
+        <Schedule :form="form"></Schedule>
 
-            <!-- Qualify On Minimum Grand Total -->
-            <QualifyOnMinimumGrandTotal :form="form"></QualifyOnMinimumGrandTotal>
+        <!-- Form Error Messages -->
+        <FormErrorMessages></FormErrorMessages>
 
-            <!-- Offer Free Delivery On Minimum Grand Total -->
-            <OfferFreeDeliveryOnMinimumGrandTotal :form="form"></OfferFreeDeliveryOnMinimumGrandTotal>
+        <!-- Create / Save Changes Button -->
+        <Button type="primary" size="xs" :action="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :disabled="!mustSaveChanges && !mustCreate" :loading="isSubmitting" class="w-full">
+            <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
+        </Button>
 
-            <!-- Set Daily Order Limit Checkbox -->
-            <SetDailyOrderLimitCheckbox :form="form"></SetDailyOrderLimitCheckbox>
+        <div>
 
-            <!-- Additional Fields -->
-            <AdditionalFields :form="form"></AdditionalFields>
+            <!-- Delete Delivery Method -->
+            <DeleteDeliveryMethod :form="form" class="mt-16"></DeleteDeliveryMethod>
 
-            <!-- Ask For An Address Checkbox -->
-            <AskForAnAddressCheckbox :form="form"></AskForAnAddressCheckbox>
+        </div>
 
-            <!-- Pin Location On Map Checkbox -->
-            <PinLocationOnMapCheckbox :form="form"></PinLocationOnMapCheckbox>
-
-            <!-- Charge Fee -->
-            <ChargeFee :form="form"></ChargeFee>
-
-            <!-- Schedule -->
-            <Schedule :form="form"></Schedule>
-
-            <!-- Form Error Messages -->
-            <FormErrorMessages></FormErrorMessages>
-
-            <!-- Create / Save Changes Button -->
-            <PrimaryButton :action="() => isEditting ? updateDeliveryMethod() : createStoreDeliveryMethod()" :disabled="!mustSaveChanges && !mustCreate" :loading="isSubmitting" type="dark" class="w-full">
-                <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
-            </PrimaryButton>
-
-            <div>
-
-                <!-- Delete Delivery Method -->
-                <DeleteDeliveryMethod :form="form" class="mt-16"></DeleteDeliveryMethod>
-
-            </div>
-
-        </form>
     </div>
 
 </template>
@@ -119,18 +116,11 @@
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, postApi, putApi } from '@Repositories/api-repository.js';
-    import { useDeliveryMethodState } from '@Stores/delivery-method-store.js';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import Schedule from '@Pages/stores/store/settings/delivery-methods/components/Schedule.vue';
     import ChargeFee from '@Pages/stores/store/settings/delivery-methods/components/ChargeFee.vue';
@@ -146,11 +136,11 @@
     import OfferFreeDeliveryOnMinimumGrandTotal from '@Pages/stores/store/settings/delivery-methods/components/OfferFreeDeliveryOnMinimumGrandTotal.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'deliveryMethodState', 'notificationState'],
         components: {
-            Alert, TextHeader, BackButton, UndoButton, PrimaryButton, LineSkeleton, MoreInfoPopover, BackdropLoader,
-            FormErrorMessages, Schedule, ChargeFee, NameTextInput, ActiveToggleSwitch, AdditionalFields, DescriptionTextarea,
-            DeleteDeliveryMethod, AskForAnAddressCheckbox, PinLocationOnMapCheckbox, QualifyOnMinimumGrandTotal, SetDailyOrderLimitCheckbox,
+            Alert, Button, LineSkeleton, MoreInfoPopover, BackdropLoader, FormErrorMessages, Schedule, ChargeFee, NameTextInput,
+            ActiveToggleSwitch, AdditionalFields, DescriptionTextarea, DeleteDeliveryMethod, AskForAnAddressCheckbox,
+            PinLocationOnMapCheckbox, QualifyOnMinimumGrandTotal, SetDailyOrderLimitCheckbox,
             OfferFreeDeliveryOnMinimumGrandTotal
         },
         data() {
@@ -190,10 +180,7 @@
                     operationalHours: this.generateOperationalHours(),
                 },
                 originalForm: null,
-                isSubmitting: false,
-                apiState: useApiState(),
-                storeState: useStoreState(),
-                deliveryMethodState: useDeliveryMethodState()
+                isSubmitting: false
             }
         },
         computed: {
@@ -322,7 +309,7 @@
             getDeliveryMethod() {
 
                 //  Start loader
-                useDeliveryMethodState().isLoadingDeliveryMethod = true;
+                this.deliveryMethodState.isLoadingDeliveryMethod = true;
 
                 //  Set the query params
                 const params = {
@@ -335,7 +322,7 @@
 
                         if(response.data.exists) {
 
-                            useDeliveryMethodState().deliveryMethod = response.data.deliveryMethod;
+                            this.deliveryMethodState.deliveryMethod = response.data.deliveryMethod;
                             this.deliveryMethod = response.data.deliveryMethod;
                             this.setFormFields();
 
@@ -344,32 +331,32 @@
                     }
 
                     //  Stop loader
-                    useDeliveryMethodState().isLoadingDeliveryMethod = false;
+                    this.deliveryMethodState.isLoadingDeliveryMethod = false;
 
                 }).catch(errorException => {
 
                     //  Stop loader
-                    useDeliveryMethodState().isLoadingDeliveryMethod = false;
+                    this.deliveryMethodState.isLoadingDeliveryMethod = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
             },
             createStoreDeliveryMethod() {
 
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 if(this.form.name.trim() == '') {
 
-                    this.setFormError('name', 'Enter delivery method name');
+                    this.formState.setFormError('name', 'Enter delivery method name');
 
                 }else {
 
                     //  Start loader
                     this.isSubmitting = true;
 
-                    postApi(useApiState().apiHome._links['createDeliveryMethod'], this.parseForm()).then(response => {
+                    postApi(this.apiState.apiHome._links['createDeliveryMethod'], this.parseForm()).then(response => {
 
                         if(response.status == 200) {
 
@@ -384,31 +371,23 @@
                                     window.scrollTo(0, 0);
                                 });
 
-                                /**
-                                 *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                                 */
-                                this.showSuccessfulNotification('Delivery method created');
+                                this.notificationState.showSuccessNotification('Delivery method created');
 
                             }else{
 
-                                this.setFormError('general', response.data.message);
-                                this.showUnsuccessfulNotification(response.data.message);
+                                this.formState.setFormError('general', response.data.message);
+                                this.notificationState.showWarningNotification(response.data.message);
 
                             }
 
                         }
 
-                        //  Stop loader
                         this.isSubmitting = false;
 
                     }).catch(errorException => {
 
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
 
                     });
 
@@ -434,15 +413,12 @@
                                 window.scrollTo(0, 0);
                             });
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Delivery method updated');
+                            this.notificationState.showSuccessNotification('Delivery method updated');
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -458,15 +434,14 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
             }
         },
         beforeUnmount() {
-            const deliveryMethodState = useDeliveryMethodState();
-            deliveryMethodState.reset();
+            this.deliveryMethodState.reset();
         },
         created() {
             this.originalForm = cloneDeep(this.form);

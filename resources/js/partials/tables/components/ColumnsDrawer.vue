@@ -42,11 +42,11 @@
 
                 <!-- Show Everything Toggle Switch -->
                 <div class="p-4 border-b shadow-sm">
-                    <ToogleSwitch
+                    <ToggleSwitch
                         size="md"
                         v-model="showEverything">
                         Show Everything
-                    </ToogleSwitch>
+                    </ToggleSwitch>
                 </div>
 
                 <div class="divide-y mb-4">
@@ -103,16 +103,15 @@
 
     import cloneDeep from 'lodash/cloneDeep';
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
     import Drawer from '@Partials/drawers/Drawer.vue';
     import { VueDraggableNext } from 'vue-draggable-next';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { draggable: VueDraggableNext, Pill, Button, Drawer, Checkbox, ToogleSwitch },
+        inject: ['formState'],
+        components: { draggable: VueDraggableNext, Pill, Button, Drawer, Checkbox, ToggleSwitch },
         props: {
             columns: {
                 type: Array,

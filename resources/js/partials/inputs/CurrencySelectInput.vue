@@ -10,18 +10,17 @@
 
 <script>
 
-    import { useApiState } from '@Stores/api-store.js';
     import { getApi } from '@Repositories/api-repository.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
 
     export default {
+        inject: ['apiState'],
         components: {
             SelectInput
         },
         data() {
             return {
                 currencies: [],
-                apiState: useApiState(),
                 isLoadingCurrencies: false
 
             };
@@ -50,7 +49,7 @@
                     //  Stop loader
                     this.isLoadingCurrencies = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

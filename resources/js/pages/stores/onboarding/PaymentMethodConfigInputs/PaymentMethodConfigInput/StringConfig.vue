@@ -1,24 +1,32 @@
 <template>
 
     <!-- Text Input -->
-    <TextInput
+    <CustomInput
+        type="text"
         v-model="localModelValue"
         :label="configSchemaEntity.label"
         :placeholder="configSchemaEntity.placeholder"
         :description="configSchemaEntity.description"
         :secondaryLabel="configSchemaEntity.optional ? '(optional)' : null"
-        :learnMoreLink="configSchemaEntity.learnMore ? configSchemaEntity.learnMore.href : null"
-        :learnMoreLabel="configSchemaEntity.learnMore ? configSchemaEntity.learnMore.label : null">
-    </TextInput>
+        :externalLinkUrl="configSchemaEntity.learnMore ? configSchemaEntity.learnMore.href : null"
+        :externalLinkName="configSchemaEntity.learnMore ? configSchemaEntity.learnMore.label : null">
+
+        <template #prefix>
+                <span class="leading-4 text-gray-400 text-sm">
+                    {{ configSchemaEntity.prefix }}
+                </span>
+        </template>
+
+    </CustomInput>
 
 </template>
 
 <script>
 
-    import TextInput from '@Partials/inputs/TextInput.vue';
+    import CustomInput from '@Partials/inputs/CustomInput.vue';
 
     export default {
-        components: { TextInput },
+        components: { CustomInput },
         props: {
             modelValue: {
                 type: String

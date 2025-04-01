@@ -1,101 +1,124 @@
 <template>
 
-    <div class="w-full flex flex-col justify-center bg-gradient-to-b from-blue-100 to-white-100 min-h-screen overflow-x-hidden px-6 py-12 lg:px-8">
+    <div class="w-full grid grid-cols-2 bg-gradient-to-b from-blue-100 to-white-100 min-h-screen overflow-x-hidden">
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div class="col-span-1 flex flex-col justify-center px-6 py-12 lg:px-8">
 
-            <!-- Logo -->
-            <Logo class="mx-auto"></Logo>
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
 
-            <!-- Text Heading -->
-            <TextHeader class="mt-10 text-center">Create your account</TextHeader>
+                <!-- Logo -->
+                <Logo class="mx-auto"></Logo>
 
-        </div>
+                <!-- Text Heading -->
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 mt-10 text-center">Create your account</h1>
 
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            </div>
 
-            <form class="space-y-6" action="#" method="POST">
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 
-                <!-- Form Error Messages -->
-                <FormErrorMessages v-if="hasGeneralError"></FormErrorMessages>
+                <div class="space-y-6">
 
-                <template v-if="showVerificationCode">
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages v-if="formState.hasGeneralError"></FormErrorMessages>
 
-                    <!-- Enter Verification Code Alert -->
-                    <Alert>
-                        Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> and enter the verification code below to confirm ownership of the mobile number <span class="font-bold">{{ mobileNumber }}</span>
-                    </Alert>
+                    <template v-if="showVerificationCode">
 
-                    <!-- Mobile Verification Pin Input -->
-                    <OtpInput v-model="verificationCode" :errorText="getFormError('verificationCode')"></OtpInput>
+                        <!-- Enter Verification Code Alert -->
+                        <Alert>
+                            Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> and enter the verification code below to confirm ownership of the mobile number <span class="font-bold">{{ mobileNumber }}</span>
+                        </Alert>
 
-                </template>
+                        <!-- Mobile Verification Pin Input -->
+                        <OtpInput v-model="verificationCode" :errorText="formState.getFormError('verificationCode')"></OtpInput>
 
-                <template v-else>
+                    </template>
 
-                    <!-- Mobile Number Input -->
-                    <MobileNumberInput v-model="mobileNumber" :errorText="getFormError('mobileNumber')" @keydown.enter="handleRegistration"></MobileNumberInput>
+                    <template v-else>
 
-                    <template v-if="accountExists == false">
+                        <!-- Mobile Number Input -->
+                        <MobileNumberInput
+                            v-model="mobileNumber"
+                            @keydown.enter="handleRegistration"
+                            :errorText="formState.getFormError('mobileNumber')"
+                            description="We will recognize this sim card when using Perfect Order on a mobile network e.g Orange">
+                        </MobileNumberInput>
 
-                        <div class="grid grid-cols-2 gap-4">
+                        <template v-if="accountExists == false">
 
-                            <div class="md:col-span-1 col-span-2">
+                            <div class="grid grid-cols-2 gap-4">
 
-                                <!-- First Name Input -->
-                                <TextInput v-model="firstName" label="First Name" autocomplete="given-name" :errorText="getFormError('firstName')" @keydown.enter="handleRegistration"></TextInput>
+                                <div class="md:col-span-1 col-span-2">
+
+                                    <!-- First Name Input -->
+                                    <TextInput v-model="firstName" label="First Name" autocomplete="given-name" :errorText="formState.getFormError('firstName')" @keydown.enter="handleRegistration"></TextInput>
+
+                                </div>
+
+                                <div class="md:col-span-1 col-span-2">
+
+                                    <!-- Last Name Input -->
+                                    <TextInput v-model="lastName" label="Last Name" autocomplete="family-name" :errorText="formState.getFormError('lastName')" @keydown.enter="handleRegistration"></TextInput>
+
+                                </div>
 
                             </div>
 
-                            <div class="md:col-span-1 col-span-2">
+                            <template v-if="firstName && lastName">
 
-                                <!-- Last Name Input -->
-                                <TextInput v-model="lastName" label="Last Name" autocomplete="family-name" :errorText="getFormError('lastName')" @keydown.enter="handleRegistration"></TextInput>
+                                <!-- Password Input -->
+                                <PasswordInput v-model="password" :showForgotPassword="false" :errorText="formState.getFormError('password')" @keydown.enter="handleRegistration"></PasswordInput>
 
-                            </div>
+                                <!-- Confirm Password Input -->
+                                <ConfirmPasswordInput v-model="passwordConfirmation" :errorText="formState.getFormError('passwordConfirmation')" @keydown.enter="handleRegistration"></ConfirmPasswordInput>
 
-                        </div>
-
-                        <template v-if="firstName && lastName">
-
-                            <!-- Password Input -->
-                            <PasswordInput v-model="password" :showForgotPassword="false" :errorText="getFormError('password')" @keydown.enter="handleRegistration"></PasswordInput>
-
-                            <!-- Confirm Password Input -->
-                            <ConfirmPasswordInput v-model="passwordConfirmation" :errorText="getFormError('passwordConfirmation')" @keydown.enter="handleRegistration"></ConfirmPasswordInput>
+                            </template>
 
                         </template>
 
                     </template>
 
-                </template>
+                    <!-- Create Account Button -->
+                    <div class="flex">
 
-                <!-- Create Account Button -->
-                <div class="flex">
-                    <BackButton v-if="showVerificationCode" :action="backToRegistrationForm" class="w-16 mr-2"></BackButton>
+                        <Button v-if="showVerificationCode" :action="backToRegistrationForm" type="light" size="sm" icon="short-left-arrow" class="w-16 mr-2"></Button>
 
-                <Button
-                    size="sm"
-                    class="w-full"
-                    type="primary"
-                    :loading="isSubmitting"
-                    :disabled="isSubmitting"
-                    :action="handleRegistration">
-                        <template v-if="showVerificationCode">Create Account</template>
-                        <template v-else>Continue</template>
-                    </Button>
+                        <Button
+                            size="sm"
+                            class="w-full"
+                            type="primary"
+                            :loading="isSubmitting"
+                            :disabled="isSubmitting"
+                            :action="handleRegistration">
+                            <template v-if="showVerificationCode">Create Account</template>
+                            <template v-else>Continue</template>
+                        </Button>
+
+                    </div>
+
                 </div>
 
-            </form>
+                <!-- Social Sign In Links -->
+                <SocialLinks message="Or sign up with"></SocialLinks>
 
-            <!-- Social Sign In Links -->
-            <SocialLinks message="Or sign up with"></SocialLinks>
+                <!-- Register Link -->
+                <p class="text-sm text-center mt-8">
+                    <span class="text-gray-500 mr-1">Already have an account?</span>
+                    <router-link :to="{ name: 'login' }">Login</router-link>
+                </p>
 
-            <!-- Register Link -->
-            <p class="text-sm text-center mt-8">
-                <span class="text-gray-500 mr-1">Already have an account?</span>
-                <router-link :to="{ name: 'login' }">Login</router-link>
-            </p>
+            </div>
+
+        </div>
+
+        <div class="col-span-1 relative">
+
+            <img
+                :key="index"
+                :src="image"
+                v-for="(image, index) in images"
+                class="absolute w-full h-full object-cover object-left transition-opacity duration-1000"
+                :class="{ 'opacity-100': index === currentImageIndex, 'opacity-0': index !== currentImageIndex }"
+            />
 
         </div>
 
@@ -110,39 +133,30 @@
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SocialLinks from '@Pages/auth/components/SocialLinks.vue';
-    import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
     import { validateRegister, register } from '@Repositories/auth-repository.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'notificationState'],
         components: {
-            Logo, Alert, Button, RouterLink, TextInput, TextHeader, BackButton, PasswordInput, OtpInput,
-            PrimaryButton, SocialLinks, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
+            Logo, Alert, Button, RouterLink, TextInput, PasswordInput, OtpInput,
+            SocialLinks, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
         },
         data() {
             return {
                 registerUrl: null,
                 isSubmitting: false,
                 accountExistsUrl: null,
-                apiState: useApiState(),
                 validateRegisterUrl: null,
                 appName: settings.appName,
                 mobileVerificationShortcode: null,
-                notificationState: useNotificationState(),
 
                 accountExists: null,
                 showVerificationCode: false,
@@ -152,7 +166,13 @@
                 firstName: '',
                 mobileNumber: '',
                 verificationCode: '',
-                passwordConfirmation: ''
+                passwordConfirmation: '',
+
+                currentImageIndex: 0,
+                slideShowSetInterval: null,
+                images: [
+                    '/images/lady-with-laptop.jpg'
+                ]
             };
         },
         beforeRouteEnter(to, from, next) {
@@ -173,10 +193,7 @@
         methods: {
             handleRegistration() {
 
-                /**
-                 *  Note: the hideFormErrors() method is part of the FormMixin methods
-                 */
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 if(this.showVerificationCode) {
                     this.attemptRegistration();
@@ -187,12 +204,9 @@
                 }
             },
             checkIfAccountExists() {
-                /**
-                 *  Note: the setFormError() method is part of the FormMixin methods
-                 */
                 if(this.mobileNumber.trim() == '') {
 
-                    this.setFormError('mobileNumber', 'Enter your mobile number');
+                    this.formState.setFormError('mobileNumber', 'Enter your mobile number');
 
                 }else if(this.accountExistsUrl != null) {
 
@@ -217,51 +231,39 @@
                     .catch(errorException => {
 
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                         this.setServerFormErrors(errorException);
+                         this.formState.setServerFormErrors(errorException);
 
                     });
 
                 }else {
-
-                    /**
-                     *  Note: the setGeneralFormError() method is part of the FormMixin methods
-                     */
                     this.setGeneralFormError('The accountExistsUrl does not exist');
-
                 }
             },
             validateRegistration() {
 
-                /**
-                 *  Note: the setFormError() method is part of the FormMixin methods
-                 */
                 if(this.firstName.trim() == '') {
 
-                    this.setFormError('firstName', 'Enter your first name');
+                    this.formState.setFormError('firstName', 'Enter your first name');
 
                 }else if(this.lastName.trim() == '') {
 
-                    this.setFormError('lastName', 'Enter your last name');
+                    this.formState.setFormError('lastName', 'Enter your last name');
 
                 }else if(this.mobileNumber.trim() == '') {
 
-                    this.setFormError('mobileNumber', 'Enter your mobile number');
+                    this.formState.setFormError('mobileNumber', 'Enter your mobile number');
 
                 }else if(this.password.trim() == '') {
 
-                    this.setFormError('password', 'Enter your password');
+                    this.formState.setFormError('password', 'Enter your password');
 
                 }else if(this.passwordConfirmation.trim() == '') {
 
-                    this.setFormError('passwordConfirmation', 'Enter your password confirmation');
+                    this.formState.setFormError('passwordConfirmation', 'Enter your password confirmation');
 
                 }else if(this.password != this.passwordConfirmation) {
 
-                    this.setFormError('password', 'Password does not match confirmation');
+                    this.formState.setFormError('password', 'Password does not match confirmation');
 
                 }else if(this.validateRegisterUrl != null) {
 
@@ -279,7 +281,6 @@
 
                         if(response.status == 200) {
 
-                            //  Stop loader
                             this.isSubmitting = false;
 
                             //  Show verification code
@@ -289,33 +290,21 @@
 
                     }).catch(errorException => {
 
-                        //  Stop loader
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
 
                     });
 
                 }else {
-
-                    /**
-                     *  Note: the setGeneralFormError() method is part of the FormMixin methods
-                     */
                     this.setGeneralFormError('The validateRegisterUrl does not exist');
 
                 }
             },
             attemptRegistration() {
 
-                /**
-                 *  Note: the setFormError() method is part of the FormMixin methods
-                 */
                 if(this.verificationCode.trim() == '') {
 
-                    this.setFormError('verificationCode', 'Enter your verification code');
+                    this.formState.setFormError('verificationCode', 'Enter your verification code');
 
                 }else if(this.registerUrl != null) {
 
@@ -334,45 +323,47 @@
 
                         if(response.status == 200) {
 
-                            //  Stop loader
                             this.isSubmitting = false;
 
                             // Redirect to the dashboard
                             this.$router.replace({ name: 'show-stores'});
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Welcome to ' + this.appName);
+                            this.notificationState.showSuccessNotification('Welcome to ' + this.appName);
 
                         }
 
                     }).catch(errorException => {
 
-                        //  Stop loader
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                         this.setServerFormErrors(errorException);
+                         this.formState.setServerFormErrors(errorException);
 
                     });
 
                 }else {
-
-                    /**
-                     *  Note: the setGeneralFormError() method is part of the FormMixin methods
-                     */
                     this.setGeneralFormError('The registerUrl does not exist');
 
                 }
             },
             backToRegistrationForm() {
                 this.showVerificationCode = false;
-            }
+            },
+            startSlideshow() {
+                this.slideShowSetInterval = setInterval(() => {
+                    this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+                }, 3000);
+            },
+            stopSlideshow() {
+                if (this.slideShowSetInterval) {
+                    clearInterval(this.slideShowSetInterval);
+                    this.slideShowSetInterval = null;
+                }
+            },
+        },
+        beforeUnmount() {
+            this.stopSlideshow();
         },
         created() {
+            this.startSlideshow();
             this.registerUrl = this.apiState.apiHome['_links']['register'];
             this.accountExistsUrl = this.apiState.apiHome['_links']['accountExists'];
             this.validateRegisterUrl = this.apiState.apiHome['_links']['validateRegister'];

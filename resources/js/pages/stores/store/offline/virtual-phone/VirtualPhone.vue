@@ -76,15 +76,12 @@
 
     import { v4 as uuidv4 } from 'uuid';
     import settings from '@Js/settings.js';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import { postApi } from '@Repositories/api-repository.js';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState'],
         components: { Button, SpinningLoader },
         props: {
             msisdn: {
@@ -100,16 +97,14 @@
                 content: '',
                 requestType: 1,
                 sessionId: uuidv4(),
-                apiState: useApiState(),
                 isShowingUssdPopup: false,
                 isSendingUssdMessage: false,
-                storeState: useStoreState(),
                 telcofloLaunchUssdUrl: settings.telcofloLaunchUssdUrl,
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.msg = this.initialMessage;
                     this.startApiSimulationRequest();
                 }
@@ -118,9 +113,6 @@
         computed: {
             store() {
                 return this.storeState.store;
-            },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
             }
         },
         methods: {
@@ -173,7 +165,7 @@
                     //  Stop loader
                     this.isSendingUssdMessage = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

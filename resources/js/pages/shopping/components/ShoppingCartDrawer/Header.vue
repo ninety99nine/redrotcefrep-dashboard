@@ -30,26 +30,18 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-
-export default {
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            }
+        },
+        methods: {
+            closeShoppingCartDrawer() {
+                return this.shoppingCartState.closeShoppingCartDrawer();
+            }
         }
-    },
-    methods: {
-        closeShoppingCartDrawer() {
-            return this.shoppingCartState.closeShoppingCartDrawer();
-        }
-    }
-};
+    };
 
 </script>

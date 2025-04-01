@@ -31,11 +31,11 @@
         <div v-if="totalWorkflowSteps < maxWorkflowSteps" class="flex justify-center mb-16">
 
             <Pill
+                size="sm"
                 type="primary"
                 :showDot="false"
-                size="px-8 py-2"
-                :clickable="true" :action="() => addWorkflowStep()"
-                :text="hasWorkflowSteps ? (totalWorkflowSteps == (maxWorkflowSteps - 1) ? '+ Finally this' : '+ Then this') : '+ Do this'">
+                :action="() => addWorkflowStep()">
+                {{ hasWorkflowSteps ? (totalWorkflowSteps == (maxWorkflowSteps - 1) ? '+ Finally this' : '+ Then this') : '+ Do this' }}
             </Pill>
 
         </div>
@@ -59,25 +59,20 @@
 
 <script>
 
-    import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { VueDraggableNext } from 'vue-draggable-next';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
-    import { getApi, postApi } from '@Repositories/api-repository.js';
     import Pill from '@Partials/pills/Pill.vue';
+    import Alert from '@Partials/alerts/Alert.vue';
+    import { VueDraggableNext } from 'vue-draggable-next';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
+    import { getApi, postApi } from '@Repositories/api-repository.js';
     import WorkflowStep from '@Pages/stores/store/settings/workflows/components/workflow-step/WorkflowStep.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
-        components: { Alert, draggable: VueDraggableNext, Pill, WorkflowStep },
+        inject: ['apiState', 'formState', 'workflowState', 'notificationState'],
+        components: { Pill, Alert, draggable: VueDraggableNext, WorkflowStep },
         data() {
             return {
                 maxWorkflowSteps: 5,
-                apiState: useApiState(),
                 isLoadingWorkflowSteps: false,
-                workflowState: useWorkflowState(),
                 isUpdatingWorkflowArrangement: false,
             };
         },
@@ -101,7 +96,7 @@
         methods: {
             addWorkflowStep() {
                 this.workflowState.workflowSteps.push({
-                    tempId: this.generateUniqueId()
+                    tempId: generateUniqueId()
                 });
             },
             onCreated(workflowStep, index) {
@@ -136,7 +131,7 @@
                     //  Stop loader
                     this.isLoadingWorkflowSteps = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -169,15 +164,12 @@
 
                         if(response.data.updated) {
 
-                            /**
-                             * Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            if(notify) this.showSuccessfulNotification('Workflow arrangement updated');
+                           if(notify) this.notificationState.showSuccessNotification('Workflow arrangement updated');
 
                         } else {
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -185,7 +177,7 @@
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 } finally {
 

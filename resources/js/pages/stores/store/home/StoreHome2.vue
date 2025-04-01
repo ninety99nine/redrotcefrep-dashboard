@@ -31,7 +31,7 @@
                     <SelectInput
                         v-model="period"
                         labelPopoverTitle="What Is This?"
-                        :errorText="getFormError('period')"
+                        :errorText="formState.getFormError('period')"
                         labelPopoverDescription="Select the period to show insights">
                         <option value="today">Today</option>
                         <option value="yesterday">Yesterday</option>
@@ -137,7 +137,7 @@
                                     <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
                                 </div>
                                 <div v-else class="flex space-x-1 items-center">
-                                    <p class="text-gray-500 text-sm">{{ capitalizeAllWords(categoryInsight.name) }}</p>
+                                    <p v-capitalize-all class="text-gray-500 text-sm">{{ categoryInsight.name }}</p>
                                     <MoreInfoPopover title="What Is This?" :description="categoryInsight.description" placement="top"></MoreInfoPopover>
                                 </div>
 
@@ -153,20 +153,14 @@
 
                     <div v-if="index == insights.length - 1" class="flex justify-center items-center border-t border-dashed pt-8">
 
-                        <PrimaryButton :action="showingAllInsights ? showLessInsights : showMoreInsights" class="w-40" type="light" size="xs">
+                        <Button type="light" size="xs" :action="showingAllInsights ? showLessInsights : showMoreInsights" class="w-40">
                             <template v-if="showingAllInsights">
-                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                                </svg>
                                 <span class="mr-2">show less</span>
                             </template>
                             <template v-else>
-                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                                </svg>
                                 <span class="mr-2">show more</span>
                             </template>
-                        </PrimaryButton>
+                        </Button>
 
                     </div>
 
@@ -293,14 +287,14 @@
 
                     <div class="flex justify-end">
 
-                        <PrimaryButton :action="navigateToAddCoupon" class="w-40" size="xs">
+                        <Button type="action" size="xs" :action="navigateToAddCoupon" class="w-40">
                             <span class="mr-2">Allow Payments</span>
                             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 7.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z" />
                                 <path fill-rule="evenodd" d="M1.5 4.875C1.5 3.839 2.34 3 3.375 3h17.25c1.035 0 1.875.84 1.875 1.875v9.75c0 1.036-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 14.625v-9.75ZM8.25 9.75a3.75 3.75 0 1 1 7.5 0 3.75 3.75 0 0 1-7.5 0ZM18.75 9a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-.008ZM4.5 9.75A.75.75 0 0 1 5.25 9h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75H5.25a.75.75 0 0 1-.75-.75V9.75Z" clip-rule="evenodd" />
                                 <path d="M2.25 18a.75.75 0 0 0 0 1.5c5.4 0 10.63.722 15.6 2.075 1.19.324 2.4-.558 2.4-1.82V18.75a.75.75 0 0 0-.75-.75H2.25Z" />
                             </svg>
-                        </PrimaryButton>
+                        </Button>
 
                     </div>
 
@@ -313,14 +307,14 @@
 
                     <div class="flex justify-end">
 
-                        <PrimaryButton :action="navigateToAddCoupon" class="w-40" size="xs">
+                        <Button type="action" size="xs" :action="navigateToAddCoupon" class="w-40">
                             <span class="mr-2">Allow Delivery</span>
                             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M3.375 4.5C2.339 4.5 1.5 5.34 1.5 6.375V13.5h12V6.375c0-1.036-.84-1.875-1.875-1.875h-8.25ZM13.5 15h-12v2.625c0 1.035.84 1.875 1.875 1.875h.375a3 3 0 1 1 6 0h3a.75.75 0 0 0 .75-.75V15Z" />
                                 <path d="M8.25 19.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0ZM15.75 6.75a.75.75 0 0 0-.75.75v11.25c0 .087.015.17.042.248a3 3 0 0 1 5.958.464c.853-.175 1.522-.935 1.464-1.883a18.659 18.659 0 0 0-3.732-10.104 1.837 1.837 0 0 0-1.47-.725H15.75Z" />
                                 <path d="M19.5 19.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
                             </svg>
-                        </PrimaryButton>
+                        </Button>
 
                     </div>
 
@@ -340,9 +334,9 @@
                         <p class="text-sm">Start by stocking your store with products your customers will love</p>
 
                         <!-- Add Product Button -->
-                        <AddButton :action="navigateToAddProduct" class="w-40" size="sm">
-                            <span class="ml-2">Add Product</span>
-                        </AddButton>
+                        <Button type="primary" size="xs" icon="add" :action="navigateToAddProduct" class="w-40">
+                            <span>Add Product</span>
+                        </Button>
                     </div>
                     <div>
                         <span class="text-6xl">🛍️</span>
@@ -358,9 +352,9 @@
                         <p class="text-sm">Create amazing incentives for your customers, such as offering <span class="underline decoration-dashed underline-offset-4">discounts</span> or <span class="underline decoration-dashed underline-offset-4">free delivery</span>, while determining who can claim them and when.</p>
 
                         <!-- Add Coupon Button -->
-                        <AddButton :action="navigateToAddCoupon" class="w-40" size="sm">
-                            <span class="ml-2">Add Coupon</span>
-                        </AddButton>
+                        <Button type="primary" size="sm" :action="navigateToAddCoupon" class="w-40">
+                            <span>Add Coupon</span>
+                        </Button>
                     </div>
                     <div>
                         <span class="text-6xl">🥰</span>
@@ -377,9 +371,9 @@
                         <p class="text-sm">Invite others to help manage your store. Collaborate by adding team members to help you grow your business.</p>
 
                         <!-- Add Team Member Button -->
-                        <AddButton :action="navigateToInviteTeamMember" class="w-60" size="sm">
-                            <span class="ml-2">Add Team Member</span>
-                        </AddButton>
+                        <Button type="primary" size="sm" :action="navigateToInviteTeamMember" class="w-60">
+                            <span>Add Team Member</span>
+                        </Button>
                     </div>
                     <div>
                         <span class="text-6xl">💪</span>
@@ -408,19 +402,9 @@
                                 <p v-else class="font-bold text-4xl text-center mb-8">{{ validDeleteConfirmationCode }}</p>
 
                                 <!-- Delete Collection Code Input -->
-                                <OtpInput v-model="deleteConfirmationCode" :errorText="getFormError('deleteConfirmationCode')" class="mb-8"></OtpInput>
+                                <OtpInput v-model="deleteConfirmationCode" :errorText="formState.getFormError('deleteConfirmationCode')" class="mb-8"></OtpInput>
 
                             </template>
-
-                            <template #trigger="triggerProps">
-
-                                <!-- Delete Store Button - Triggers Confirmation Modal -->
-                                <PrimaryButton :action="triggerProps.showModal" :loading="isDeletingStore" class="w-40" type="danger">
-                                    Delete Store
-                                </PrimaryButton>
-
-                            </template>
-
 
                         </ConfirmModal>
 
@@ -440,12 +424,8 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useAuthState } from '@Stores/auth-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
+    import capitalizeAll from '@Directives/capitalizeAll.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import Countdown from '@Partials/countdowns/Countdown.vue';
@@ -454,26 +434,26 @@
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import VirtualPhone from '@Components/virtual-phone/VirtualPhone.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import StoreSubscribeButton from '@Components/store/StoreSubscribeButton.vue';
     import MobileNumberShortcode from '@Components/user/MobileNumberShortcode.vue';
-    import Status from '@Pages/stores/store/orders/order/components/OrderHeader/Status.vue';
+    import Status from '@Pages/stores/store/orders/order/components/order-header/Status.vue';
     import StoreQuickStartGuideProgress from '@Components/store/StoreQuickStartGuideProgress.vue';
     import UserStoreSubscriptionCountdown from '@Components/store/UserStoreSubscriptionCountdown.vue';
-    import PaymentStatus from '@Pages/stores/store/orders/order/components/OrderHeader/PaymentStatus.vue';
-    import CollectionStatus from '@Pages/stores/store/orders/order/components/OrderHeader/CollectionStatus.vue';
+    import PaymentStatus from '@Pages/stores/store/orders/order/components/order-header/PaymentStatus.vue';
+    import CollectionStatus from '@Pages/stores/store/orders/order/components/order-header/CollectionStatus.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['authState', 'formState', 'storeState', 'notificationState'],
+        directives: { capitalizeAll },
         components: {
-            Pill, TextHeader, AddButton, BasicTable, Checkbox, Countdown, SelectInput, Status, ConfirmModal,
-            OtpInput, LineSkeleton, SpinningLoader, PrimaryButton, SelectInputTags, MoreInfoPopover, ToogleSwitch,
-            VirtualPhone, PaymentStatus, StoreSubscribeButton, MobileNumberShortcode, CollectionStatus,
+            Pill, Button, BasicTable, Checkbox, Countdown, SelectInput, Status, ConfirmModal, OtpInput,
+            LineSkeleton, SpinningLoader, SelectInputTags, MoreInfoPopover, ToggleSwitch, VirtualPhone,
+            PaymentStatus, StoreSubscribeButton, MobileNumberShortcode, CollectionStatus,
             StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown
         },
         data() {
@@ -487,10 +467,8 @@
                 maxTotalInsights: 4,
                 categories: ['sales'],
                 isDeletingStore: false,
-                authState: useAuthState(),
                 isLoadingDeleteCode: false,
                 deleteConfirmationCode: '',
-                storeState: useStoreState(),
                 isLoadingStoreInsights: false,
                 validDeleteConfirmationCode: '',
                 categoryOptions: ['sales', 'orders', 'products', 'customers', 'operations']
@@ -615,7 +593,7 @@
                     //  Stop loader
                     this.isLoadingStoreInsights = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -641,7 +619,7 @@
                     //  Stop loader
                     this.isLoadingDeleteCode = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -664,10 +642,7 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Store deleted');
+                            this.notificationState.showSuccessNotification('Store deleted');
 
                             /**
                              *  After setting the isDeletingStore to false, we need to wait until the nextTick()
@@ -688,8 +663,8 @@
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -700,7 +675,7 @@
                     //  Stop loader
                     this.isDeletingStore = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

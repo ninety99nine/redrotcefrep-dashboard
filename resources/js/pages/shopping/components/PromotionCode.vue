@@ -6,7 +6,7 @@
                 class="w-full"
                 placeholder="Enter promotion code"
                 v-model="shoppingCartForm.promotionCode"
-                :errorText="getFormError('promotionCode')">
+                :errorText="formState.getFormError('promotionCode')">
             </TextInput>
 
             <transition name="fade-1" mode="out-in">
@@ -25,22 +25,12 @@
 
 <script>
 
-import { FormMixin } from '@Mixins/FormMixin.js';
-import { useStoreState } from '@Stores/store-store.js';
 import TextInput from '@Partials/inputs/TextInput.vue';
 import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-
 
 export default {
-    mixins: [FormMixin],
+    inject: ['formState', 'storeState', 'shoppingCartState'],
     components: { TextInput, LineSkeleton },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
     watch: {
         'shoppingCartForm.promotionCode'() {
             this.shoppingCartState.inspectStoreShoppingCartWithDelay();

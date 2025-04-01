@@ -64,15 +64,12 @@
 
 <script>
 
-import debounce from 'lodash.debounce';
-import { useStoreState } from '@Stores/store-store.js';
 import TipsCard from '@Pages/shopping/components/TipsCard.vue';
 import ItemsCard from '@Pages/shopping/components/ItemsCard.vue';
 import StoreLogo from '@Pages/shopping/components/StoreLogo.vue';
 import StoreName from '@Pages/shopping/components/StoreName.vue';
 import GrandTotal from '@Pages/shopping/components/GrandTotal.vue';
 import StoreBanner from '@Pages/shopping/components/StoreBanner.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
 import ReturnToShop from '@Pages/shopping/components/ReturnToShop.vue';
 import CustomerCard from '@Pages/shopping/components/CustomerCard.vue';
 import CheckoutHeading from '@Pages/shopping/components/CheckoutHeading.vue';
@@ -86,16 +83,11 @@ import DeliveryMethodsCard from '@Pages/shopping/components/DeliveryMethodsCard.
 import ShoppingCartDrawer from '@Pages/shopping/components/ShoppingCartDrawer/Index.vue';
 
 export default {
+    inject: ['storeState', 'shoppingCartState'],
     components: {
         TipsCard, ItemsCard, StoreLogo, StoreName, CheckoutHeading, GrandTotal, StoreBanner, ReturnToShop, CustomerCard,
         CreateStoreLink, PromotionCodeCard, OrderSummaryCard, StoreFooterMenus, StoreDescription, CustomizeDrawer,
         DeliveryMethodsCard, ShoppingCartDrawer
-    },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
     },
     watch: {
         'shoppingCartState.mappedCartProducts': {

@@ -24,10 +24,9 @@
      * Component Reference: https://flowbite.com/docs/components/drawer/
      */
     import { initFlowbite, Drawer } from 'flowbite';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
         props: {
             placement: {
                 type: String,
@@ -74,7 +73,7 @@
         data() {
             return {
                 drawer: null,
-                drawerUniqueId: this.generateUniqueId('drawer')
+                drawerUniqueId: generateUniqueId('drawer')
             };
         },
         computed: {

@@ -19,15 +19,15 @@
                     <!-- Modal Content -->
                     <slot name="content"></slot>
 
-                    <div class="flex justify-end space-x-2">
+                    <div v-if="showDelineButton || showApproveButton" class="flex justify-end space-x-2">
 
                         <!-- (No) Button -->
-                        <Button :action="hideModal" :type="declineType" size="sm" :icon="declineIcon">
+                        <Button v-if="showDelineButton" :action="hideModal" :type="declineType" size="sm" :icon="declineIcon">
                             <span>{{ declineText }}</span>
                         </Button>
 
                         <!-- (Yes) Button -->
-                        <Button :action="() => approveAction(hideModal)" :type="approveType" size="sm" :icon="approveIcon" :disabled="approveDisabled" :loading="isLoading">
+                        <Button v-if="showApproveButton" :action="() => approveAction(hideModal)" :type="approveType" size="sm" :icon="approveIcon" :disabled="approveDisabled" :loading="isLoading">
                             <span>{{ approveText }}</span>
                         </Button>
 
@@ -44,16 +44,19 @@
     /**
      * Component Reference: https://flowbite.com/docs/components/modal/
      */
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import Button from '@Partials/buttons/Button.vue';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
         components: { Button },
         props: {
             isLoading: {
                 type: Boolean,
                 default: false
+            },
+            showDelineButton: {
+                type: Boolean,
+                default: true
             },
             declineText: {
                 type: String,
@@ -66,6 +69,10 @@
             declineIcon: {
                 type: [String, null],
                 default: null
+            },
+            showApproveButton: {
+                type: Boolean,
+                default: true
             },
             approveText: {
                 type: String,
@@ -130,7 +137,7 @@
         data() {
             return {
                 modal: null,
-                modalUniqueId: this.generateUniqueId('modal')
+                modalUniqueId: generateUniqueId('modal')
             }
         },
         watch: {

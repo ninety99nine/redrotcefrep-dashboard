@@ -16,22 +16,18 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import CheckoutCardBody from '@Pages/shopping/components/CheckoutCardBody.vue';
-import DeliveryMethodsCardBody from '@Pages/shopping/components/DeliveryMethodsCardBody.vue';
-import DeliveryMethodsCardHeading from '@Pages/shopping/components/DeliveryMethodsCardHeading.vue';
+    import CheckoutCardBody from '@Pages/shopping/components/CheckoutCardBody.vue';
+    import DeliveryMethodsCardBody from '@Pages/shopping/components/DeliveryMethodsCardBody.vue';
+    import DeliveryMethodsCardHeading from '@Pages/shopping/components/DeliveryMethodsCardHeading.vue';
 
-export default {
-    components: { CheckoutCardBody, DeliveryMethodsCardBody, DeliveryMethodsCardHeading },
-    data() {
-        return {
-            storeState: useStoreState(),
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        }
-    },
-};
+    export default {
+        inject: ['storeState'],
+        components: { CheckoutCardBody, DeliveryMethodsCardBody, DeliveryMethodsCardHeading },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            }
+        },
+    };
+
 </script>

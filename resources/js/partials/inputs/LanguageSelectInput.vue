@@ -8,18 +8,17 @@
 
 <script>
 
-    import { useApiState } from '@Stores/api-store.js';
     import { getApi } from '@Repositories/api-repository.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
 
     export default {
+        inject: ['apiState'],
         components: {
             SelectInput
         },
         data() {
             return {
                 languages: [],
-                apiState: useApiState(),
                 isLoadingLanguages: false
 
             };
@@ -48,7 +47,7 @@
                     //  Stop loader
                     this.isLoadingLanguages = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

@@ -56,12 +56,9 @@
                                 </MoreInfoPopover>
                             </div>
 
-                            <PrimaryButton :action="generatePaymentShortcode" :loading="isGeneratingPaymentShortcode" type="light" size="sm">
-                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                </svg>
+                            <Button type="light" size="xs" icon="refresh" :action="generatePaymentShortcode" :loading="isGeneratingPaymentShortcode">
                                 <span>Renew Shortcode</span>
-                            </PrimaryButton>
+                            </Button>
 
                         </div>
 
@@ -75,9 +72,9 @@
 
             <!-- Subscribe Button - Triggers Modal -->
             <slot name="trigger" :showModal="triggerProps.showModal">
-                <PrimaryButton :action="triggerProps.showModal" size="xs" type="success">
+                <Button type="success" size="xs" :action="triggerProps.showModal">
                     Subscribe
-                </PrimaryButton>
+                </Button>
             </slot>
 
         </template>
@@ -89,21 +86,18 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import BasicModal from '@Partials/modals/BasicModal.vue';
     import { postApi } from '@Repositories/api-repository.js';
     import Countdown from '@Partials/countdowns/Countdown.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { Countdown, BasicModal, ShineEffect, PrimaryButton, MoreInfoPopover },
+        inject: ['formState', 'storeState'],
+        components: { Button, Countdown, BasicModal, ShineEffect, MoreInfoPopover },
         data() {
             return {
                 paymentShortcode: null,
-                storeState: useStoreState(),
                 isGeneratingPaymentShortcode: false
             };
         },
@@ -132,7 +126,7 @@
                     //  Stop loader
                     this.isGeneratingPaymentShortcode = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

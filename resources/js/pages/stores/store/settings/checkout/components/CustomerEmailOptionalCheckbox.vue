@@ -3,7 +3,7 @@
     <Checkbox
         size="xs"
         v-model="storeState.online"
-        :errorText="getFormError('online')">
+        :errorText="formState.getFormError('online')">
         <div class="text-sm mt-0.5">Optional</div>
     </Checkbox>
 
@@ -11,18 +11,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { Checkbox },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

@@ -7,7 +7,7 @@
             <Checkbox
                 size="xs"
                 v-model="form.offerFreeDeliveryOnMinimumGrandTotal"
-                :errorText="getFormError('offerFreeDeliveryOnMinimumGrandTotal')">
+                :errorText="formState.getFormError('offerFreeDeliveryOnMinimumGrandTotal')">
                 <div class="space-y-1 mt-0.5">
                     <p class="font-bold text-sm mx-2">Offer free delivery on minimum grand total</p>
                     <p class="text-sm text-gray-500 mx-2">Customer carts must qualify with a minimum grand total to claim free delivery.</p>
@@ -25,7 +25,7 @@
                     labelPopoverTitle="What Is This?"
                     v-model="form.freeDeliveryMinimumGrandTotal"
                     v-if="form.offerFreeDeliveryOnMinimumGrandTotal"
-                    :errorText="getFormError('minimumGrandTotal')"
+                    :errorText="formState.getFormError('minimumGrandTotal')"
                     labelPopoverDescription="Customer carts must qualify with a minimum grand total to claim free delivery">
                 </NumberInput>
 
@@ -38,12 +38,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: {
             Checkbox, NumberInput
         },

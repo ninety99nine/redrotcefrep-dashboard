@@ -97,52 +97,48 @@
 </template>
 
 <script>
-import { usePageState } from "@Stores/page-store.js";
 
-export default {
-    data() {
-        return {
-            pageState: usePageState(),
-        };
-    },
-    methods: {
-        saveStateDebounced(actionName) {
-            this.pageState.saveStateDebounced(actionName);
-        },
-        triggerFileInput() {
-            this.$refs.fileInput.click();
-        },
-        handleFileUpload(event) {
-            const files = event.target.files;
-            this.processFiles(files);
-        },
-        handleDrop(event) {
-            event.preventDefault();
-            const files = event.dataTransfer.files;
-            this.processFiles(files);
-        },
-        processFiles(files) {
-            if (!files.length) return;
+    export default {
+        inject: ['pageState'],
+        methods: {
+            saveStateDebounced(actionName) {
+                this.pageState.saveStateDebounced(actionName);
+            },
+            triggerFileInput() {
+                this.$refs.fileInput.click();
+            },
+            handleFileUpload(event) {
+                const files = event.target.files;
+                this.processFiles(files);
+            },
+            handleDrop(event) {
+                event.preventDefault();
+                const files = event.dataTransfer.files;
+                this.processFiles(files);
+            },
+            processFiles(files) {
+                if (!files.length) return;
 
-            Array.from(files).forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.pageState.pageForm.sections[this.pageState.sectionIndex].rows[this.pageState.rowIndex].columns[this.pageState.columnIndex].modules[this.pageState.moduleIndex].mediaFiles.push({
-                        filePath: URL.createObjectURL(file),
-                        errorMessage: null,
-                        uploading: null,
-                        uploaded: null,
-                        fileRef: file,  // Don't use [file: file] use [fileRef: file for Non-reactive, best for performance]
-                    });
-                    this.saveStateDebounced(`${files.length} ${ files.length == 1 ? 'image' : 'images'} added`);
-                };
-                reader.readAsDataURL(file);
-            });
+                Array.from(files).forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.pageState.pageForm.sections[this.pageState.sectionIndex].rows[this.pageState.rowIndex].columns[this.pageState.columnIndex].modules[this.pageState.moduleIndex].mediaFiles.push({
+                            filePath: URL.createObjectURL(file),
+                            errorMessage: null,
+                            uploading: null,
+                            uploaded: null,
+                            fileRef: file,  // Don't use [file: file] use [fileRef: file for Non-reactive, best for performance]
+                        });
+                        this.saveStateDebounced(`${files.length} ${ files.length == 1 ? 'image' : 'images'} added`);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            },
+            removeImage(index) {
+                this.pageState.pageForm.sections[this.pageState.sectionIndex].rows[this.pageState.rowIndex].columns[this.pageState.columnIndex].modules[this.pageState.moduleIndex].mediaFiles.splice(index, 1);
+                this.saveStateDebounced("Image removed");
+            }
         },
-        removeImage(index) {
-            this.pageState.pageForm.sections[this.pageState.sectionIndex].rows[this.pageState.rowIndex].columns[this.pageState.columnIndex].modules[this.pageState.moduleIndex].mediaFiles.splice(index, 1);
-            this.saveStateDebounced("Image removed");
-        }
-    },
-};
+    };
+
 </script>

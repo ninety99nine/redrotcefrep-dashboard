@@ -124,14 +124,12 @@
 
     import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { Pill, Alert, LineSkeleton, MoreInfoPopover, NoDataPlaceholder },
         props: {
             order: {
@@ -139,11 +137,6 @@
             },
             isLoadingOrder: {
                 type: Boolean
-            }
-        },
-        data() {
-            return {
-                storeState: useStoreState()
             }
         },
         computed: {
@@ -163,7 +156,7 @@
                 if(this.canViewProduct(orderProduct)) {
                     this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': orderProduct._links.showProduct } });
                 }else{
-                    this.showUnsuccessfulNotification('This product does not exist anymore. It might be deleted');
+                    this.notificationState.showWarningNotification('This product does not exist anymore. It might be deleted');
                 }
             },
         }

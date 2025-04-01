@@ -26,7 +26,6 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import Tax from '@Pages/stores/store/settings/general/components/Tax.vue';
     import General from '@Pages/stores/store/settings/general/components/General.vue';
     import DeleteStore from '@Pages/stores/store/settings/general/components/DeleteStore.vue';
@@ -35,13 +34,9 @@
     import Communication from '@Pages/stores/store/settings/general/components/Communication.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             Tax, General, DeleteStore, OpeningHours, Localization, Communication
-        },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
         },
         computed: {
             store() {

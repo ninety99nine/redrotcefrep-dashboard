@@ -58,7 +58,7 @@
         </div>
 
         <!-- Input Error Message -->
-        <InputErrorMessage :errorText="getFormError('profilePhoto')" :class="{'block text-center mt-4' : this.getFormError('profilePhoto')}"></InputErrorMessage>
+        <InputErrorMessage :errorText="formState.getFormError('profilePhoto')" :class="{'block text-center mt-4' : formState.getFormError('profilePhoto')}"></InputErrorMessage>
 
     </div>
 
@@ -67,12 +67,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useAuthState } from '@Stores/auth-store.js';
     import { updateUserProfilePhoto } from '@Repositories/user-repository.js';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
+        inject: ['authState', 'formState', 'notificationState'],
         props: {
             user: {
                 type: Object
@@ -90,13 +89,11 @@
                 default: true
             },
         },
-        mixins: [FormMixin],
         components: { InputErrorMessage },
         data() {
             return {
                 selectedFile: null,
                 isSubmitting: false,
-                authState: useAuthState(),
                 imageUrl: this.user.profilePhoto,
                 originalImageUrl: this.user.profilePhoto
             };
@@ -156,7 +153,7 @@
             },
             uploadImage(event, file) {
 
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 //  Start loader
                 this.isSubmitting = true;
@@ -165,9 +162,8 @@
 
                     if(response.status == 200) {
 
-                        //  Stop loader
                         this.isSubmitting = false;
-                        this.showSuccessfulNotification('Profile photo updated');
+                        this.notificationState.showSuccessNotification('Profile photo updated');
 
                     }
 
@@ -175,7 +171,7 @@
 
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                     //  If the current user is the authenticated user
                     if(this.user.id == this.authState.user.id) {

@@ -14,7 +14,7 @@
                 </svg>
 
                 <!-- Delete Zone Button -->
-                <DeleteButton :action="() => onRemovePostalCodeZone(index)" size="xs" type="danger"></DeleteButton>
+                <Button type="danger" size="xs" :action="() => onRemovePostalCodeZone(index)"></Button>
 
             </div>
 
@@ -38,7 +38,7 @@
                             placeholder="Nairobi"
                             labelPopoverTitle="What Is This?"
                             v-model="form.postalCodeZones[index].name"
-                            :errorText="getFormError('postalCodeZones'+index+'name')"
+                            :errorText="formState.getFormError('postalCodeZones'+index+'name')"
                             labelPopoverDescription="Set the area name for this delivery method">
                         </TextInput>
 
@@ -47,7 +47,7 @@
                             label="Delivery fee"
                             labelPopoverTitle="What Is This?"
                             v-model="form.postalCodeZones[index].fee"
-                            :errorText="getFormError('postalCodeZones'+index+'fee')"
+                            :errorText="formState.getFormError('postalCodeZones'+index+'fee')"
                             labelPopoverDescription="Specify the fee charged for deliveries within the area">
                         </MoneyInput>
 
@@ -59,7 +59,7 @@
                         labelPopoverTitle="What Is This?"
                         :key="form.postalCodeZones[index].postalCodes"
                         :tags="form.postalCodeZones[index].postalCodes"
-                        :errorText="getFormError('postalCodeZones'+index+'value')"
+                        :errorText="formState.getFormError('postalCodeZones'+index+'value')"
                         @onTagsChanged="(newValues) => form.postalCodeZones[index].postalCodes = newValues"
                         labelPopoverDescription="The postal codes supported by this area e.g 10001, 00100 or SW1A 1AA" />
 
@@ -78,10 +78,10 @@
                         </svg>
                         <span>Zone {{ index + 1 }}</span>
                     </div>
-                    <Pill v-if="form.postalCodeZones[index].name" type="info" :text="form.postalCodeZones[index].name" :showDot="false"></Pill>
+                    <Pill v-if="form.postalCodeZones[index].name" type="info" size="xs" :showDot="false">{{ form.postalCodeZones[index].name }}</Pill>
                     <InputErrorMessage v-else errorText="No name" margin="mt-0"></InputErrorMessage>
 
-                    <Pill v-if="form.postalCodeZones[index].fee" type="primary" :text="store.currency.symbol+form.postalCodeZones[index].fee" :showDot="false"></Pill>
+                    <Pill v-if="form.postalCodeZones[index].fee" type="primary" size="xs" :showDot="false">{{ store.currency.symbol+form.postalCodeZones[index].fee }}</Pill>
                     <InputErrorMessage v-else errorText="No fee" margin="mt-0"></InputErrorMessage>
                 </div>
 
@@ -93,10 +93,10 @@
                 <InputErrorMessage v-else errorText="No postal codes" margin="mt-0"></InputErrorMessage>
 
                 <!-- Area Name Error Message -->
-                <InputErrorMessage v-if="getFormError('postalCodeZones'+index+'name')" :errorText="getFormError('postalCodeZones'+index+'name')"></InputErrorMessage>
+                <InputErrorMessage v-if="formState.getFormError('postalCodeZones'+index+'name')" :errorText="formState.getFormError('postalCodeZones'+index+'name')"></InputErrorMessage>
 
                 <!-- Area Fee Input Error Message -->
-                <InputErrorMessage v-if="getFormError('postalCodeZones'+index+'fee')" :errorText="getFormError('postalCodeZones'+index+'fee')"></InputErrorMessage>
+                <InputErrorMessage v-if="formState.getFormError('postalCodeZones'+index+'fee')" :errorText="formState.getFormError('postalCodeZones'+index+'fee')"></InputErrorMessage>
 
             </div>
 
@@ -113,7 +113,7 @@
                 </svg>
 
                 <div class="text-sm space-y-2">
-                    <p><Pill type="primary" text="+ Add Zone" :showDot="false" :clickable="true" :action="onAddPostalCodeZone"></Pill> to offer delivery to specific postal codes for a fee</p>
+                    <p><Pill type="primary" size="xs" text="+ Add Zone" :showDot="false" :action="onAddPostalCodeZone"></Pill> to offer delivery to specific postal codes for a fee</p>
                 </div>
             </div>
 
@@ -122,9 +122,9 @@
         <div class="flex justify-end space-x-2">
 
             <!-- Undo Button -->
-            <UndoButton v-if="postalCodeZonesHaveChanged && hasOriginalPostalCodeZones" :action="onResetPostalCodeZones" size="xs">
-                <span class="ml-1">Undo</span>
-            </UndoButton>
+            <Button v-if="postalCodeZonesHaveChanged && hasOriginalPostalCodeZones" type="light" size="xs" :action="onResetPostalCodeZones">
+                <span>Undo</span>
+            </Button>
 
             <div class="flex justify-end">
 
@@ -133,9 +133,9 @@
                     <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                         <div v-if="!hasPostalCodeZones" class="animate-bounce text-4xl">👆</div>
                     </div>
-                    <AddButton :action="onAddPostalCodeZone" class="w-40" size="xs">
-                        <span class="ml-2">Add Zone</span>
-                    </AddButton>
+                    <Button type="light" size="xs" :action="onAddPostalCodeZone" class="w-40">
+                        <span>Add Zone</span>
+                    </Button>
                 </div>
 
             </div>
@@ -150,21 +150,17 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: {
-            TextInput, InputTags, AddButton, MoneyInput, UndoButton, DeleteButton, Pill, InputErrorMessage
+            Pill, Button, TextInput, InputTags, MoneyInput, InputErrorMessage
         },
         props: {
             form: {
@@ -173,8 +169,7 @@
         },
         data() {
             return {
-                originalPostalCodeZones: [],
-                storeState: useStoreState()
+                originalPostalCodeZones: []
             }
         },
         computed: {

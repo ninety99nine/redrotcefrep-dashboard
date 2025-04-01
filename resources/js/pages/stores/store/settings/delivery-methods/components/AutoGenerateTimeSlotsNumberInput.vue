@@ -5,18 +5,17 @@
         placeholder="1"
         v-if="form.autoGenerateTimeSlots"
         v-model="form.timeSlotIntervalValue"
-        :errorText="getFormError('timeSlotIntervalValue')">
+        :errorText="formState.getFormError('timeSlotIntervalValue')">
     </NumberInput>
 
 </template>
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { NumberInput },
         props: {
             form: {

@@ -15,16 +15,12 @@ export const useOnboardingState = defineStore('onboarding', {
             paymentMethods: [],
             isUploading: false,
             totalCompletedSteps: 0,
-            apiState: useApiState(),
             totalCompletedUploads: 0,
-            formState: useFormState(),
             originalPaymentMethods: [],
-            storeState: useStoreState(),
             associatedPaymentMethods: [],
             unassociatedPaymentMethods: [],
             isCreatingPaymentMethod: false,
             isSubmittingPaymentMethods: false,
-            notificationState: useNotificationState(),
             isLoadingUnassociatedPaymentMethods: false,
         }
     },
@@ -175,7 +171,7 @@ export const useOnboardingState = defineStore('onboarding', {
                 '_relationships': 'paymentMethod,photo,logo'
             };
 
-            getApi(this.apiState.apiHome._links['showStorePaymentMethods'], params).then(response => {
+            getApi(useApiState().apiHome._links['showStorePaymentMethods'], params).then(response => {
 
                 if (response.status == 200) {
 
@@ -246,7 +242,8 @@ export const useOnboardingState = defineStore('onboarding', {
                 //  Stop loader
                 this.isLoadingAssociatedPaymentMethods = false;
 
-                this.formState.setServerFormErrors(errorException);
+                useFormState().setServerFormErrors(errorException);
+
             });
 
         },
@@ -260,7 +257,7 @@ export const useOnboardingState = defineStore('onboarding', {
                 'association': 'unassociated'
             };
 
-            getApi(this.apiState.apiHome._links['showPaymentMethods'], params).then(response => {
+            getApi(useApiState().apiHome._links['showPaymentMethods'], params).then(response => {
 
                 if(response.status == 200) {
                     this.pagination = response.data;
@@ -312,7 +309,7 @@ export const useOnboardingState = defineStore('onboarding', {
                 //  Stop loader
                 this.isLoadingUnassociatedPaymentMethods = false;
 
-                this.formState.setServerFormErrors(errorException);
+                useFormState().setServerFormErrors(errorException);
 
             });
 
@@ -346,25 +343,25 @@ export const useOnboardingState = defineStore('onboarding', {
                         } else {
                             errors.push(`Payment method ${index + 1}: ${result.reason?.message || 'An error occurred'}`);
                             this.formErrorMessagesIndex = index;
-                            this.formState.setServerFormErrors(result.reason, index);
+                            useFormState().setServerFormErrors(result.reason, index);
                         }
                     });
 
                     if (successCount) {
                         if(this.hasAssociatedPaymentMethods) {
-                            this.notificationState.addSuccessNotification('Payment methods updated!');
+                            useNotificationState().showSuccessNotification('Payment methods updated!');
                         }else{
-                            this.notificationState.addSuccessNotification('Payment methods added!');
+                            useNotificationState().showSuccessNotification('Payment methods added!');
                         }
                     }
 
                     if (errors.length > 0) {
-                        this.notificationState.addWarningNotification(errors.join('\n'));
+                        useNotificationState().showWarningNotification(errors.join('\n'));
                     }
 
                 })
                 .catch((error) => {
-                    this.notificationState.addWarningNotification('An unexpected error occurred while submitting payment methods.');
+                    useNotificationState().showWarningNotification('An unexpected error occurred while submitting payment methods.');
                     console.error(error);
                 })
                 .finally(() => {
@@ -388,7 +385,7 @@ export const useOnboardingState = defineStore('onboarding', {
 
             try {
 
-                const createStorePaymentMethodUrl = this.apiState.apiHome['_links']['createStorePaymentMethod'];
+                const createStorePaymentMethodUrl = useApiState().apiHome['_links']['createStorePaymentMethod'];
                 const response = await postApi(createStorePaymentMethodUrl, storePaymentMethodData);
 
                 if (response.status === 200 && response.data['created'] == true) {
@@ -450,7 +447,7 @@ export const useOnboardingState = defineStore('onboarding', {
             let failedUploads = results.filter(result => result.status === 'rejected').length;
 
             if (failedUploads > 0) {
-                this.notificationState.addWarningNotification(`⚠️ ${failedUploads} image(s) failed to upload. You can retry manually.`);
+                useNotificationState().showWarningNotification(`⚠️ ${failedUploads} image(s) failed to upload. You can retry manually.`);
             }
 
             this.isUploading = false;
@@ -551,7 +548,7 @@ export const useOnboardingState = defineStore('onboarding', {
             return this.store ? this.store._relationships.logo : null;
         },
         store() {
-            return this.storeState.store;
+            return useStoreState().store;
         },
         totalSelectedPaymentMethods() {
             return this.paymentMethods.filter((paymentMethod) => paymentMethod.active).length;

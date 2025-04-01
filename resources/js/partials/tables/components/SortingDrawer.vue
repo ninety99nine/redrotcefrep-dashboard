@@ -134,17 +134,15 @@
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
     import Drawer from '@Partials/drawers/Drawer.vue';
-    import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import { getApi } from '@Repositories/api-repository.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState' , 'formState'],
         components: { draggable: VueDraggableNext, Pill, Button, Drawer, Checkbox, SpinningLoader },
         props: {
             sortingExpressions: {
@@ -159,7 +157,6 @@
                 sortDrawer: null,
                 localSorting: null,
                 originalSorting: null,
-                apiState: useApiState(),
                 isLoadingSorting: false,
                 lastEmittedSorting: null,
             }
@@ -332,7 +329,7 @@
                     //  Stop loader
                     this.isLoadingSorting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

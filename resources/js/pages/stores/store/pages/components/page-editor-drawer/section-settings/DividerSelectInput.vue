@@ -76,12 +76,11 @@
 
 <script>
     import { initFlowbite, Dropdown } from "flowbite";
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: { InputLabel, InputErrorMessage },
         props: {
             color: {
@@ -116,8 +115,8 @@
             return {
                 dropdown: null,
                 localModelValue: this.modelValue,
-                dropdownUniqueId: this.generateUniqueId("dropdown"),
-                triggerUniqueId: this.generateUniqueId("dropdown-trigger"),
+                dropdownUniqueId: generateUniqueId("dropdown"),
+                triggerUniqueId: generateUniqueId("dropdown-trigger"),
             };
         },
         computed: {

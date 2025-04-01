@@ -3,7 +3,7 @@
     <Checkbox
         size="xs"
         v-model="form.restrictMaximumNoticeForOrders"
-        :errorText="getFormError('restrictMaximumNoticeForOrders')">
+        :errorText="formState.getFormError('restrictMaximumNoticeForOrders')">
         <div class="mt-0.5 mx-2">
             <p class="font-bold text-sm mb-1">Restrict maximum notice for orders</p>
             <p class="text-sm text-gray-500 max-w-96">Customers can only place orders if the delivery date is within a reasonable timeframe</p>
@@ -35,12 +35,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Checkbox, NumberInput },
         props: {
             form: {

@@ -97,115 +97,116 @@
 </template>
 
 <script>
-import Drawer from "@Partials/drawers/Drawer.vue";
-import { usePageState } from "@Stores/page-store.js";
-import RowSettings from "@Pages/stores/store/pages/components/page-editor-drawer/row-settings/RowSettings.vue";
-import PageSettings from "@Pages/stores/store/pages/components/page-editor-drawer/page-settings/PageSettings.vue";
-import ColumnSettings from "@Pages/stores/store/pages/components/page-editor-drawer/column-settings/ColumnSettings.vue";
-import SectionSettings from "@Pages/stores/store/pages/components/page-editor-drawer/section-settings/SectionSettings.vue";
-import TextModuleSettings from "@Pages/stores/store/pages/components/page-editor-drawer/module-settings/TextModuleSettings.vue";
-import ImageModuleSettings from "@Pages/stores/store/pages/components/page-editor-drawer/module-settings/ImageModuleSettings.vue";
 
-export default {
-    components: { Drawer, RowSettings, SectionSettings, ColumnSettings, TextModuleSettings, ImageModuleSettings, PageSettings },
-    data() {
-        return {
-            activeTab: 'Content',
-            pageState: usePageState(),
-        };
-    },
-    computed: {
-        currentScope() {
-            if (this.pageState.moduleIndex !== null) return "module";
-            if (this.pageState.columnIndex !== null) return "column";
-            if (this.pageState.rowIndex !== null) return "row";
-            if (this.pageState.sectionIndex !== null) return "section";
-            return "page"; // Default to "page"
-        },
-        scopeTitle() {
-            switch (this.currentScope) {
-                case "page":
-                    return "Page";
-                case "section":
-                    return "Section";
-                case "row":
-                    return "Row";
-                case "column":
-                    return "Column";
-                case "module":
-                    return "Module";
-                default:
-                    return "Settings";
-            }
-        },
-        page() {
-            return this.pageState.pageForm; // Assume pageForm represents the entire page
-        },
-        section() {
-            return this.pageState.sectionIndex !== null
-                ? this.pageState.pageForm.sections[this.pageState.sectionIndex]
-                : null;
-        },
-        row() {
-            return this.pageState.rowIndex !== null ? this.section.rows[this.pageState.rowIndex] : null;
-        },
-        column() {
-            return this.pageState.columnIndex !== null ? this.row.columns[this.pageState.columnIndex] : null;
-        },
-        module() {
-            return this.pageState.moduleIndex !== null ? this.column.modules[this.pageState.moduleIndex] : null;
-        },
-        drawerTabs() {
-            return this.pageState.drawerTabs;
-        },
-        selectedDrawerTab() {
-            return this.pageState.selectedDrawerTab;
-        },
-    },
-    methods: {
-        breadcrumbClass(scope) {
-            return this.currentScope === scope
-                ? "font-semibold text-blue-800 underline"
-                : "hover:underline hover:text-blue-600 active:text-blue-800";
-        },
-        drawerTabActive(drawerTab) {
-            return this.selectedDrawerTab == drawerTab.value;
-        },
-        drawerTabClass(drawerTab) {
-            var classes = ['text-xs px-4 pt-4 pb-2 cursor-pointer transition'];
+    import Drawer from "@Partials/drawers/Drawer.vue";
+    import RowSettings from "@Pages/stores/store/pages/components/page-editor-drawer/row-settings/RowSettings.vue";
+    import PageSettings from "@Pages/stores/store/pages/components/page-editor-drawer/page-settings/PageSettings.vue";
+    import ColumnSettings from "@Pages/stores/store/pages/components/page-editor-drawer/column-settings/ColumnSettings.vue";
+    import SectionSettings from "@Pages/stores/store/pages/components/page-editor-drawer/section-settings/SectionSettings.vue";
+    import TextModuleSettings from "@Pages/stores/store/pages/components/page-editor-drawer/module-settings/TextModuleSettings.vue";
+    import ImageModuleSettings from "@Pages/stores/store/pages/components/page-editor-drawer/module-settings/ImageModuleSettings.vue";
 
-            this.drawerTabActive(drawerTab)
-                ? classes.push("border-b-2 border-blue-600 font-medium text-blue-600 bg-blue-50")
-                : classes.push("text-gray-500 hover:text-blue-600");
+    export default {
+        inject: ['pageState'],
+        components: { Drawer, RowSettings, SectionSettings, ColumnSettings, TextModuleSettings, ImageModuleSettings, PageSettings },
+        data() {
+            return {
+                activeTab: 'Content'
+            };
+        },
+        computed: {
+            currentScope() {
+                if (this.pageState.moduleIndex !== null) return "module";
+                if (this.pageState.columnIndex !== null) return "column";
+                if (this.pageState.rowIndex !== null) return "row";
+                if (this.pageState.sectionIndex !== null) return "section";
+                return "page"; // Default to "page"
+            },
+            scopeTitle() {
+                switch (this.currentScope) {
+                    case "page":
+                        return "Page";
+                    case "section":
+                        return "Section";
+                    case "row":
+                        return "Row";
+                    case "column":
+                        return "Column";
+                    case "module":
+                        return "Module";
+                    default:
+                        return "Settings";
+                }
+            },
+            page() {
+                return this.pageState.pageForm; // Assume pageForm represents the entire page
+            },
+            section() {
+                return this.pageState.sectionIndex !== null
+                    ? this.pageState.pageForm.sections[this.pageState.sectionIndex]
+                    : null;
+            },
+            row() {
+                return this.pageState.rowIndex !== null ? this.section.rows[this.pageState.rowIndex] : null;
+            },
+            column() {
+                return this.pageState.columnIndex !== null ? this.row.columns[this.pageState.columnIndex] : null;
+            },
+            module() {
+                return this.pageState.moduleIndex !== null ? this.column.modules[this.pageState.moduleIndex] : null;
+            },
+            drawerTabs() {
+                return this.pageState.drawerTabs;
+            },
+            selectedDrawerTab() {
+                return this.pageState.selectedDrawerTab;
+            },
+        },
+        methods: {
+            breadcrumbClass(scope) {
+                return this.currentScope === scope
+                    ? "font-semibold text-blue-800 underline"
+                    : "hover:underline hover:text-blue-600 active:text-blue-800";
+            },
+            drawerTabActive(drawerTab) {
+                return this.selectedDrawerTab == drawerTab.value;
+            },
+            drawerTabClass(drawerTab) {
+                var classes = ['text-xs px-4 pt-4 pb-2 cursor-pointer transition'];
 
-            return classes;
+                this.drawerTabActive(drawerTab)
+                    ? classes.push("border-b-2 border-blue-600 font-medium text-blue-600 bg-blue-50")
+                    : classes.push("text-gray-500 hover:text-blue-600");
+
+                return classes;
+            },
+            setDrawerTab(drawerTab) {
+                this.pageState.setDrawerTab(drawerTab);
+            },
+            onBreadcrumbClick(scope) {
+                if (scope === "page") {
+                    this.pageState.sectionIndex = null;
+                    this.pageState.rowIndex = null;
+                    this.pageState.columnIndex = null;
+                    this.pageState.moduleIndex = null;
+                } else if (scope === "section") {
+                    this.pageState.rowIndex = null;
+                    this.pageState.columnIndex = null;
+                    this.pageState.moduleIndex = null;
+                } else if (scope === "row") {
+                    this.pageState.columnIndex = null;
+                    this.pageState.moduleIndex = null;
+                } else if (scope === "column") {
+                    this.pageState.moduleIndex = null;
+                }
+            },
+            closePageEditorDrawer() {
+                this.pageState.closePageEditorDrawer();
+            },
         },
-        setDrawerTab(drawerTab) {
-            this.pageState.setDrawerTab(drawerTab);
+        mounted() {
+            this.pageState.pageEditorDrawer = this.$refs.pageEditorDrawer;
         },
-        onBreadcrumbClick(scope) {
-            if (scope === "page") {
-                this.pageState.sectionIndex = null;
-                this.pageState.rowIndex = null;
-                this.pageState.columnIndex = null;
-                this.pageState.moduleIndex = null;
-            } else if (scope === "section") {
-                this.pageState.rowIndex = null;
-                this.pageState.columnIndex = null;
-                this.pageState.moduleIndex = null;
-            } else if (scope === "row") {
-                this.pageState.columnIndex = null;
-                this.pageState.moduleIndex = null;
-            } else if (scope === "column") {
-                this.pageState.moduleIndex = null;
-            }
-        },
-        closePageEditorDrawer() {
-            this.pageState.closePageEditorDrawer();
-        },
-    },
-    mounted() {
-        this.pageState.pageEditorDrawer = this.$refs.pageEditorDrawer;
-    },
-};
+    };
+
 </script>

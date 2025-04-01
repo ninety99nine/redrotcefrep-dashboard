@@ -1,6 +1,6 @@
-import { useAuthState } from '@Stores/auth-store.js';
-import settings from '@Js/settings.js';
 import { defineStore } from 'pinia';
+import settings from '@Js/settings.js';
+import { useAuthState } from '@Stores/auth-store.js';
 
 export const useApiState = defineStore('api', {
     state: () => ({

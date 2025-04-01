@@ -13,18 +13,13 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
+    export default {
+        inject: ['storeState'],
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+        }
+    };
 
-export default {
-    data() {
-        return {
-            storeState: useStoreState()
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        },
-    }
-};
 </script>

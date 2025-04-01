@@ -81,92 +81,91 @@
 </template>
 
 <script>
-import { initFlowbite, Dropdown } from "flowbite";
-import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-import InputLabel from '@Partials/input-labels/InputLabel.vue';
+    import { initFlowbite, Dropdown } from "flowbite";
+    import { generateUniqueId } from '@Utils/generalUtils.js';
+    import InputLabel from '@Partials/input-labels/InputLabel.vue';
 
-export default {
-    mixins: [UtilsMixin],
-    components: { InputLabel },
-    props: {
-        label: {
-            type: String,
-            default: "Column Layout",
+    export default {
+        components: { InputLabel },
+        props: {
+            label: {
+                type: String,
+                default: "Column Layout",
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            modelValue: {
+                type: String,
+                default: null,
+            },
+            showAsterisk: {
+                type: Boolean,
+                default: false
+            },
         },
-        labelPopoverTitle: {
-            type: String
+        data() {
+            return {
+                dropdown: null,
+                localModelValue: this.modelValue,
+                dropdownUniqueId: generateUniqueId("dropdown"),
+                triggerUniqueId: generateUniqueId("dropdown-trigger"),
+            };
         },
-        labelPopoverDescription: {
-            type: String
+        computed: {
+            columnOptions() {
+                return [
+                    { value: '4_4', columns: ['100%'] }, // One column
+                    { value: '1_2,1_2', columns: ['50%', '50%'] }, // Two equal columns
+                    { value: '1_3,1_3,1_3', columns: ['33.33%', '33.33%', '33.33%'] }, // Three equal columns
+                    { value: '1_4,1_4,1_4,1_4', columns: ['25%', '25%', '25%', '25%'] }, // Four equal columns
+                    { value: '1_5,1_5,1_5,1_5,1_5', columns: ['20%', '20%', '20%', '20%', '20%'] }, // Five equal columns
+                    { value: '1_6,1_6,1_6,1_6,1_6,1_6', columns: ['16.67%', '16.67%', '16.67%', '16.67%', '16.67%', '16.67%'] }, // Six equal columns
+                    { value: '2_5,3_5', columns: ['40%', '60%'] }, // Two-fifths and three-fifths
+                    { value: '3_5,2_5', columns: ['60%', '40%'] }, // Three-fifths and two-fifths
+                    { value: '1_3,2_3', columns: ['33.33%', '66.67%'] }, // One-third and two-thirds
+                    { value: '2_3,1_3', columns: ['66.67%', '33.33%'] }, // Two-thirds and one-third
+                    { value: '1_4,3_4', columns: ['25%', '75%'] }, // One-fourth and three-fourths
+                    { value: '3_4,1_4', columns: ['75%', '25%'] }, // Three-fourths and one-fourth
+                    { value: '1_4,1_2,1_4', columns: ['25%', '50%', '25%'] }, // One-fourth, one-half, one-fourth
+                    { value: '1_5,3_5,1_5', columns: ['20%', '60%', '20%'] }, // One-fifth, three-fifths, one-fifth
+                    { value: '1_4,1_4,1_2', columns: ['25%', '25%', '50%'] }, // One-fourth, one-fourth, one-half
+                    { value: '1_2,1_4,1_4', columns: ['50%', '25%', '25%'] }, // One-half, one-fourth, one-fourth
+                    { value: '1_5,1_5,3_5', columns: ['20%', '20%', '60%'] }, // One-fifth, one-fifth, three-fifths
+                    { value: '3_5,1_5,1_5', columns: ['60%', '20%', '20%'] }, // Three-fifths, one-fifth, one-fifth
+                    { value: '1_6,1_6,1_6,1_2', columns: ['16.67%', '16.67%', '16.67%', '50%'] }, // One-sixth, one-sixth, one-sixth, one-half
+                    { value: '1_2,1_6,1_6,1_6', columns: ['50%', '16.67%', '16.67%', '16.67%'] }, // One-half, one-sixth, one-sixth, one-sixth
+                ];
+            },
+            selectedOption() {
+                return this.columnOptions.find(option => option.value === this.localModelValue);
+            },
         },
-        modelValue: {
-            type: String,
-            default: null,
+        methods: {
+            selectOption(value) {
+                this.localModelValue = value;
+                this.$emit("update:modelValue", value);
+                this.$emit("change", value);
+                this.dropdown.hide();
+            },
         },
-        showAsterisk: {
-            type: Boolean,
-            default: false
-        },
-    },
-    data() {
-        return {
-            dropdown: null,
-            localModelValue: this.modelValue,
-            dropdownUniqueId: this.generateUniqueId("dropdown"),
-            triggerUniqueId: this.generateUniqueId("dropdown-trigger"),
-        };
-    },
-    computed: {
-        columnOptions() {
-            return [
-                { value: '4_4', columns: ['100%'] }, // One column
-                { value: '1_2,1_2', columns: ['50%', '50%'] }, // Two equal columns
-                { value: '1_3,1_3,1_3', columns: ['33.33%', '33.33%', '33.33%'] }, // Three equal columns
-                { value: '1_4,1_4,1_4,1_4', columns: ['25%', '25%', '25%', '25%'] }, // Four equal columns
-                { value: '1_5,1_5,1_5,1_5,1_5', columns: ['20%', '20%', '20%', '20%', '20%'] }, // Five equal columns
-                { value: '1_6,1_6,1_6,1_6,1_6,1_6', columns: ['16.67%', '16.67%', '16.67%', '16.67%', '16.67%', '16.67%'] }, // Six equal columns
-                { value: '2_5,3_5', columns: ['40%', '60%'] }, // Two-fifths and three-fifths
-                { value: '3_5,2_5', columns: ['60%', '40%'] }, // Three-fifths and two-fifths
-                { value: '1_3,2_3', columns: ['33.33%', '66.67%'] }, // One-third and two-thirds
-                { value: '2_3,1_3', columns: ['66.67%', '33.33%'] }, // Two-thirds and one-third
-                { value: '1_4,3_4', columns: ['25%', '75%'] }, // One-fourth and three-fourths
-                { value: '3_4,1_4', columns: ['75%', '25%'] }, // Three-fourths and one-fourth
-                { value: '1_4,1_2,1_4', columns: ['25%', '50%', '25%'] }, // One-fourth, one-half, one-fourth
-                { value: '1_5,3_5,1_5', columns: ['20%', '60%', '20%'] }, // One-fifth, three-fifths, one-fifth
-                { value: '1_4,1_4,1_2', columns: ['25%', '25%', '50%'] }, // One-fourth, one-fourth, one-half
-                { value: '1_2,1_4,1_4', columns: ['50%', '25%', '25%'] }, // One-half, one-fourth, one-fourth
-                { value: '1_5,1_5,3_5', columns: ['20%', '20%', '60%'] }, // One-fifth, one-fifth, three-fifths
-                { value: '3_5,1_5,1_5', columns: ['60%', '20%', '20%'] }, // Three-fifths, one-fifth, one-fifth
-                { value: '1_6,1_6,1_6,1_2', columns: ['16.67%', '16.67%', '16.67%', '50%'] }, // One-sixth, one-sixth, one-sixth, one-half
-                { value: '1_2,1_6,1_6,1_6', columns: ['50%', '16.67%', '16.67%', '16.67%'] }, // One-half, one-sixth, one-sixth, one-sixth
-            ];
-        },
-        selectedOption() {
-            return this.columnOptions.find(option => option.value === this.localModelValue);
-        },
-    },
-    methods: {
-        selectOption(value) {
-            this.localModelValue = value;
-            this.$emit("update:modelValue", value);
-            this.$emit("change", value);
-            this.dropdown.hide();
-        },
-    },
-    mounted() {
-        initFlowbite();
+        mounted() {
+            initFlowbite();
 
-        const $targetEl = document.getElementById(this.dropdownUniqueId);
-        const $triggerEl = document.getElementById(this.triggerUniqueId);
+            const $targetEl = document.getElementById(this.dropdownUniqueId);
+            const $triggerEl = document.getElementById(this.triggerUniqueId);
 
-        const $options = {
-            triggerType: "click",
-            placement: "bottom",
-        };
+            const $options = {
+                triggerType: "click",
+                placement: "bottom",
+            };
 
-        if ($targetEl) {
-            this.dropdown = new Dropdown($targetEl, $triggerEl, $options);
-        }
-    },
-};
+            if ($targetEl) {
+                this.dropdown = new Dropdown($targetEl, $triggerEl, $options);
+            }
+        },
+    };
 </script>

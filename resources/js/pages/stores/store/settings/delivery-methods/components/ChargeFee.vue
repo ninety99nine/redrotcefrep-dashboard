@@ -4,7 +4,7 @@
         <div :class="[{ 'bg-blue-50 p-4 rounded-lg': form.chargeFee }, 'transition-all duration-500']">
 
             <!-- Charge Fee Toggle Switch -->
-            <ChargeFeeToogleSwitch :form="form"></ChargeFeeToogleSwitch>
+            <ChargeFeeToggleSwitch :form="form"></ChargeFeeToggleSwitch>
 
             <div :class="[form.chargeFee ? 'h-24 mt-4 p-0.5' : 'h-0 mb-0 p-0', 'transition-all duration-500 overflow-hidden']">
 
@@ -44,13 +44,13 @@
     import FeeByPostalCode from '@Pages/stores/store/settings/delivery-methods/components/FeeByPostalCode.vue';
     import FlatFeeMoneyInput from '@Pages/stores/store/settings/delivery-methods/components/FlatFeeMoneyInput.vue';
     import FeeTypeSelectInput from '@Pages/stores/store/settings/delivery-methods/components/FeeTypeSelectInput.vue';
-    import ChargeFeeToogleSwitch from '@Pages/stores/store/settings/delivery-methods/components/ChargeFeeToogleSwitch.vue';
+    import ChargeFeeToggleSwitch from '@Pages/stores/store/settings/delivery-methods/components/ChargeFeeToggleSwitch.vue';
     import PercentageFeeNumberInput from '@Pages/stores/store/settings/delivery-methods/components/PercentageFeeNumberInput.vue';
 
     export default {
         components: {
             FeeByWeight, FeeByDistance, FeeByPostalCode, FlatFeeMoneyInput, FeeTypeSelectInput,
-            ChargeFeeToogleSwitch, PercentageFeeNumberInput
+            ChargeFeeToggleSwitch, PercentageFeeNumberInput
         },
         props: {
             form: {

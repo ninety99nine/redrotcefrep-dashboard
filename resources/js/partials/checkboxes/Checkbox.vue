@@ -7,7 +7,7 @@
             <div class="flex w-full gap-2">
 
                 <!-- Checkbox -->
-                <input :id="uniqueId" :name="uniqueId" v-model="localModelValue" type="checkbox" :disabled="disabled" :class="[ { 'cursor-not-allowed opacity-50': disabled }, 'w-4 h-4 mt-0.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600' ]" >
+                <input :id="uniqueId" v-model="localModelValue" type="checkbox" :disabled="disabled" :class="[ { 'cursor-not-allowed opacity-50': disabled }, 'w-4 h-4 mt-0.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600' ]" >
 
                 <!-- Label and Slot Content -->
                 <div>
@@ -34,12 +34,11 @@
     /**
      * Component Reference: https://flowbite.com/docs/forms/checkbox/
      */
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: { MoreInfoPopover, InputErrorMessage },
         props: {
             modelValue: {
@@ -72,7 +71,7 @@
         data() {
             return {
                 localModelValue: this.modelValue,
-                uniqueId: this.generateUniqueId('number')
+                uniqueId: generateUniqueId('number')
             };
         },
         watch: {

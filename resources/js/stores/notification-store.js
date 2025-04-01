@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+import { generateUniqueId } from '@Utils/generalUtils.js';
 
 export const useNotificationState = defineStore('notification', {
     state: () => {
@@ -8,17 +8,17 @@ export const useNotificationState = defineStore('notification', {
         }
     },
     actions: {
-        addSuccessNotification(message) {
+        showSuccessNotification(message) {
             this.addNotification(message, 'success-notification');
         },
-        addWarningNotification(message) {
+        showWarningNotification(message) {
             this.addNotification(message, 'warning-notification');
         },
         addNotification(message, type) {
             this.notifications.push({
                 type: type,
                 message: message,
-                id: UtilsMixin.methods.generateUniqueId('notification')
+                id: generateUniqueId('notification')
             });
         },
     },

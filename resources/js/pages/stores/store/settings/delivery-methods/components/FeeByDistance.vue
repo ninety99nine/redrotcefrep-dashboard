@@ -33,7 +33,7 @@
                 </svg>
 
                 <!-- Delete Zone Button -->
-                <DeleteButton :action="() => onRemoveDistanceZone(index)" size="xs" type="danger"></DeleteButton>
+                <Button type="danger" size="xs" :action="() => onRemoveDistanceZone(index)"></Button>
 
             </div>
 
@@ -56,7 +56,7 @@
                         label="Delivery distance up to"
                         labelPopoverTitle="What Is This?"
                         v-model="form.distanceZones[index].distance"
-                        :errorText="getFormError('distanceZones'+index+'distance')"
+                        :errorText="formState.getFormError('distanceZones'+index+'distance')"
                         labelPopoverDescription="Set the maximum distance eligible for this delivery method">
                         <template #suffix>{{ store.distanceUnit }}</template>
                     </NumberInput>
@@ -66,7 +66,7 @@
                         label="Delivery fee"
                         labelPopoverTitle="What Is This?"
                         v-model="form.distanceZones[index].fee"
-                        :errorText="getFormError('distanceZones'+index+'fee')"
+                        :errorText="formState.getFormError('distanceZones'+index+'fee')"
                         labelPopoverDescription="Specify the fee charged for deliveries within the set distance range">
                     </MoneyInput>
 
@@ -85,19 +85,19 @@
                         </svg>
                         <span>Zone {{ index + 1 }}</span>
                     </div>
-                    <Pill v-if="form.distanceZones[index].distance" type="info" :text="form.distanceZones[index].distance+' '+store.distanceUnit" :showDot="false"></Pill>
+                    <Pill v-if="form.distanceZones[index].distance" type="info" size="xs" :showDot="false">{{ form.distanceZones[index].distance+' '+store.distanceUnit }}</Pill>
                     <InputErrorMessage v-else errorText="No distance" margin="mt-0"></InputErrorMessage>
 
-                    <Pill v-if="form.distanceZones[index].fee" type="primary" :text="store.currency.symbol+form.distanceZones[index].fee" :showDot="false"></Pill>
+                    <Pill v-if="form.distanceZones[index].fee" type="primary" size="xs" :showDot="false">{{ store.currency.symbol+form.distanceZones[index].fee }}</Pill>
                     <InputErrorMessage v-else errorText="No fee" margin="mt-0"></InputErrorMessage>
 
                 </div>
 
                 <!-- Distance Input Error Message -->
-                <InputErrorMessage v-if="getFormError('distanceZones'+index+'distance')" :errorText="getFormError('distanceZones'+index+'distance')"></InputErrorMessage>
+                <InputErrorMessage v-if="formState.getFormError('distanceZones'+index+'distance')" :errorText="formState.getFormError('distanceZones'+index+'distance')"></InputErrorMessage>
 
                 <!-- Fee Input Error Message -->
-                <InputErrorMessage v-if="getFormError('distanceZones'+index+'fee')" :errorText="getFormError('distanceZones'+index+'fee')"></InputErrorMessage>
+                <InputErrorMessage v-if="formState.getFormError('distanceZones'+index+'fee')" :errorText="formState.getFormError('distanceZones'+index+'fee')"></InputErrorMessage>
 
             </div>
 
@@ -114,8 +114,9 @@
                 </svg>
 
                 <div class="text-sm space-y-2">
-                    <Pill type="primary" text="+ Add Zone" :showDot="false" :clickable="true" :action="onAddDistanceZone"></Pill> to offer delivery within specific distances for a fee
+                    <Pill type="primary"  size="xs" :showDot="false" :action="onAddDistanceZone">+ Add Zone</Pill> to offer delivery within specific distances for a fee
                 </div>
+
             </div>
 
         </div>
@@ -123,9 +124,9 @@
         <div class="flex justify-end space-x-2">
 
             <!-- Undo Button -->
-            <UndoButton v-if="distanceZonesHaveChanged && hasOriginalDistanceZones" :action="onResetDistanceZones" size="xs">
+            <Button v-if="distanceZonesHaveChanged && hasOriginalDistanceZones" :action="onResetDistanceZones" type="primary" size="xs">
                 <span class="ml-1">Undo</span>
-            </UndoButton>
+            </Button>
 
             <div class="flex justify-end">
 
@@ -134,9 +135,9 @@
                     <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                         <div v-if="!hasDistanceZones" class="animate-bounce text-4xl">👆</div>
                     </div>
-                    <AddButton :action="onAddDistanceZone" class="w-40" size="xs">
+                    <Button type="primary" size="xs" :action="onAddDistanceZone" class="w-40">
                         <span class="ml-2">Add Zone</span>
-                    </AddButton>
+                    </Button>
                 </div>
 
             </div>
@@ -151,24 +152,19 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import AddressInput from '@Partials/inputs/AddressInput.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import { useDeliveryMethodState } from '@Stores/delivery-method-store.js';
-    import Pill from '@Partials/pills/Pill.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
     import ShowDistanceInInvoiceCheckbox from '@Pages/stores/store/settings/delivery-methods/components/ShowDistanceInInvoiceCheckbox.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState', 'deliveryMethodState'],
         components: {
-            AddButton, MoneyInput, UndoButton, NumberInput, AddressInput, DeleteButton,
-            Pill, InputErrorMessage, ShowDistanceInInvoiceCheckbox
+            Pill, Button, MoneyInput, NumberInput, AddressInput,
+            InputErrorMessage, ShowDistanceInInvoiceCheckbox
         },
         props: {
             form: {
@@ -177,9 +173,7 @@
         },
         data() {
             return {
-                originalDistanceZones: [],
-                storeState: useStoreState(),
-                deliveryMethodState: useDeliveryMethodState()
+                originalDistanceZones: []
             }
         },
         computed: {
@@ -219,14 +213,14 @@
         },
         methods: {
             setAddress(address) {
-                useDeliveryMethodState().deliveryMethod._relationships.address = address;
+                this.deliveryMethodState.deliveryMethod._relationships.address = address;
             },
             setValidatedAddressForm(addressForm) {
                 this.form.address = addressForm;
             },
             onDeletedAddress() {
                 if(this.hasAddress) {
-                    useDeliveryMethodState().deliveryMethod._relationships.address = null;
+                    this.deliveryMethodState.deliveryMethod._relationships.address = null;
                 }else{
                     delete this.form.address;
                 }

@@ -8,7 +8,7 @@
 
                 <!-- Text Heading -->
                 <LineSkeleton v-if="isLoadingStore" width="w-32" height="h-4" :shine="true"></LineSkeleton>
-                <TextHeader v-else>{{ store._attributes.nameWithEmoji }}</TextHeader>
+                <h1 v-else class="text-2xl font-bold tracking-tight text-gray-900">{{ store._attributes.nameWithEmoji }}</h1>
 
                 <!-- Description -->
                 <LineSkeleton v-if="isLoadingStore" width="w-40" :shine="true"></LineSkeleton>
@@ -37,12 +37,9 @@
 
                             <div>
 
-                                <PrimaryButton :action="navigateToStoreHome" class="w-40" size="xs" type="success">
+                                <Button type="primary" size="xs" icon="short-right-arrow" :action="navigateToStoreHome" class="w-40">
                                     <span class="mr-2">Continue</span>
-                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                                    </svg>
-                                </PrimaryButton>
+                                </Button>
 
                             </div>
 
@@ -80,25 +77,15 @@
 <script>
 
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import { getApi } from '@Repositories/api-repository.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import { useNotificationState } from '@Stores/notification-store.js';
     import StoreQuickStartGuideProgress from '@Components/store/StoreQuickStartGuideProgress.vue';
     import UserStoreSubscriptionCountdown from '@Components/store/UserStoreSubscriptionCountdown.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { Alert, TextHeader, LineSkeleton, PrimaryButton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
-        data() {
-            return {
-                storeState: useStoreState(),
-                notificationState: useNotificationState()
-            }
-        },
+        inject: ['formState', 'storeState', 'notificationState'],
+        components: { Alert, Button, LineSkeleton, StoreQuickStartGuideProgress, UserStoreSubscriptionCountdown },
         watch: {
             '$route.params.store_href'(newValue, oldValue) {
                 this.showStore();
@@ -168,7 +155,7 @@
                     //  Stop loader
                     this.storeState.setIsLoadingStore(false);
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
             },
@@ -194,7 +181,7 @@
                     //  Stop loader
                     this.storeState.setIsLoadingQuickStartGuide(false);
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

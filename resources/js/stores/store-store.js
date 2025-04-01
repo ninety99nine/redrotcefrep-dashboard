@@ -210,7 +210,7 @@ export const useStoreState = defineStore('store', {
 
             if(this.storeForm.name.trim() == '') {
                 useFormState().setFormError('name', 'The store name is required');
-                useNotificationState().addWarningNotification('The store name is required');
+                useNotificationState().showWarningNotification('The store name is required');
                 return;
             }
 
@@ -232,12 +232,12 @@ export const useStoreState = defineStore('store', {
 
                         this.setShouldUpdate(true);
                         this.setStoreForm(response.data.store);
-                        useNotificationState().addSuccessNotification('Store updated');
+                        useNotificationState().showSuccessNotification('Store updated');
 
                     }else{
 
                         useFormState().setGeneralFormError(response.data.message);
-                        useNotificationState().addWarningNotification(response.data.message);
+                        useNotificationState().showWarningNotification(response.data.message);
 
                     }
 
@@ -266,7 +266,7 @@ export const useStoreState = defineStore('store', {
 
                     if(response.data.deleted) {
 
-                        useNotificationState().addSuccessNotification('Store deleted');
+                        useNotificationState().showSuccessNotification('Store deleted');
 
                         //  Navigate to show dashboard
                         router.replace({ name: 'dashboard' }).then(() => {
@@ -277,7 +277,7 @@ export const useStoreState = defineStore('store', {
                     }else{
 
                         useFormState().setGeneralFormError(response.data.message);
-                        useNotificationState().addWarningNotification(response.data.message);
+                        useNotificationState().showWarningNotification(response.data.message);
 
                     }
 

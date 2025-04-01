@@ -5,7 +5,7 @@
         <div class="flex items-center border-dashed border-b py-6 mb-6">
 
             <!-- Text Heading -->
-            <TextHeader>Transactions</TextHeader>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Transactions</h1>
 
             <!-- More Info Popover -->
             <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" :description="'Transactions are records of online and offline payments for goods and services whether initiated and verified by the '+appName+' system or users within the '+appName+' ecosystem'" placement="top"></MoreInfoPopover>
@@ -102,7 +102,9 @@
                 <tr @click.stop="onView(transaction)" v-for="(transaction, index) in transactions" :key="index" class="group cursor-pointer bg-white hover:bg-gray-50 border-b">
 
                     <!-- For -->
-                    <td class="whitespace-nowrap px-4 py-4">{{ capitalizeAllWords(transaction.ownerType) }}</td>
+                    <td class="whitespace-nowrap px-4 py-4">
+                        <span v-capitalize-all>{{ capitalizeAllWords(transaction.ownerType) }}</span>
+                    </td>
 
                     <!-- Description -->
                     <td class="px-4 py-4">
@@ -111,7 +113,7 @@
 
                     <!-- Payment Status -->
                     <td class="whitespace-nowrap px-4 py-4">
-                        <Pill :type="transaction.paymentStatus.name.toLowerCase() == 'paid' ? 'success' : 'warning'" :text="transaction.paymentStatus.name"></Pill>
+                        <Pill :type="transaction.paymentStatus.name.toLowerCase() == 'paid' ? 'success' : 'warning'" size="xs">{{ transaction.paymentStatus.name }}</Pill>
                     </td>
 
                     <!-- Amount -->
@@ -132,7 +134,7 @@
                     <!-- Verified By -->
                     <td class="text-xs text-center text-gray-300">
                         <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                        <Pill v-else type="info" :text="appName" :showDot="false"></Pill>
+                        <Pill v-else type="info" size="xs" :showDot="false">{{ appName }}</Pill>
                     </td>
 
                     <!-- Requested By -->
@@ -152,7 +154,7 @@
                     <!-- DPO Expiry Date -->
                     <td class="text-xs text-center text-gray-300">
                         <span v-if="transaction._attributes.dpoPaymentLinkHasExpired == null" class="text-xs text-center text-gray-300">---</span>
-                        <Pill v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></Pill>
+                        <Pill v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" size="xs" :showDot="false">{{ transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired' }}</Pill>
                     </td>
 
                     <!-- DPO Expiry Date -->
@@ -191,17 +193,18 @@
 
     import settings from '@Js/settings.js';
     import { initFlowbite } from "flowbite";
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
+    import Pill from '@Partials/pills/Pill.vue';
+    import capitalizeAll from '@Directives/capitalizeAll.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getTransactions } from '@Repositories/transaction-repository.js';
+    import { formattedDate, formattedDatetime, dateToTimestamp } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
-        components: { TextHeader, BasicTable, ExternalLink, Datepicker, MoreInfoPopover },
+        directives: { capitalizeAll },
+        components: { Pill, BasicTable, ExternalLink, Datepicker, MoreInfoPopover },
         data() {
             return {
                 url: null,
@@ -225,6 +228,9 @@
             }
         },
         methods: {
+            formattedDate: formattedDate,
+            dateToTimestamp: dateToTimestamp,
+            formattedDatetime: formattedDatetime,
             onView(transaction) {
                 console.log('view:'+transaction.name);
             },
@@ -300,7 +306,7 @@
             resetAddFilterModal() {
                 this.dateNameFilter = 'startAt';
                 this.dateOperationFilter = 'gte';
-                this.dateValueFilter = this.formattedDate();    //  UtilsMixin
+                this.dateValueFilter = this.formattedDate();
             },
             hideFilterModal() {
                 this.resetAddFilterModal();
@@ -336,7 +342,7 @@
                          *  params['startAt'] = 'gte-170915760000';
                          *  params['endAt'] = 'gte-170915760000';
                          */
-                        params[filter.name] = filter.operation+'-'+this.dateToTimestamp(filter.value);    //  UtilsMixin
+                        params[filter.name] = filter.operation+'-'+this.dateToTimestamp(filter.value);
 
                     }
 

@@ -5,7 +5,7 @@
         label="Fee Type"
         v-model="form.feeType"
         labelPopoverTitle="What Is This?"
-        :errorText="getFormError('feeType')"
+        :errorText="formState.getFormError('feeType')"
         labelPopoverDescription="Select the free type e.g Is this a flat fee or a free that is calculated based on a percetange of the total cart amount, location distance or postal code?">
         <option value="flat fee">Flat fee</option>
         <option value="percentage fee">Percentage fee</option>
@@ -18,11 +18,10 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { SelectInput },
         props: {
             form: {

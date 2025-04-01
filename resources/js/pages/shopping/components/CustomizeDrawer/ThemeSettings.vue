@@ -131,21 +131,16 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import Colorpicker from '@Partials/colorpicker/Colorpicker.vue';
+    import Colorpicker from '@Partials/colorpicker/Colorpicker.vue';
 
-export default {
-    components: { Colorpicker },
-    data() {
-        return {
-            storeState: useStoreState(),
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        },
-    }
-};
+    export default {
+        inject: ['storeState'],
+        components: { Colorpicker },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+        }
+    };
 
 </script>

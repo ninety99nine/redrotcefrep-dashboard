@@ -29,8 +29,8 @@
                 <textarea
                     :rows="rows"
                     :id="uniqueId"
-                    :name="uniqueId"
-                    :required="required"
+                    @blur="onBlur"
+                    @focus="onFocus"
                     v-model="localModelValue"
                     :placeholder="placeholder"
                     :disabled="skeleton || disabled"
@@ -59,7 +59,7 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -67,7 +67,6 @@
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: { ShineEffect, InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
         props: {
             modelValue: {
@@ -111,10 +110,6 @@
                 type: String,
                 default: ''
             },
-            required: {
-                type: Boolean,
-                default: true
-            },
             disabled: {
                 type: Boolean,
                 default: false
@@ -126,21 +121,27 @@
         },
         data() {
             return {
+                focusedValue: null,
                 localModelValue: this.modelValue,
-                uniqueId: this.generateUniqueId('text')
+                uniqueId: generateUniqueId('text')
             };
         },
         watch: {
             modelValue(newValue, oldValue) {
-                this.updateValue(newValue);
+                this.localModelValue = newValue;
             },
             localModelValue(newValue, oldValue) {
                 this.$emit('update:modelValue', newValue);
             }
         },
         methods: {
-            updateValue(newValue) {
-                this.localModelValue = newValue;
+            onFocus() {
+                this.focusedValue = this.localModelValue;
+            },
+            onBlur() {
+                if(this.localModelValue != this.focusedValue) {
+                    this.$emit('blur', this.localModelValue);
+                }
             }
         }
     };

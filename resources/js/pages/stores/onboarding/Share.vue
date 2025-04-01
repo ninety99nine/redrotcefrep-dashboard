@@ -158,19 +158,17 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
-    import { useStoreState } from '@Stores/store-store.js';
     import StoreLogo from '@Components/store/StoreLogo.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import CopyToClipboard from '@Partials/clipboards/CopyToClipboard.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             Button, StoreLogo, CopyToClipboard
         },
         data() {
             return {
-                showMore: false,
-                storeState: useStoreState()
+                showMore: false
             };
         },
         watch: {

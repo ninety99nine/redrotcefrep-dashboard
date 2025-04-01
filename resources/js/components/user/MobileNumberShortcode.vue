@@ -38,18 +38,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useAuthState } from '@Stores/auth-store.js';
     import BasicModal from '@Partials/modals/BasicModal.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['authState', 'formState'],
         components: { BasicModal },
-        data() {
-            return {
-                authState: useAuthState(),
-            };
-        },
         computed: {
             mobileNumberShortcode() {
                 return this.authState.user._attributes.mobileNumberShortcode;

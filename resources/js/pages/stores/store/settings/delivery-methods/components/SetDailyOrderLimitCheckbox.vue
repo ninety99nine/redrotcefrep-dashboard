@@ -6,7 +6,7 @@
             <Checkbox
                 size="xs"
                 v-model="form.setDailyOrderLimit"
-                :errorText="getFormError('setDailyOrderLimit')">
+                :errorText="formState.getFormError('setDailyOrderLimit')">
                 <div class="mt-0.5 mx-2">
                     <p class="font-bold text-sm mb-1">Set daily order limit</p>
                     <p class="text-sm text-gray-500 max-w-96">Orders placed must not exceed the daily limit specified</p>
@@ -40,12 +40,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Checkbox, NumberInput },
         props: {
             form: {

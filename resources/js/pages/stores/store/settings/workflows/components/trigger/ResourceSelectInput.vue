@@ -3,9 +3,9 @@
     <SelectInput
         class="w-60"
         v-model="workflowForm.resource"
-        :errorText="getFormError('resource')">
+        :errorText="formState.getFormError('resource')">
         <option v-for="resource in resources" :key="resource" :value="resource">
-            {{ capitalize(resource) }}
+            <span v-capitalize>{{ resource }}</span>
         </option>
     </SelectInput>
 
@@ -13,18 +13,16 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import capitalize from '@Directives/capitalize.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'workflowState'],
+        directives: { capitalize },
         components: { SelectInput },
         data() {
             return {
-                resources: ['order', 'inventory'],
-                workflowState: useWorkflowState()
+                resources: ['order', 'inventory']
             }
         },
         computed: {

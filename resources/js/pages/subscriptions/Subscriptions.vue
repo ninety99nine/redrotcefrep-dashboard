@@ -5,7 +5,7 @@
         <div class="flex items-center border-dashed border-b py-6 mb-6">
 
             <!-- Text Heading -->
-            <TextHeader>Subscriptions</TextHeader>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Subscriptions</h1>
 
             <!-- More Info Popover -->
             <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Subscriptions are records of transactions for services that have a start and end date such as Store or AI Assistant subscriptions" placement="top"></MoreInfoPopover>
@@ -156,12 +156,14 @@
                                 </MoreInfoPopover>
                             </div>
                         </template>
-                        <template v-else>{{ capitalizeAllWords(subscription.ownerType) }}</template>
+                        <template v-else>
+                            <span v-capitalize-all>{{ capitalizeAllWords(subscription.ownerType) }}</span>
+                        </template>
                     </td>
 
                     <!-- Status -->
                     <td class="whitespace-nowrap px-4 py-4">
-                        <Pill :type="subscription.hasExpired == false ? 'success' : 'warning'" :text="subscription.hasExpired ? 'Inactive' : 'Active'" :showDot="false"></Pill>
+                        <Pill :type="subscription.hasExpired == false ? 'success' : 'warning'" size="xs" :showDot="false">{{ subscription.hasExpired ? 'Inactive' : 'Active' }}</Pill>
                     </td>
 
                     <!-- Start At -->
@@ -214,16 +216,17 @@
 <script>
 
     import { initFlowbite } from "flowbite";
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
+    import Pill from '@Partials/pills/Pill.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
+    import capitalizeAll from '@Directives/capitalizeAll.js';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getSubscriptions } from '@Repositories/subscription-repository.js';
+    import { formattedDate, formattedDatetime, dateToTimestamp } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
-        components: { TextHeader, BasicTable, Datepicker, MoreInfoPopover },
+        directives: { capitalizeAll },
+        components: { Pill, BasicTable, Datepicker, MoreInfoPopover },
         data() {
             return {
                 url: null,
@@ -245,6 +248,9 @@
             }
         },
         methods: {
+            formattedDate: formattedDate,
+            dateToTimestamp: dateToTimestamp,
+            formattedDatetime: formattedDatetime,
             onView(subscription) {
                 console.log('view:'+subscription.name);
             },
@@ -320,7 +326,7 @@
             resetAddFilterModal() {
                 this.dateNameFilter = 'startAt';
                 this.dateOperationFilter = 'gte';
-                this.dateValueFilter = this.formattedDate();    //  UtilsMixin
+                this.dateValueFilter = this.formattedDate();
             },
             hideFilterModal() {
                 this.resetAddFilterModal();
@@ -354,7 +360,7 @@
                          *  params['startAt'] = 'gte-170915760000';
                          *  params['endAt'] = 'gte-170915760000';
                          */
-                        params[filter.name] = filter.operation+'-'+this.dateToTimestamp(filter.value);    //  UtilsMixin
+                        params[filter.name] = filter.operation+'-'+this.dateToTimestamp(filter.value);
 
                     }
 

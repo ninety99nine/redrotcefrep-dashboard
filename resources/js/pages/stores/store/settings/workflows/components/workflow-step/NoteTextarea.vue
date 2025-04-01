@@ -5,7 +5,7 @@
         placeholder="Additional notes"
         labelPopoverTitle="What Is This?"
         v-model="workflowStepForm.settings.note"
-        :errorText="getFormError('settingsNote')"
+        :errorText="formState.getFormError('settingsNote')"
         labelPopoverDescription="Addtional notes to include together with the message">
     </TextareaInput>
 
@@ -13,11 +13,10 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { TextareaInput },
         props: {
             workflowStepForm: {

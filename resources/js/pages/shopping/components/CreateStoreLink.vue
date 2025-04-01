@@ -19,15 +19,10 @@
 <script>
 
 import Logo from '@Partials/logos/Logo.vue';
-import { useStoreState } from '@Stores/store-store.js';
 
 export default {
+    inject: ['storeState'],
     components: { Logo },
-    data() {
-        return {
-            storeState: useStoreState(),
-        };
-    },
     computed: {
         storeForm() {
             return this.storeState.storeForm;

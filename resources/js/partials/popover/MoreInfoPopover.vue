@@ -41,10 +41,9 @@
      * Component Reference: https://flowbite.com/docs/components/popover/
      */
     import { initFlowbite, Popover } from "flowbite";
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
         props: {
             title: {
                 type: String
@@ -77,8 +76,8 @@
         data() {
             return {
                 popover: null,
-                popoverUniqueId: this.generateUniqueId('popover'),
-                triggerUniqueId: this.generateUniqueId('popover-trigger'),
+                popoverUniqueId: generateUniqueId('popover'),
+                triggerUniqueId: generateUniqueId('popover-trigger'),
             };
         },
         methods: {

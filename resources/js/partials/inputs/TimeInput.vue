@@ -22,7 +22,7 @@
             </div>
 
             <!-- Input Field -->
-            <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" type="time" :min="min" :max="max" :required="required" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
+            <input v-model="localModelValue" :id="uniqueId" type="time" :min="min" :max="max" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
 
             <!-- Suffix Slot -->
             <div v-if="$slots.suffix">
@@ -40,7 +40,7 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
@@ -85,20 +85,15 @@
                 type: String,
                 default: null   //  '18:00'
             },
-            required: {
-                type: Boolean,
-                default: true
-            },
             errorText: {
                 type: String
             }
         },
-        mixins: [UtilsMixin],
         components: { InputLabel, InputLabelDescription, InputErrorMessage },
         data() {
         return {
             localModelValue: this.modelValue,
-            uniqueId: this.generateUniqueId('text')
+            uniqueId: generateUniqueId('text')
         };
         },
         watch: {

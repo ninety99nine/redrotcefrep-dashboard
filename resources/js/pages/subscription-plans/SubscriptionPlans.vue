@@ -5,7 +5,7 @@
         <div class="flex items-center border-dashed border-b py-6 mb-6">
 
             <!-- Text Heading -->
-            <TextHeader>Subscription Plans</TextHeader>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Subscription Plans</h1>
 
                 <!-- More Info Popover -->
             <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Subscription plans are pricing packages for various services of the application such as Store, AI Assistant and SMS Alert payment plans." placement="top"></MoreInfoPopover>
@@ -33,7 +33,7 @@
                     <td class="whitespace-nowrap px-4 py-4">{{ subscriptionPlan.service }}</td>
                     <td class="whitespace-nowrap px-4 py-4">{{ subscriptionPlan.type }}</td>
                     <td class="whitespace-nowrap px-4 py-4">
-                        <Pill :type="subscriptionPlan.status ? 'success' : 'info'" :text="subscriptionPlan ? 'Active' : 'Inactive'"></Pill>
+                        <Pill :type="subscriptionPlan.status ? 'success' : 'info'" size="xs">{{ subscriptionPlan ? 'Active' : 'Inactive' }}</Pill>
                     </td>
                     <td class="opacity-0 group-hover:opacity-100 transition-opacity px-4 py-4 space-x-4">
                         <a href="#" @click.stop.prevent="onEdit(subscriptionPlan)" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>

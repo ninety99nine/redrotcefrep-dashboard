@@ -14,7 +14,7 @@
                 type="range"
                 :step="step"
                 :id="uniqueId"
-                :name="uniqueId"
+
                 :disabled="disabled"
                 v-model="localModelValue"
                 class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
@@ -39,12 +39,11 @@
 
   <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: { InputLabel, InputErrorMessage },
         props: {
             modelValue: {
@@ -107,7 +106,7 @@
         data() {
             return {
                 localModelValue: this.modelValue ?? this.start,
-                uniqueId: this.generateUniqueId("range-slider"),
+                uniqueId: generateUniqueId("range-slider"),
             };
         },
         watch: {

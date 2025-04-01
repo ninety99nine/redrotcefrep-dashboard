@@ -29,12 +29,12 @@
             <template #primaryFilters>
 
                 <!-- Show Everything Toggle Switch -->
-                <ToogleSwitch
+                <ToggleSwitch
                     v-model="showEverything" size="md"
                     labelPopoverTitle="What Is This?"
                     labelPopoverDescription="Turn on if you want to show more information about your transactions">
                     Show Everything
-                </ToogleSwitch>
+                </ToggleSwitch>
 
             </template>
 
@@ -103,7 +103,7 @@
                         <!-- Verified By -->
                         <td class="text-xs text-center text-gray-300">
                             <span v-if="transaction._relationships.verifiedByUser" class="whitespace-nowrap px-4 py-4">{{ transaction._relationships.verifiedByUser._attributes.name }}</span>
-                            <Pill v-else type="info" :text="appName" :showDot="false"></Pill>
+                            <Pill v-else type="info" size="xs" :showDot="false">{{ appName }}</Pill>
                         </td>
 
                         <!-- Requested By -->
@@ -123,7 +123,7 @@
                         <!-- DPO Link Status -->
                         <td class="text-xs text-center text-gray-300">
                             <span v-if="transaction._attributes.dpoPaymentLinkHasExpired == null" class="text-xs text-center text-gray-300">---</span>
-                            <Pill v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" :text="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired'" :showDot="false"></Pill>
+                            <Pill v-else :type="transaction._attributes.dpoPaymentLinkHasExpired == false ? 'success' : 'warning'" size="xs" :showDot="false">{{ transaction._attributes.dpoPaymentLinkHasExpired == false ? 'Active' : 'Expired' }}</Pill>
                         </td>
 
                         <!-- DPO Expiry Date -->
@@ -204,15 +204,6 @@
                 <p class="mb-8">Are you sure you want to permanently delete <span class="font-bold text-black">transaction #{{ deletableTransaction._attributes.number }}</span>?</p>
             </template>
 
-            <template #trigger="triggerProps">
-
-                <!-- Delete Transaction Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
-                    Delete Transaction
-                </PrimaryButton>
-
-            </template>
-
 
         </ConfirmModal>
 
@@ -224,27 +215,22 @@
 
     import settings from '@Js/settings.js';
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
+    import { formattedDatetime } from '@Utils/dateUtils.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ExternalLink from '@Partials/links/ExternalLink.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import TransactionPaymentStatus from '@Components/transaction/TransactionPaymentStatus.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState', 'notificationState'],
         components: {
-            Pill, AddButton, TextHeader, BasicTable, ExternalLink, ConfirmModal, LineSkeleton, SpinningLoader,
-            PrimaryButton, MoreInfoPopover, ToogleSwitch, TransactionPaymentStatus
+            Pill, BasicTable, ExternalLink, ConfirmModal, LineSkeleton, SpinningLoader,
+            MoreInfoPopover, ToggleSwitch, TransactionPaymentStatus
         },
         props: {
             order: {
@@ -266,8 +252,7 @@
                 appName: settings.appName,
                 deletableTransaction: null,
                 isDeletingTransactionIds: [],
-                isLoadingTransactions: false,
-                storeState: useStoreState(),
+                isLoadingTransactions: false
             }
         },
         computed: {
@@ -284,6 +269,8 @@
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(transaction) {
                 this.$router.push({
                     name: 'show-store-transaction',
@@ -365,10 +352,7 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Transaction deleted');
+                            this.notificationState.showSuccessNotification('Transaction deleted');
 
                             //  If we are not deleting any other transactions, then refresh the transaction list
                             if(this.isDeletingTransactionIds.length == 0) this.getTransactions();
@@ -377,8 +361,8 @@
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -389,7 +373,7 @@
                     //  Stop loader
                     this.isDeletingTransactionIds.splice(this.isDeletingTransactionIds.findIndex((id) => id == this.deletableTransaction.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

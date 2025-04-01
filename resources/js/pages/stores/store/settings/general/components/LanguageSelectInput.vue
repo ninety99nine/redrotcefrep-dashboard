@@ -12,18 +12,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import LanguageSelectInput from '@Partials/inputs/LanguageSelectInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { LanguageSelectInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

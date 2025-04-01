@@ -3,13 +3,18 @@
     <div>
 
         <ShineEffect v-if="isLoading">
+
             <div class="flex items-center space-x-2">
+
                 <!-- Clock Icon -->
                 <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
+
                 <LineSkeleton width="w-1/2"></LineSkeleton>
+
             </div>
+
         </ShineEffect>
 
         <!-- Timeslot Select Input -->
@@ -28,15 +33,13 @@
 
     import dayjs from 'dayjs';
     import debounce from 'lodash/debounce';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
     import { postApi } from '@Repositories/api-repository.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ShineEffect from '@Partials/skeletons/ShineEffect.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState'],
         components: {
             SelectInput, ShineEffect, LineSkeleton
         },
@@ -53,39 +56,50 @@
             deliveryDate: {
                 type: String,
             },
+            showAllDates: {
+                type: Boolean,
+                default: false
+            },
+            showAllTimeslots: {
+                type: Boolean,
+                default: false
+            },
+            autoSelectFirstTimeslot: {
+                type: Boolean,
+                value: true
+            }
         },
-        emits: ['isLoading', 'update:modelValue', 'scheduleOptions'],
+        emits: ['isLoading', 'update:modelValue', 'change', 'scheduleOptions'],
         data() {
             return {
                 isLoading: false,
                 apiRequestCounter: 0,
                 debounceInstance: null,
-                apiState: useApiState(),
                 availableTimeSlots: null,
                 localModelValue: this.modelValue,
             };
         },
         watch: {
             modelValue(newValue) {
-                this.updateValue(newValue);
+                this.localModelValue = newValue;
             },
             localModelValue(newValue) {
                 this.$emit('update:modelValue', newValue);
+                this.$emit('change', newValue);
             },
             deliveryDate(newValue) {
                 if(newValue) this.debouncedShowDeliveryMethodScheduleOptions();
             }
         },
         methods: {
-            updateValue(newValue) {
-                this.localModelValue = newValue;
-            },
             setIsLoading(status) {
                 this.isLoading = status;
                 this.$emit('isLoading', status);
             },
             parseForm() {
                 return {
+                    showAllDates: this.showAllDates,
+                    showAllTimeslots: this.showAllTimeslots,
                     deliveryDate: dayjs(this.deliveryDate).format('YYYY-MM-DD'),
                     scheduleType: this.form ? this.form.scheduleType : this.deliveryMethod.scheduleType,
                     dailyOrderLimit: this.form ? this.form.dailyOrderLimit : this.deliveryMethod.dailyOrderLimit,
@@ -116,7 +130,7 @@
                             const scheduleOptions = response.data;
                             this.availableTimeSlots = scheduleOptions.availableTimeSlots;
 
-                            if(this.availableTimeSlots.length) {
+                            if (this.autoSelectFirstTimeslot && this.availableTimeSlots.length && !this.availableTimeSlots.includes(this.localModelValue)) {
                                 this.localModelValue = this.availableTimeSlots[0];
                             }
 
@@ -130,7 +144,7 @@
                         // Stop loader
                         this.setIsLoading(false);
 
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
                     });
             },
             debouncedShowDeliveryMethodScheduleOptions() {

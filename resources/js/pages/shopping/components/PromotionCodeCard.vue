@@ -17,29 +17,23 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import PromotionCodeCardBody from '@Pages/shopping/components/PromotionCodeCardBody.vue';
-import PromotionCodeCardHeading from '@Pages/shopping/components/PromotionCodeCardHeading.vue';
+    import PromotionCodeCardBody from '@Pages/shopping/components/PromotionCodeCardBody.vue';
+    import PromotionCodeCardHeading from '@Pages/shopping/components/PromotionCodeCardHeading.vue';
 
-export default {
-    components: { PromotionCodeCardBody, PromotionCodeCardHeading },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        components: { PromotionCodeCardBody, PromotionCodeCardHeading },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            hasShoppingCart() {
+                return this.shoppingCartState.hasShoppingCart;
+            },
         },
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
-        },
-        hasShoppingCart() {
-            return this.shoppingCartState.hasShoppingCart;
-        },
-    },
-};
+    };
+
 </script>

@@ -26,37 +26,30 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            hasCartProducts() {
+                return this.shoppingCartState.hasCartProducts();
+            },
+            hasShoppingCartProducts() {
+                return this.shoppingCartState.hasShoppingCartProducts;
+            },
+            isInspectingShoppingCart() {
+                return this.shoppingCartState.isInspectingShoppingCart;
+            }
+        },
+        methods: {
+            toggleShoppingCartDrawer() {
+                return this.shoppingCartState.toggleShoppingCartDrawer();
+            }
+        }
+    };
 
-export default {
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState(),
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        },
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
-        },
-        hasCartProducts() {
-            return this.shoppingCartState.hasCartProducts();
-        },
-        hasShoppingCartProducts() {
-            return this.shoppingCartState.hasShoppingCartProducts;
-        },
-        isInspectingShoppingCart() {
-            return this.shoppingCartState.isInspectingShoppingCart;
-        }
-    },
-    methods: {
-        toggleShoppingCartDrawer() {
-            return this.shoppingCartState.toggleShoppingCartDrawer();
-        }
-    }
-};
 </script>

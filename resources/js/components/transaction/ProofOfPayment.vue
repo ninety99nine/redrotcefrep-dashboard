@@ -58,7 +58,7 @@
         </div>
 
         <!-- Input Error Message -->
-        <InputErrorMessage :errorText="getFormError('logo')"  :class="{'block text-center mt-4' : this.getFormError('logo')}"></InputErrorMessage>
+        <InputErrorMessage :errorText="formState.getFormError('logo')"  :class="{'block text-center mt-4' : getFormError('logo')}"></InputErrorMessage>
 
     </div>
 
@@ -67,12 +67,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import { updateStoreLogo } from '@Repositories/store-repository.js';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
+        inject: ['formState', 'storeState'],
         props: {
             store: {
                 type: Object
@@ -90,14 +89,12 @@
                 default: true
             },
         },
-        mixins: [FormMixin],
         components: { InputErrorMessage },
         data() {
             return {
                 selectedFile: null,
                 isSubmitting: false,
                 imageUrl: this.store.logo,
-                storeState: useStoreState(),
                 originalImageUrl: this.store.logo
             };
         },
@@ -157,7 +154,7 @@
             uploadImage(event, file) {
 
                 //  Hide server errors
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 //  Start loader
                 this.isSubmitting = true;
@@ -166,9 +163,8 @@
 
                     if(response.status == 200) {
 
-                        //  Stop loader
                         this.isSubmitting = false;
-                        this.showSuccessfulNotification('Store logo updated');
+                        this.notificationState.showSuccessNotification('Store logo updated');
 
                     }
 
@@ -177,7 +173,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                     //  If the current store is the stored store
                     if(this.store.id == this.storeState.store.id) {

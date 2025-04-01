@@ -24,19 +24,14 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import CombineFeesToggleSwitch from '@Pages/stores/store/settings/checkout/components/CombineFeesToggleSwitch.vue';
     import CombineDiscountsToggleSwitch from '@Pages/stores/store/settings/checkout/components/CombineDiscountsToggleSwitch.vue';
     import CostBreakdownSectionHeadingTextInput from '@Pages/stores/store/settings/checkout/components/CostBreakdownSectionHeadingTextInput.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             CombineFeesToggleSwitch, CombineDiscountsToggleSwitch, CostBreakdownSectionHeadingTextInput
-        },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
         },
         computed: {
             storeForm() {

@@ -3,7 +3,7 @@
     <Checkbox
         size="xs"
         v-model="form.requireMinimumNoticeForOrders"
-        :errorText="getFormError('requireMinimumNoticeForOrders')">
+        :errorText="formState.getFormError('requireMinimumNoticeForOrders')">
         <div class="mt-0.5 mx-2">
             <p class="font-bold text-sm mb-1">Require minimum notice for orders</p>
             <p class="text-sm text-gray-500 max-w-96">Customers must place orders at least a few hours or days before the delivery date to allow for order processing</p>
@@ -47,13 +47,12 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Checkbox, NumberInput, SelectInput },
         props: {
             form: {

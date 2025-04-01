@@ -6,7 +6,7 @@
         label="Store Website"
         placeholder="Baby Cakes 🧁"
         labelPopoverTitle="What Is This?"
-        :errorText="getFormError('alias')"
+        :errorText="formState.getFormError('alias')"
         labelPopoverDescription="The website link that will be used by customers to visit your store, shop and place orders">
         <template #prepend>
             <div class="flex items-center space-x-1 py-1.5 pl-2 pr-4 rounded-l-md bg-gray-50 text-gray-500 border-r whitespace-nowrap">
@@ -23,18 +23,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import { useStoreState } from '@Stores/store-store.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { TextInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

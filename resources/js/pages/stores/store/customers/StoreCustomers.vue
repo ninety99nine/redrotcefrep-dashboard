@@ -23,12 +23,12 @@
                     <div class="flex justify-center my-4">
 
                         <!-- Show Everything Toggle Switch -->
-                        <ToogleSwitch
+                        <ToggleSwitch
                             v-model="showEverything" size="md"
                             labelPopoverTitle="What Is This?"
                             labelPopoverDescription="Turn on if you want to show more information about your products">
                             Show Everything
-                        </ToogleSwitch>
+                        </ToggleSwitch>
 
                     </div>
 
@@ -200,24 +200,22 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { formattedDate, formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState', 'notificationState'],
         components: {
             Pill, Button, BasicTable, Checkbox, ConfirmModal, SpinningLoader,
-            MoreInfoPopover, ToogleSwitch, NoDataPlaceholder
+            MoreInfoPopover, ToggleSwitch, NoDataPlaceholder
         },
         data() {
             return {
@@ -229,12 +227,11 @@
                 deletableCustomer: null,
                 isDeletingCustomerIds: [],
                 isLoadingCustomers: false,
-                storeState: useStoreState(),
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getCustomers();
                 }
             }
@@ -242,9 +239,6 @@
         computed: {
             store() {
                 return this.storeState.store;
-            },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
             },
             tableHeaders() {
                 return this.showEverything
@@ -256,6 +250,9 @@
             }
         },
         methods: {
+            formattedDate: formattedDate,
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(customer) {
 
                 if(this.isDeletingCustomerIds.length) return;
@@ -313,7 +310,7 @@
                     //  Stop loader
                     this.isLoadingCustomers = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -332,13 +329,13 @@
 
                         if(response.data.deleted) {
 
-                            this.showSuccessfulNotification('Customer deleted');
+                            this.notificationState.showSuccessNotification('Customer deleted');
                             if(this.isDeletingCustomerIds.length == 0) this.getCustomers();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -349,7 +346,7 @@
                     //  Stop loader
                     this.isDeletingCustomerIds.splice(this.isDeletingCustomerIds.findIndex((id) => id == this.deletableCustomer.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

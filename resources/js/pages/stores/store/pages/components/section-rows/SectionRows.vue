@@ -103,11 +103,11 @@
 <script>
 
     import debounce from 'lodash/debounce';
-    import { usePageState } from '@Stores/page-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import RowColumns from '@Pages/stores/store/pages/components/row-columns/RowColumns.vue';
 
     export default {
+        inject: ['pageState'],
         components: {
             draggable: VueDraggableNext, RowColumns
         },
@@ -117,7 +117,6 @@
         data() {
             return {
                 showAddRowButton: true,
-                pageState: usePageState(),
                 debounceShowAddRowButton: null,
             }
         },

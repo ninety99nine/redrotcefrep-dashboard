@@ -61,10 +61,10 @@
                             </div>
 
                             <!-- Add Delivery Option Toogle Switch -->
-                            <ToogleSwitch
+                            <ToggleSwitch
                                 size="md"
                                 v-model="additionalFeatures.delivery.active">
-                            </ToogleSwitch>
+                            </ToggleSwitch>
 
                         </div>
 
@@ -75,7 +75,7 @@
 
                             <MoneyInput
                                 label="Delivery fee"
-                                :errorText="getFormError('flatFeeRate')"
+                                :errorText="formState.getFormError('flatFeeRate')"
                                 v-model="additionalFeatures.delivery.flatFeeRate"
                                 description="You can set more detailed settings in Settings » Delivery Methods">
                             </MoneyInput>
@@ -105,10 +105,10 @@
                             </div>
 
                             <!-- Add Self Pick-up Option Toogle Switch -->
-                            <ToogleSwitch
+                            <ToggleSwitch
                                 size="md"
                                 v-model="additionalFeatures.selfPickUpDelivery.active">
-                            </ToogleSwitch>
+                            </ToggleSwitch>
 
                         </div>
 
@@ -143,10 +143,10 @@
                             </div>
 
                             <!-- Loyalty & Rewards Toogle Switch -->
-                            <ToogleSwitch
+                            <ToggleSwitch
                                 size="md"
                                 v-model="additionalFeatures.rewards.active">
-                            </ToogleSwitch>
+                            </ToggleSwitch>
 
                         </div>
 
@@ -158,7 +158,7 @@
                             <PercentageInput
                                 placeholder="10"
                                 label="Rewards (%)"
-                                :errorText="getFormError('rewardPercentageRate')"
+                                :errorText="formState.getFormError('rewardPercentageRate')"
                                 v-model="additionalFeatures.rewards.percentageRate">
                             </PercentageInput>
 
@@ -195,10 +195,10 @@
                             </div>
 
                             <!-- Automated WhatsApp Notifications Toogle Switch -->
-                            <ToogleSwitch
+                            <ToggleSwitch
                                 size="md"
                                 v-model="additionalFeatures.automatedWhatsappNotifications.active">
-                            </ToogleSwitch>
+                            </ToggleSwitch>
 
                         </div>
 
@@ -250,10 +250,10 @@
                             </div>
 
                             <!-- Available On USSD Toogle Switch -->
-                            <ToogleSwitch
+                            <ToggleSwitch
                                 size="md"
                                 v-model="additionalFeatures.ussd.active">
-                            </ToogleSwitch>
+                            </ToggleSwitch>
 
                         </div>
 
@@ -266,7 +266,7 @@
                             <MobileNumberInput
                                 label="Mobile Number"
                                 v-model="additionalFeatures.ussd.mobileNumber"
-                                :errorText="getFormError('ussdMobileNumber')"
+                                :errorText="formState.getFormError('ussdMobileNumber')"
                                 :description="ussdMobileNumberWithoutExtension ? `Customers dial *250*${ussdMobileNumberWithoutExtension}# to access your store` : 'Enter your mobile number to create your shortcode'">
                             </MobileNumberInput>
 
@@ -275,7 +275,7 @@
                                 maxlength="20"
                                 label="Call To Action"
                                 placeholder="Order pizza"
-                                :errorText="getFormError('callToAction')"
+                                :errorText="formState.getFormError('callToAction')"
                                 v-model="additionalFeatures.ussd.callToAction"
                                 description="The call to action to start the shopping experience on USSD">
                             </TextInput>
@@ -360,27 +360,24 @@
     import isEqual from 'lodash/isEqual';
     import settings from '@Js/settings.js';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import { parsePhoneNumberFromString } from 'libphonenumber-js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import PercentageInput from '@Partials/inputs/PercentageInput.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import { getApi, postApi, putApi } from '@Repositories/api-repository.js';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import BulkMobileNumberInput from '@Partials/inputs/BulkMobileNumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState'],
         components: {
             Button, TextInput, StoreLogo, MoneyInput, LineSkeleton, PercentageInput,
-            ToogleSwitch, MobileNumberInput, FormErrorMessages, BulkMobileNumberInput
+            ToggleSwitch, MobileNumberInput, FormErrorMessages, BulkMobileNumberInput
         },
         data() {
             return {
@@ -428,9 +425,7 @@
                         name: 'Receive order notifications using SMS'
                     },
                 ],
-                apiState: useApiState(),
-                appName: settings.appName,
-                storeState: useStoreState(),
+                appName: settings.appName
             }
         },
         computed: {
@@ -582,13 +577,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
 
@@ -614,13 +609,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
 
@@ -644,13 +639,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
 
@@ -673,13 +668,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
 
@@ -702,13 +697,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
 
@@ -750,19 +745,19 @@
 
                         } else {
 
-                            this.setFormError('general', response.data.message);
+                            this.formState.setFormError('general', response.data.message);
 
                         }
 
                     } else {
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
             },
@@ -786,13 +781,13 @@
 
                     } else {
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
             },
@@ -830,13 +825,13 @@
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
+                        this.formState.setFormError('general', response.data.message);
 
                     }
 
                 } catch (errorException) {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 }
 
@@ -862,7 +857,7 @@
 
                 }).catch(errorException => {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -890,7 +885,7 @@
 
                 }).catch(errorException => {
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

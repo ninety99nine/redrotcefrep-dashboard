@@ -35,9 +35,8 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
-
     export default {
+        inject: ['storeState'],
         data() {
             return {
                 navOptions: [
@@ -66,8 +65,7 @@
                         name: 'show-store-payment-method-settings'
                     }
                 ],
-                selectedNavOption: 'show-store-general-settings',
-                storeState: useStoreState(),
+                selectedNavOption: 'show-store-general-settings'
             }
         },
         watch: {

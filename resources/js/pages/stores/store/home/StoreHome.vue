@@ -51,8 +51,6 @@
 
 <script>
 
-    import { useAuthState } from '@Stores/auth-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import Insights from '@Pages/stores/store/home/components/Insights.vue';
     import AddTeamCard from '@Pages/stores/store/home/components/AddTeamCard.vue';
     import UpgradeCard from '@Pages/stores/store/home/components/UpgradeCard.vue';
@@ -66,15 +64,10 @@
     import GettingStartedCard from '@Pages/stores/store/home/components/GettingStartedCard.vue';
 
     export default {
+        inject: ['authState', 'storeState'],
         components: {
             Insights, AddTeamCard, UpgradeCard, TutorialsCard, StoreLinkCard, AddCouponsCard,
             AddProductsCard, StoreQrCodeCard, UpgradeBannerCard, ShareYourStoreCard, GettingStartedCard
-        },
-        data() {
-            return {
-                authState: useAuthState(),
-                storeState: useStoreState()
-            };
         },
         computed: {
             store() {

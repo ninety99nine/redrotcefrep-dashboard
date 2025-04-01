@@ -6,7 +6,7 @@
         placeholder="Baby Cakes"
         v-model="storeForm.smsSenderName"
         labelPopoverTitle="What Is This?"
-        :errorText="getFormError('smsSenderName')"
+        :errorText="formState.getFormError('smsSenderName')"
         labelPopoverDescription="The name given to SMS messages sent to the customer by your store e.g Baby Cakes">
         <template #prepend>
             <div class="flex items-center space-x-1 py-1.5 px-4 rounded-l-md bg-gray-50 text-gray-500 border-r whitespace-nowrap">
@@ -21,18 +21,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import { useStoreState } from '@Stores/store-store.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { TextInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

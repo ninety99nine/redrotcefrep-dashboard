@@ -8,7 +8,6 @@ export const useWorkflowState = defineStore('workflow', {
         return {
             workflow: null,
             workflowSteps: [],
-            route: useRoute(),
             workflowForm: null,
             isSuccessful: false,
             isLoadingWorkflow: false,
@@ -132,10 +131,10 @@ export const useWorkflowState = defineStore('workflow', {
     },
     getters: {
         isCreating() {
-            return this.route.name === 'create-store-workflow';
+            return useRoute().name === 'create-store-workflow';
         },
         isEditting() {
-            return this.route.name === 'show-store-workflow';
+            return useRoute().name === 'show-store-workflow';
         },
         mustCreate() {
             return this.isCreating && this.workflowFormHasChanged && !this.isLoadingWorkflow && !this.isSubmittingWorkflow && this.hasWorkflowSteps;

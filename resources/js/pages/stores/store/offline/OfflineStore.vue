@@ -24,7 +24,7 @@
                             v-else
                             label="Mobile Number"
                             v-model="storeForm.ussdMobileNumber"
-                            :errorText="getFormError('ussdMobileNumber')"
+                            :errorText="formState.getFormError('ussdMobileNumber')"
                             :description="ussdMobileNumberWithoutExtension ? `Customers dial *250*${ussdMobileNumberWithoutExtension}# to access your store` : 'Enter your mobile number to create your shortcode'">
                         </MobileNumberInput>
 
@@ -36,7 +36,7 @@
                             label="Call To Action"
                             placeholder="Order pizza"
                             v-model="storeForm.callToAction"
-                            :errorText="getFormError('callToAction')"
+                            :errorText="formState.getFormError('callToAction')"
                             description="The call to action to start the shopping experience on USSD">
                         </TextInput>
 
@@ -109,9 +109,6 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useAuthState } from '@Stores/auth-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
@@ -120,15 +117,13 @@
     import VirtualPhone from '@Pages/stores/store/offline/virtual-phone/VirtualPhone.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['authState', 'formState', 'storeState'],
         components: {
             TextInput, SelectInput, LineSkeleton, MobileNumberInput, VirtualPhone
         },
         data() {
             return {
-                country: 'Botswana',
-                authState: useAuthState(),
-                storeState: useStoreState()
+                country: 'Botswana'
             };
         },
         computed: {

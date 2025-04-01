@@ -2,26 +2,35 @@
 
     <div
         @click.stop="loading ? copyToClipboardNotReady() : copyToClipboard()"
-        :class="[{ 'hover:bg-blue-50' : !loading}, 'w-full cursor-pointer w-full flex justify-between items-center bg-gray-50 p-2 border rounded-md relative']">
+        :class="
+            showText
+                ? [
+                    { 'hover:bg-blue-50' : !loading},
+                    'w-full flex justify-between items-center bg-gray-50 p-2 border rounded-md cursor-pointer relative']
+                : ['relative']">
 
         <!-- Copied Hint -->
-        <div v-if="copied" class="absolute -top-8 right-0 bg-green-500 text-white text-xs px-4 py-1 rounded-md">
+        <div v-if="copied" :class="[showText ? '-top-8 right-0' : '-top-8 -right-7', 'absolute bg-green-500 text-white text-xs px-4 py-1 rounded-md']">
             Copied!
             <div class="absolute left-1/2 -bottom-1 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-green-500"></div>
         </div>
 
         <!-- Not Ready Hint -->
-        <div v-if="notReady" class="absolute -top-8 right-0 bg-yellow-500 text-white text-xs px-4 py-1 rounded-md">
+        <div v-if="notReady" :class="[showText ? '-top-8 -right-2' : '-top-8 -right-9', 'whitespace-nowrap absolute bg-yellow-500 text-white text-xs px-4 py-1 rounded-md']">
             Not Ready!
             <div class="absolute left-1/2 -bottom-1 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-yellow-500"></div>
         </div>
 
-        <!-- Store Link -->
-        <ShineEffect v-if="loading" class="w-full">
-            <div :class="[{ 'text-gray-300' : loading}, 'text-xs w-4/5 truncate']">{{ placeholder }}</div>
-        </ShineEffect>
+        <template v-if="showText">
 
-        <div v-else :class="[{ 'text-gray-300' : loading}, 'text-xs w-4/5 truncate']">{{ text }}</div>
+            <!-- Store Link -->
+            <ShineEffect v-if="loading" class="w-full">
+                <div :class="[{ 'text-gray-300' : loading}, 'text-xs w-4/5 truncate']">{{ placeholder }}</div>
+            </ShineEffect>
+
+            <div v-else :class="[{ 'text-gray-300' : loading}, 'text-xs w-4/5 truncate']">{{ text }}</div>
+
+        </template>
 
         <!-- Copy Icon -->
         <svg
@@ -30,7 +39,7 @@
             stroke-width="1.5"
             stroke="currentColor"
             xmlns="http://www.w3.org/2000/svg"
-            :class="[{ 'text-gray-300' : loading }, 'w-5 h-5 cursor-pointer']"
+            :class="[{ 'text-gray-300' : loading }, 'w-5 h-5 cursor-pointer hover:opacity-50 active:scale-95 active:opacity-25']"
             @click.stop="loading ? copyToClipboardNotReady() : copyToClipboard()">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
         </svg>
@@ -57,8 +66,12 @@
                 default: '...'
             },
             text: {
-                type: String
+                type: [String, Number],
             },
+            showText: {
+                type: Boolean,
+                default: true
+            }
         },
         data() {
             return {

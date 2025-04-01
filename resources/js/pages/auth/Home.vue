@@ -8,7 +8,7 @@
             <Logo class="mx-auto"></Logo>
 
             <!-- Text Heading -->
-            <TextHeader class="mt-10 text-center">Welcome to {{ appName }}</TextHeader>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 mt-10 text-center">Welcome to {{ appName }}</h1>
 
         </div>
 
@@ -28,10 +28,9 @@
     import settings from '@Js/settings.js';
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
 
     export default {
-        components: { RouterLink, Logo, TextHeader },
+        components: { RouterLink, Logo },
         data() {
             return {
                 appName: settings.appName

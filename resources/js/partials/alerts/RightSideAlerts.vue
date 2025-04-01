@@ -7,13 +7,11 @@
 
                 <!-- Success -->
                 <SuccessToast v-if="notification.type == 'success-notification'" @onHide="onHide(notification)">
-                    <p class="font-bold">Awesome 🙌</p>
                     <p>{{ notification.message }}</p>
                 </SuccessToast>
 
                 <!-- Warning -->
                 <WarningToast v-else-if="notification.type == 'warning-notification'" @onHide="onHide(notification)">
-                    <p class="font-bold">Sorry 😔</p>
                     <p>{{ notification.message }}</p>
                 </WarningToast>
 
@@ -28,15 +26,10 @@
 
     import SuccessToast from '@Partials/toasts/SuccessToast.vue';
     import WarningToast from '@Partials/toasts/WarningToast.vue';
-    import { useNotificationState } from '@Stores/notification-store.js';
 
     export default {
+        inject: ['notificationState'],
         components: { SuccessToast, WarningToast },
-        data() {
-            return {
-                notificationState: useNotificationState()
-            };
-        },
         computed: {
             notifications() {
                 return this.notificationState.notifications;

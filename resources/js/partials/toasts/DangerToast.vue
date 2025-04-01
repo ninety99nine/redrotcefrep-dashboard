@@ -25,10 +25,9 @@
      * Component Reference: https://flowbite.com/docs/components/alerts/
      */
     import { Dismiss } from 'flowbite';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
         props: {
             //  The transition duration as the element is hidden
             duration: {
@@ -47,8 +46,8 @@
         },
         data() {
             return {
-                targetElUniqueId: this.generateUniqueId('danger-target-toast'),
-                triggerElUniqueId: this.generateUniqueId('danger-trigger-toast'),
+                targetElUniqueId: generateUniqueId('danger-target-toast'),
+                triggerElUniqueId: generateUniqueId('danger-trigger-toast'),
             };
         },
         mounted() {

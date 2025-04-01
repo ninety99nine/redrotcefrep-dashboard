@@ -137,19 +137,15 @@
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
     import Drawer from '@Partials/drawers/Drawer.vue';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import { getApi } from '@Repositories/api-repository.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState' , 'formState', 'storeState'],
         components: { Pill, Button, Drawer, Checkbox, MoneyInput, Datepicker, SpinningLoader },
         props: {
             filterExpressions: {
@@ -164,10 +160,8 @@
                 localFilters: null,
                 filterDrawer: null,
                 originalFilters: null,
-                apiState: useApiState(),
                 isLoadingFilters: false,
                 lastEmittedFilters: null,
-                storeState: useStoreState(),
             }
         },
         watch: {
@@ -364,23 +358,25 @@
             clearFilters() {
                 this.localFilters = cloneDeep(this.originalFilters);
             },
-            getFilters() {
+            async getFilters() {
 
                 if(this.isLoadingFilters) return;
 
-                //  Start loader
                 this.isLoadingFilters = true;
 
-                //  Set the query params
-                const params = {
-                    'type': 'orders'
-                };
+                const url = this.apiState.apiHome['_links']['showFilters'];
 
-                if(this.store) {
-                    params['store_id'] = this.store.id
+                let config = {
+                    params: {
+                        'type': 'orders'
+                    }
                 }
 
-                getApi(this.apiState.apiHome['_links']['showFilters'], params).then(response => {
+                if(this.store) {
+                    config.params['store_id'] = this.store.id
+                }
+
+                await axios.get(url, config).then(response => {
 
                     if(response.status == 200) {
 
@@ -414,22 +410,20 @@
                         });
 
                         this.originalFilters = cloneDeep(this.localFilters);
-
                         this.applyFilterExpressions();
+
+                    }else{
+
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
-                    //  Stop loader
-                    this.isLoadingFilters = false;
-
                 }).catch(errorException => {
-
-                    //  Stop loader
-                    this.isLoadingFilters = false;
-
-                    this.setServerFormErrors(errorException);
-
+                    this.formState.setServerFormErrors(errorException);
                 });
+
+                this.isLoadingFilters = false;
 
             },
         },

@@ -20,13 +20,13 @@
                         <TextInput
                             v-model="form.addressLine"
                             placeholder="Street address"
-                            :errorText="getFormError('addressLine')">
+                            :errorText="formState.getFormError('addressLine')">
                         </TextInput>
 
                         <!-- Address Line 2 Input -->
                         <TextInput
                             v-model="form.addressLine2"
-                            :errorText="getFormError('addressLine2')"
+                            :errorText="formState.getFormError('addressLine2')"
                             placeholder="Apartment, unit number, suite, etc. (optional)">
                         </TextInput>
 
@@ -36,7 +36,7 @@
                     <div v-if="countryAddressOption.city.required" :class="cityWrapperClass">
                         <TextInput
                             v-model="form.city"
-                            :errorText="getFormError('city')"
+                            :errorText="formState.getFormError('city')"
                             :placeholder="countryAddressOption.city.label">
                         </TextInput>
                     </div>
@@ -45,7 +45,7 @@
                     <div v-if="countryAddressOption.state.required" class="col-span-1">
                         <TextInput
                             v-model="form.state"
-                            :errorText="getFormError('state')"
+                            :errorText="formState.getFormError('state')"
                             :placeholder="countryAddressOption.state.label">
                         </TextInput>
                     </div>
@@ -54,7 +54,7 @@
                     <div v-if="countryAddressOption.postal_code.required" class="col-span-1">
                         <TextInput
                             v-model="form.postalCode"
-                            :errorText="getFormError('postalCode')"
+                            :errorText="formState.getFormError('postalCode')"
                             :placeholder="countryAddressOption.postal_code.label">
                         </TextInput>
                     </div>
@@ -90,31 +90,35 @@
 
                 <div class="col-span-2 flex space-x-2 mt-4">
 
-                    <DeleteButton
+                    <Button
+                        size="xs"
+                        type="danger"
+                        :action="deleteAddress"
                         :disabled="isSubmitting"
-                        v-if="step == 1 && completeAddress"
-                        :action="deleteAddress" size="xs" type="danger">
-                        <span class="ml-2">Delete</span>
-                    </DeleteButton>
+                        v-if="step == 1 && completeAddress">
+                        <span>Delete</span>
+                    </Button>
 
                     <template v-if="step == 2">
 
-                        <BackButton
+                        <Button
                             size="xs"
-                            type="info"
+                            type="light"
                             class="w-24"
                             :action="() => step = 1">
-                            <span class="ml-1">Back</span>
-                        </BackButton>
+                            <span>Back</span>
+                        </Button>
 
                     </template>
 
-                    <PrimaryButton
+                    <Button
+                        size="xs"
+                        type="primary"
+                        class="w-full"
                         :action="submit"
-                        :disabled="!pinLocationOnMap && !mustSaveChanges" size="xs" type="success"
-                        class="w-full">
-                        {{ submitText }}
-                    </PrimaryButton>
+                        :disabled="!pinLocationOnMap && !mustSaveChanges">
+                        <span>{{ submitText }}</span>
+                    </Button>
 
                 </div>
 
@@ -140,14 +144,14 @@
                 <div v-if="completeAddress" class="flex justify-between items-center space-x-20">
                     <span class="text-sm">{{ completeAddress }}</span>
 
-                    <PrimaryButton :action="showModal" size="xs" type="light">
+                    <Button type="light" size="xs" :action="showModal">
                         <span class="whitespace-nowrap">Edit Address</span>
-                    </PrimaryButton>
+                    </Button>
                 </div>
 
-                <AddButton v-else :action="showModal" size="sm" type="light">
-                    <span class="ml-2">Add Address</span>
-                </AddButton>
+                <Button v-else type="light" size="xs" :action="showModal">
+                    <span>Add Address</span>
+                </Button>
 
                 <!-- Google Maps -->
                 <GoogleMaps
@@ -171,24 +175,18 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import GoogleMaps from '@Partials/maps/GoogleMaps.vue';
-    import AddButton from '@Partials/buttons/AddButton.vue';
     import BasicModal from '@Partials/modals/BasicModal.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import CountrySelectInput from '@Partials/inputs/CountrySelectInput.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'notificationState'],
         components: {
-            TextInput, GoogleMaps, AddButton, BasicModal, BackButton, DeleteButton,
-            PrimaryButton, LineSkeleton, CountrySelectInput
+            Button, TextInput, GoogleMaps, BasicModal, LineSkeleton, CountrySelectInput
         },
         props: {
             address: {
@@ -244,7 +242,6 @@
                 completeAddress: null,
                 previewLatitude: null,
                 previewLongitude: null,
-                apiState: useApiState(),
                 countryAddressOptions: [],
                 isLoadingCountryAddressOptions: false
             };
@@ -402,7 +399,7 @@
                     //  Stop loader
                     this.isLoadingCountryAddressOptions = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -433,7 +430,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -459,7 +456,7 @@
 
                     if(response.status == 200) {
 
-                        this.showSuccessfulNotification('Address created');
+                        this.notificationState.showSuccessNotification('Address created');
                         this.$emit('onCreated', response.data.address);
                         this.setFields(response.data.address);
                         this.hideModal();
@@ -474,7 +471,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -490,7 +487,7 @@
 
                     if(response.status == 200) {
 
-                        this.showSuccessfulNotification('Address updated');
+                        this.notificationState.showSuccessNotification('Address updated');
                         this.$emit('onUpdated', response.data.address);
                         this.setFields(response.data.address);
                         this.hideModal();
@@ -505,7 +502,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -529,15 +526,15 @@
 
                         if(response.data.deleted) {
 
-                            this.showSuccessfulNotification('Address deleted');
+                            this.notificationState.showSuccessNotification('Address deleted');
                             this.$emit('onDeleted', response.data.address);
                             this.setFields(null);
                             this.hideModal();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -551,7 +548,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

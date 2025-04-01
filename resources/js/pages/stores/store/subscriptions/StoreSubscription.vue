@@ -127,22 +127,19 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import { formattedDate } from '@Utils/dateUtils.js';
     import { getApi } from '@Repositories/api-repository.js';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState'],
         components: { Pill, Button, SpinningLoader, MoreInfoPopover },
         data() {
             return {
                 subscription: null,
                 subscriptionHref: null,
-                storeState: useStoreState(),
                 isLoadingSubscription: false,
             };
         },
@@ -170,6 +167,7 @@
             },
         },
         methods: {
+            formattedDate: formattedDate,
             showSubscription() {
 
                 this.isLoadingSubscription = true;
@@ -193,7 +191,7 @@
                 }).catch(errorException => {
 
                     this.isLoadingSubscription = false;
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

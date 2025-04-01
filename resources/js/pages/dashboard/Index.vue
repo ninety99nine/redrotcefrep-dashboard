@@ -286,10 +286,7 @@
     import settings from '@Js/settings.js';
     import Logo from '@Partials/logos/Logo.vue';
     import Footer from '@Pages/dashboard/Footer.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { useAuthState } from '@Stores/auth-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import { getApi } from '@Repositories/api-repository.js';
     import { logout } from '@Repositories/auth-repository.js';
@@ -299,7 +296,7 @@
     import RightSideAlerts from '@Partials/alerts/RightSideAlerts.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['authState', 'formState', 'storeState'],
         components: {
             Logo, Footer, Button, PageLoader, LineSkeleton,
             StoreLogo, SpinningLoader, RightSideAlerts
@@ -359,7 +356,7 @@
                     },
                     {
                         name: 'Settings',
-                        routeName: 'show-store-settings',
+                        routeName: 'show-store-general-settings',
                     }
                 ],
                 profileNavMenus: [
@@ -375,9 +372,7 @@
                 storeHref: false,
                 isOnboarding: false,
                 isLoggingOut: false,
-                authState: useAuthState(),
-                appName: settings.appName,
-                storeState: useStoreState(),
+                appName: settings.appName
             }
         },
         watch: {
@@ -425,7 +420,7 @@
                     params: { 'store_href': this.store._links.showStore }
                 })
             },
-            showStore() {
+            async showStore() {
 
                 this.storeState.setIsLoadingStore(true);
 
@@ -459,7 +454,7 @@
                     //  Stop loader
                     this.storeState.setIsLoadingStore(false);
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -472,7 +467,6 @@
 
                     if(response.status == 200) {
 
-                        //  Stop loader
                         this.isLoggingOut = false;
 
                         // Redirect to login

@@ -22,13 +22,13 @@
 </template>
 
 <script>
+
     import settings from '@Js/settings.js';
     import Editor from '@tinymce/tinymce-vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: {
             Editor, InputLabel
         },
@@ -60,7 +60,7 @@
             return {
                 localContent: this.modelValue,
                 tinyMceApiKey: settings.tinyMceApiKey,
-                uniqueId: this.generateUniqueId('editor'),
+                uniqueId: generateUniqueId('editor'),
                 editorConfig: {
                     menubar: false,
                     branding: false,

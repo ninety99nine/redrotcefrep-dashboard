@@ -50,14 +50,13 @@
 
 <script>
 
-    import { useApiState } from '@Stores/api-store.js';
-    import { useAuthState } from '@Stores/auth-store.js';
     import { getApi } from '@Repositories/api-repository.js';
     import StoreCard from '@Pages/stores//components/StoreCard.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import AddStoreCard from '@Pages/stores//components/AddStoreCard.vue';
 
     export default {
+        inject: ['apiState', 'authState'],
         components: {
             StoreCard, SpinningLoader, AddStoreCard
         },
@@ -65,9 +64,7 @@
             return {
                 stores: [],
                 pagination: null,
-                isLoadingStores: false,
-                apiState: useApiState(),
-                authState: useAuthState()
+                isLoadingStores: false
             };
         },
         computed: {
@@ -111,7 +108,7 @@
 
                     this.isLoadingStores = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

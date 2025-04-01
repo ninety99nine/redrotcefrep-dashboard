@@ -4,12 +4,12 @@
         <template v-if="showingBasicTab">
 
             <!-- Visible -->
-            <ToogleSwitch
+            <ToggleSwitch
                 size="md"
                 v-model="pageState.pageForm.sections[this.pageState.sectionIndex].rows[this.pageState.rowIndex].visible"
                 @change="saveStateDebounced(pageState.pageForm.sections[this.pageState.sectionIndex].rows[this.pageState.rowIndex].visible ? 'Row visibility enabled' : 'Row visibility disabled')">
                 Visible
-            </ToogleSwitch>
+            </ToggleSwitch>
 
             <!-- Name -->
             <TextInput
@@ -49,20 +49,16 @@
 </template>
 
 <script>
-    import { usePageState } from "@Stores/page-store.js";
+
     import TextInput from '@Partials/inputs/TextInput.vue';
     import Colorpicker from '@Partials/colorpicker/Colorpicker.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import RowColumns from '@Pages/stores/store/pages/components/page-editor-drawer/row-settings/row-columns/RowColumns.vue';
     import ColumnSelectInput from '@Pages/stores/store/pages/components/page-editor-drawer/row-settings/ColumnSelectInput.vue';
 
     export default {
-        components: { TextInput, Colorpicker, ToogleSwitch, RowColumns, ColumnSelectInput },
-        data() {
-            return {
-                pageState: usePageState()
-            };
-        },
+        inject: ['pageState'],
+        components: { TextInput, Colorpicker, ToggleSwitch, RowColumns, ColumnSelectInput },
         computed: {
             showingBasicTab() {
                 return this.pageState.showingBasicTab;

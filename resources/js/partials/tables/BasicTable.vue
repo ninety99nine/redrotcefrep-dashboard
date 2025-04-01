@@ -10,7 +10,7 @@
             <div class="w-1/3 flex justify-center items-center space-x-4">
 
                 <!-- Search Input -->
-                <SearchInput v-model="searchTerm" :isSearching="isSearching" class="w-full"></SearchInput>
+                <SearchInput v-model="localSearchTerm" :isSearching="isSearching" class="w-full"></SearchInput>
 
             </div>
 
@@ -175,7 +175,7 @@
     import Pill from '@Partials/pills/Pill.vue';
     import { Modal, initFlowbite } from "flowbite";
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import Pagination from '@Partials/paginations/Pagination.vue';
@@ -185,12 +185,15 @@
     import SortingDrawer from '@Partials/tables/components/SortingDrawer.vue';
 
     export default {
-        mixins: [UtilsMixin],
         components: { Pill, Button, SearchInput, SelectInput, Pagination, SpinningLoader, FilterDrawer, ColumnsDrawer, SortingDrawer },
         props: {
             isLoading: {
                 type: Boolean,
                 default: false
+            },
+            searchTerm: {
+                type: String,
+                default: null
             },
             pagination: {
                 type: Object
@@ -218,16 +221,16 @@
                 modal: null,
                 filters: [],
                 sorting: [],
-                searchTerm: '',
                 filterDrawer: null,
                 sortingDrawer: null,
                 localPerPage: this.perPage,
+                localSearchTerm: this.searchTerm,
                 perPageOptions: ['15', '50', '100', '200'],
-                uniqueModalId: this.generateUniqueId('modal'),
+                uniqueModalId: generateUniqueId('modal'),
             }
         },
         watch: {
-            searchTerm(newValue) {
+            localSearchTerm(newValue) {
                 this.$emit('search', newValue);
             },
             localPerPage(newValue) {
@@ -247,7 +250,7 @@
                 return this.hasSearchTerm && this.isLoading;
             },
             hasSearchTerm() {
-                return this.searchTerm.length > 0;
+                return this.localSearchTerm != null && this.localSearchTerm.trim() != '';
             },
             hasFilters() {
                 return this.filters.length > 0;

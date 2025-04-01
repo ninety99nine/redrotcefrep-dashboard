@@ -56,8 +56,6 @@ export default {
             this.updateValue(newValue);
         },
         localModelValue(newValue) {
-            console.log('newValue');
-            console.log(newValue);
             const nullableValue = newValue == '#00000000' ? null : newValue;
             this.$emit('update:modelValue', nullableValue);
             this.$emit('change', nullableValue);

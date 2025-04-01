@@ -3,7 +3,9 @@
     <div class="flex items-center space-x-1">
 
         <!-- Label -->
-        <label :for="_for" class="block text-sm font-medium leading-6 text-gray-900">
+        <label
+            :for="_for"
+            class="block text-sm font-medium leading-6 text-gray-900">
             <slot></slot>
             <span v-if="secondaryLabel" class="font-normal text-gray-400 ml-1">{{ secondaryLabel }}</span>
         </label>
@@ -20,9 +22,11 @@
 
 <script>
 
+    import capitalize from '@Directives/capitalize.js';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
+        directives: { capitalize },
         props: {
             _for: {
                 type: [String, null],

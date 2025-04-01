@@ -3,7 +3,7 @@
     <component :is="skeleton ? 'ShineEffect' : 'div'" :class="wrapperClass">
 
         <button
-            @click="onClick"
+            @click.prevent.stop="onClick"
             :class="[buttonClasses, $attrs.class]">
 
             <!-- Spinning Loader -->
@@ -200,6 +200,10 @@ export default {
             type: String,
             default: 'space-x-2',
         },
+        rounded: {
+            type: String,
+            default: 'rounded-lg',
+        },
         wrapperClass: {
             type: String,
             default: null,
@@ -219,7 +223,7 @@ export default {
         buttonClasses() {
 
             var classes = [];
-            const baseClasses = [this.spacing, 'group flex justify-center items-center font-semibold rounded-lg transition-all duration-250 active:scale-95'];
+            const baseClasses = [this.spacing, this.rounded, 'group flex justify-center items-center font-semibold transition-all duration-250 active:scale-95'];
 
             const sizeClasses = {
                 xs: "py-1.5 px-3 text-xs",
@@ -258,10 +262,10 @@ export default {
         }
     },
     methods: {
-        onClick() {
+        onClick(event) {
             if(this.disabled) return;
             if(this.copyContent) this.copyToClipboard();
-            if(this.action) this.action();
+            if(this.action) this.action(event);
         },
         copyToClipboard() {
 

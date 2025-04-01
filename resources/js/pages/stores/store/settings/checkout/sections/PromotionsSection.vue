@@ -24,18 +24,13 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import ShowPromotionsToggleSwitch from '@Pages/stores/store/settings/checkout/components/ShowPromotionsToggleSwitch.vue';
     import PromotionsSectionHeadingTextInput from '@Pages/stores/store/settings/checkout/components/PromotionsSectionHeadingTextInput.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             ShowPromotionsToggleSwitch, PromotionsSectionHeadingTextInput
-        },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
         },
         computed: {
             storeForm() {

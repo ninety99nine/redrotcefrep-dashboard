@@ -36,11 +36,11 @@
 
 <script>
 
-    import { useApiState } from '@Stores/api-store.js';
     import { getApi } from '@Repositories/api-repository.js';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
     export default {
+        inject: ['apiState'],
         props: {
             message: {
                 type: String,
@@ -53,7 +53,6 @@
         data() {
             return {
                 socialLoginLinks: [],
-                apiState: useApiState(),
                 disableSocialLoginLinks: false,
                 isLoadingSocialLoginLinks: false,
             };
@@ -95,7 +94,7 @@
                     //  Stop loader
                     this.isLoadingSocialLoginLinks = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

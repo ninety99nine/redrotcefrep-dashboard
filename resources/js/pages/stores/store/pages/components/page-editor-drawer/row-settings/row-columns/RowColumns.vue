@@ -52,12 +52,12 @@
              <div v-if="pageState.pageForm.sections[this.sectionIndex].rows[this.rowIndex].columns.length < 6" class="pt-4">
 
                 <!-- Add Column -->
-                <AddButton
+                <Button
                     size="xs"
                     type="light"
                     :action="addColumn">
-                    <span class="ml-2">Add</span>
-                </AddButton>
+                    <span>Add</span>
+                </Button>
 
              </div>
 
@@ -69,22 +69,17 @@
 
 <script>
 
-    import { usePageState } from '@Stores/page-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import AddButton from '@Partials/buttons/AddButton.vue';
 
     export default {
+        inject: ['pageState'],
         components: {
-            draggable: VueDraggableNext, AddButton
+            Button, draggable: VueDraggableNext
         },
         props: {
             rowIndex: Number,
             sectionIndex: Number,
-        },
-        data() {
-            return {
-                pageState: usePageState()
-            }
         },
         computed: {
             draggableClass() {

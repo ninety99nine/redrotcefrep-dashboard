@@ -2,41 +2,33 @@
     <div v-if="hasTips" class="space-y-4 px-4 pb-4">
         <div class="flex flex-wrap gap-2">
             <Pill
+                size="xs"
                 :key="index"
-                size="px-4 py-1"
                 :showDot="false"
-                :clickable="true"
-                :text="formatTipText(tip)"
                 :action="() => setTip(tip)"
                 v-for="(tip, index) in tips"
-                :type="isSelectedTip(tip) ? 'primary' : 'info'"
-            />
+                :type="isSelectedTip(tip) ? 'primary' : 'info'">
+                {{ formatTipText(tip) }}
+            </Pill>
         </div>
-        <div v-if="isFixedTip" class="mt-4">
+        <div v-if="isFlatTip" class="mt-4">
             <MoneyInput
                 v-model="shoppingCartForm.tipFlatRate"
-                :errorText="getFormError('discountFixedRate')"
+                :errorText="formState.getFormError('discountFlatRate')"
             />
         </div>
     </div>
 </template>
 
 <script>
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import MoneyInput from '@Partials/inputs/MoneyInput.vue';
+
     import Pill from '@Partials/pills/Pill.vue';
-    import { useShoppingCartState, TIP_TYPES } from '@Stores/shopping-cart-store.js';
+    import { TIP_TYPES } from '@Enums/enums.js';
+    import MoneyInput from '@Partials/inputs/MoneyInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState', 'shoppingCartState'],
         components: { MoneyInput, Pill },
-        data() {
-            return {
-                storeState: useStoreState(),
-                shoppingCartState: useShoppingCartState(),
-            };
-        },
         watch: {
             'shoppingCartForm.tipFlatRate'() {
                 this.shoppingCartState.inspectStoreShoppingCartWithDelay();
@@ -55,8 +47,8 @@
             hasTips() {
                 return this.store.tips.length > 0;
             },
-            isFixedTip() {
-                return this.selectedTip?.type === 'fixed';
+            isFlatTip() {
+                return this.selectedTip?.type === TIP_TYPES.FLAT.value;
             },
             selectedTip() {
                 return this.shoppingCartState.tip;
@@ -77,7 +69,7 @@
                     return TIP_TYPES.NONE;
                 }
                 if (tip === 'specify') {
-                    return TIP_TYPES.FIXED;
+                    return TIP_TYPES.FLAT;
                 }
                 return TIP_TYPES.PERCENTAGE(tip);
             },

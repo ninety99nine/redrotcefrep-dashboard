@@ -7,7 +7,10 @@
             <div class="flex items-center">
 
                 <!-- Text Heading -->
-                <TextHeader><span class="mr-2">🥰</span> Stores</TextHeader>
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+                    <span class="mr-2">🥰</span>
+                    <span>Stores</span>
+                </h1>
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Stores are businesses selling goods or services to customers" placement="top"></MoreInfoPopover>
@@ -17,17 +20,17 @@
             <template v-if="(pagination ?? {}).total > 0">
 
                 <!-- Show Everything Toggle Switch -->
-                <ToogleSwitch
+                <ToggleSwitch
                     v-model="showEverything" size="md"
                     labelPopoverTitle="What Is This?"
                     labelPopoverDescription="Turn on if you want to show more information about stores">
                     Show Everything
-                </ToogleSwitch>
+                </ToggleSwitch>
 
                 <!-- Create Store Button -->
-                <AddButton :action="onCreateStore" class="w-40">
-                    <span class="ml-2">Create Store</span>
-                </AddButton>
+                <Button :action="onCreateStore" class="w-40">
+                    <span>Create Store</span>
+                </Button>
 
             </template>
 
@@ -94,7 +97,7 @@
                     <!-- Status -->
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
-                            <Pill :type="store.online ? 'success' : 'warning'" :text="store.online ? 'Online' : 'Offline'" :showDot="false"></Pill>
+                            <Pill :type="store.online ? 'success' : 'warning'" size="xs" :showDot="false">{{ store.online ? 'Online' : 'Offline' }}</Pill>
                             <MoreInfoPopover v-if="store.online" class="opacity-0 group-hover:opacity-100" title="Status" description="This store is online" placement="top"></MoreInfoPopover>
                             <MoreInfoPopover v-else-if="store.offlineMessage" class="opacity-0 group-hover:opacity-100" title="Offline Message" :description="store.offlineMessage" placement="top"></MoreInfoPopover>
                         </div>
@@ -182,7 +185,7 @@
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
                             <template v-if="store.orangeMoneyPaymentEnabled">
-                                <Pill :type="store.orangeMoneyPaymentEnabled ? 'success' : 'info'" :text="store.orangeMoneyPaymentEnabled ? 'Enabled' : 'Disabled'" :showDot="false"></Pill>
+                                <Pill :type="store.orangeMoneyPaymentEnabled ? 'success' : 'info'" size="xs" :showDot="false">{{ store.orangeMoneyPaymentEnabled ? 'Enabled' : 'Disabled' }}</Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Orange Money Merchant Code" :description="store.orangeMoneyMerchantCode" placement="top"></MoreInfoPopover>
                             </template>
                             <NoDataPlaceholder v-else></NoDataPlaceholder>
@@ -193,7 +196,7 @@
                     <td class="whitespace-nowrap px-4 py-4">
                         <div class="flex space-x-1 items-center">
                             <template v-if="store.dpoPaymentEnabled">
-                                <Pill :type="store.dpoPaymentEnabled ? 'success' : 'info'" :text="store.dpoPaymentEnabled ? 'Enabled' : 'Disabled'" :showDot="false"></Pill>
+                                <Pill :type="store.dpoPaymentEnabled ? 'success' : 'info'" size="xs" :showDot="false">{{ store.dpoPaymentEnabled ? 'Enabled' : 'Disabled' }}</Pill>
                                 <MoreInfoPopover v-if="store.dpoPaymentEnabled" class="opacity-0 group-hover:opacity-100" title="DPO Company Token" :description="store.dpoCompanyToken" placement="top"></MoreInfoPopover>
                             </template>
                             <NoDataPlaceholder v-else></NoDataPlaceholder>
@@ -213,7 +216,7 @@
                                         <div v-if="store.allowFreeDelivery == false" class="flex items-center space-x-1 mt-2 mb-4">
                                             <span class="text-xs">Flat Fee: </span>
                                             <span v-if="store.deliveryFlatFee.amount > 0">{{ store.deliveryFlatFee.amountWithCurrency }}</span>
-                                            <Pill v-else type="info" text="None" :showDot="false"></Pill>
+                                            <Pill v-else type="info" size="xs" :showDot="false">None</Pill>
                                         </div>
 
                                         <div v-if="store.deliveryDestinations.length">
@@ -254,7 +257,7 @@
                                                             <template v-else>
 
                                                                 <!-- Delivery Destination Allow Free Delivery -->
-                                                                <Pill v-if="deliveryDestination.allowFreeDelivery" type="success" text="Free Delivery" :showDot="false"></Pill>
+                                                                <Pill v-if="deliveryDestination.allowFreeDelivery" type="success" size="xs" :showDot="false">Free Delivery</Pill>
 
                                                                 <!-- Delivery Destination Cost -->
                                                                 <p v-else class="text-xs">{{ deliveryDestination.cost.amountWithCurrency }}</p>
@@ -411,9 +414,9 @@
                 <p>Get your store up and running in just a few minutes. Let’s turn your ideas into reality and start reaching customers today!</p>
 
                 <!-- Add Coupon Button -->
-                <AddButton :action="onCreateStore" class="w-40" size="sm">
-                    <span class="ml-2">Add Store</span>
-                </AddButton>
+                <Button type="primary" size="xs" :action="onCreateStore" class="w-40">
+                    <span>Add Store</span>
+                </Button>
             </div>
             <div>
                 <span class="text-8xl">🌱</span>
@@ -428,16 +431,6 @@
                 <p class="mb-8">Are you sure you want to permanently delete <span class="font-bold text-black">{{ deletableStore.name }}</span>?</p>
             </template>
 
-            <template #trigger="triggerProps">
-
-                <!-- Delete Store Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
-                    Delete Store
-                </PrimaryButton>
-
-            </template>
-
-
         </ConfirmModal>
 
     </div>
@@ -446,30 +439,25 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Countdown from '@Partials/countdowns/Countdown.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
-    import Pill from '@Partials/pills/Pill.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { isFutureDate, formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'notificationState'],
         components: {
-            AddButton, TextHeader, StoreLogo, BasicTable, Countdown, Checkbox, ConfirmModal, PrimaryButton,
-            SpinningLoader, MoreInfoPopover, ToogleSwitch, Pill, NoDataPlaceholder
-
+            Pill, Button, StoreLogo, BasicTable, Countdown, Checkbox, ConfirmModal,
+            SpinningLoader, MoreInfoPopover, ToggleSwitch, NoDataPlaceholder
         },
         data() {
             return {
@@ -480,8 +468,7 @@
                 deletableStore: null,
                 showEverything: false,
                 isDeletingStoreIds: [],
-                isLoadingStores: false,
-                apiState: useApiState()
+                isLoadingStores: false
             }
         },
         computed: {
@@ -495,6 +482,9 @@
             }
         },
         methods: {
+            isFutureDate: isFutureDate,
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(store) {
                 this.$router.push({
                     name: 'show-store-home',
@@ -564,7 +554,7 @@
                     //  Stop loader
                     this.isLoadingStores = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -583,18 +573,15 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Store deleted');
+                            this.notificationState.showSuccessNotification('Store deleted');
 
                             //  If we are not deleting any other stores, then refresh the coupon list
                             if(this.isDeletingStoreIds.length == 0) this.getStores();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -605,7 +592,7 @@
                     //  Stop loader
                     this.isDeletingStoreIds.splice(this.isDeletingStoreIds.findIndex((id) => id == this.deletableStore.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

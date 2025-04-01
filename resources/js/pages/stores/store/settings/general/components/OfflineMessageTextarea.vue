@@ -7,7 +7,7 @@
         v-model="storeForm.offlineMessage"
         labelPopoverTitle="What Is This?"
         placeholder="Closed for the holidays"
-        :errorText="getFormError('offlineMessage')"
+        :errorText="formState.getFormError('offlineMessage')"
         labelPopoverDescription="The message to show to customers who visit your store while its offline (Not available to customers)">
     </TextareaInput>
 
@@ -15,18 +15,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { TextareaInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

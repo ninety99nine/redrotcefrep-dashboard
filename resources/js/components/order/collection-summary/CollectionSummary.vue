@@ -139,27 +139,16 @@
                     </Alert>
 
                     <!-- Collection Code Input -->
-                    <OtpInput v-model="collectionCode" :errorText="getFormError('collectionCode')" class="mb-8"></OtpInput>
+                    <OtpInput v-model="collectionCode" :errorText="formState.getFormError('collectionCode')" class="mb-8"></OtpInput>
 
                     <!-- Collection Note Textarea -->
                     <TextareaInput v-model="collectionNote"
                         label="Note (Optional)" placeholder="Collected by John Doe" :rows="2"
-                        :errorText="getFormError('collectionNote')"
+                        :errorText="formState.getFormError('collectionNote')"
                         labelPopoverTitle="What Is This?"
                         labelPopoverDescription="Important note regarding this order collection e.g Collected by John Doe">
                     </TextareaInput>
 
-                </div>
-
-            </template>
-
-            <template #trigger="triggerProps">
-
-                <div class="flex justify-end">
-                    <!-- Confirm Collection Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmCollection" size="xs" type="light" :action="triggerProps.showModal" :disabled="isUpdatingOrderStatus">
-                        Confirm Collection
-                    </PrimaryButton>
                 </div>
 
             </template>
@@ -175,20 +164,17 @@
 
     import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import { formattedDatetime } from '@Utils/dateUtils.js';
     import { postApi } from '@Repositories/api-repository.js';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
-        components: { Pill, Alert, ConfirmModal, TextareaInput, OtpInput, LineSkeleton, PrimaryButton, MoreInfoPopover },
+        inject: ['formState', 'storeState', 'notificationState'],
+        components: { Pill, Alert, ConfirmModal, TextareaInput, OtpInput, LineSkeleton, MoreInfoPopover },
         props: {
             order: {
                 type: Object
@@ -204,7 +190,6 @@
             return {
                 collectionCode: '',
                 collectionNote: '',
-                storeState: useStoreState(),
                 isUpdatingOrderStatus: false
             }
         },
@@ -223,6 +208,8 @@
             },
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             verifyOrderCollection(hideModal) {
 
                 //  Start loader
@@ -241,7 +228,7 @@
                         hideModal();
 
                         this.refreshOrder();
-                        this.showSuccessfulNotification('Order collection confirmed');
+                        this.notificationState.showSuccessNotification('Order collection confirmed');
 
                     }
 
@@ -253,7 +240,7 @@
                     //  Stop loader
                     this.isUpdatingOrderStatus = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

@@ -21,18 +21,13 @@
 <script>
 
 import CartTotals from '@Pages/shopping/components/CartTotals.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
 import ProductLines from '@Pages/shopping/components/ProductLines.vue';
 import NoProductLines from '@Pages/shopping/components/NoProductLines.vue';
 
 export default {
+    inject: ['shoppingCartState'],
     components: {
         CartTotals, ProductLines, NoProductLines
-    },
-    data() {
-        return {
-            shoppingCartState: useShoppingCartState()
-        };
     },
     computed: {
         hasCartProducts() {

@@ -1,24 +1,23 @@
 <template>
 
-    <ToogleSwitch
+    <ToggleSwitch
         size="md"
         v-model="form.active"
         labelPopoverTitle="What Is This?"
-        :errorText="getFormError('active')"
+        :errorText="formState.getFormError('active')"
         labelPopoverDescription="Turn on so that your delivery method is made available to customers. Turn off so that your delivery method not available to customers">
         Active
-    </ToogleSwitch>
+    </ToggleSwitch>
 
 </template>
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { ToogleSwitch },
+        inject: ['formState'],
+        components: { ToggleSwitch },
         props: {
             form: {
                 type: Object

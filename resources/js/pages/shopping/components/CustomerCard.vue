@@ -28,20 +28,15 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
 import CustomerEmailTextInput from '@Pages/shopping/components/CustomerEmailTextInput.vue';
 import CustomerLastNameTextInput from '@Pages/shopping/components/CustomerLastNameTextInput.vue';
 import CustomerFirstNameTextInput from '@Pages/shopping/components/CustomerFirstNameTextInput.vue';
 import CustomerMobileNumberTextInput from '@Pages/shopping/components/CustomerMobileNumberTextInput.vue';
 
 export default {
+    inject: ['storeState'],
     components: {
         CustomerEmailTextInput, CustomerLastNameTextInput, CustomerFirstNameTextInput, CustomerMobileNumberTextInput
-    },
-    data() {
-        return {
-            storeState: useStoreState()
-        };
     },
     computed: {
         storeForm() {

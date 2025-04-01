@@ -29,13 +29,10 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import TriggerSelectInput from '@Pages/stores/store/settings/workflows/components/trigger/TriggerSelectInput.vue';
     import ResourceSelectInput from '@Pages/stores/store/settings/workflows/components/trigger/ResourceSelectInput.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
         components: { TriggerSelectInput, ResourceSelectInput }
     };
 </script>

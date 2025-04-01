@@ -81,7 +81,6 @@
 <script>
 
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import { useOnboardingState } from '@Stores/onboarding-store.js';
     import UrlConfig from '@Pages/stores/onboarding/PaymentMethodConfigInputs/PaymentMethodConfigInput/UrlConfig.vue';
     import EmailConfig from '@Pages/stores/onboarding/PaymentMethodConfigInputs/PaymentMethodConfigInput/EmailConfig.vue';
     import ImageConfig from '@Pages/stores/onboarding/PaymentMethodConfigInputs/PaymentMethodConfigInput/ImageConfig.vue';
@@ -91,6 +90,7 @@
     import MobileNumberConfig from '@Pages/stores/onboarding/PaymentMethodConfigInputs/PaymentMethodConfigInput/MobileNumberConfig.vue';
 
     export default {
+        inject: ['onboardingState'],
         props: {
             paymentMethod: {
                 type: Object
@@ -102,11 +102,6 @@
         components: {
             TextInput, UrlConfig, EmailConfig, ImageConfig, SelectConfig,
             StringConfig, ContentConfig, MobileNumberConfig
-        },
-        data() {
-            return {
-                onboardingState: useOnboardingState(),
-            };
         },
         methods: {
             checkIfPaymentMethodConfigSchemaEntityPassesCondition(configSchemaEntity, configs) {

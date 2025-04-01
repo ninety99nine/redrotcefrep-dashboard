@@ -4,7 +4,7 @@
         label="Section heading"
         v-model="storeForm.name"
         placeholder="Baby Cakes 🧁"
-        :errorText="getFormError('name')"
+        :errorText="formState.getFormError('name')"
         labelPopoverTitle="What Is This?"
         labelPopoverDescription="The heading of the customer section">
     </TextInput>
@@ -13,18 +13,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import { useStoreState } from '@Stores/store-store.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { TextInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

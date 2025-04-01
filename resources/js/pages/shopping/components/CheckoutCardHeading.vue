@@ -24,40 +24,34 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import SearchInput from '@Partials/inputs/SearchInput.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
-import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
+    import SearchInput from '@Partials/inputs/SearchInput.vue';
+    import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
+    import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
 
-export default {
-    components: { SearchInput, CategoryHeading, CategoryOptions },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState(),
-        };
-    },
-    watch: {
-        'shoppingCartState.searchTerm'(newValue, oldValue) {
-            this.showShoppingProducts();
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        components: { SearchInput, CategoryHeading, CategoryOptions },
+        watch: {
+            'shoppingCartState.searchTerm'(newValue, oldValue) {
+                this.showShoppingProducts();
+            }
+        },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            isSearchingProducts() {
+                return this.shoppingCartState.isSearchingProducts;
+            },
+        },
+        methods: {
+            showShoppingProducts() {
+                return this.shoppingCartState.showShoppingProducts();
+            },
+            setIsSearchingProducts() {
+                return this.shoppingCartState.setIsSearchingProducts(true);
+            },
         }
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        },
-        isSearchingProducts() {
-            return this.shoppingCartState.isSearchingProducts;
-        },
-    },
-    methods: {
-        showShoppingProducts() {
-            return this.shoppingCartState.showShoppingProducts();
-        },
-        setIsSearchingProducts() {
-            return this.shoppingCartState.setIsSearchingProducts(true);
-        },
-    }
-};
+    };
+
 </script>

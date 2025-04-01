@@ -22,9 +22,10 @@
             </p>
 
             <!-- Proceed Button -->
-            <PrimaryButton :action="navigateToRegister" type="success">
-                <span class="mr-2">Let’s Create Your Store</span> 🚀
-            </PrimaryButton>
+            <Button :action="navigateToRegister" type="success">
+                <span class="mr-2">Let’s Create Your Store</span>
+                <span>🚀</span>
+            </Button>
 
             <!-- Register Link -->
              <div class="text-center">
@@ -44,12 +45,11 @@
 import settings from '@Js/settings.js';
 import Logo from '@Partials/logos/Logo.vue';
 import Alert from '@Partials/alerts/Alert.vue';
-import TextHeader from '@Partials/texts/TextHeader.vue';
+import Button from '@Partials/buttons/Button.vue';
 import ExternalLink from '@Partials/links/ExternalLink.vue';
-import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
 
 export default {
-    components: { Logo, Alert, TextHeader, ExternalLink, PrimaryButton },
+    components: { Logo, Alert, Button, ExternalLink },
     data() {
         return {
             appWebsiteUrl: settings.appWebsiteUrl

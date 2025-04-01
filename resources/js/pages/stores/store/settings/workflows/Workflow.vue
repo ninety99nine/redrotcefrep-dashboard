@@ -1,105 +1,107 @@
 <template>
 
-    <div class="bg-white shadow-lg border p-8 rounded-lg relative">
+    <div class="bg-white shadow-lg border p-8 rounded-lg relative space-y-4">
 
         <!-- Loading Backdrop -->
         <BackdropLoader v-if="isLoadingWorkflow || isSubmitting" class="rounded-lg"></BackdropLoader>
 
-        <form class="space-y-4" action="#" method="POST">
+        <div class="flex justify-start items-center border-dashed py-6">
 
-            <div class="flex justify-start items-center border-dashed py-6">
+            <!-- Back Button -->
+            <Button type="light" size="xs" icon="short-left-arrow" class="w-16 mr-4" :action="goBack"></Button>
 
-                <!-- Back Button -->
-                <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
-
-                <div v-if="isLoadingWorkflow" class="flex items-center space-x-2">
-                    <div class="flex space-x-2">
-                        <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
-                        <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
-                    </div>
+            <div v-if="isLoadingWorkflow" class="flex items-center space-x-2">
+                <div class="flex space-x-2">
+                    <LineSkeleton width="w-40" :shine="true"></LineSkeleton>
+                    <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
                 </div>
-
-                <template v-else>
-
-                    <TextHeader>{{ isCreating ? 'Add Workflow' : workflowForm.name }}</TextHeader>
-
-                    <!-- More Info Popover -->
-                    <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Workflows are automated processes that manage tasks like order alerts, payment links, and delivery updates for smooth operations and a seamless customer experience" placement="top"></MoreInfoPopover>
-
-                </template>
-
             </div>
 
-            <div :class="[workflowFormHasName && (mustSaveChanges || mustCreate || hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps) ? 'h-20 mb-8' : 'h-0 mb-0 p-0', 'transition-all duration-500 overflow-hidden']">
+            <template v-else>
 
-                <!-- Save Changes Info Alert -->
-                <Alert type="warning" class="flex justify-between items-center border border-dashed">
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ isCreating ? 'Add Workflow' : workflowForm.name }}</h1>
 
-                    <div class="flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                        </svg>
-                        <span>{{ isEditting ? 'Please save your changes' : 'Create your workflow' }}</span>
-                    </div>
+                <!-- More Info Popover -->
+                <MoreInfoPopover class="ml-2 mt-1" title="What Is This?" description="Workflows are automated processes that manage tasks like order alerts, payment links, and delivery updates for smooth operations and a seamless customer experience" placement="top"></MoreInfoPopover>
 
-                    <div class="flex items-center space-x-2">
+            </template>
 
-                        <!-- Undo Button -->
-                        <UndoButton :action="workflowState.reset" type="light" size="xs">
-                            <span class="ml-1">Undo</span>
-                        </UndoButton>
+        </div>
 
-                        <!-- Create / Save Changes Button -->
-                        <PrimaryButton :action="submit" :loading="isSubmitting" type="dark">
-                            <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
-                        </PrimaryButton>
+        <div :class="[workflowFormHasName && (mustSaveChanges || mustCreate || hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps) ? 'h-20 mb-8' : 'h-0 mb-0 p-0', 'transition-all duration-500 overflow-hidden']">
 
-                    </div>
-
-                </Alert>
-
-            </div>
-
-            <!-- Form Error Messages -->
-            <FormErrorMessages></FormErrorMessages>
-
-            <!-- Active Toggle Switch -->
-            <ActiveToggleSwitch></ActiveToggleSwitch>
-
-            <!-- Name Input -->
-            <NameTextInput></NameTextInput>
-
-            <!-- Trigger -->
-            <Trigger></Trigger>
-
-            <!-- Workflow Steps -->
-            <WorkflowSteps v-if="!isLoadingWorkflow"></WorkflowSteps>
-
-            <!-- Set Form Name Info Alert -->
-            <Alert v-if="!workflowFormHasName && (hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps)" type="warning" class="flex justify-between items-center mb-4">
+            <!-- Save Changes Info Alert -->
+            <Alert type="warning" class="flex justify-between items-center border border-dashed">
 
                 <div class="flex items-center space-x-2">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                     </svg>
-                    <span>Give your workflow a name</span>
+                    <span>{{ isEditting ? 'Please save your changes' : 'Create your workflow' }}</span>
+                </div>
+
+                <div class="flex items-center space-x-2">
+
+                    <!-- Undo Button -->
+                    <Button type="light" size="xs" :action="workflowState.reset">
+                        <span class="ml-1">Undo</span>
+                    </Button>
+
+                    <!-- Create / Save Changes Button -->
+                    <Button type="primary" size="xs" :action="submit" :loading="isSubmitting">
+                        <span>{{ isEditting ? 'Save Changes' : 'Create' }}</span>
+                    </Button>
+
                 </div>
 
             </Alert>
 
-            <!-- Create / Save Changes Button -->
-            <PrimaryButton :action="submit" :disabled="isSubmitting || !(workflowFormHasName && (mustSaveChanges || mustCreate || hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps))" type="dark" class="w-full">
-                <span>{{ isEditting || hasUnsavedWorkflowSteps ? 'Save Changes' : 'Create' }}</span>
-            </PrimaryButton>
+        </div>
 
-            <div>
+        <!-- Form Error Messages -->
+        <FormErrorMessages></FormErrorMessages>
 
-                <!-- Delete Workflow -->
-                <DeleteWorkflow class="mt-16"></DeleteWorkflow>
+        <!-- Active Toggle Switch -->
+        <ActiveToggleSwitch></ActiveToggleSwitch>
 
+        <!-- Name Input -->
+        <NameTextInput></NameTextInput>
+
+        <!-- Trigger -->
+        <Trigger></Trigger>
+
+        <!-- Workflow Steps -->
+        <WorkflowSteps v-if="!isLoadingWorkflow"></WorkflowSteps>
+
+        <!-- Set Form Name Info Alert -->
+        <Alert v-if="!workflowFormHasName && (hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps)" type="warning" class="flex justify-between items-center mb-4">
+
+            <div class="flex items-center space-x-2">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                <span>Give your workflow a name</span>
             </div>
 
-        </form>
+        </Alert>
+
+        <!-- Create / Save Changes Button -->
+        <Button
+            size="xs"
+            type="primary"
+            class="w-full"
+            :action="submit"
+            :disabled="isSubmitting || !(workflowFormHasName && (mustSaveChanges || mustCreate || hasUnsavedWorkflowSteps || hasUncreatedWorkflowSteps))">
+            <span>{{ isEditting || hasUnsavedWorkflowSteps ? 'Save Changes' : 'Create' }}</span>
+        </Button>
+
+        <div>
+
+            <!-- Delete Workflow -->
+            <DeleteWorkflow class="mt-16"></DeleteWorkflow>
+
+        </div>
+
     </div>
 
 </template>
@@ -108,14 +110,7 @@
 
     import cloneDeep from 'lodash/cloneDeep';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
@@ -128,17 +123,10 @@
     import ActiveToggleSwitch from '@Pages/stores/store/settings/workflows/components/ActiveToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'workflowState', 'notificationState'],
         components: {
-            Alert, TextHeader, BackButton, UndoButton, PrimaryButton, LineSkeleton, BackdropLoader, MoreInfoPopover,
+            Alert, Button, LineSkeleton, BackdropLoader, MoreInfoPopover,
             FormErrorMessages, Trigger, NameTextInput, WorkflowSteps, DeleteWorkflow, ActiveToggleSwitch
-        },
-        data() {
-            return {
-                apiState: useApiState(),
-                storeState: useStoreState(),
-                workflowState: useWorkflowState()
-            }
         },
         computed: {
             store() {
@@ -233,7 +221,7 @@
                     //  Stop loader
                     this.workflowState.setIsLoadingWorkflow(false);
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -261,11 +249,11 @@
                 await this.workflowState.updateWorkflowStepArrangement(false);
 
                 if(mustCreate) {
-                    this.showSuccessfulNotification('Workflow created');
+                    this.notificationState.showSuccessNotification('Workflow created');
                 }
 
                 if(mustSaveChanges) {
-                    this.showSuccessfulNotification('Workflow updated');
+                    this.notificationState.showSuccessNotification('Workflow updated');
                 }
 
                 if(this.workflowState.hasWorkflowSteps) {
@@ -289,10 +277,10 @@
             },
             createWorkflow: async function() {
 
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 if(this.workflowForm.name.trim() == '') {
-                    this.setFormError('name', 'Enter workflow name');
+                    this.formState.setFormError('name', 'Enter workflow name');
                 } else {
 
                     if(!this.mustCreate) return;
@@ -314,8 +302,8 @@
 
                             } else {
 
-                                this.setFormError('general', response.data.message);
-                                this.showUnsuccessfulNotification(response.data.message);
+                                this.formState.setFormError('general', response.data.message);
+                                this.notificationState.showWarningNotification(response.data.message);
 
                             }
                         }
@@ -325,17 +313,17 @@
                         // Stop loader
                         this.workflowState.setIsSubmittingWorkflow(false);
 
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
 
                     }
                 }
             },
             updateWorkflow: async function() {
 
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 if(this.workflowForm.name.trim() == '') {
-                    this.setFormError('name', 'Enter workflow name');
+                    this.formState.setFormError('name', 'Enter workflow name');
                 } else {
 
                     if(!this.mustSaveChanges) return;
@@ -357,8 +345,8 @@
 
                             } else {
 
-                                this.setFormError('general', response.data.message);
-                                this.showUnsuccessfulNotification(response.data.message);
+                                this.formState.setFormError('general', response.data.message);
+                                this.notificationState.showWarningNotification(response.data.message);
 
                             }
                         }
@@ -368,7 +356,7 @@
                         // Stop loader
                         this.workflowState.setIsSubmittingWorkflow(false);
 
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
 
                     }
                 }

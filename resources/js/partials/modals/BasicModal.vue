@@ -26,11 +26,11 @@
 </template>
 
 <script>
+
     import { initFlowbite, Modal } from 'flowbite';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
         props: {
             placement: {
                 type: String,
@@ -68,7 +68,7 @@
                 modal: null,
                 isOpen: false,
                 isClosing: false,
-                modalUniqueId: this.generateUniqueId('modal'),
+                modalUniqueId: generateUniqueId('modal'),
             };
         },
         watch: {

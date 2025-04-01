@@ -21,7 +21,7 @@
                 <slot name="prepend"></slot>
             </div>
 
-            <input ref="phoneInput" :id="uniqueId" :name="uniqueId" type="tel" autocomplete="tel" required
+            <input ref="phoneInput" :id="uniqueId" type="tel" autocomplete="tel" required
                     class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
 
             <!-- Suffix Slot -->

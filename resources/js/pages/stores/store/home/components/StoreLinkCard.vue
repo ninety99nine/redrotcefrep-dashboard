@@ -46,17 +46,12 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
-    import { useStoreState } from '@Stores/store-store.js';
     import CopyToClipboard from '@Partials/clipboards/CopyToClipboard.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             Button, CopyToClipboard
-        },
-        data() {
-            return {
-                storeState: useStoreState()
-            };
         },
         computed: {
             store() {

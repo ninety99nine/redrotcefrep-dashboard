@@ -41,9 +41,9 @@
                             <SelectInput
                                 class="w-full"
                                 v-model="workflowStepForm.settings.action"
-                                :errorText="getFormError('settingsAction')">
+                                :errorText="formState.getFormError('settingsAction')">
                                 <option v-for="action in actions" :key="action" :value="action">
-                                    {{ capitalize(action) }}
+                                    <span v-capitalize>{{ action }}</span>
                                 </option>
                             </SelectInput>
 
@@ -59,9 +59,9 @@
                         <SelectInput
                             class="w-60"
                             v-model="workflowStepForm.settings.recipient"
-                            :errorText="getFormError('settings.recipient')">
+                            :errorText="formState.getFormError('settings.recipient')">
                             <option v-for="recipient in recipients" :key="recipient" :value="recipient">
-                                {{ capitalize(recipient) }}
+                                <span v-capitalize>{{ recipient }}</span>
                             </option>
                         </SelectInput>
 
@@ -75,9 +75,9 @@
                         <SelectInput
                             class="w-60"
                             v-model="workflowStepForm.settings.template"
-                            :errorText="getFormError('settingsTemplate')">
+                            :errorText="formState.getFormError('settingsTemplate')">
                             <option v-for="template in templates" :key="template" :value="template">
-                                {{ capitalize(template) }}
+                                <span v-capitalize>{{ template }}</span>
                             </option>
                         </SelectInput>
 
@@ -165,15 +165,9 @@
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import UndoButton from '@Partials/buttons/UndoButton.vue';
+    import capitalize from '@Directives/capitalize.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import { postApi, putApi, deleteApi } from '@Repositories/api-repository.js';
@@ -185,11 +179,11 @@
     import ReviewLinkTextInput from '@Pages/stores/store/settings/workflows/components/workflow-step/ReviewLinkTextInput.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'workflowState'],
+        directives: { capitalize },
         components: {
-            Alert, TextHeader, UndoButton, SelectInput, SpinningLoader, PrimaryButton, MoreInfoPopover,
-            FormErrorMessages, BulkMobileNumberInput, NoteTextarea, EmailTextInput, AddDelayCheckbox,
-            AutoCancelCheckbox, ReviewLinkTextInput
+            Alert, SelectInput, SpinningLoader, MoreInfoPopover, FormErrorMessages, BulkMobileNumberInput,
+            NoteTextarea, EmailTextInput, AddDelayCheckbox, AutoCancelCheckbox, ReviewLinkTextInput
         },
         props: {
             index: {
@@ -205,24 +199,22 @@
                 isDeleting: false,
                 isSubmitting: false,
                 workflowStepForm: {},
-                apiState: useApiState(),
-                originalWorkflowStepForm: null,
-                workflowState: useWorkflowState()
+                originalWorkflowStepForm: null
             }
         },
         watch: {
             mustSaveChanges(newValue) {
                 if(newValue) {
-                    useWorkflowState().addUnsavedWorkflowStep(this.updateWorkflowStep);
+                    this.workflowState.addUnsavedWorkflowStep(this.updateWorkflowStep);
                 } else {
-                    useWorkflowState().removeUnsavedWorkflowStep(this.updateWorkflowStep);
+                    this.workflowState.removeUnsavedWorkflowStep(this.updateWorkflowStep);
                 }
             },
             mustCreate(newValue) {
                 if(newValue) {
-                    useWorkflowState().addUncreatedWorkflowStep(this.createWorkflowStep);
+                    this.workflowState.addUncreatedWorkflowStep(this.createWorkflowStep);
                 } else {
-                    useWorkflowState().removeUncreatedWorkflowStep(this.createWorkflowStep);
+                    this.workflowState.removeUncreatedWorkflowStep(this.createWorkflowStep);
                 }
             },
             'workflowForm.trigger'(newValue) {
@@ -422,26 +414,26 @@
             async createWorkflowStep() {
                 try {
 
-                    this.hideFormErrors();
+                    this.formState.hideFormErrors();
 
                     // Start loader
                     this.isSubmitting = true;
 
-                    const response = await postApi(useApiState().apiHome._links['createWorkflowStep'], this.parseForm());
+                    const response = await postApi(this.apiState.apiHome._links['createWorkflowStep'], this.parseForm());
 
                     if(response.status === 200) {
                         if(response.data.created) {
                             this.$emit('onCreated', response.data.workflowStep, this.index);
                             this.originalWorkflowStepForm = cloneDeep(this.workflowStepForm);
                         } else {
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
                         }
                     }
 
                 } catch (error) {
 
-                    this.setServerFormErrors(error);
+                    this.formState.setServerFormErrors(error);
 
                 } finally {
 
@@ -462,8 +454,8 @@
                         if(response.data.updated) {
                             // Workflow step updated
                         } else {
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
                         }
 
                         this.originalWorkflowStepForm = cloneDeep(this.workflowStepForm);
@@ -471,7 +463,7 @@
 
                 } catch (error) {
 
-                    this.setServerFormErrors(error);
+                    this.formState.setServerFormErrors(error);
 
                 } finally {
 
@@ -486,8 +478,8 @@
 
                     this.$emit('onDeleted', this.index);
 
-                    useWorkflowState().uncreatedWorkflowSteps.splice(
-                        useWorkflowState().uncreatedWorkflowSteps.indexOf(this.index), 1
+                    this.workflowState.uncreatedWorkflowSteps.splice(
+                        this.workflowState.uncreatedWorkflowSteps.indexOf(this.index), 1
                     );
 
                     return;
@@ -504,21 +496,21 @@
 
                             this.$emit('onDeleted', this.index);
 
-                            useWorkflowState().unsavedWorkflowSteps.splice(
-                                useWorkflowState().unsavedWorkflowSteps.indexOf(this.index), 1
+                            this.workflowState.unsavedWorkflowSteps.splice(
+                                this.workflowState.unsavedWorkflowSteps.indexOf(this.index), 1
                             );
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
@@ -530,7 +522,7 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -538,12 +530,12 @@
         },
         beforeUnmount() {
             this.workflowState.removeResetableWorkflowStep();
-            useWorkflowState().removeUncreatedWorkflowStep(this.createWorkflowStep);
+            this.workflowState.removeUncreatedWorkflowStep(this.createWorkflowStep);
         },
         created() {
             this.setFormFields();
-            if(this.mustCreate) useWorkflowState().addUncreatedWorkflowStep(this.createWorkflowStep);
-            useWorkflowState().addResetableWorkflowStep(this.reset);
+            if(this.mustCreate) this.workflowState.addUncreatedWorkflowStep(this.createWorkflowStep);
+            this.workflowState.addResetableWorkflowStep(this.reset);
         }
     };
 

@@ -17,9 +17,9 @@
                 <template #trigger="triggerProps">
 
                     <!-- Delete Delivery Method Button - Triggers Confirmation Modal -->
-                    <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
+                    <Button type="danger" size="xs" :action="triggerProps.showModal" :loading="isDeleting" class="w-60">
                         Delete Delivery Method
-                    </PrimaryButton>
+                    </Button>
 
                 </template>
 
@@ -33,16 +33,13 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { deleteApi } from '@Repositories/api-repository.js';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import { useDeliveryMethodState } from '@Stores/delivery-method-store.js';
 
     export default {
-        mixins: [FormMixin],
-        components: { ConfirmModal, PrimaryButton },
+        inject: ['formState', 'storeState', 'deliveryMethodState', 'notificationState'],
+        components: { Button, ConfirmModal },
         props: {
             form: {
                 type: Object
@@ -50,9 +47,7 @@
         },
         data() {
             return {
-                isDeleting: false,
-                storeState: useStoreState(),
-                deliveryMethodState: useDeliveryMethodState()
+                isDeleting: false
             }
         },
         computed: {
@@ -87,22 +82,19 @@
                                 window.scrollTo(0, 0);
                             });
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Delivery method deleted');
+                            this.notificationState.showSuccessNotification('Delivery method deleted');
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
                     }else{
 
-                        this.setFormError('general', response.data.message);
-                        this.showUnsuccessfulNotification(response.data.message);
+                        this.formState.setFormError('general', response.data.message);
+                        this.notificationState.showWarningNotification(response.data.message);
 
                     }
 
@@ -114,7 +106,7 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

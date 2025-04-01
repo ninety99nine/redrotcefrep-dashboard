@@ -58,8 +58,8 @@
                                 <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
                             </svg>
 
-                            <h1 :class="[{ 'text-green-500' : isPaid }, { 'text-red-500' : isFailedPayment }, { 'text-yellow-500' : isPendingPayment }, 'text-xl font-bold']">
-                                {{ capitalize(transaction.paymentStatus.name) }}
+                            <h1 v-capitalize :class="[{ 'text-green-500' : isPaid }, { 'text-red-500' : isFailedPayment }, { 'text-yellow-500' : isPendingPayment }, 'text-xl font-bold']">
+                                {{ transaction.paymentStatus.name }}
                             </h1>
                         </div>
 
@@ -157,15 +157,16 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import Button from '@Partials/buttons/Button.vue';
+    import capitalize from '@Directives/capitalize.js';
+    import { formattedDatetime } from '@Utils/dateUtils.js';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { getApi, postApi } from '@Repositories/api-repository.js';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState'],
+        directives: { capitalize },
         components: { Button, SpinningLoader, MoreInfoPopover },
         data() {
             return {
@@ -201,6 +202,7 @@
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
             changePricingPlan(activePricingPlan) {
                 this.activePricingPlan = activePricingPlan;
             },
@@ -227,7 +229,7 @@
                 }).catch(errorException => {
 
                     this.isLoadingTransaction = false;
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -264,7 +266,7 @@
                 }).catch(errorException => {
 
                     this.isRenewTransactionPaymentLink = false;
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

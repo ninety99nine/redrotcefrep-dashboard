@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
@@ -41,13 +41,12 @@
             default: 6
         },
         },
-        mixins: [UtilsMixin],
         components: { InputLabel, InputLabelDescription, InputErrorMessage },
         data() {
-        return {
-            otpDigits: Array(this.length).fill(''),
-            uniqueId: this.generateUniqueId('mobile_number')
-        };
+            return {
+                otpDigits: Array(this.length).fill(''),
+                uniqueId: generateUniqueId('mobile_number')
+            };
         },
         watch: {
             modelValue(newValue, oldValue) {

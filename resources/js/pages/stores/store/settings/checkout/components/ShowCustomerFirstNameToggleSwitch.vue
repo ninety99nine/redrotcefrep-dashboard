@@ -1,28 +1,21 @@
 <template>
 
-    <ToogleSwitch
+    <ToggleSwitch
         size="md"
         v-model="storeForm.online"
-        :errorText="getFormError('online')">
+        :errorText="formState.getFormError('online')">
         Show first name
-    </ToogleSwitch>
+    </ToggleSwitch>
 
 </template>
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { ToogleSwitch },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
+        inject: ['formState', 'storeState'],
+        components: { ToggleSwitch },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

@@ -3,7 +3,7 @@
     <Checkbox
         size="xs"
         v-model="workflowStepForm.settings.useReviewLink"
-        :errorText="getFormError('settingsUseReviewLink')">
+        :errorText="formState.getFormError('settingsUseReviewLink')">
         <div class="w-full mt-0.5 mx-2">
             <p class="font-bold text-sm mb-1">Use review link</p>
             <p class="text-sm text-gray-500 max-w-96">Provide a link that will be used to take reviews</p>
@@ -14,7 +14,7 @@
                     class="w-full p-0.5"
                     labelPopoverTitle="What Is This?"
                     v-model="workflowStepForm.settings.reviewLink"
-                    :errorText="getFormError('settingsReviewLink')"
+                    :errorText="formState.getFormError('settingsReviewLink')"
                     placeholder="https://paypal.me/baby-cakes"
                     :labelPopoverDescription="'The link that will be used to redirect customers to place a review. If not provided, '+appName+' will use its own review system'">
 
@@ -37,12 +37,11 @@
 <script>
 
     import settings from '@Js/settings.js';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { TextInput, Checkbox },
         props: {
             workflowStepForm: {

@@ -3,10 +3,15 @@ module.exports = {
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
         "./resources/**/*.vue",
+        'node_modules/preline/dist/*.js',
         "./node_modules/flowbite/**/*.js"
     ],
     theme: {
         extend: {
+            spacing: {
+              '13': '3.25rem', // 13 * 0.25rem = 3.25rem (52px)
+              '15': '3.75rem', // 15 * 0.25rem = 3.75rem (60px)
+            },
             gridTemplateColumns: {
                 // Standard grid configurations
                 '1': 'repeat(1, minmax(0, 1fr))',
@@ -35,6 +40,7 @@ module.exports = {
         },
     },
     plugins: [
-        require('flowbite/plugin')
+        require('preline/plugin'),
+        require('flowbite/plugin'),
     ],
 };

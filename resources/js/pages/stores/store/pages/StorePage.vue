@@ -5,23 +5,25 @@
         </template>
 
         <template v-else>
+
             <div class="flex flex-wrap gap-2 justify-center py-8">
+
                 <!-- Modes -->
                 <Pill
+                    size="md"
                     :key="index"
-                    size="px-4 py-2"
                     :showDot="false"
-                    :clickable="true"
-                    :text="mode.name"
-                    v-for="(mode, index) in modes"
                     :action="() => setMode(mode)"
+                    v-for="(mode, index) in modes"
                     :type="selectedMode == mode.value ? 'primary' : 'info'">
                     <template v-if="modeIcons[mode.value]">
                         <svg class="w-4 h-4 mr-1" :xmlns="modeIcons[mode.value].xmlns" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path :d="modeIcons[mode.value].path" />
                         </svg>
                     </template>
+                    <span>{{ mode.name }}</span>
                 </Pill>
+
             </div>
 
             <!-- Undo, Redo, and History -->
@@ -128,110 +130,106 @@
 </template>
 
 <script>
-import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-import { usePageState } from "@Stores/page-store.js";
-import Dropdown from "@Partials/dropdowns/Dropdown.vue";
-import SaveChanges from '@Partials/save-changes/SaveChanges.vue';
-import Pill from "@Partials/pills/Pill.vue";
-import PageSections from "@Pages/stores/store/pages/components/page-sections/PageSections.vue";
-import PageEditorDrawer from "@Pages/stores/store/pages/components/page-editor-drawer/PageEditorDrawer.vue";
+    import Dropdown from "@Partials/dropdowns/Dropdown.vue";
+    import { formattedRelativeDate } from '@Utils/dateUtils.js';
+    import SaveChanges from '@Partials/save-changes/SaveChanges.vue';
+    import Pill from "@Partials/pills/Pill.vue";
+    import PageSections from "@Pages/stores/store/pages/components/page-sections/PageSections.vue";
+    import PageEditorDrawer from "@Pages/stores/store/pages/components/page-editor-drawer/PageEditorDrawer.vue";
 
-export default {
-    mixins: [UtilsMixin],
-    components: {
-        Dropdown, SaveChanges, Pill, PageSections, PageEditorDrawer
-    },
-    data() {
-        return {
-            isSubmitting: false,
-            pageState: usePageState(),
-            modeIcons: {
-                "block builder": {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    path: "M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z",
+    export default {
+        inject: ['pageState'],
+        components: {
+            Dropdown, SaveChanges, Pill, PageSections, PageEditorDrawer
+        },
+        data() {
+            return {
+                isSubmitting: false,
+                modeIcons: {
+                    "block builder": {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        path: "M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z",
+                    },
+                    "visual builder": {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        path: "M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59",
+                    },
                 },
-                "visual builder": {
-                    xmlns: "http://www.w3.org/2000/svg",
-                    path: "M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59",
-                },
+            };
+        },
+        computed: {
+            page() {
+                return this.pageState.page;
             },
-        };
-    },
-    computed: {
-        page() {
-            return this.pageState.page;
+            modes() {
+                return this.pageState.modes;
+            },
+            selectedMode() {
+                return this.pageState.selectedMode;
+            },
+            isLoadingPage() {
+                return this.pageState.isLoadingPage;
+            },
+            isUpdatingPage() {
+                return this.pageState.isUpdatingPage;
+            },
+            updateProgress() {
+                return this.pageState.updateProgress;
+            },
+            mustSaveChanges() {
+                return this.pageState.mustSaveChanges;
+            },
+            canUndo() {
+                return this.pageState.canUndo;
+            },
+            canRedo() {
+                return this.pageState.canRedo;
+            },
+            history() {
+                return this.pageState.history;
+            },
+            historyItems() {
+                return this.pageState.historyItems;
+            },
         },
-        modes() {
-            return this.pageState.modes;
+        methods: {
+            formattedRelativeDate: formattedRelativeDate,
+            resetPageForm() {
+                this.pageState.resetPageForm();
+            },
+            updatePage() {
+                this.pageState.updatePage();
+            },
+            showPage() {
+                this.pageState.showPage(this.$route.params.page_href);
+            },
+            setMode(mode) {
+                this.pageState.setMode(mode);
+            },
+            undo() {
+                this.pageState.undo();
+            },
+            redo() {
+                this.pageState.redo();
+            },
+            jumpToHistory(index) {
+                this.pageState.jumpToHistory(index);
+            },
+            clearHistory() {
+                this.pageState.clearHistory();
+            },
+            buttonClasses(enabled) {
+                return [
+                    "w-8 h-8 p-2 flex items-center justify-center rounded-full",
+                    enabled
+                        ? "cursor-pointer text-blue-600 border border-blue-400 bg-blue-50 hover:text-blue-700 hover:border-blue-500 hover:bg-blue-100 active:scale-90 transition-all"
+                        : "cursor-not-allowed text-gray-300 border border-gray-200",
+                ];
+            }
         },
-        selectedMode() {
-            return this.pageState.selectedMode;
+        created() {
+            this.pageState.pageHref = this.$route.params.page_href;
+            this.showPage();
         },
-        isLoadingPage() {
-            return this.pageState.isLoadingPage;
-        },
-        isUpdatingPage() {
-            return this.pageState.isUpdatingPage;
-        },
-        updateProgress() {
-            return this.pageState.updateProgress;
-        },
-        mustSaveChanges() {
-            return this.pageState.mustSaveChanges;
-        },
-        canUndo() {
-            return this.pageState.canUndo;
-        },
-        canRedo() {
-            return this.pageState.canRedo;
-        },
-        history() {
-            return this.pageState.history;
-        },
-        historyItems() {
-            return this.pageState.history.timeline.map((item, index) => ({
-                ...item,
-                isActive: index === this.pageState.history.currentIndex
-            }));
-        },
-    },
-    methods: {
-        resetPageForm() {
-            this.pageState.resetPageForm();
-        },
-        updatePage() {
-            this.pageState.updatePage();
-        },
-        showPage() {
-            this.pageState.showPage(this.$route.params.page_href);
-        },
-        setMode(mode) {
-            this.pageState.setMode(mode);
-        },
-        undo() {
-            this.pageState.undo();
-        },
-        redo() {
-            this.pageState.redo();
-        },
-        jumpToHistory(index) {
-            this.pageState.jumpToHistory(index);
-        },
-        clearHistory() {
-            this.pageState.clearHistory();
-        },
-        buttonClasses(enabled) {
-            return [
-                "w-8 h-8 p-2 flex items-center justify-center rounded-full",
-                enabled
-                    ? "cursor-pointer text-blue-600 border border-blue-400 bg-blue-50 hover:text-blue-700 hover:border-blue-500 hover:bg-blue-100 active:scale-90 transition-all"
-                    : "cursor-not-allowed text-gray-300 border border-gray-200",
-            ];
-        }
-    },
-    created() {
-        this.pageState.pageHref = this.$route.params.page_href;
-        this.showPage();
-    },
-};
+    };
 </script>

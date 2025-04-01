@@ -39,11 +39,11 @@
                             </span>
                             <div class="space-x-1">
                                 <template v-if="product.allowVariations.name.toLowerCase() == 'yes'">
-                                    <Pill type="success" :text="product.totalVisibleVariations+(product.totalVisibleVariations == 1 ? ' option' : ' options')" :showDot="false"></Pill>
+                                    <Pill type="success" size="xs" :showDot="false">{{ product.totalVisibleVariations+(product.totalVisibleVariations == 1 ? ' option' : ' options') }}</Pill>
                                 </template>
                                 <template v-else>
-                                    <Pill v-if="product.isFree.status" type="success" text="free" :showDot="false"></Pill>
-                                    <Pill v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
+                                    <Pill v-if="product.isFree.status" type="success" size="xs" :showDot="false">free</Pill>
+                                    <Pill v-if="product.onSale.status" type="success" size="xs" :showDot="false">on sale</Pill>
                                     <span
                                         v-if="!product.isFree.status"
                                         class="text-sm text-[var(--product-price-color)] group-hover:text-[var(--product-price-color-hover)] transition-colors"
@@ -73,12 +73,12 @@
                                                 min="0"
                                                 @click.stop
                                                 type="number"
+                                                v-only-numbers
                                                 placeholder="..."
-                                                @input="validateQuantityInput($event)"
                                                 v-model="mappedCartProducts[product.id].quantity"
                                                 :style="{ '--product-quantity-color': storeForm.productQuantityColor, '--product-quantity-color-hover': storeForm.productHoverQuantityColor }"
-                                                class="w-10 border-0 rounded-full !ring-gray-300 remove-arrow p-0 bg-transparent text-center text-sm text-[var(--product-quantity-color)] group-hover:text-[var(--product-quantity-color-hover)] transition-colors">
-                                            </input>
+                                                class="w-10 border-0 rounded-full !ring-gray-300 remove-arrow p-0 bg-transparent text-center text-sm text-[var(--product-quantity-color)] group-hover:text-[var(--product-quantity-color-hover)] transition-colors"
+                                            />
                                         </div>
 
                                         <!-- Increase Quantity Icon Button -->
@@ -98,17 +98,17 @@
 
                                 </div>
 
-                                <PrimaryButton
+                                <Button
                                     v-else
                                     size="xs"
-                                    type="custom"
+                                    type="primary"
                                     :action="() => addToCart(product)"
                                     :bgColor="storeForm.secondaryButtonColor"
                                     :textColor="storeForm.secondaryButtonTextColor">
                                     <span class="whitespace-nowrap">
                                         {{ product.allowVariations.name.toLowerCase() == 'yes' ? 'Select option' : 'Add to cart' }}
                                     </span>
-                                </PrimaryButton>
+                                </Button>
 
                             </transition>
 
@@ -129,9 +129,9 @@
                             <span v-else class="text-xs inline-block" :style="'color:'+storeForm.textColor+';'">No products found</span>
                         </transition>
 
-                        <PrimaryButton
+                        <Button
                             size="xs"
-                            type="custom"
+                            type="primary"
                             :action="clearSearch"
                             v-if="!isSearchingProducts && hasSearchTerm"
                             :bgColor="storeForm.secondaryButtonColor"
@@ -143,7 +143,7 @@
                                 </svg>
                                 <span class="text-xs whitespace-nowrap">clear search</span>
                             </div>
-                        </PrimaryButton>
+                        </Button>
 
                     </div>
 
@@ -166,88 +166,82 @@
 
 <script>
 
-import Pill from '@Partials/pills/Pill.vue';
-import { useStoreState } from '@Stores/store-store.js';
-import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-import { ShoppingCartMixin } from '@Mixins/ShoppingCartMixin.js';
-import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
-import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
+    import onlyNumbers from '@Directives/onlyNumbers.js';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
+    import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
+    import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
 
-export default {
-    mixins: [ShoppingCartMixin],
-    components: { Pill, LineSkeleton, PrimaryButton, BackdropLoader, CategoryHeading, CategoryOptions },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    computed: {
-        store() {
-            return this.storeState.store;
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        directives: { onlyNumbers },
+        components: { Pill, Button, LineSkeleton, BackdropLoader, CategoryHeading, CategoryOptions },
+        computed: {
+            store() {
+                return this.storeState.store;
+            },
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            products() {
+                return this.shoppingCartState.products;
+            },
+            hasProducts() {
+                return this.shoppingCartState.hasProducts;
+            },
+            hasSearchTerm() {
+                return this.shoppingCartState.hasSearchTerm;
+            },
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            hasDetectedProductLineChanges() {
+                return this.detectedProductLineChanges.length > 0;
+            },
+            detectedProductLineChanges() {
+                return (((this.shoppingCart || {}).changes || {}).detectedProductLineChanges || []);
+            },
+            isLoadingProducts() {
+                return this.shoppingCartState.isLoadingProducts;
+            },
+            isSearchingProducts() {
+                return this.shoppingCartState.isSearchingProducts;
+            },
+            mappedCartProducts() {
+                return this.shoppingCartState.mappedCartProducts;
+            },
         },
-        storeForm() {
-            return this.storeState.storeForm;
+        methods: {
+            hasQuantity(productId) {
+                return this.shoppingCartState.hasQuantity(productId);
+            },
+            isAddedToCart(productId) {
+                return this.shoppingCartState.isAddedToCart(productId);
+            },
+            addToCart(product) {
+                this.shoppingCartState.addToCart(product);
+            },
+            increaseQuantity(productId) {
+                this.shoppingCartState.increaseQuantity(productId);
+            },
+            decreaseQuantity(productId) {
+                this.shoppingCartState.decreaseQuantity(productId);
+            },
+            removeFromCart(productId) {
+                this.shoppingCartState.removeFromCart(productId);
+            },
+            clearSearch() {
+                this.shoppingCartState.clearSearch();
+            },
+            showShoppingProducts() {
+                this.shoppingCartState.showShoppingProducts();
+            }
         },
-        products() {
-            return this.shoppingCartState.products;
-        },
-        hasProducts() {
-            return this.shoppingCartState.hasProducts;
-        },
-        hasSearchTerm() {
-            return this.shoppingCartState.hasSearchTerm;
-        },
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
-        },
-        hasDetectedProductLineChanges() {
-            return this.detectedProductLineChanges.length > 0;
-        },
-        detectedProductLineChanges() {
-            return (((this.shoppingCart || {}).changes || {}).detectedProductLineChanges || []);
-        },
-        isLoadingProducts() {
-            return this.shoppingCartState.isLoadingProducts;
-        },
-        isSearchingProducts() {
-            return this.shoppingCartState.isSearchingProducts;
-        },
-        mappedCartProducts() {
-            return this.shoppingCartState.mappedCartProducts;
-        },
-    },
-    methods: {
-        hasQuantity(productId) {
-            return this.shoppingCartState.hasQuantity(productId);
-        },
-        isAddedToCart(productId) {
-            return this.shoppingCartState.isAddedToCart(productId);
-        },
-        addToCart(product) {
-            this.shoppingCartState.addToCart(product);
-        },
-        increaseQuantity(productId) {
-            this.shoppingCartState.increaseQuantity(productId);
-        },
-        decreaseQuantity(productId) {
-            this.shoppingCartState.decreaseQuantity(productId);
-        },
-        removeFromCart(productId) {
-            this.shoppingCartState.removeFromCart(productId);
-        },
-        clearSearch() {
-            this.shoppingCartState.clearSearch();
-        },
-        showShoppingProducts() {
-            this.shoppingCartState.showShoppingProducts();
+        created() {
+            this.showShoppingProducts();
         }
-    },
-    created() {
-        this.showShoppingProducts();
-    }
-};
+    };
+
 </script>

@@ -43,79 +43,79 @@
 </template>
 
 <script>
-import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-export default {
-    mixins: [UtilsMixin],
-    components: { MoreInfoPopover, InputErrorMessage },
-    props: {
-        modelValue: {
-            type: [String, Number, Boolean],
-            required: true
-        },
-        value: {
-            type: [String, Number, Boolean],
-            required: true
-        },
-        label: {
-            type: String,
-            default: ''
-        },
-        size: {
-            type: String,
-            default: 'base',
-            options: ['xs', 'sm', 'base', 'lg']
-        },
-        disabled: {
-            type: Boolean,
-            default: false
-        },
-        labelPopoverTitle: {
-            type: String
-        },
-        labelPopoverDescription: {
-            type: String
-        },
-        errorText: {
-            type: String
-        },
-        groupName: {
-            type: String,
-            required: true
-        }
-    },
-    data() {
-        return {
-            localModelValue: this.modelValue,
-            uniqueId: this.generateUniqueId('radio')
-        };
-    },
-    watch: {
-        modelValue(newValue) {
-            this.localModelValue = newValue;
-        },
-        localModelValue(newValue) {
-            this.$emit('update:modelValue', newValue);
-        }
-    },
-    computed: {
-        textClass() {
-            let classes = ['font-medium text-gray-900 dark:text-gray-300'];
+    import { generateUniqueId } from '@Utils/generalUtils.js';
+    import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
+    import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-            if (this.size === 'xs') {
-                classes.push('text-xs');
-            } else if (this.size === 'sm') {
-                classes.push('text-sm');
-            } else if (this.size === 'base') {
-                classes.push('text-base');
-            } else if (this.size === 'lg') {
-                classes.push('text-lg');
+    export default {
+        components: { MoreInfoPopover, InputErrorMessage },
+        props: {
+            modelValue: {
+                type: [String, Number, Boolean],
+                required: true
+            },
+            value: {
+                type: [String, Number, Boolean],
+                required: true
+            },
+            label: {
+                type: String,
+                default: ''
+            },
+            size: {
+                type: String,
+                default: 'base',
+                options: ['xs', 'sm', 'base', 'lg']
+            },
+            disabled: {
+                type: Boolean,
+                default: false
+            },
+            labelPopoverTitle: {
+                type: String
+            },
+            labelPopoverDescription: {
+                type: String
+            },
+            errorText: {
+                type: String
+            },
+            groupName: {
+                type: String,
+                required: true
             }
+        },
+        data() {
+            return {
+                localModelValue: this.modelValue,
+                uniqueId: generateUniqueId('radio')
+            };
+        },
+        watch: {
+            modelValue(newValue) {
+                this.localModelValue = newValue;
+            },
+            localModelValue(newValue) {
+                this.$emit('update:modelValue', newValue);
+            }
+        },
+        computed: {
+            textClass() {
+                let classes = ['font-medium text-gray-900 dark:text-gray-300'];
 
-            return classes.join(' ');
+                if (this.size === 'xs') {
+                    classes.push('text-xs');
+                } else if (this.size === 'sm') {
+                    classes.push('text-sm');
+                } else if (this.size === 'base') {
+                    classes.push('text-base');
+                } else if (this.size === 'lg') {
+                    classes.push('text-lg');
+                }
+
+                return classes.join(' ');
+            }
         }
-    }
-};
+    };
 </script>

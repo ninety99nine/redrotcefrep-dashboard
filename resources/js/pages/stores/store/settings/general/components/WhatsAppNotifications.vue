@@ -16,10 +16,11 @@
             Set the primary WhatsApp number that your store will use
             to automatically send updates and notifications using
             <Pill
+                size="xs"
                 type="primary"
-                text="workflows"
                 :showDot="false"
-                :clickable="true" @action="() => {}">
+                :action="() => {}">
+                workflows
             </Pill>,
             ensuring clear and timely communication
         </p>
@@ -29,7 +30,7 @@
             label="WhatsApp Number"
             labelPopoverTitle="What Is This?"
             v-model="storeForm.whatsappMobileNumber"
-            :errorText="getFormError('whatsappMobileNumber')"
+            :errorText="formState.getFormError('whatsappMobileNumber')"
             labelPopoverDescription="The Whatsapp mobile number that will be used to send notifications via whatsapp to customers or team members">
         </MobileNumberInput>
 
@@ -39,19 +40,12 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import Pill from '@Partials/pills/Pill.vue';
+    import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { MobileNumberInput, Pill },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
+        inject: ['formState', 'storeState'],
+        components: { Pill, MobileNumberInput },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

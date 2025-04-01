@@ -4,20 +4,20 @@
         <template v-if="showingBasicTab">
 
             <!-- Visible -->
-            <ToogleSwitch
+            <ToggleSwitch
                 size="md"
                 v-model="pageState.pageForm.visible"
                 @change="saveStateDebounced(pageState.pageForm.visible ? 'Page visibility enabled' : 'Page visibility disabled')">
                 Visible
-            </ToogleSwitch>
+            </ToggleSwitch>
 
             <!-- Homepage -->
-            <ToogleSwitch
+            <ToggleSwitch
                 size="md"
                 v-model="pageState.pageForm.homepage"
                 @change="saveStateDebounced(pageState.pageForm.homepage ? 'Set as homepage' : 'Removed from homepage')">
                 Homepage
-            </ToogleSwitch>
+            </ToggleSwitch>
 
             <!-- Title -->
             <TextInput
@@ -48,18 +48,14 @@
 </template>
 
 <script>
-    import { usePageState } from "@Stores/page-store.js";
+
     import TextInput from '@Partials/inputs/TextInput.vue';
     import Colorpicker from '@Partials/colorpicker/Colorpicker.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        components: { TextInput, Colorpicker, ToogleSwitch },
-        data() {
-            return {
-                pageState: usePageState()
-            };
-        },
+        inject: ['pageState'],
+        components: { TextInput, Colorpicker, ToggleSwitch },
         computed: {
             showingBasicTab() {
                 return this.pageState.showingBasicTab;
@@ -74,4 +70,5 @@
             },
         },
     };
+
 </script>

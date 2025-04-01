@@ -77,19 +77,14 @@
 
 <script>
 
-    import { usePageState } from '@Stores/page-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import Pill from '@Partials/pills/Pill.vue';
     import SectionRows from '@Pages/stores/store/pages/components/section-rows/SectionRows.vue';
 
     export default {
+        inject: ['pageState'],
         components: {
             draggable: VueDraggableNext, Pill, SectionRows
-        },
-        data() {
-            return {
-                pageState: usePageState()
-            }
         },
         computed: {
             draggableClass() {

@@ -3,18 +3,13 @@ import { v4 as uuidv4 } from 'uuid';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 import cloneDeep from 'lodash/cloneDeep';
+import { TIP_TYPES } from '@Enums/enums.js';
 import { useApiState } from '@Stores/api-store.js';
 import { useAuthState } from '@Stores/auth-store.js';
 import { useFormState } from '@Stores/form-store.js';
 import { useStoreState } from '@Stores/store-store.js';
 import { getApi, postApi } from '@Repositories/api-repository.js';
 import { useNotificationState } from '@Stores/notification-store.js';
-
-export const TIP_TYPES = {
-    NONE: { type: 'none', value: 'none' },
-    FIXED: { type: 'fixed', value: 'specify' },
-    PERCENTAGE: (value) => ({ type: 'percentage', value }),
-};
 
 export const useShoppingCartState = defineStore('shoppingCart', {
     state: () => {
@@ -29,12 +24,10 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             shoppingCartForm: null,
             mappedCartProducts: {},
             isCreatingOrder: false,
-            apiState: useApiState(),
             nonSelectedProducts: [],
             productsPagination: null,
             isLoadingProducts: false,
             shoppingCartDrawer: null,
-            authState: useAuthState(),
             isSearchingProducts: false,
             originalShoppingCartForm: null,
             isInspectingShoppingCart: false,
@@ -153,15 +146,15 @@ export const useShoppingCartState = defineStore('shoppingCart', {
             this.tip = tip;
 
             switch (tip.type) {
-                case 'none':
+                case TIP_TYPES.NONE.type:
                     this.shoppingCartForm.tipFlatRate = null;
                     this.shoppingCartForm.tipPercentageRate = null;
                     break;
-                case 'fixed':
+                case TIP_TYPES.FLAT.type:
                     this.shoppingCartForm.tipFlatRate = '0.00';
                     this.shoppingCartForm.tipPercentageRate = null;
                     break;
-                case 'percentage':
+                case TIP_TYPES.PERCENTAGE.type:
                     this.shoppingCartForm.tipFlatRate = null;
                     this.shoppingCartForm.tipPercentageRate = tip.value;
                     break;
@@ -196,7 +189,7 @@ export const useShoppingCartState = defineStore('shoppingCart', {
                 },
             };
 
-            if(!this.authState.hasAuthUser) this.shoppingCartForm.guestId = uuidv4();
+            if(!useAuthState().hasAuthUser) this.shoppingCartForm.guestId = uuidv4();
 
             this.setOriginalShoppingCartForm();
 
@@ -372,7 +365,7 @@ export const useShoppingCartState = defineStore('shoppingCart', {
                     quantity: product.quantity
                 }));
 
-            postApi(this.apiState.apiHome['_links']['inspectShoppingCart'], this.parseForm()).then(response => {
+            postApi(useApiState().apiHome['_links']['inspectShoppingCart'], this.parseForm()).then(response => {
                 if (response.status === 200) {
                     this.setShoppingCart(response.data);
                 }
@@ -401,12 +394,12 @@ export const useShoppingCartState = defineStore('shoppingCart', {
 
                     if(response.data.created) {
 
-                        useNotificationState().addSuccessNotification('Order placed');
+                        useNotificationState().showSuccessNotification('Order placed');
 
                     }else{
 
                         useFormState().setGeneralFormError(response.data.message);
-                        useNotificationState().addWarningNotification(response.data.message);
+                        useNotificationState().showWarningNotification(response.data.message);
 
                     }
 
@@ -467,8 +460,8 @@ export const useShoppingCartState = defineStore('shoppingCart', {
         hasDiscounts() {
             return this.hasShoppingCart && Object.keys(this.shoppingCart.totals.discounts).length > 0;
         },
-        hasAdditionalFees() {
-            return this.hasShoppingCart && Object.keys(this.shoppingCart.totals.additionalFees).length > 0;
+        hasFees() {
+            return this.hasShoppingCart && Object.keys(this.shoppingCart.totals.fees).length > 0;
         },
         hasShoppingCartProducts() {
             return this.hasShoppingCart && this.shoppingCart.totalsSummary.orderProducts.totalUncancelled > 0;

@@ -7,24 +7,20 @@
         </div>
     </transition>
 </template>
+
 <script>
 
-import Logo from '@Partials/logos/Logo.vue';
-import { useLoaderState } from '@Stores/loader-store.js';
-import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
+    import Logo from '@Partials/logos/Logo.vue';
+    import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
 
-export default {
-    components: { Logo, SpinningLoader },
-    data() {
-        return {
-            loader: useLoaderState()
-        };
-    },
-    computed: {
-        isVisible() {
-            return this.loader.isVisible;
+    export default {
+        inject: ['loaderState'],
+        components: { Logo, SpinningLoader },
+        computed: {
+            isVisible() {
+                return this.loaderState.isVisible;
+            }
         }
-    }
-};
+    };
 
 </script>

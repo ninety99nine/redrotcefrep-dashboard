@@ -21,36 +21,30 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import CartTotals from '@Pages/shopping/components/CartTotals.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import ProductLines from '@Pages/shopping/components/ProductLines.vue';
-import NoProductLines from '@Pages/shopping/components/NoProductLines.vue';
-import AddProductModal from '@Pages/shopping/components/AddProductModal.vue';
+    import CartTotals from '@Pages/shopping/components/CartTotals.vue';
+    import ProductLines from '@Pages/shopping/components/ProductLines.vue';
+    import NoProductLines from '@Pages/shopping/components/NoProductLines.vue';
+    import AddProductModal from '@Pages/shopping/components/AddProductModal.vue';
 
-export default {
-    components: {
-        CartTotals, ProductLines, NoProductLines, AddProductModal
-    },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        components: {
+            CartTotals, ProductLines, NoProductLines, AddProductModal
         },
-        hasCartProducts() {
-            return this.shoppingCartState.hasCartProducts();
-        },
-        hasShoppingCartProducts() {
-            return this.shoppingCartState.hasShoppingCartProducts;
-        },
-        isInspectingShoppingCart() {
-            return this.shoppingCartState.isInspectingShoppingCart;
-        },
-    }
-};
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            hasCartProducts() {
+                return this.shoppingCartState.hasCartProducts();
+            },
+            hasShoppingCartProducts() {
+                return this.shoppingCartState.hasShoppingCartProducts;
+            },
+            isInspectingShoppingCart() {
+                return this.shoppingCartState.isInspectingShoppingCart;
+            },
+        }
+    };
+
 </script>

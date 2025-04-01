@@ -10,7 +10,7 @@
                 placeholder="123456789"
                 labelPopoverTitle="What Is This?"
                 v-model="localModelValue.companyToken"
-                :errorText="getFormError('companyToken')"
+                :errorText="formState.getFormError('companyToken')"
                 labelPopoverDescription="The DPO company token that identifies the DPO account used to receive payments">
             </TextInput>
 
@@ -28,7 +28,7 @@
                 size="xs"
                 class="mt-1"
                 v-model="localModelValue.emailPaymentRequest"
-                :errorText="getFormError('emailPaymentRequest')">
+                :errorText="formState.getFormError('emailPaymentRequest')">
                 <div class="space-y-1 mt-0.5">
                     <p class="font-bold text-sm mx-2">Email Payment Request</p>
                     <p class="text-sm text-gray-500 mx-2">Automatically send a payment request to the customer's email</p>
@@ -44,7 +44,7 @@
                 label="Secret Token"
                 :showForgotPassword="false"
                 v-model="localModelValue.secretToken"
-                :errorText="getFormError('secretToken')"
+                :errorText="formState.getFormError('secretToken')"
                 labelPopoverDescription="The Stripe secret token - Check your Stripe developer dashboard to get your API secret key">
             </PasswordInput>
 
@@ -53,7 +53,7 @@
                 label="Public Token"
                 :showForgotPassword="false"
                 v-model="localModelValue.publicToken"
-                :errorText="getFormError('publicToken')"
+                :errorText="formState.getFormError('publicToken')"
                 labelPopoverDescription="The Stripe public token - Check your Stripe developer dashboard to get your API public key">
             </PasswordInput>
 
@@ -66,7 +66,7 @@
                 label="Payment Link"
                 labelPopoverTitle="What Is This?"
                 v-model="localModelValue.paymentLink"
-                :errorText="getFormError('paymentLink')"
+                :errorText="formState.getFormError('paymentLink')"
                 placeholder="https://paypal.me/baby-cakes"
                 labelPopoverDescription="The PayPal payment link - Check your PayPal developer dashboard to get your payment link">
 
@@ -88,14 +88,13 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import CountrySelectInput from '@Partials/inputs/CountrySelectInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: {
             TextInput, Checkbox, PasswordInput, CountrySelectInput
         },

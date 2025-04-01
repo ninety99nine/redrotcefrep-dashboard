@@ -5,7 +5,7 @@
         <div class="flex justify-start items-center border-dashed py-6">
 
             <!-- Back Button -->
-            <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
+            <Button type="light" size="xs" class="w-16 mr-4" :action="goBack"></Button>
 
             <div v-if="isLoadingTeamMember" class="flex items-center space-x-2">
                 <div class="flex space-x-2">
@@ -19,9 +19,9 @@
 
                 <div class="flex items-center space-x-2">
 
-                    <TextHeader>{{ isInviting ? 'Add Team Member' : teamMember._attributes.name }}</TextHeader>
-                    <Pill v-if="isEditting" :type="isCreator ? 'success' : 'info'" :text="teamMemberRole" :showDot="isCreator"></Pill>
-                    <Pill v-if="isEditting" :type="isInvited ? 'warning' : 'info'" :text="teamMemberStatus" :showDot="isCreator"></Pill>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ isInviting ? 'Add Team Member' : teamMember._attributes.name }}</h1>
+                    <Pill v-if="isEditting" :type="isCreator ? 'success' : 'info'" size="xs" :showDot="isCreator">{{ teamMemberRole }}</Pill>
+                    <Pill v-if="isEditting" :type="isInvited ? 'warning' : 'info'" size="xs" :showDot="isCreator">{{ teamMemberStatus }}</Pill>
 
                 </div>
 
@@ -31,198 +31,192 @@
             </template>
         </div>
 
-        <!-- Team Member Form -->
-        <form class="relative" action="#" method="POST">
+        <!-- General Error Info Alert -->
+        <Alert v-if="mustInvite || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
 
-            <!-- General Error Info Alert -->
-            <Alert v-if="mustInvite || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                <span>{{ isInviting ? 'Invite your team member' : 'Please save your changes'}}</span>
+            </div>
 
-                <div class="flex items-center space-x-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                    </svg>
-                    <span>{{ isInviting ? 'Invite your team member' : 'Please save your changes'}}</span>
+            <!-- Invite Team Member / Save Changes Button -->
+            <Button type="primary" size="xs" :action="isInviting ? inviteTeamMember : updateTeamMember" :loading="isSubmitting" class="w-40">
+                {{ isInviting ? 'Invite' : 'Save Changes' }}
+            </Button>
+
+        </Alert>
+
+        <!-- Form Error Messages -->
+        <FormErrorMessages></FormErrorMessages>
+
+        <div class="grid grid-cols-12 gap-4 mb-8">
+
+            <div class="col-span-8 relative">
+
+                <!-- Loading Backdrop -->
+                <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" class="rounded-lg"></BackdropLoader>
+
+                <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
+
+                    <template v-if="isInviting">
+
+                        <p class="font-bold text-sm">Invitation</p>
+
+                        <p class="text-sm text-gray-400">Enter the mobile number of the person you want to invite e.g +26772000001</p>
+
+                    </template>
+
+                    <!-- Mobile Number Input -->
+                    <MobileNumberInput
+                        v-if="isInviting"
+                        v-model="form.mobileNumbers[0]"
+                        labelPopoverTitle="What Is This?"
+                        :errorText="formState.getFormError('mobileNumbers0')"
+                        labelPopoverDescription="The mobile number that will be used by customers as the primary contact number of your store">
+                    </MobileNumberInput>
+
+                    <div v-else>
+                        <div class="flex items-center space-x-2">
+                            <span>Mobile Number: </span>
+                            <LineSkeleton v-if="isLoadingTeamMember" width="w-24" :shine="true"></LineSkeleton>
+                            <span v-else class="font-bold">{{ (teamMember.mobileNumber || {}).national || teamMember._relationships.userStoreAssociation.mobileNumber.national }}</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Invite Team Member / Save Changes Button -->
-                <PrimaryButton :action="isInviting ? inviteTeamMember : updateTeamMember" :loading="isSubmitting" class="w-40">
-                    {{ isInviting ? 'Invite' : 'Save Changes' }}
-                </PrimaryButton>
+                <div class="bg-white shadow-lg rounded-lg border p-4">
 
-            </Alert>
+                    <div v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions || isLoadingAvailableTeamMemberPermissions" class="space-y-4">
+                        <LineSkeleton width="w-24" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-60" :shine="true"></LineSkeleton>
+                    </div>
 
-            <!-- Form Error Messages -->
-            <FormErrorMessages></FormErrorMessages>
+                    <div v-else class="space-y-2">
 
-            <div class="grid grid-cols-12 gap-4 mb-8">
+                        <template v-if="isMe">
 
-                <div class="col-span-8 relative">
+                            <!-- Info Alert -->
+                            <Alert v-if="form.hasFullPermissions" class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                </svg>
+                                <span>You cannot change your own permissions</span>
+                            </Alert>
+
+                        </template>
+
+                        <template v-else>
+
+                            <Checkbox
+                                label="Grant Full Permissions"
+                                v-model="form.hasFullPermissions"
+                                labelPopoverTitle="What Is This?"
+                                labelPopoverDescription="The team member will be granted all available permissions when this is checked">
+                            </Checkbox>
+
+                            <!-- Info Alert -->
+                            <Alert v-if="form.hasFullPermissions">
+                                This team member has been granted <span class="font-bold">Full Permissions</span> to manage this store
+                            </Alert>
+
+                            <!-- Permission Input Tags -->
+                            <SelectInputTags
+                                v-else
+                                class="w-full"
+                                label="Permissions"
+                                :tags="form.permissions"
+                                labelPopoverTitle="What Is This?"
+                                :errorText="formState.getFormError('permissions')"
+                                :selectableTags="teamMemberPermissionOptions"
+                                @onTagsChanged="(newValues) => form.permissions = newValues"
+                                labelPopoverDescription="Set the permissions for your team member"
+                            />
+
+                        </template>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-span-4">
+
+
+                <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
 
                     <!-- Loading Backdrop -->
-                    <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" class="rounded-lg"></BackdropLoader>
+                    <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" :showSpinningLoader="false" class="rounded-lg"></BackdropLoader>
 
-                    <div class="space-y-4 bg-white shadow-lg rounded-lg border p-4 mb-4">
+                    <!-- Permissions Title -->
+                    <div class="flex items-center space-x-4 mb-2">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                            </svg>
 
-                        <template v-if="isInviting">
-
-                            <p class="font-bold text-sm">Invitation</p>
-
-                            <p class="text-sm text-gray-400">Enter the mobile number of the person you want to invite e.g +26772000001</p>
-
-                        </template>
-
-                        <!-- Mobile Number Input -->
-                        <MobileNumberInput
-                            v-if="isInviting"
-                            v-model="form.mobileNumbers[0]"
-                            labelPopoverTitle="What Is This?"
-                            :errorText="getFormError('mobileNumbers0')"
-                            labelPopoverDescription="The mobile number that will be used by customers as the primary contact number of your store">
-                        </MobileNumberInput>
-
-                        <div v-else>
-                            <div class="flex items-center space-x-2">
-                                <span>Mobile Number: </span>
-                                <LineSkeleton v-if="isLoadingTeamMember" width="w-24" :shine="true"></LineSkeleton>
-                                <span v-else class="font-bold">{{ (teamMember.mobileNumber || {}).national || teamMember._relationships.userStoreAssociation.mobileNumber.national }}</span>
-                            </div>
+                            <p class="font-bold text-lg">Permissions</p>
                         </div>
-
+                        <Pill type="primary" size="xs" :showDot="false">{{ form.hasFullPermissions ? 'All' : totalPermissions }}</Pill>
                     </div>
 
-                    <div class="bg-white shadow-lg rounded-lg border p-4">
+                    <!-- Permissions Description -->
+                    <p class="text-sm text-gray-400 border-b border-dashed pb-2 mb-4">See permissions granted</p>
 
-                        <div v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions || isLoadingAvailableTeamMemberPermissions" class="space-y-4">
-                            <LineSkeleton width="w-24" :shine="true"></LineSkeleton>
-                            <LineSkeleton width="w-60" :shine="true"></LineSkeleton>
-                        </div>
-
-                        <div v-else class="space-y-2">
-
-                            <template v-if="isMe">
-
-                                <!-- Info Alert -->
-                                <Alert v-if="form.hasFullPermissions" class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                                    </svg>
-                                    <span>You cannot change your own permissions</span>
-                                </Alert>
-
-                            </template>
-
-                            <template v-else>
-
-                                <Checkbox
-                                    label="Grant Full Permissions"
-                                    v-model="form.hasFullPermissions"
-                                    labelPopoverTitle="What Is This?"
-                                    labelPopoverDescription="The team member will be granted all available permissions when this is checked">
-                                </Checkbox>
-
-                                <!-- Info Alert -->
-                                <Alert v-if="form.hasFullPermissions">
-                                    This team member has been granted <span class="font-bold">Full Permissions</span> to manage this store
-                                </Alert>
-
-                                <!-- Permission Input Tags -->
-                                <SelectInputTags
-                                    v-else
-                                    class="w-full"
-                                    label="Permissions"
-                                    :tags="form.permissions"
-                                    labelPopoverTitle="What Is This?"
-                                    :errorText="getFormError('permissions')"
-                                    :selectableTags="teamMemberPermissionOptions"
-                                    @onTagsChanged="(newValues) => form.permissions = newValues"
-                                    labelPopoverDescription="Set the permissions for your team member"
-                                />
-
-                            </template>
-
-                        </div>
-
+                    <!-- Instructions Loader -->
+                    <div v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions" class="space-y-4">
+                        <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
+                        <LineSkeleton width="w-60" :shine="true"></LineSkeleton>
                     </div>
 
-                </div>
-
-                <div class="col-span-4">
-
-
-                    <div class="flex flex-col justify-between bg-white shadow-lg rounded-lg border p-4 relative">
-
-                        <!-- Loading Backdrop -->
-                        <BackdropLoader v-if="isLoadingTeamMember || isSubmitting" :showSpinningLoader="false" class="rounded-lg"></BackdropLoader>
-
-                        <!-- Permissions Title -->
-                        <div class="flex items-center space-x-4 mb-2">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                                </svg>
-
-                                <p class="font-bold text-lg">Permissions</p>
-                            </div>
-
-                            <Pill type="primary" :text="form.hasFullPermissions ? 'All' : totalPermissions" :showDot="false"></Pill>
+                    <!-- Instructions -->
+                    <div v-else-if="hasPermissions" class="space-y-2">
+                        <div v-for="(permission, index) in form.permissions" :key="index" class="flex space-x-2 px-2 border-l-4 border-green-300">
+                            <p class="text-xs">{{ permission.text }}</p>
                         </div>
-
-                        <!-- Permissions Description -->
-                        <p class="text-sm text-gray-400 border-b border-dashed pb-2 mb-4">See permissions granted</p>
-
-                        <!-- Instructions Loader -->
-                        <div v-if="isLoadingTeamMember || isLoadingTeamMemberPermissions" class="space-y-4">
-                            <LineSkeleton width="w-32" :shine="true"></LineSkeleton>
-                            <LineSkeleton width="w-60" :shine="true"></LineSkeleton>
-                        </div>
-
-                        <!-- Instructions -->
-                        <div v-else-if="hasPermissions" class="space-y-2">
-                            <div v-for="(permission, index) in form.permissions" :key="index" class="flex space-x-2 px-2 border-l-4 border-green-300">
-                                <p class="text-xs">{{ permission.text }}</p>
-                            </div>
-                        </div>
-
-                        <Alert v-else>
-                            No permissions granted
-                        </Alert>
-
                     </div>
+
+                    <Alert v-else>
+                        No permissions granted
+                    </Alert>
 
                 </div>
 
             </div>
 
-            <div v-if="teamMember && !isCreator" class="space-y-4 shadow-lg rounded-lg border border-red-300 bg-red-50 p-4">
+        </div>
 
-                <!-- Remove Team Member Info -->
-                <p>Do you want to remove <span class="font-bold text-black">{{ teamMember._attributes.name }}</span>?</p>
+        <div v-if="teamMember && !isCreator" class="space-y-4 shadow-lg rounded-lg border border-red-300 bg-red-50 p-4">
 
-                <div class="flex justify-end">
+            <!-- Remove Team Member Info -->
+            <p>Do you want to remove <span class="font-bold text-black">{{ teamMember._attributes.name }}</span>?</p>
 
-                    <ConfirmModal approveText="Remove Team Member" :approveAction="deleteTeamMember" :isLoading="isDeleting">
+            <div class="flex justify-end">
 
-                        <template #content>
-                            <p class="text-lg font-bold border-b border-dashed pb-4 mb-4">Confirm Delete</p>
-                            <p class="mb-8">Are you sure you want to remove <span class="font-bold text-black">{{ teamMember._attributes.name }}</span>?</p>
-                        </template>
+                <ConfirmModal approveText="Remove Team Member" :approveAction="deleteTeamMember" :isLoading="isDeleting">
 
-                        <template #trigger="triggerProps">
+                    <template #content>
+                        <p class="text-lg font-bold border-b border-dashed pb-4 mb-4">Confirm Delete</p>
+                        <p class="mb-8">Are you sure you want to remove <span class="font-bold text-black">{{ teamMember._attributes.name }}</span>?</p>
+                    </template>
 
-                            <!-- Remove Team Member Button - Triggers Confirmation Modal -->
-                            <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-60" type="danger">
-                                Remove Team Member
-                            </PrimaryButton>
+                    <template #trigger="triggerProps">
 
-                        </template>
+                        <!-- Remove Team Member Button - Triggers Confirmation Modal -->
+                        <Button type="danger" size="xs" :action="triggerProps.showModal" :loading="isDeleting" class="w-60">
+                            Remove Team Member
+                        </Button>
 
-                    </ConfirmModal>
+                    </template>
 
-                </div>
+                </ConfirmModal>
 
             </div>
 
-        </form>
+        </div>
 
     </div>
 
@@ -233,19 +227,13 @@
     import cloneDeep from 'lodash/cloneDeep';
     import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useAuthState } from '@Stores/auth-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
@@ -256,12 +244,11 @@
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [UtilsMixin, FormMixin],
+        inject: ['authState', 'formState', 'storeState', 'notificationState'],
         components: {
-            Pill, Alert, TextInput, TextHeader, Checkbox, InputTags, BackButton, NumberInput,
-            SelectInput, ConfirmModal, PrimaryButton, LineSkeleton, SpinningLoader,
-            SelectInputTags, MoreInfoPopover, BackdropLoader, MobileNumberInput,
-            FormErrorMessages
+            Pill, Alert, Button, TextInput, Checkbox, InputTags, NumberInput, SelectInput, ConfirmModal,
+            LineSkeleton, SpinningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader,
+            MobileNumberInput, FormErrorMessages
         },
         data() {
             return {
@@ -274,9 +261,7 @@
                 isDeleting: false,
                 originalForm: null,
                 isSubmitting: false,
-                authState: useAuthState(),
                 isLoadingTeamMember: false,
-                storeState: useStoreState(),
                 selectedAllPermissions: false,
                 teamMemberPermissionOptions: [],
                 isLoadingTeamMemberPermissions: false,
@@ -378,7 +363,7 @@
                     //  Stop loader
                     this.isLoadingTeamMember = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -410,7 +395,7 @@
                     //  Stop loader
                     this.isLoadingTeamMemberPermissions = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -437,7 +422,7 @@
                     //  Stop loader
                     this.isLoadingAvailableTeamMemberPermissions = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -462,7 +447,7 @@
                 postApi(this.store._links.inviteStoreTeamMembers, data).then(response => {
 
                     if(response.status == 200) {
-                        this.showSuccessfulNotification(response.data.message);
+                        this.notificationState.showSuccessNotification(response.data.message);
 
                         //  Navigate to show team members
                         this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
@@ -480,7 +465,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -512,10 +497,7 @@
 
                             this.originalForm = cloneDeep(this.form);
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Team member updated');
+                            this.notificationState.showSuccessNotification('Team member updated');
 
                             if(this.form.hasFullPermissions) {
                                 this.showStoreTeamMemberPermissions();
@@ -525,8 +507,8 @@
 
                             this.form = cloneDeep(this.originalForm);
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -540,7 +522,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -560,10 +542,7 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification(response.data.message);
+                            this.notificationState.showSuccessNotification(response.data.message);
 
                             //  Navigate to show team members
                             this.$router.push({ name: 'show-store-team-members', params: { 'store_href': this.store._links.showStore } });
@@ -573,8 +552,8 @@
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -588,7 +567,7 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

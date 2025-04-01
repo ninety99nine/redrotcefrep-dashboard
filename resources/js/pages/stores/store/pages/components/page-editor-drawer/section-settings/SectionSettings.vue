@@ -4,12 +4,12 @@
         <template v-if="showingBasicTab">
 
             <!-- Visible -->
-            <ToogleSwitch
+            <ToggleSwitch
                 size="md"
                 v-model="pageState.pageForm.sections[this.pageState.sectionIndex].visible"
                 @change="saveStateDebounced(pageState.pageForm.sections[this.pageState.sectionIndex].visible ? 'Section visibility enabled' : 'Section visibility disabled')">
                 Visible
-            </ToogleSwitch>
+            </ToggleSwitch>
 
             <!-- Name -->
             <TextInput
@@ -119,20 +119,16 @@
 </template>
 
 <script>
-    import { usePageState } from "@Stores/page-store.js";
+
     import TextInput from '@Partials/inputs/TextInput.vue';
     import Colorpicker from '@Partials/colorpicker/Colorpicker.vue';
     import RangeSlider from '@Partials/range-sliders/RangeSlider.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import DividerSelectInput from '@Pages/stores/store/pages/components/page-editor-drawer/section-settings/DividerSelectInput.vue';
 
     export default {
-        components: { TextInput, Colorpicker, RangeSlider, ToogleSwitch, DividerSelectInput },
-        data() {
-            return {
-                pageState: usePageState()
-            };
-        },
+        inject: ['pageState'],
+        components: { TextInput, Colorpicker, RangeSlider, ToggleSwitch, DividerSelectInput },
         computed: {
             showingBasicTab() {
                 return this.pageState.showingBasicTab;

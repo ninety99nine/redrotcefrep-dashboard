@@ -18,8 +18,8 @@
             <!-- Input Field -->
             <div class="flex">
                 <div class="flex items-center px-3 bg-gray-100 rounded-l-lg border text-xs">{{ currencySymbol }}</div>
-                <input v-if="size == 'lg'" v-model="localModelValue" @blur="onBlur" :id="uniqueId" :name="uniqueId" type="number" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" min="0" class="block w-full rounded-r-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3">
-                <input v-else-if="size == 'sm'" v-model="localModelValue" @blur="onBlur" :id="uniqueId" :name="uniqueId" type="number" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" min="0" class="block w-full rounded-r-md border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3">
+                <input v-if="size == 'lg'" v-model="localModelValue" @blur="onBlur" :id="uniqueId" type="number" :autocomplete="autocomplete" :placeholder="placeholder" min="0" class="block w-full rounded-r-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-700 sm:text-sm sm:leading-6 px-3">
+                <input v-else-if="size == 'sm'" v-model="localModelValue" @blur="onBlur" :id="uniqueId" type="number" :autocomplete="autocomplete" :placeholder="placeholder" min="0" class="block w-full rounded-r-md border-0 py-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-blue-700 text-xs sm:leading-6 px-3">
 
                 <!-- More Info Popover -->
                 <MoreInfoPopover v-if="label == '' && (labelPopoverTitle || labelPopoverDescription)" :title="labelPopoverTitle" :description="labelPopoverDescription" placement="top" class="ml-2"></MoreInfoPopover>
@@ -37,7 +37,7 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
@@ -87,10 +87,6 @@
             type: String,
             default: ''
         },
-        required: {
-            type: Boolean,
-            default: true
-        },
         errorText: {
             type: String
         },
@@ -100,12 +96,11 @@
             options: ['lg', 'sm']
         },
     },
-    mixins: [UtilsMixin],
     components: { InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
     data() {
         return {
             localModelValue: this.modelValue,
-            uniqueId: this.generateUniqueId('money')
+            uniqueId: generateUniqueId('money')
         };
     },
     watch: {
@@ -113,11 +108,7 @@
             this.updateValue(newValue);
         },
         localModelValue(newValue, oldValue) {
-            /**
-             *  Note: the covertToValidMoney() method is part of the UtilsMixin methods
-             */
-            var value = this.covertToValidMoney(newValue);
-            this.notifyParent(value);
+            this.notifyParent(newValue.toString());
         }
     },
     methods: {
@@ -125,13 +116,8 @@
             this.localModelValue = newValue;
         },
         onBlur(event) {
-            /**
-             *  Note: the covertToValidMoney() method is part of the UtilsMixin methods
-             */
-            var value = this.covertToValidMoney(event.target.value);
-
+            var value = this.convertToValidMoney(event.target.value, 'BWP');
             this.localModelValue = value;
-
             this.notifyParent(value);
         },
         notifyParent(value) {

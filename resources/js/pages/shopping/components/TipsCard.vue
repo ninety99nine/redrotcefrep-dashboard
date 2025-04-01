@@ -16,21 +16,17 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import TipsCardBody from '@Pages/shopping/components/TipsCardBody.vue';
-import TipsCardHeading from '@Pages/shopping/components/TipsCardHeading.vue';
+    import TipsCardBody from '@Pages/shopping/components/TipsCardBody.vue';
+    import TipsCardHeading from '@Pages/shopping/components/TipsCardHeading.vue';
 
-export default {
-    components: { TipsCardBody, TipsCardHeading },
-    data() {
-        return {
-            storeState: useStoreState(),
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        }
-    },
-};
+    export default {
+        inject: ['storeState'],
+        components: { TipsCardBody, TipsCardHeading },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            }
+        },
+    };
+
 </script>

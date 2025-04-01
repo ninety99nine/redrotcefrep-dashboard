@@ -95,11 +95,11 @@
 <script>
 
     import debounce from 'lodash/debounce';
-    import { usePageState } from '@Stores/page-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
     import AddModule from '@Pages/stores/store/pages/components/column-modules/AddModule.vue';
 
     export default {
+        inject: ['pageState'],
         components: {
             draggable: VueDraggableNext, AddModule
         },
@@ -110,7 +110,6 @@
         },
         data() {
             return {
-                pageState: usePageState(),
                 showAddModuleButton: true,
                 debounceShowAddModuleButton: null
             }

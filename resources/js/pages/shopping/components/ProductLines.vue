@@ -10,8 +10,8 @@
                 <div class="w-full">
                     <p class="text-sm">{{ productLine.name }}</p>
                     <div class="space-x-1">
-                        <Pill v-if="productLine.isFree.status" type="success" text="free" :showDot="false"></Pill>
-                        <Pill v-if="productLine.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
+                        <Pill v-if="productLine.isFree.status" type="success" size="xs" :showDot="false">free</Pill>
+                        <Pill v-if="productLine.onSale.status" type="success" size="xs" :showDot="false">on sale</Pill>
                         <span v-if="!productLine.isFree.status" class="text-sm text-gray-500">{{ productLine.unitPrice.amountWithCurrency }}</span>
                     </div>
                 </div>
@@ -31,11 +31,11 @@
                                 min="0"
                                 @click.stop
                                 type="number"
+                                v-only-numbers
                                 placeholder="..."
-                                @input="validateQuantityInput($event)"
                                 v-model="mappedCartProducts[productLine.productId].quantity"
-                                class="w-10 border-0 rounded-full !ring-gray-300 remove-arrow p-0 bg-transparent text-center text-sm">
-                            </input>
+                                class="w-10 border-0 rounded-full !ring-gray-300 remove-arrow p-0 bg-transparent text-center text-sm"
+                            />
                         </div>
 
                         <!-- Increase Quantity Icon Button -->
@@ -83,84 +83,79 @@
 
 <script>
 
-import Pill from '@Partials/pills/Pill.vue';
-import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-import { ShoppingCartMixin } from '@Mixins/ShoppingCartMixin.js';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
+    import Pill from '@Partials/pills/Pill.vue';
+    import onlyNumbers from '@Directives/onlyNumbers.js';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
-export default {
-    mixins: [ShoppingCartMixin],
-    components: { Pill, LineSkeleton },
-    data() {
-        return {
-            shoppingCartState: useShoppingCartState(),
-        };
-    },
-    computed: {
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
+    export default {
+        inject: ['shoppingCartState'],
+        directives: { onlyNumbers },
+        components: { Pill, LineSkeleton },
+        computed: {
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            hasDetectedProductLineChanges() {
+                return this.detectedProductLineChanges.length > 0;
+            },
+            detectedProductLineChanges() {
+                return (((this.shoppingCart || {}).changes || {}).detectedProductLineChanges || []);
+            },
+            mappedCartProducts() {
+                return this.shoppingCartState.mappedCartProducts;
+            },
+            isInspectingShoppingCart() {
+                return this.shoppingCartState.isInspectingShoppingCart;
+            },
+            totalCartProducts() {
+                return this.shoppingCartState.totalCartProducts();
+            },
+            matchingShoppingCartProductLines() {
+                return this.shoppingCartState.matchingShoppingCartProductLines;
+            },
+            hasMatchingShoppingCartProductLines() {
+                return this.shoppingCartState.hasMatchingShoppingCartProductLines;
+            },
+            totalMatchingShoppingCartProductLines() {
+                return this.shoppingCartState.totalMatchingShoppingCartProductLines;
+            },
+            lastTotalMatchingShoppingCartProductLines() {
+                return this.shoppingCartState.lastTotalMatchingShoppingCartProductLines;
+            },
+            productLinePlaceholdersTotal() {
+                if(this.hasMatchingShoppingCartProductLines) {
+                    return this.totalMatchingShoppingCartProductLines - this.totalCartProducts;
+                }else{
+                    return this.totalCartProducts;
+                }
+            },
+            productLinePlaceholders() {
+
+                var total;
+
+                if(this.hasMatchingShoppingCartProductLines) {
+                    total = this.totalCartProducts - this.totalMatchingShoppingCartProductLines;
+                }else{
+                    total = this.totalCartProducts;
+                }
+
+                return new Array(total).fill(0);
+            },
         },
-        hasDetectedProductLineChanges() {
-            return this.detectedProductLineChanges.length > 0;
-        },
-        detectedProductLineChanges() {
-            return (((this.shoppingCart || {}).changes || {}).detectedProductLineChanges || []);
-        },
-        mappedCartProducts() {
-            return this.shoppingCartState.mappedCartProducts;
-        },
-        isInspectingShoppingCart() {
-            return this.shoppingCartState.isInspectingShoppingCart;
-        },
-        totalCartProducts() {
-            return this.shoppingCartState.totalCartProducts();
-        },
-        matchingShoppingCartProductLines() {
-            return this.shoppingCartState.matchingShoppingCartProductLines;
-        },
-        hasMatchingShoppingCartProductLines() {
-            return this.shoppingCartState.hasMatchingShoppingCartProductLines;
-        },
-        totalMatchingShoppingCartProductLines() {
-            return this.shoppingCartState.totalMatchingShoppingCartProductLines;
-        },
-        lastTotalMatchingShoppingCartProductLines() {
-            return this.shoppingCartState.lastTotalMatchingShoppingCartProductLines;
-        },
-        productLinePlaceholdersTotal() {
-            if(this.hasMatchingShoppingCartProductLines) {
-                return this.totalMatchingShoppingCartProductLines - this.totalCartProducts;
-            }else{
-                return this.totalCartProducts;
+        methods: {
+            hasQuantity(productId) {
+                return this.shoppingCartState.hasQuantity(productId);
+            },
+            increaseQuantity(productId) {
+                this.shoppingCartState.increaseQuantity(productId);
+            },
+            decreaseQuantity(productId) {
+                this.shoppingCartState.decreaseQuantity(productId);
+            },
+            removeFromCart(productId) {
+                this.shoppingCartState.removeFromCart(productId);
             }
         },
-        productLinePlaceholders() {
-
-            var total;
-
-            if(this.hasMatchingShoppingCartProductLines) {
-                total = this.totalCartProducts - this.totalMatchingShoppingCartProductLines;
-            }else{
-                total = this.totalCartProducts;
-            }
-
-            return new Array(total).fill(0);
-        },
-    },
-    methods: {
-        hasQuantity(productId) {
-            return this.shoppingCartState.hasQuantity(productId);
-        },
-        increaseQuantity(productId) {
-            this.shoppingCartState.increaseQuantity(productId);
-        },
-        decreaseQuantity(productId) {
-            this.shoppingCartState.decreaseQuantity(productId);
-        },
-        removeFromCart(productId) {
-            this.shoppingCartState.removeFromCart(productId);
-        }
-    },
-};
+    };
 
 </script>

@@ -37,21 +37,13 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import Countdown from '@Partials/countdowns/Countdown.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import StoreSubscribeButton from '@Components/store/StoreSubscribeButton.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState'],
         components: { Countdown, MoreInfoPopover, StoreSubscribeButton },
-        data() {
-            return {
-                storeState: useStoreState()
-            }
-        },
         computed: {
             store() {
                 return this.storeState.store;

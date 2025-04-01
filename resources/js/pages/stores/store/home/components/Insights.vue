@@ -131,7 +131,7 @@
                             <LineSkeleton width="w-4" :shine="true"></LineSkeleton>
                         </div>
                         <div v-else class="flex space-x-1 items-center">
-                            <p class="text-gray-500 text-xs">{{ capitalizeAllWords(categoryInsight.name) }}</p>
+                            <p v-capitalize-all class="text-gray-500 text-xs">{{ categoryInsight.name }}</p>
                             <MoreInfoPopover title="What Is This?" :description="categoryInsight.description" placement="top"></MoreInfoPopover>
                         </div>
 
@@ -162,16 +162,16 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import { getApi } from '@Repositories/api-repository.js';
+    import capitalizeAll from '@Directives/capitalizeAll.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
 
     export default {
-        mixins: [UtilsMixin],
+        inject: ['storeState'],
+        directives: { capitalizeAll },
         components: {
             Button, SelectInput, LineSkeleton, SelectInputTags, MoreInfoPopover
         },
@@ -185,7 +185,6 @@
                 period: 'today',
                 maxTotalInsights: 4,
                 categories: ['sales'],
-                storeState: useStoreState(),
                 isLoadingStoreInsights: false,
                 categoryOptions: ['sales', 'orders', 'products', 'customers', 'operations']
             }
@@ -263,7 +262,7 @@
                     //  Stop loader
                     this.isLoadingStoreInsights = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

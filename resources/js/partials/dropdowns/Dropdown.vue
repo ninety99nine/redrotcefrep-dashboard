@@ -36,77 +36,74 @@
 </template>
 
 <script>
-import { initFlowbite, Dropdown } from "flowbite";
-import { UtilsMixin } from "@Mixins/UtilsMixin.js";
 
-export default {
-    mixins: [UtilsMixin],
-    props: {
-        items: {
-            type: Array,
-            default: () => [],
-        },
-        placement: {
-            type: String,
-            default: "bottom",
-        },
-        triggerType: {
-            type: String,
-            default: "click",
-            options: ["click", "hover", "none"],
-        },
-        onToggle: {
-            type: Function,
-            default: () => {}
-        },
-        onShow: {
-            type: Function,
-            default: () => {}
-        },
-        onHide: {
-            type: Function,
-            default: () => {}
-        },
-    },
-    data() {
-        return {
-            dropdown: null,
-            dropdownUniqueId: this.generateUniqueId("dropdown"),
-            triggerUniqueId: this.generateUniqueId("dropdown-trigger"),
-        };
-    },
-    methods: {
-        showDropdown() {
-            console.log('showDropdown');
-            this.dropdown.show();
-        },
-        hideDropdown() {
-            console.log('hideDropdown');
-            this.dropdown.hide();
-        },
-        toggleDropdown() {
-            console.log('toggleDropdown');
-            this.dropdown.toggle();
-        },
-    },
-    mounted() {
-        // Initialize Flowbite
-        initFlowbite();
+    import { initFlowbite, Dropdown } from "flowbite";
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
-        const $targetEl = document.getElementById(this.dropdownUniqueId);
-        const $triggerEl = document.getElementById(this.triggerUniqueId);
+    export default {
+        props: {
+            items: {
+                type: Array,
+                default: () => [],
+            },
+            placement: {
+                type: String,
+                default: "bottom",
+            },
+            triggerType: {
+                type: String,
+                default: "click",
+                options: ["click", "hover", "none"],
+            },
+            onToggle: {
+                type: Function,
+                default: () => {}
+            },
+            onShow: {
+                type: Function,
+                default: () => {}
+            },
+            onHide: {
+                type: Function,
+                default: () => {}
+            },
+        },
+        data() {
+            return {
+                dropdown: null,
+                dropdownUniqueId: generateUniqueId("dropdown"),
+                triggerUniqueId: generateUniqueId("dropdown-trigger"),
+            };
+        },
+        methods: {
+            showDropdown() {
+                this.dropdown.show();
+            },
+            hideDropdown() {
+                this.dropdown.hide();
+            },
+            toggleDropdown() {
+                this.dropdown.toggle();
+            },
+        },
+        mounted() {
+            // Initialize Flowbite
+            initFlowbite();
 
-        const $options = {
-            triggerType: this.triggerType,
-            placement: this.placement,
-            onToggle: this.onToggle,
-            onShow: this.onShow,
-            onHide: this.onHide,
-        };
+            const $targetEl = document.getElementById(this.dropdownUniqueId);
+            const $triggerEl = document.getElementById(this.triggerUniqueId);
 
-        if ($targetEl) {
-            this.dropdown = new Dropdown($targetEl, $triggerEl, $options);
-        }
-    },
-};
+            const $options = {
+                triggerType: this.triggerType,
+                placement: this.placement,
+                onToggle: this.onToggle,
+                onShow: this.onShow,
+                onHide: this.onHide,
+            };
+
+            if ($targetEl) {
+                this.dropdown = new Dropdown($targetEl, $triggerEl, $options);
+            }
+        },
+    };
 </script>

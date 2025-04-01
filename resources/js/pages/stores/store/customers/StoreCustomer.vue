@@ -7,13 +7,13 @@
             <div class="flex items-center border-dashed">
 
                 <!-- Back Button -->
-                <BackButton class="w-16 mr-4" :action="goBack"></BackButton>
+                <Button type="light" size="xs" icon="short-left-arrow" :action="goBack"></Button>
 
                 <LineSkeleton v-if="isLoadingCustomer" width="w-40" :shine="true"></LineSkeleton>
 
                 <template v-else>
 
-                    <TextHeader>{{ isCreating ? 'Add Customer' : customer._attributes.name }}</TextHeader>
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900">{{ isCreating ? 'Add Customer' : customer._attributes.name }}</h1>
 
                 </template>
 
@@ -22,24 +22,21 @@
             <div v-if="!isCreating && !isLoadingCustomer && !(mustCreate || mustSaveChanges)" class="flex justify-end items-center">
 
                 <!-- Cancel Button -->
-                <PrimaryButton v-if="showForm" :action="stopShowingForm" class="w-40" type="light">
+                <Button v-if="showForm" type="light" size="xs" :action="stopShowingForm" class="w-40">
                     <span>Cancel</span>
-                </PrimaryButton>
+                </Button>
 
                 <!-- Edit Button -->
-                <PrimaryButton v-else :action="() => showForm = true" class="w-40" type="light">
-                    <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                    </svg>
+                <Button v-else type="light" size="xs" :action="() => showForm = true" class="w-40">
                     <span>Edit</span>
-                </PrimaryButton>
+                </Button>
 
             </div>
 
         </div>
 
         <!-- Customer Form -->
-        <form v-if="showForm" class="relative" action="#" method="POST">
+        <div v-if="showForm">
 
             <!-- General Error Info Alert -->
             <Alert v-if="mustCreate || mustSaveChanges" type="warning" class="flex justify-between items-center mb-2">
@@ -54,14 +51,14 @@
                 <div class="flex justify-end items-center space-x-4">
 
                     <!-- Cancel Button -->
-                    <PrimaryButton v-if="!isCreating" :action="stopShowingForm" class="w-40" type="light">
+                    <Button v-if="!isCreating" type="light" size="xs" :action="stopShowingForm" class="w-40">
                         <span>Cancel</span>
-                    </PrimaryButton>
+                    </Button>
 
                     <!-- Create Customer / Save Changes Button -->
-                    <PrimaryButton :action="isCreating ? createCustomer : updateCustomer" :loading="isSubmitting" class="w-40">
-                        {{ isCreating ? 'Create Customer' : 'Save Changes' }}
-                    </PrimaryButton>
+                    <Button type="primary" size="xs" :action="isCreating ? createCustomer : updateCustomer" :loading="isSubmitting" class="w-40">
+                        <span>{{ isCreating ? 'Create Customer' : 'Save Changes' }}</span>
+                    </Button>
 
                 </div>
 
@@ -82,7 +79,7 @@
                             placeholder="John"
                             v-model="form.firstName"
                             labelPopoverTitle="What Is This?"
-                            :errorText="getFormError('firstName')"
+                            :errorText="formState.getFormError('firstName')"
                             labelPopoverDescription="Customer's first name e.g John">
                         </TextInput>
 
@@ -92,7 +89,7 @@
                             placeholder="Doe"
                             v-model="form.lastName"
                             labelPopoverTitle="What Is This?"
-                            :errorText="getFormError('lastName')"
+                            :errorText="formState.getFormError('lastName')"
                             labelPopoverDescription="Customer's last name e.g Doe">
                         </TextInput>
 
@@ -101,7 +98,7 @@
                             label="Email"
                             v-model="form.email"
                             placeholder="johndoe@gmail.com"
-                            :errorText="getFormError('email')"
+                            :errorText="formState.getFormError('email')"
                             labelPopoverTitle="What Is This?"
                             labelPopoverDescription="Customer's email e.g johndoe@gmail.com">
                         </TextInput>
@@ -110,7 +107,7 @@
                         <MobileNumberInput
                             v-model="form.mobileNumber"
                             labelPopoverTitle="What Is This?"
-                            :errorText="getFormError('mobileNumber')"
+                            :errorText="formState.getFormError('mobileNumber')"
                             labelPopoverDescription="Customer's mobile number e.g +26772000001">
                         </MobileNumberInput>
 
@@ -120,7 +117,7 @@
                             label="Notes"
                             v-model="form.notes"
                             labelPopoverTitle="What Is This?"
-                            :errorText="getFormError('notes')"
+                            :errorText="formState.getFormError('notes')"
                             placeholder="Very loyal customer"
                             labelPopoverDescription="Short notes about customer e.g Very loyal customer">
                         </TextareaInput>
@@ -129,7 +126,7 @@
                         <Datepicker
                             :key="form.birthday"
                             v-model="form.birthday"
-                            :errorText="getFormError('birthday')"
+                            :errorText="formState.getFormError('birthday')"
                             label="Birthday" labelPopoverTitle="What Is This?"
                             labelPopoverDescription="Customer's birthday 🥳">
                         </Datepicker>
@@ -140,7 +137,7 @@
 
             </div>
 
-        </form>
+        </div>
 
         <div v-else class="grid grid-cols-12 gap-4 mb-8">
 
@@ -331,16 +328,6 @@
                         <p class="mb-8">Are you sure you want to permanently delete <span class="font-bold text-black">{{ form.name }}</span>?</p>
                     </template>
 
-                    <template #trigger="triggerProps">
-
-                        <!-- Delete Customer Button - Triggers Confirmation Modal -->
-                        <PrimaryButton :action="triggerProps.showModal" :loading="isDeleting" class="w-40" type="danger">
-                            Delete Customer
-                        </PrimaryButton>
-
-                    </template>
-
-
                 </ConfirmModal>
 
             </div>
@@ -357,39 +344,33 @@
     import cloneDeep from 'lodash/cloneDeep';
     import Pill from '@Partials/pills/Pill.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import TextInput from '@Partials/inputs/TextInput.vue';
     import InputTags from '@Partials/inputs/InputTags.vue';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
     import MoneyInput from '@Partials/inputs/MoneyInput.vue';
-    import BackButton from '@Partials/buttons/BackButton.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
     import Datepicker from '@Partials/datepicker/Datepicker.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import TextareaInput from '@Partials/inputs/TextareaInput.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import SelectInputTags from '@Partials/inputs/SelectInputTags.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import CustomerOrders from '@Components/customer/orders/CustomerOrders.vue';
     import { getApi, putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
+    import { formattedDate, formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
     import CustomerTransactions from '@Components/customer/transactions/CustomerTransactions.vue';
 
     export default {
-        mixins: [UtilsMixin, FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
         components: {
-            Pill, Alert, TextInput, TextHeader, MoneyInput, InputTags, BackButton, NumberInput,
-            SelectInput, Datepicker, ConfirmModal, TextareaInput, LineSkeleton, PrimaryButton,
-            SpinningLoader, SelectInputTags, MoreInfoPopover, BackdropLoader, ToogleSwitch,
-            MobileNumberInput, CustomerOrders, CustomerTransactions
+            Pill, Alert, Button, TextInput, MoneyInput, InputTags, NumberInput, SelectInput, Datepicker,
+            ConfirmModal, TextareaInput, LineSkeleton, SpinningLoader, SelectInputTags, MoreInfoPopover,
+            BackdropLoader, ToggleSwitch, MobileNumberInput, CustomerOrders, CustomerTransactions
         },
         data() {
             return {
@@ -406,9 +387,7 @@
                 isDeleting: false,
                 originalForm: null,
                 isSubmitting: false,
-                isLoadingCustomer: false,
-                apiState: useApiState(),
-                storeState: useStoreState(),
+                isLoadingCustomer: false
             }
         },
         watch: {
@@ -454,6 +433,9 @@
             }
         },
         methods: {
+            formattedDate: formattedDate,
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             goBack() {
                 this.$router.replace({ name: 'show-store-customers', params: { 'store_href': this.store._links.showStore } });
             },
@@ -504,7 +486,7 @@
                     //  Stop loader
                     this.isLoadingCustomer = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -517,7 +499,7 @@
                 postApi(this.apiState.apiHome['_links']['createCustomer'], this.parseForm()).then(response => {
 
                     if(response.status == 200) {
-                        this.showSuccessfulNotification('Customer created');
+                        this.notificationState.showSuccessNotification('Customer created');
 
                         //  Navigate to show customers
                         this.$router.push({ name: 'show-store-customers', params: { 'store_href': this.store._links.showStore } });
@@ -535,7 +517,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -554,10 +536,7 @@
 
                         if(response.data.updated) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Customer updated');
+                            this.notificationState.showSuccessNotification('Customer updated');
 
                             this.showForm = false;
 
@@ -567,8 +546,8 @@
 
                             this.form = cloneDeep(this.originalForm);
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -582,7 +561,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -598,10 +577,7 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Customer deleted');
+                            this.notificationState.showSuccessNotification('Customer deleted');
 
                             //  Navigate to show customers
                             this.$router.push({ name: 'show-store-customers', params: { 'store_href': this.store._links.showStore } });
@@ -611,8 +587,8 @@
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -626,7 +602,7 @@
                     //  Stop loader
                     this.isDeleting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

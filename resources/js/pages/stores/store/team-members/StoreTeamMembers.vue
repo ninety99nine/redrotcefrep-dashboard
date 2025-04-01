@@ -23,12 +23,12 @@
                     <div class="flex justify-center my-4">
 
                         <!-- Show Everything Toggle Switch -->
-                        <ToogleSwitch
+                        <ToggleSwitch
                             v-model="showEverything" size="md"
                             labelPopoverTitle="What Is This?"
                             labelPopoverDescription="Turn on if you want to show more information about your products">
                             Show Everything
-                        </ToogleSwitch>
+                        </ToggleSwitch>
 
                     </div>
 
@@ -37,7 +37,7 @@
                 <template #afterRefreshButton>
 
                     <!-- Add Invite Team Button -->
-                    <Button :action="onInviteTeamMember" type="primary" size="sm" icon="add">
+                    <Button type="primary" size="sm" icon="add" :action="onInviteTeamMember">
                         <span>Invite Team</span>
                     </Button>
 
@@ -178,7 +178,7 @@
                     <div class="flex justify-end">
 
                         <!-- Invite Team Button -->
-                        <Button :action="onInviteTeamMember" type="primary" size="sm" icon="add">
+                        <Button type="primary" size="sm" icon="add" :action="onInviteTeamMember">
                             <span>Invite Team</span>
                         </Button>
 
@@ -197,16 +197,6 @@
                 <p v-if="deletableTeamMember" class="mb-8">Are you sure you want to remove <span class="font-bold text-black">{{ deletableTeamMember._attributes.name }}</span>?</p>
             </template>
 
-            <template #trigger="triggerProps">
-
-                <!-- Delete Team Member Button - Triggers Confirmation Modal -->
-                <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger">
-                    Remove Team Member
-                </PrimaryButton>
-
-            </template>
-
-
         </ConfirmModal>
 
     </div>
@@ -216,27 +206,23 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ProfilePhoto from '@Components/user/ProfilePhoto.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState', 'notificationState'],
         components: {
-            Button, BasicTable, Checkbox, ProfilePhoto, ConfirmModal,
-            PrimaryButton, SpinningLoader, MoreInfoPopover, ToogleSwitch, Pill,
-            NoDataPlaceholder
+            Pill, Button, BasicTable, Checkbox, ProfilePhoto, ConfirmModal,
+            SpinningLoader, MoreInfoPopover, ToggleSwitch, NoDataPlaceholder
         },
         data() {
             return {
@@ -247,13 +233,12 @@
                 showEverything: false,
                 deletableTeamMember: null,
                 isDeletingTeamMemberIds: [],
-                isLoadingTeamMembers: false,
-                storeState: useStoreState(),
+                isLoadingTeamMembers: false
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getTeamMembers();
                 }
             }
@@ -261,9 +246,6 @@
         computed: {
             store() {
                 return this.storeState.store;
-            },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
             },
             tableHeaders() {
                 return this.showEverything
@@ -275,6 +257,8 @@
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(teamMember) {
                 this.$router.push({
                     name: 'show-store-team-member',
@@ -329,7 +313,7 @@
                     //  Stop loader
                     this.isLoadingTeamMembers = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -354,18 +338,15 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification(response.data.message);
+                            this.notificationState.showSuccessNotification(response.data.message);
 
                             //  If we are not deleting any other team members, then refresh the coupon list
                             if(this.isDeletingTeamMemberIds.length == 0) this.getTeamMembers();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -376,7 +357,7 @@
                     //  Stop loader
                     this.isDeletingTeamMemberIds.splice(this.isDeletingTeamMemberIds.findIndex((id) => id == this.deletableTeamMember.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

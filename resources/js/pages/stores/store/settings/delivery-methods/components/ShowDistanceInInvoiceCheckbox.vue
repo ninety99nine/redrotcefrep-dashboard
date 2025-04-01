@@ -3,7 +3,7 @@
     <Checkbox
         size="xs"
         v-model="form.showDistanceOnInvoice"
-        :errorText="getFormError('showDistanceOnInvoice')">
+        :errorText="formState.getFormError('showDistanceOnInvoice')">
         <div class="space-y-1 mt-0.5">
             <p class="font-bold text-sm mx-2">Show distance on invoice</p>
             <p class="text-sm text-gray-500 mx-2">The calculated delivery distance will appear on the invoice</p>
@@ -15,12 +15,11 @@
 <script>
 
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import Pill from '@Partials/pills/Pill.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Alert, Checkbox, Pill },
         props: {
             form: {

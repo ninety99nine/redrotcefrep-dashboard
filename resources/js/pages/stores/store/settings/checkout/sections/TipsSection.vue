@@ -27,20 +27,15 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import TipsSelectInput from '@Pages/stores/store/settings/checkout/components/TipsSelectInput.vue';
     import ShowTipsToggleSwitch from '@Pages/stores/store/settings/checkout/components/ShowTipsToggleSwitch.vue';
     import ShowSpecifyTipToggleSwitch from '@Pages/stores/store/settings/checkout/components/ShowSpecifyTipToggleSwitch.vue';
     import TipsSectionHeadingTextInput from '@Pages/stores/store/settings/checkout/components/TipsSectionHeadingTextInput.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             TipsSelectInput, ShowTipsToggleSwitch, ShowSpecifyTipToggleSwitch, TipsSectionHeadingTextInput
-        },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
         },
         computed: {
             storeForm() {

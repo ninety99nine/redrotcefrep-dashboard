@@ -8,10 +8,10 @@
             <Logo class="mx-auto"></Logo>
 
             <!-- Large Text Heading -->
-            <LargeTextHeader class="mt-20">Oops</LargeTextHeader>
+            <h1 class="text-8xl font-bold leading-3 tracking-tight text-gray-900 text-center mt-20">Oops</h1>
 
             <!-- Text Heading -->
-            <TextHeader class="mt-20 text-center">Seems like something went wrong</TextHeader>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 mt-20 text-center">Seems like something went wrong</h1>
 
             <!-- API Call Last Error Message Info Alert -->
             <Alert v-if="api.hasLastErrorMessage" class="mt-4 mb-0 mx-auto max-w-96" type="warning">
@@ -37,16 +37,9 @@
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { useApiState } from '@Stores/api-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
-    import LargeTextHeader from '@Partials/texts/LargeTextHeader.vue';
 
     export default {
-        components: { Logo, Alert, RouterLink, TextHeader, LargeTextHeader },
-        data() {
-            return {
-                api: useApiState()
-            }
-        }
+        inject: ['apiState'],
+        components: { Logo, Alert, RouterLink }
     };
 </script>

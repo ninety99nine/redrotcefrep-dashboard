@@ -3,13 +3,13 @@
     <SelectInput
         class="w-60"
         v-model="workflowForm.trigger"
-        :errorText="getFormError('trigger')">
+        :errorText="formState.getFormError('trigger')">
         <optgroup
             :key="group.name"
             :label="group.name"
             v-for="group in triggerGroups">
             <option v-for="option in group.options" :key="option" :value="option">
-                {{ capitalize(option) }}
+                <span v-capitalize>{{ option }}</span>
             </option>
         </optgroup>
     </SelectInput>
@@ -18,19 +18,13 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import capitalize from '@Directives/capitalize.js';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'workflowState'],
+        directives: { capitalize },
         components: { SelectInput },
-        data() {
-            return {
-                workflowState: useWorkflowState()
-            }
-        },
         watch: {
             'workflowForm.resource'(newValue) {
                 if(newValue) {

@@ -24,7 +24,18 @@
                 </template>
 
                 <!-- Input Field -->
-                <input v-model="localModelValue" :id="uniqueId" :name="uniqueId" :ref="$attrs['ref']" type="text" :autocomplete="autocomplete" :required="required" :placeholder="placeholder" :maxlength="maxlength" :minlength="minlength" class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
+                <input
+                    type="text"
+                    @blur="onBlur"
+                    :id="uniqueId"
+                    @focus="onFocus"
+                    :ref="$attrs['ref']"
+                    :minlength="minlength"
+                    :maxlength="maxlength"
+                    v-model="localModelValue"
+                    :placeholder="placeholder"
+                    :autocomplete="autocomplete"
+                    class="w-full rounded-md border-0 focus:ring-0 py-1.5 px-3 sm:text-sm placeholder:text-gray-400">
 
                 <!-- Suffix Slot -->
                 <template v-if="$slots.suffix">
@@ -47,13 +58,14 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputLabelDescription from '@Partials/input-labels/InputLabelDescription.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
     export default {
+        components: { InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
         props: {
             modelValue: {
                 type: String
@@ -100,33 +112,34 @@
                 type: String,
                 default: null
             },
-            required: {
-                type: Boolean,
-                default: true
-            },
             errorText: {
                 type: String
             }
         },
-        mixins: [UtilsMixin],
-        components: { InputLabel, InputLabelDescription, MoreInfoPopover, InputErrorMessage },
+        emits: ['update:modelValue', 'blur'],
         data() {
             return {
+                focusedValue: null,
                 localModelValue: this.modelValue,
-                uniqueId: this.generateUniqueId('text')
+                uniqueId: generateUniqueId('text')
             };
         },
         watch: {
             modelValue(newValue, oldValue) {
-                this.updateValue(newValue);
+                this.localModelValue = newValue;
             },
             localModelValue(newValue, oldValue) {
                 this.$emit('update:modelValue', newValue);
             }
         },
         methods: {
-            updateValue(newValue) {
-                this.localModelValue = newValue;
+            onFocus() {
+                this.focusedValue = this.localModelValue;
+            },
+            onBlur() {
+                if(this.localModelValue != this.focusedValue) {
+                    this.$emit('blur', this.localModelValue);
+                }
             }
         }
     };

@@ -7,7 +7,7 @@
         v-model="form.percentageFeeRate"
         labelPopoverTitle="What Is This?"
         v-if="form.feeType == 'percentage fee'"
-        :errorText="getFormError('percentageFeeRate')"
+        :errorText="formState.getFormError('percentageFeeRate')"
         labelPopoverDescription="Set the percentage fee amount (This is the percentage fee that will be applied as a charge)">
         <template #suffix>%</template>
     </NumberInput>
@@ -16,11 +16,10 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: {
             NumberInput
         },

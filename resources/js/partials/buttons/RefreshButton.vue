@@ -1,16 +1,16 @@
 <template>
-    <PrimaryButton :action="action" :disabled="disabled" :loading="loading" :size="size" :type="type">
+    <Button :action="action" :disabled="disabled" :loading="loading" :size="size" :type="type">
         <span :class="iconClass">&#10227;</span>
         <slot></slot>
-    </PrimaryButton>
+    </Button>
 </template>
 
 <script>
 
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
+    import Button from '@Partials/buttons/Button.vue';
 
     export default {
-        components: { PrimaryButton },
+        components: { Button },
         props: {
             action: {
                 type: Function

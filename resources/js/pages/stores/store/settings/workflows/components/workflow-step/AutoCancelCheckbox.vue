@@ -3,7 +3,7 @@
     <Checkbox
         size="xs"
         v-model="workflowStepForm.settings.autoCancel"
-        :errorText="getFormError('settingsAutoCancel')">
+        :errorText="formState.getFormError('settingsAutoCancel')">
         <div class="mt-0.5 mx-2">
             <p class="font-bold text-sm mb-1">Auto cancel if not paid</p>
             <p class="text-sm text-gray-500 max-w-96">Automatically cancel the order if not paid after a specified amount of time</p>
@@ -39,13 +39,12 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import NumberInput from '@Partials/inputs/NumberInput.vue';
     import SelectInput from '@Partials/inputs/SelectInput.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState'],
         components: { Checkbox, NumberInput, SelectInput },
         props: {
             workflowStepForm: {

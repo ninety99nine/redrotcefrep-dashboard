@@ -1,30 +1,23 @@
 <template>
 
-    <ToogleSwitch
+    <ToggleSwitch
         size="md"
         v-model="workflowForm.active"
         labelPopoverTitle="What Is This?"
-        :errorText="getFormError('active')"
+        :errorText="formState.getFormError('active')"
         labelPopoverDescription="Turn on so that your workflow automates processes. Turn off so that your workflow does not automate processes">
         Active
-    </ToogleSwitch>
+    </ToggleSwitch>
 
 </template>
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useWorkflowState } from '@Stores/workflow-store.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { ToogleSwitch },
-        data() {
-            return {
-                workflowState: useWorkflowState()
-            }
-        },
+        inject: ['formState', 'workflowState'],
+        components: { ToggleSwitch },
         computed: {
             workflowForm() {
                 return this.workflowState.workflowForm;

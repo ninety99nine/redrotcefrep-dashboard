@@ -30,12 +30,12 @@
                 <template #primaryFilters>
 
                     <!-- Show Everything Toggle Switch -->
-                    <ToogleSwitch
+                    <ToggleSwitch
                         v-model="showEverything" size="md"
                         labelPopoverTitle="What Is This?"
                         labelPopoverDescription="Turn on if you want to show more information about your product variations">
                         Show Everything
-                    </ToogleSwitch>
+                    </ToggleSwitch>
 
                 </template>
 
@@ -67,12 +67,12 @@
                                         <p>
                                             <span>SKU: </span>
                                             <span  v-if="product.sku" class="text-black"></span>
-                                            <Pill v-else type="info" text="None" :showDot="false"></Pill>
+                                            <Pill v-else type="info" size="xs" :showDot="false">None</Pill>
                                         </p>
                                         <p>
                                             <span>Barcode: </span>
                                             <span  v-if="product.barcode" class="text-black"></span>
-                                            <Pill v-else type="info" text="None" :showDot="false"></Pill>
+                                            <Pill v-else type="info" size="xs" :showDot="false">None</Pill>
                                         </p>
                                         <template v-if="product.showDescription.status && product.description != null">
                                             <hr>
@@ -88,7 +88,9 @@
                         <!-- Properties -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 ">
-                                <Pill v-for="(variable, index) in product._relationships.variables" :key="index" type="info" :text="variable.value" :showDot="false"></Pill>
+                                <Pill v-for="(variable, index) in product._relationships.variables" :key="index" type="info" size="xs" :showDot="false">
+                                    {{ variable.value }}
+                                </Pill>
                             </div>
                         </td>
 
@@ -110,7 +112,7 @@
                         <!-- Visible -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 items-center">
-                                <Pill :type="product.visible.status ? 'success' : 'warning'" :text="product.visible.name" :showDot="false"></Pill>
+                                <Pill :type="product.visible.status ? 'success' : 'warning'" size="xs" :showDot="false">{{ product.visible.name }}</Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" :title="product.visible.name" :description="product.visible.description" placement="top"></MoreInfoPopover>
                             </div>
                         </td>
@@ -119,10 +121,10 @@
                         <td class="whitespace-nowrap px-4 py-4">
                             <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <Pill v-if="product.isFree.status" type="info" text="Free" :showDot="false"></Pill>
+                                <Pill v-if="product.isFree.status" type="info" size="xs" :showDot="false">free</Pill>
                                 <template v-else>
                                     <span>{{ product.unitPrice.amountWithCurrency }}</span>
-                                    <Pill v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
+                                    <Pill v-if="product.onSale.status" type="success" size="xs" :showDot="false">on sale</Pill>
                                 </template>
 
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Pricing" placement="top">
@@ -149,7 +151,7 @@
                         <td class="whitespace-nowrap px-4 py-4">
                             <NoDataPlaceholder v-if="product.allowVariations.status"></NoDataPlaceholder>
                             <div v-else class="flex space-x-1 items-center">
-                                <Pill :type="product.hasStock.status ? 'info' : 'danger'" :text="product.hasStock.status ? (product.stockQuantityType.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.stockQuantity.description) : product.hasStock.name" :showDot="false"></Pill>
+                                <Pill :type="product.hasStock.status ? 'info' : 'danger'" size="xs" :showDot="false">{{ product.hasStock.status ? (product.stockQuantityType.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.stockQuantity.description) : product.hasStock.name }}</Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Stock" placement="top">
 
                                     <template #description>
@@ -166,7 +168,7 @@
                         <!-- Allow Variations -->
                         <td class="whitespace-nowrap px-4 py-4">
                             <div class="flex space-x-1 items-center">
-                                <Pill type="info" :text="product.allowVariations.name.toLowerCase() == 'yes' ? (product.totalVisibleVariations) : 'None'" :showDot="false"></Pill>
+                                <Pill type="info" size="xs" :showDot="false">{{ product.allowVariations.name.toLowerCase() == 'yes' ? (product.totalVisibleVariations) : 'None' }}</Pill>
                                 <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Allow Variations" placement="top">
 
                                     <template #description>
@@ -189,7 +191,7 @@
                             <!-- Allowed Quantity Per Order -->
                             <td class="whitespace-nowrap px-4 py-4">
                                 <div class="flex space-x-1 items-center">
-                                    <Pill type="info" :text="product.allowedQuantityPerOrder.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.maximumAllowedQuantityPerOrder.value" :showDot="false"></Pill>
+                                    <Pill type="info" size="xs" :showDot="false">{{ product.allowedQuantityPerOrder.value.toLowerCase() == 'unlimited' ? 'Unlimited' : product.maximumAllowedQuantityPerOrder.value }}</Pill>
                                     <MoreInfoPopover class="opacity-0 group-hover:opacity-100" title="Quantity Per Order" placement="top">
 
                                         <template #description>
@@ -240,20 +242,18 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
+    import Pill from '@Partials/pills/Pill.vue';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import { getApi, putApi, postApi } from '@Repositories/api-repository.js';
-    import Pill from '@Partials/pills/Pill.vue';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
-        components: { MoreInfoPopover, ToogleSwitch, BasicTable, SpinningLoader, Pill, NoDataPlaceholder },
+        inject: ['formState', 'storeState'],
+        components: { Pill, MoreInfoPopover, ToggleSwitch, BasicTable, SpinningLoader, NoDataPlaceholder },
         props: {
             product: {
                 type: Object
@@ -271,7 +271,6 @@
                 searchTerm: null,
                 showEverything: false,
                 sentFirstRequest: false,
-                storeState: useStoreState(),
                 isLoadingProductVariations: false,
             }
         },
@@ -307,6 +306,8 @@
             },
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onEdit(product) {
                 this.$router.push({ name: 'show-store-product', params: { 'store_href': this.store._links.showStore, 'product_href': product._links.showProduct } });
             },
@@ -347,7 +348,7 @@
                     //  Stop loader
                     this.isLoadingProductVariations = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

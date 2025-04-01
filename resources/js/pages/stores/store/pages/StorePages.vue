@@ -84,7 +84,7 @@
                             <div class="flex items-center space-x-2">
 
                                 <!-- Visible Status Badge -->
-                                <Pill :type="page.visible ? 'success' : 'warning'" :text="page.visible ? 'visible' : 'hidden'" :showDot="false"></Pill>
+                                <Pill :type="page.visible ? 'success' : 'warning'" size="xs" :showDot="false">{{ page.visible ? 'visible' : 'hidden' }}</Pill>
 
                             </div>
 
@@ -122,7 +122,7 @@
                                 <p class="text-2xl font-bold">Pages help build your shop</p>
                                 <p class="text-sm">Home, about us, terms and conditions and more are created using pages</p>
                             </div>
-                            <Pill type="primary" text="+ Add Page" size="px-8 py-2" :showDot="false" :clickable="true" :action="() => onAddPage()"></Pill>
+                            <Pill type="primary" text="+ Add Page" size="xs" :showDot="false" :action="onAddPage"></Pill>
                         </div>
 
                     </div>
@@ -139,13 +139,6 @@
                     <p class="mb-8">Are you sure you want to delete <span class="font-bold text-black">{{ deletablePage.name }}</span>?</p>
                 </template>
 
-                <template #trigger="triggerProps">
-
-                    <!-- Delete Page Button - Triggers Confirmation Modal -->
-                    <PrimaryButton ref="confirmDeleteButton" :action="triggerProps.showModal" class="hidden" type="danger"></PrimaryButton>
-
-                </template>
-
             </ConfirmModal>
 
         </div>
@@ -157,22 +150,19 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
+    import Button from '@Partials/buttons/Button.vue';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import SearchInput from '@Partials/inputs/SearchInput.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
         components: {
-            Pill, draggable: VueDraggableNext, SearchInput, ConfirmModal,
-            SpinningLoader, LineSkeleton, PrimaryButton
+            Pill, Button, draggable: VueDraggableNext, SearchInput, ConfirmModal,
+            SpinningLoader, LineSkeleton
         },
         props: {
             form: {
@@ -186,8 +176,6 @@
                 deletablePage: null,
                 isDeletingPageIds: [],
                 isLoadingPages: false,
-                apiState: useApiState(),
-                storeState: useStoreState(),
                 isUpdatingPageArrangement: false,
             }
         },
@@ -204,7 +192,7 @@
                 return this.hasSearchTerm && this.isLoadingPages;
             },
             hasSearchTerm() {
-                return this.searchTerm.length > 0;
+                return this.searchTerm != null && this.searchTerm.trim() != '';
             },
             hasPages() {
                 return this.pages.length > 0;
@@ -262,7 +250,7 @@
                     //  Stop loader
                     this.isLoadingPages = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -284,15 +272,12 @@
 
                         if(response.data.updated) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Page arrangement updated');
+                            this.notificationState.showSuccessNotification('Page arrangement updated');
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -306,7 +291,7 @@
                     //  Stop loader
                     this.isUpdatingPageArrangement = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -327,18 +312,15 @@
 
                         if(response.data.deleted) {
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Page deleted');
+                            this.notificationState.showSuccessNotification('Page deleted');
 
                             //  If we are not deleting any other page, then refresh the page list
                             if(this.isDeletingPageIds.length == 0) this.showPages();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -349,7 +331,7 @@
                     //  Stop loader
                     this.isDeletingPageIds.splice(this.isDeletingPageIds.findIndex((id) => id == this.deletePage.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

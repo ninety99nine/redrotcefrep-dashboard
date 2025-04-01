@@ -121,9 +121,9 @@
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
-    import { useOnboardingState } from '@Stores/onboarding-store.js';
 
     export default {
+        inject: ['onboardingState'],
         components: { InputLabel },
         props: {
             modelValue: {
@@ -140,8 +140,7 @@
         data() {
             return {
                 localModelValue: null,
-                originalModelValue: null,
-                onboardingState: useOnboardingState()
+                originalModelValue: null
             };
         },
         watch: {

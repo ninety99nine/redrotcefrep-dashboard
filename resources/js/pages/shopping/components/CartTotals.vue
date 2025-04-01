@@ -2,7 +2,7 @@
 
     <div class="px-4">
 
-        <template v-if="hasShoppingCartProducts && (hasDiscounts || hasAdditionalFees)">
+        <template v-if="hasShoppingCartProducts && (hasDiscounts || hasFees)">
 
             <!-- Subtotal -->
             <div class="flex justify-between text-sm border-b border-dashed pb-2 mb-2">
@@ -15,7 +15,7 @@
 
         </template>
 
-        <template v-if="hasShoppingCartProducts && (hasDiscounts || hasAdditionalFees)">
+        <template v-if="hasShoppingCartProducts && (hasDiscounts || hasFees)">
 
             <div class="border-b border-dashed pb-2 mb-2">
 
@@ -48,7 +48,7 @@
             <p v-else class="text-xs text-gray-400">Tax calculated on the discounted subtotal of {{ shoppingCart.totals.subtotalAfterDiscount.amountWithCurrency }}</p>
         </div>
 
-        <template v-if="hasShoppingCartProducts && (hasDiscounts || hasAdditionalFees)">
+        <template v-if="hasShoppingCartProducts && (hasDiscounts || hasFees)">
 
             <div class="border-b border-dashed pb-2 mb-2">
 
@@ -56,11 +56,11 @@
                 <div
                     :key="index"
                     class="flex justify-between text-sm text-gray-500"
-                    v-for="(additionalFee, index) in shoppingCart.totals.additionalFees">
-                    <span>{{ additionalFee.name }}</span>
+                    v-for="(fee, index) in shoppingCart.totals.fees">
+                    <span>{{ fee.name }}</span>
                     <LineSkeleton v-if="isInspectingShoppingCart" width="w-16" :shine="true"></LineSkeleton>
                     <span v-else>
-                        {{ additionalFee.amount.amountWithCurrency }}
+                        {{ fee.amount.amountWithCurrency }}
                     </span>
                 </div>
 
@@ -90,18 +90,11 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
 
     export default {
-        mixins: [UtilsMixin],
+        inject: ['shoppingCartState'],
         components: { LineSkeleton },
-        data() {
-            return {
-                shoppingCartState: useShoppingCartState()
-            };
-        },
         computed: {
             shoppingCart() {
                 return this.shoppingCartState.shoppingCart;
@@ -115,8 +108,8 @@
             hasDiscounts() {
                 return this.shoppingCartState.hasDiscounts;
             },
-            hasAdditionalFees() {
-                return this.shoppingCartState.hasAdditionalFees;
+            hasFees() {
+                return this.shoppingCartState.hasFees;
             },
             hasShoppingCartProducts() {
                 return this.shoppingCartState.hasShoppingCartProducts;

@@ -1,30 +1,23 @@
 <template>
 
-    <ToogleSwitch
+    <ToggleSwitch
         size="md"
         v-model="storeForm.online"
         labelPopoverTitle="What Is This?"
-        :errorText="getFormError('online')"
+        :errorText="formState.getFormError('online')"
         labelPopoverDescription="Turn on so that your store is online (Made available to customers). Turn off so that your store is offline (Not available to customers)">
         Online
-    </ToogleSwitch>
+    </ToggleSwitch>
 
 </template>
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { ToogleSwitch },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
+        inject: ['formState', 'storeState'],
+        components: { ToggleSwitch },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

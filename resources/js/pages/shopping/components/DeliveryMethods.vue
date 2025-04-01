@@ -112,94 +112,88 @@
 
 <script>
 
-import { useStoreState } from '@Stores/store-store.js';
-import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
-export default {
-    components: { LineSkeleton, InputErrorMessage },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    computed: {
-        storeForm() {
-            return this.storeState.storeForm;
-        },
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
-        },
-        hasShoppingCart() {
-            return this.shoppingCartState.hasShoppingCart;
-        },
-        shoppingCartForm() {
-            return this.shoppingCartState.shoppingCartForm;
-        },
-        deliveryMethods() {
-            return this.shoppingCartState.deliveryMethods;
-        },
-        totalDeliveryMethods() {
-            return this.shoppingCartState.totalDeliveryMethods;
-        },
-        hasDeliveryMethods() {
-            return this.shoppingCartState.hasDeliveryMethods;
-        },
-        deliveryMethodTips() {
-            return ((((this.shoppingCart || {}).delivery || {}).method || {}).tips || []);
-        },
-        hasDeliveryMethodUnavailabilityReasons() {
-            return this.deliveryMethodUnavailabilityReasons.length > 0;
-        },
-        deliveryMethodUnavailabilityReasons() {
-            return ((((this.shoppingCart || {}).delivery || {}).method || {}).unavailabilityReasons || []);
-        },
-        isInspectingShoppingCart() {
-            return this.shoppingCartState.isInspectingShoppingCart;
-        },
-        selectedDeliveryMethod() {
-            return this.deliveryMethods.find((deliveryMethod) => deliveryMethod.id == this.shoppingCartForm.deliveryMethodId);
-        }
-    },
-    methods: {
-        showShoppingDeliveryMethods() {
-            this.shoppingCartState.showShoppingDeliveryMethods();
-        },
-        itemClasses(index) {
-            if(this.isFirstItem(index)) {
-                return 'pt-4 pb-2';
-            }else if(this.isLastItem(index)) {
-                return 'pt-2 pb-4';
-            }else{
-                return 'py-2';
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        components: { LineSkeleton, InputErrorMessage },
+        computed: {
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            hasShoppingCart() {
+                return this.shoppingCartState.hasShoppingCart;
+            },
+            shoppingCartForm() {
+                return this.shoppingCartState.shoppingCartForm;
+            },
+            deliveryMethods() {
+                return this.shoppingCartState.deliveryMethods;
+            },
+            totalDeliveryMethods() {
+                return this.shoppingCartState.totalDeliveryMethods;
+            },
+            hasDeliveryMethods() {
+                return this.shoppingCartState.hasDeliveryMethods;
+            },
+            deliveryMethodTips() {
+                return ((((this.shoppingCart || {}).delivery || {}).method || {}).tips || []);
+            },
+            hasDeliveryMethodUnavailabilityReasons() {
+                return this.deliveryMethodUnavailabilityReasons.length > 0;
+            },
+            deliveryMethodUnavailabilityReasons() {
+                return ((((this.shoppingCart || {}).delivery || {}).method || {}).unavailabilityReasons || []);
+            },
+            isInspectingShoppingCart() {
+                return this.shoppingCartState.isInspectingShoppingCart;
+            },
+            selectedDeliveryMethod() {
+                return this.deliveryMethods.find((deliveryMethod) => deliveryMethod.id == this.shoppingCartForm.deliveryMethodId);
             }
         },
-        isFirstItem(index) {
-            return index == 0;
+        methods: {
+            showShoppingDeliveryMethods() {
+                this.shoppingCartState.showShoppingDeliveryMethods();
+            },
+            itemClasses(index) {
+                if(this.isFirstItem(index)) {
+                    return 'pt-4 pb-2';
+                }else if(this.isLastItem(index)) {
+                    return 'pt-2 pb-4';
+                }else{
+                    return 'py-2';
+                }
+            },
+            isFirstItem(index) {
+                return index == 0;
+            },
+            isLastItem(index) {
+                return index == (this.totalDeliveryMethods - 1);
+            },
+            usesFlatFee(deliveryMethod) {
+                return deliveryMethod.feeType.toLowerCase() == 'flat fee';
+            },
+            usesPercentageFee(deliveryMethod) {
+                return deliveryMethod.feeType.toLowerCase() == 'percentage fee';
+            },
+            usesFeeByDistance(deliveryMethod) {
+                return deliveryMethod.feeType.toLowerCase() == 'fee by distance';
+            },
+            setDeliveryMethod(deliveryMethod) {
+                this.shoppingCartState.setDeliveryMethod(deliveryMethod);
+            },
+            isSelectedDeliveryMethod(deliveryMethod) {
+                return this.shoppingCartState.isSelectedDeliveryMethod(deliveryMethod);
+            },
         },
-        isLastItem(index) {
-            return index == (this.totalDeliveryMethods - 1);
-        },
-        usesFlatFee(deliveryMethod) {
-            return deliveryMethod.feeType.toLowerCase() == 'flat fee';
-        },
-        usesPercentageFee(deliveryMethod) {
-            return deliveryMethod.feeType.toLowerCase() == 'percentage fee';
-        },
-        usesFeeByDistance(deliveryMethod) {
-            return deliveryMethod.feeType.toLowerCase() == 'fee by distance';
-        },
-        setDeliveryMethod(deliveryMethod) {
-            this.shoppingCartState.setDeliveryMethod(deliveryMethod);
-        },
-        isSelectedDeliveryMethod(deliveryMethod) {
-            return this.shoppingCartState.isSelectedDeliveryMethod(deliveryMethod);
-        },
-    },
-    created() {
-        this.showShoppingDeliveryMethods();
-    }
-};
+        created() {
+            this.showShoppingDeliveryMethods();
+        }
+    };
+
 </script>

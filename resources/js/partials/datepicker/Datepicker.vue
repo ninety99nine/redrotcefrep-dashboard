@@ -31,8 +31,9 @@
     /**
      * Component Reference: https://flowbite.com/docs/plugins/datepicker/
      */
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { formattedDate } from '@Utils/dateUtils.js';
     import Datepicker from 'flowbite-datepicker/Datepicker';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
     import InputLabel from '@Partials/input-labels/InputLabel.vue';
     import InputErrorMessage from '@Partials/input-error-messages/InputErrorMessage.vue';
 
@@ -177,13 +178,13 @@
                 default: 0
             }
         },
-        mixins: [UtilsMixin],
+        emits: ['update:modelValue', 'change'],
         components: { InputLabel, InputErrorMessage },
         data() {
             return {
                 datetimePicker: null,
                 localModelValue: null,
-                uniqueId: this.generateUniqueId('datepicker')
+                uniqueId: generateUniqueId('datepicker')
             };
         },
         watch: {
@@ -192,6 +193,7 @@
             }
         },
         methods: {
+            formattedDate: formattedDate,
             updateValue(newValue) {
 
                 /**
@@ -214,6 +216,7 @@
                  *  20 Dec 2024 (The Readable datetime format)
                  */
                 this.$emit('update:modelValue', this.formattedDate(date));
+                this.$emit('change', this.formattedDate(date))
             }
         },
         mounted() {

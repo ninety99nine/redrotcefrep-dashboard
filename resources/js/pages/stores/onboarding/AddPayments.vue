@@ -44,10 +44,10 @@
                         </div>
 
                         <!-- Active Toogle Switch -->
-                        <ToogleSwitch
+                        <ToggleSwitch
                             size="md"
                             v-model="paymentMethod.active">
-                        </ToogleSwitch>
+                        </ToggleSwitch>
 
                     </div>
 
@@ -188,16 +188,15 @@
 
     import Button from '@Partials/buttons/Button.vue';
     import StoreLogo from '@Components/store/StoreLogo.vue';
-    import { useOnboardingState } from '@Stores/onboarding-store.js';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import PaymentMethodConfigInputs from '@Pages/stores/onboarding/PaymentMethodConfigInputs/Index.vue';
 
     export default {
-        components: { Button, StoreLogo, ToogleSwitch, PaymentMethodConfigInputs },
+        inject: ['onboardingState'],
+        components: { Button, StoreLogo, ToggleSwitch, PaymentMethodConfigInputs },
         data() {
             return {
-                uploadsFailedBefore: false,
-                onboardingState: useOnboardingState()
+                uploadsFailedBefore: false
             };
         },
         computed: {

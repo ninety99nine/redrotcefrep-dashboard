@@ -12,16 +12,11 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import AddressInput from '@Partials/inputs/AddressInput.vue';
 
     export default {
+        inject: ['storeState'],
         components: { AddressInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             store() {
                 return this.storeState.store;

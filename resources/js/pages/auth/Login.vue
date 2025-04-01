@@ -1,77 +1,98 @@
 <template>
 
-    <div class="w-full flex flex-col justify-center bg-gradient-to-b from-blue-100 to-white-100 min-h-screen overflow-x-hidden px-6 py-12 lg:px-8">
+    <div class="w-full grid grid-cols-2 bg-gradient-to-b from-blue-100 to-white-100 min-h-screen overflow-x-hidden">
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <div class="col-span-1 flex flex-col justify-center px-6 py-12 lg:px-8">
 
-            <!-- Logo -->
-            <Logo class="mx-auto"></Logo>
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
 
-            <!-- Text Heading -->
-            <TextHeader class="mt-10 text-center">Sign in to your account</TextHeader>
+                <!-- Logo -->
+                <Logo class="mx-auto"></Logo>
 
-        </div>
+                <!-- Text Heading -->
+                <h1 class="text-2xl font-bold tracking-tight text-gray-900 mt-10 text-center">Sign in to your account</h1>
 
-        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            </div>
 
-            <form class="space-y-6" action="#" method="POST">
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 
-                <!-- Form Error Messages -->
-                <FormErrorMessages v-if="hasGeneralError"></FormErrorMessages>
+                <div class="space-y-6">
 
-                <!-- Mobile Number Input -->
-                <MobileNumberInput v-model="mobileNumber" :errorText="getFormError('mobileNumber')" @keydown.enter="handleLogin"></MobileNumberInput>
+                    <!-- Form Error Messages -->
+                    <FormErrorMessages v-if="formState.hasGeneralError"></FormErrorMessages>
 
-                <template v-if="accountExists">
+                    <!-- Mobile Number Input -->
+                    <MobileNumberInput
+                        v-model="mobileNumber"
+                        @keydown.enter="handleLogin"
+                        :errorText="formState.getFormError('mobileNumber')"
+                        description="The sim card used to create your Perfect Order account using a mobile network e.g Orange">
+                    </MobileNumberInput>
 
-                    <!-- Set New Password Info Alert -->
-                    <Alert v-if="requiresPassword">
-                        Please set a new password for your account.
-                    </Alert>
+                    <template v-if="accountExists">
 
-                    <!-- Password Input -->
-                    <PasswordInput v-model="password" :showForgotPassword="!requiresPassword" :errorText="getFormError('password')" @keydown.enter="handleLogin"></PasswordInput>
-
-                    <template v-if="requiresPassword">
-
-                        <!-- Confirm Password Input -->
-                        <ConfirmPasswordInput v-model="passwordConfirmation" :errorText="getFormError('passwordConfirmation')" @keydown.enter="handleLogin"></ConfirmPasswordInput>
-
-                        <!-- Enter Verification Code Alert -->
-                        <Alert>
-                            Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> and enter the verification code below to confirm ownership of the mobile number <span class="font-bold">{{ mobileNumber }}</span>
+                        <!-- Set New Password Info Alert -->
+                        <Alert v-if="requiresPassword">
+                            Please set a new password for your account.
                         </Alert>
 
-                        <!-- Mobile Verification Pin Input -->
-                        <OtpInput v-model="verificationCode" :errorText="getFormError('verificationCode')"></OtpInput>
+                        <!-- Password Input -->
+                        <PasswordInput v-model="password" :showForgotPassword="!requiresPassword" :errorText="formState.getFormError('password')" @keydown.enter="handleLogin"></PasswordInput>
+
+                        <template v-if="requiresPassword">
+
+                            <!-- Confirm Password Input -->
+                            <ConfirmPasswordInput v-model="passwordConfirmation" :errorText="formState.getFormError('passwordConfirmation')" @keydown.enter="handleLogin"></ConfirmPasswordInput>
+
+                            <!-- Enter Verification Code Alert -->
+                            <Alert>
+                                Dial <span class="font-bold">{{ mobileVerificationShortcode }}</span> and enter the verification code below to confirm ownership of the mobile number <span class="font-bold">{{ mobileNumber }}</span>
+                            </Alert>
+
+                            <!-- Mobile Verification Pin Input -->
+                            <OtpInput v-model="verificationCode" :errorText="formState.getFormError('verificationCode')"></OtpInput>
+
+                        </template>
 
                     </template>
 
-                </template>
+                    <!-- Sign In Button -->
+                    <Button
+                        size="sm"
+                        class="w-full"
+                        type="primary"
+                        :action="handleLogin"
+                        :loading="isSubmitting"
+                        :disabled="isSubmitting">
+                        <template v-if="accountExists && requiresPassword">Set Password</template>
+                        <template v-else-if="accountExists && !requiresPassword">Sign In</template>
+                        <template v-else-if="!accountExists && !requiresPassword">Continue</template>
+                    </Button>
 
-                <!-- Sign In Button -->
-                <Button
-                    size="sm"
-                    class="w-full"
-                    type="primary"
-                    :action="handleLogin"
-                    :loading="isSubmitting"
-                    :disabled="isSubmitting">
-                    <template v-if="accountExists && requiresPassword">Set Password</template>
-                    <template v-else-if="accountExists && !requiresPassword">Sign In</template>
-                    <template v-else-if="!accountExists && !requiresPassword">Continue</template>
-                </Button>
+                </div>
 
-            </form>
+                <!-- Social Sign In Links -->
+                <SocialLinks></SocialLinks>
 
-            <!-- Social Sign In Links -->
-            <SocialLinks></SocialLinks>
+                <!-- Register Link -->
+                <p class="text-sm text-center mt-8">
+                    <span class="text-gray-500 mr-1">Don't have an account?</span>
+                    <router-link :to="{ name: 'register' }">Register</router-link>
+                </p>
 
-            <!-- Register Link -->
-            <p class="text-sm text-center mt-8">
-                <span class="text-gray-500 mr-1">Don't have an account?</span>
-                <router-link :to="{ name: 'register' }">Register</router-link>
-            </p>
+            </div>
+
+        </div>
+
+        <div class="col-span-1 relative">
+
+            <img
+                :key="index"
+                :src="image"
+                v-for="(image, index) in images"
+                class="absolute w-full h-full object-cover object-left transition-opacity duration-1000"
+                :class="{ 'opacity-100': index === currentImageIndex, 'opacity-0': index !== currentImageIndex }"
+            />
 
         </div>
 
@@ -84,27 +105,21 @@
     import { RouterLink } from 'vue-router';
     import Logo from '@Partials/logos/Logo.vue';
     import Alert from '@Partials/alerts/Alert.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useAuthState } from '@Stores/auth-store.js';
-    import TextHeader from '@Partials/texts/TextHeader.vue';
     import { login } from '@Repositories/auth-repository.js';
     import { postApi } from '@Repositories/api-repository.js';
     import PasswordInput from '@Partials/inputs/PasswordInput.vue';
     import OtpInput from '@Partials/inputs/otp-inputs/OtpInput.vue';
     import SocialLinks from '@Pages/auth/components/SocialLinks.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
-    import { useNotificationState } from '@Stores/notification-store.js';
     import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
     import ConfirmPasswordInput from '@Partials/inputs/ConfirmPasswordInput.vue';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState'],
         components: {
-            Logo, Alert, Button, RouterLink, TextHeader, PasswordInput, OtpInput, SocialLinks,
+            Logo, Alert, Button, RouterLink, PasswordInput, OtpInput, SocialLinks,
             SpinningLoader, MobileNumberInput, FormErrorMessages, ConfirmPasswordInput
         },
         data() {
@@ -112,11 +127,8 @@
                 loginUrl: null,
                 isSubmitting: false,
                 accountExistsUrl: null,
-                apiState: useApiState(),
-                authState: useAuthState(),
                 showPasswordConfirmation: false,
                 mobileVerificationShortcode: null,
-                notificationState: useNotificationState(),
 
                 accountExists: false,
                 requiresPassword: false,
@@ -125,6 +137,12 @@
                 mobileNumber: '',
                 verificationCode: '',
                 passwordConfirmation: '',
+
+                currentImageIndex: 0,
+                slideShowSetInterval: null,
+                images: [
+                    '/images/lady-holding-boxes.jpg'
+                ]
             };
         },
         beforeRouteEnter(to, from, next) {
@@ -144,10 +162,7 @@
         },
         methods: {
             handleLogin() {
-                /**
-                 *  Note: the hideFormErrors() method is part of the FormMixin methods
-                 */
-                this.hideFormErrors();
+                this.formState.hideFormErrors();
 
                 if(this.accountExists) {
                     this.attemptLogin();
@@ -156,12 +171,9 @@
                 }
             },
             checkIfAccountExists() {
-                /**
-                 *  Note: the setFormError() method is part of the FormMixin methods
-                 */
                 if(this.mobileNumber.trim() == '') {
 
-                    this.setFormError('mobileNumber', 'Enter your mobile number');
+                    this.formState.setFormError('mobileNumber', 'Enter your mobile number');
 
                 }else if(this.accountExistsUrl != null) {
 
@@ -191,47 +203,35 @@
                     .catch(errorException => {
 
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
 
                     });
 
                 }else {
-
-                    /**
-                     *  Note: the setGeneralFormError() method is part of the FormMixin methods
-                     */
-                    this.setGeneralFormError('The accountExistsUrl does not exist');
-
+                    this.formState.setGeneralFormError('The accountExistsUrl does not exist');
                 }
             },
             attemptLogin() {
 
-                /**
-                 *  Note: the setFormError() method is part of the FormMixin methods
-                 */
                 if(this.mobileNumber.trim() == '') {
 
-                    this.setFormError('mobileNumber', 'Enter your mobile number');
+                    this.formState.setFormError('mobileNumber', 'Enter your mobile number');
 
                 }else if(this.password.trim() == '') {
 
-                    this.setFormError('password', 'Enter your password');
+                    this.formState.setFormError('password', 'Enter your password');
 
                 }else if(this.requiresPassword && this.passwordConfirmation.trim() == '') {
 
-                    this.setFormError('passwordConfirmation', 'Enter your password confirmation');
+                    this.formState.setFormError('passwordConfirmation', 'Enter your password confirmation');
 
                 }else if(this.requiresPassword && this.password != this.passwordConfirmation) {
 
-                    this.setFormError('password', 'Password does not match confirmation');
+                    this.formState.setFormError('password', 'Password does not match confirmation');
 
                 }else if(this.requiresPassword && this.verificationCode.trim() == '') {
 
-                    this.setFormError('verificationCode', 'Enter your verification code');
+                    this.formState.setFormError('verificationCode', 'Enter your verification code');
 
                 }else if(this.loginUrl != null) {
 
@@ -251,48 +251,46 @@
 
                         if(response.status == 200) {
 
-                            //  Stop loader
                             this.isSubmitting = false;
-
-                            // Get the redirect query from the URL if present
                             const redirect = this.$route.query.redirect;
 
                             if(redirect) {
-
-                                // Redirect to the specified route
                                 this.$router.replace(redirect);
-
                             } else {
-
                                 this.$router.replace({ name: 'show-stores'});
-
                             }
 
                         }
 
                     }).catch(errorException => {
 
-                        //  Stop loader
                         this.isSubmitting = false;
-
-                        /**
-                         *  Note: the setServerFormErrors() method is part of the FormMixin methods
-                         */
-                        this.setServerFormErrors(errorException);
+                        this.formState.setServerFormErrors(errorException);
 
                     });
 
                 }else {
-
-                    /**
-                     *  Note: the setGeneralFormError() method is part of the FormMixin methods
-                     */
-                    this.setGeneralFormError('The loginUrl does not exist');
+                    this.formState.setGeneralFormError('The loginUrl does not exist');
 
                 }
             },
+            startSlideshow() {
+                this.slideShowSetInterval = setInterval(() => {
+                    this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
+                }, 3000);
+            },
+            stopSlideshow() {
+                if (this.slideShowSetInterval) {
+                    clearInterval(this.slideShowSetInterval);
+                    this.slideShowSetInterval = null;
+                }
+            },
+        },
+        beforeUnmount() {
+            this.stopSlideshow();
         },
         created() {
+            this.startSlideshow();
             this.loginUrl = this.apiState.apiHome['_links']['login'];
             this.accountExistsUrl = this.apiState.apiHome['_links']['accountExists'];
             this.mobileVerificationShortcode = this.apiState.apiHome['mobileVerificationShortcode'];

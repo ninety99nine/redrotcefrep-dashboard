@@ -47,11 +47,11 @@
                                     </span>
                                     <div class="space-x-1">
                                         <template v-if="product.allowVariations.name.toLowerCase() == 'yes'">
-                                            <Pill type="success" :text="product.totalVisibleVariations+(product.totalVisibleVariations == 1 ? ' option' : ' options')" :showDot="false"></Pill>
+                                            <Pill type="success" size="xs" :showDot="false">{{ product.totalVisibleVariations+(product.totalVisibleVariations == 1 ? ' option' : ' options') }}</Pill>
                                         </template>
                                         <template v-else>
-                                            <Pill v-if="product.isFree.status" type="success" text="free" :showDot="false"></Pill>
-                                            <Pill v-if="product.onSale.status" type="success" text="on sale" :showDot="false"></Pill>
+                                            <Pill v-if="product.isFree.status" type="success" size="xs" :showDot="false">free</Pill>
+                                            <Pill v-if="product.onSale.status" type="success" size="xs" :showDot="false">on sale</Pill>
                                             <span
                                                 v-if="!product.isFree.status"
                                                 class="text-sm text-[var(--product-price-color)] group-hover:text-[var(--product-price-color-hover)] transition-colors"
@@ -81,12 +81,12 @@
                                                         min="0"
                                                         @click.stop
                                                         type="number"
+                                                        v-only-numbers
                                                         placeholder="..."
-                                                        @input="validateQuantityInput($event)"
                                                         v-model="mappedCartProducts[product.id].quantity"
                                                         :style="{ '--product-quantity-color': storeForm.productQuantityColor, '--product-quantity-color-hover': storeForm.productHoverQuantityColor }"
-                                                        class="w-10 border-0 rounded-full !ring-gray-300 remove-arrow p-0 bg-transparent text-center text-sm text-[var(--product-quantity-color)] group-hover:text-[var(--product-quantity-color-hover)] transition-colors">
-                                                    </input>
+                                                        class="w-10 border-0 rounded-full !ring-gray-300 remove-arrow p-0 bg-transparent text-center text-sm text-[var(--product-quantity-color)] group-hover:text-[var(--product-quantity-color-hover)] transition-colors"
+                                                    />
                                                 </div>
 
                                                 <!-- Increase Quantity Icon Button -->
@@ -106,17 +106,17 @@
 
                                         </div>
 
-                                        <PrimaryButton
+                                        <Button
                                             v-else
                                             size="xs"
-                                            type="custom"
+                                            type="primary"
                                             :action="() => addToCart(product)"
                                             :bgColor="storeForm.secondaryButtonColor"
                                             :textColor="storeForm.secondaryButtonTextColor">
                                             <span class="whitespace-nowrap">
                                                 {{ product.allowVariations.name.toLowerCase() == 'yes' ? 'Select option' : 'Add to cart' }}
                                             </span>
-                                        </PrimaryButton>
+                                        </Button>
 
                                     </transition>
 
@@ -137,9 +137,9 @@
                                     <span v-else class="text-xs inline-block" :style="'color:'+storeForm.textColor+';'">{{ hasCartProducts ? 'selected every product' : 'No products found' }}</span>
                                 </transition>
 
-                                <PrimaryButton
+                                <Button
                                     size="xs"
-                                    type="custom"
+                                    type="primary"
                                     :action="clearSearch"
                                     v-if="!isSearchingNonSelectedProducts && hasSearchTerm"
                                     :bgColor="storeForm.secondaryButtonColor"
@@ -151,7 +151,7 @@
                                         </svg>
                                         <span class="text-xs whitespace-nowrap">clear search</span>
                                     </div>
-                                </PrimaryButton>
+                                </Button>
 
                             </div>
 
@@ -163,17 +163,17 @@
 
             </div>
 
-            <PrimaryButton
-                size="sm"
+            <Button
+                size="xs"
                 class="mt-4"
-                type="custom"
+                type="primary"
                 :disabled="!hasCartProducts"
                 v-if="hasNonSelectedProducts"
                 :bgColor="storeForm.primaryButtonColor"
                 :textColor="storeForm.primaryButtonTextColor"
                 :action="() => addSelectedToCart(slotProps.hideModal)">
                 Add
-            </PrimaryButton>
+            </Button>
 
         </template>
 
@@ -181,15 +181,15 @@
 
             <!-- Add Button - Triggers Modal -->
             <slot name="trigger" :showModal="triggerProps.showModal">
-                <AddButton
-                    size="sm"
+                <Button
+                    size="xs"
                     class="m-4"
                     type="custom"
                     :action="triggerProps.showModal"
                     :bgColor="storeForm.primaryButtonColor"
                     :textColor="storeForm.primaryButtonTextColor">
                     <span class="ml-2">Add</span>
-                </AddButton>
+                </Button>
             </slot>
 
         </template>
@@ -200,92 +200,89 @@
 
 <script>
 
-import Pill from '@Partials/pills/Pill.vue';
-import { useStoreState } from '@Stores/store-store.js';
-import AddButton from '@Partials/buttons/AddButton.vue';
-import BasicModal from '@Partials/modals/BasicModal.vue';
-import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-import { ShoppingCartMixin } from '@Mixins/ShoppingCartMixin.js';
-import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
-import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
+    import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
+    import onlyNumbers from '@Directives/onlyNumbers.js';
+    import BasicModal from '@Partials/modals/BasicModal.vue';
+    import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
+    import BackdropLoader from '@Partials/loaders/BackdropLoader.vue';
+    import CategoryHeading from '@Pages/shopping/components/CategoryHeading.vue';
+    import CategoryOptions from '@Pages/shopping/components/CategoryOptions.vue';
 
-export default {
-    mixins: [ShoppingCartMixin],
-    components: {
-        Pill, AddButton, BasicModal, LineSkeleton, PrimaryButton, BackdropLoader,
-        CategoryHeading, CategoryOptions
-    },
-    data() {
-        return {
-            mappedCartProducts: {},
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    computed: {
-        store() {
-            return this.storeState.store;
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        directives: { onlyNumbers },
+        components: {
+            Pill, Button, BasicModal, LineSkeleton, BackdropLoader,
+            CategoryHeading, CategoryOptions
         },
-        storeForm() {
-            return this.storeState.storeForm;
+        data() {
+            return {
+                mappedCartProducts: {}
+            };
         },
-        nonSelectedProducts() {
-            return this.shoppingCartState.nonSelectedProducts;
+        computed: {
+            store() {
+                return this.storeState.store;
+            },
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            nonSelectedProducts() {
+                return this.shoppingCartState.nonSelectedProducts;
+            },
+            hasCartProducts() {
+                return this.shoppingCartState.hasCartProducts(this.mappedCartProducts);
+            },
+            hasNonSelectedProducts() {
+                return this.shoppingCartState.hasNonSelectedProducts;
+            },
+            hasSearchTerm() {
+                return this.shoppingCartState.hasSearchTerm;
+            },
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            isLoadingNonSelectedProducts() {
+                return this.shoppingCartState.isLoadingNonSelectedProducts;
+            },
+            isSearchingNonSelectedProducts() {
+                return this.shoppingCartState.isSearchingNonSelectedProducts;
+            },
         },
-        hasCartProducts() {
-            return this.shoppingCartState.hasCartProducts(this.mappedCartProducts);
-        },
-        hasNonSelectedProducts() {
-            return this.shoppingCartState.hasNonSelectedProducts;
-        },
-        hasSearchTerm() {
-            return this.shoppingCartState.hasSearchTerm;
-        },
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
-        },
-        isLoadingNonSelectedProducts() {
-            return this.shoppingCartState.isLoadingNonSelectedProducts;
-        },
-        isSearchingNonSelectedProducts() {
-            return this.shoppingCartState.isSearchingNonSelectedProducts;
-        },
-    },
-    methods: {
-        hasQuantity(productId) {
-            return this.shoppingCartState.hasQuantity(productId, this.mappedCartProducts);
-        },
-        isAddedToCart(productId) {
-            return this.shoppingCartState.isAddedToCart(productId, this.mappedCartProducts);
-        },
-        addToCart(product) {
-            this.shoppingCartState.addToCart(product, '1', this.mappedCartProducts);
-        },
-        addSelectedToCart(hideModal) {
-            Object.values(this.mappedCartProducts).forEach((mappedCartProduct) => {
-                this.shoppingCartState.removeFromCart(mappedCartProduct.id, this.mappedCartProducts);
-                this.shoppingCartState.addToCart(mappedCartProduct, mappedCartProduct.quantity);
-            });
-            hideModal();
-        },
-        increaseQuantity(productId) {
-            this.shoppingCartState.increaseQuantity(productId, '1', this.mappedCartProducts);
-        },
-        decreaseQuantity(productId) {
-            this.shoppingCartState.decreaseQuantity(productId, '1', this.mappedCartProducts);
-        },
-        removeFromCart(productId) {
-            this.shoppingCartState.removeFromCart(productId, this.mappedCartProducts);
-        },
-        clearSearch() {
-            this.shoppingCartState.clearSearch();
-        },
-        showNonSelectedShoppingProducts() {
-            this.shoppingCartState.showNonSelectedShoppingProducts();
+        methods: {
+            hasQuantity(productId) {
+                return this.shoppingCartState.hasQuantity(productId, this.mappedCartProducts);
+            },
+            isAddedToCart(productId) {
+                return this.shoppingCartState.isAddedToCart(productId, this.mappedCartProducts);
+            },
+            addToCart(product) {
+                this.shoppingCartState.addToCart(product, '1', this.mappedCartProducts);
+            },
+            addSelectedToCart(hideModal) {
+                Object.values(this.mappedCartProducts).forEach((mappedCartProduct) => {
+                    this.shoppingCartState.removeFromCart(mappedCartProduct.id, this.mappedCartProducts);
+                    this.shoppingCartState.addToCart(mappedCartProduct, mappedCartProduct.quantity);
+                });
+                hideModal();
+            },
+            increaseQuantity(productId) {
+                this.shoppingCartState.increaseQuantity(productId, '1', this.mappedCartProducts);
+            },
+            decreaseQuantity(productId) {
+                this.shoppingCartState.decreaseQuantity(productId, '1', this.mappedCartProducts);
+            },
+            removeFromCart(productId) {
+                this.shoppingCartState.removeFromCart(productId, this.mappedCartProducts);
+            },
+            clearSearch() {
+                this.shoppingCartState.clearSearch();
+            },
+            showNonSelectedShoppingProducts() {
+                this.shoppingCartState.showNonSelectedShoppingProducts();
+            }
         }
-    }
-};
+    };
+
 </script>

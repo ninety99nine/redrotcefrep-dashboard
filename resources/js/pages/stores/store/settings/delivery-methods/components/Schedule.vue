@@ -5,7 +5,7 @@
         <div :class="[{ 'bg-blue-50 p-4 rounded-lg': form.setSchedule }, 'transition-all duration-500']">
 
             <!-- Set Schedule Toggle Switch -->
-            <SetScheduleToogleSwitch :form="form"></SetScheduleToogleSwitch>
+            <SetScheduleToggleSwitch :form="form"></SetScheduleToggleSwitch>
 
             <div :class="[form.setSchedule ? 'h-20 mt-4 mb-2 p-0.5' : 'h-0 mb-0 p-0', 'transition-all duration-500 overflow-hidden']">
 
@@ -76,7 +76,7 @@
     import OperationalHours from '@Pages/stores/store/settings/delivery-methods/components/OperationalHours.vue';
     import ScheduleTypeSelect from '@Pages/stores/store/settings/delivery-methods/components/ScheduleTypeSelect.vue';
     import SameDayDeliveryCheckbox from '@Pages/stores/store/settings/delivery-methods/components/SameDayDeliveryCheckbox.vue';
-    import SetScheduleToogleSwitch from '@Pages/stores/store/settings/delivery-methods/components/SetScheduleToogleSwitch.vue';
+    import SetScheduleToggleSwitch from '@Pages/stores/store/settings/delivery-methods/components/SetScheduleToggleSwitch.vue';
     import AutoGenerateTimeSlotsCheckbox from '@Pages/stores/store/settings/delivery-methods/components/AutoGenerateTimeSlotsCheckbox.vue';
     import AutoGenerateTimeSlotsUnitSelect from '@Pages/stores/store/settings/delivery-methods/components/AutoGenerateTimeSlotsUnitSelect.vue';
     import AutoGenerateTimeSlotsNumberInput from '@Pages/stores/store/settings/delivery-methods/components/AutoGenerateTimeSlotsNumberInput.vue';
@@ -85,7 +85,7 @@
 
     export default {
         components: {
-            ScheduleSummary, OperationalHours, ScheduleTypeSelect, SameDayDeliveryCheckbox, SetScheduleToogleSwitch,
+            ScheduleSummary, OperationalHours, ScheduleTypeSelect, SameDayDeliveryCheckbox, SetScheduleToggleSwitch,
             AutoGenerateTimeSlotsCheckbox, AutoGenerateTimeSlotsUnitSelect, AutoGenerateTimeSlotsNumberInput,
             RequireMinimumNoticeForOrdersCheckbox, RestrictMinimumNoticeForOrdersCheckbox
         },

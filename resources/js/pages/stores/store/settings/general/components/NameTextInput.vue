@@ -6,7 +6,7 @@
         v-model="storeForm.name"
         placeholder="Baby Cakes 🧁"
         autocomplete="organization"
-        :errorText="getFormError('name')"
+        :errorText="formState.getFormError('name')"
         labelPopoverTitle="What Is This?"
         labelPopoverDescription="The name of your store e.g Baby Cakes 🧁">
     </TextInput>
@@ -15,18 +15,11 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import TextInput from '@Partials/inputs/TextInput.vue';
-    import { useStoreState } from '@Stores/store-store.js';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['formState', 'storeState'],
         components: { TextInput },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
-        },
         computed: {
             storeForm() {
                 return this.storeState.storeForm;

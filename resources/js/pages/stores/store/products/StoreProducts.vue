@@ -23,12 +23,12 @@
                     <div class="flex justify-center my-4">
 
                         <!-- Show Everything Toggle Switch -->
-                        <ToogleSwitch
+                        <ToggleSwitch
                             v-model="showEverything" size="md"
                             labelPopoverTitle="What Is This?"
                             labelPopoverDescription="Turn on if you want to show more information about your products">
                             Show Everything
-                        </ToogleSwitch>
+                        </ToggleSwitch>
 
                     </div>
 
@@ -329,26 +329,23 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
     import { VueDraggableNext } from 'vue-draggable-next';
-    import { useStoreState } from '@Stores/store-store.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import Checkbox from '@Partials/checkboxes/Checkbox.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
-    import ToogleSwitch from '@Partials/toggle-switches/ToogleSwitch.vue';
+    import ToggleSwitch from '@Partials/toggle-switches/ToggleSwitch.vue';
     import { getApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['apiState', 'formState', 'storeState', 'notificationState'],
         components: {
-            Pill,Button, draggable: VueDraggableNext, BasicTable, Checkbox, ConfirmModal,
-            SpinningLoader, MoreInfoPopover, ToogleSwitch,  NoDataPlaceholder
+            Pill, Button, draggable: VueDraggableNext, BasicTable, Checkbox, ConfirmModal,
+            SpinningLoader, MoreInfoPopover, ToggleSwitch,  NoDataPlaceholder
         },
         data() {
             return {
@@ -358,17 +355,15 @@
                 checkedRowIds: [],
                 showEverything: false,
                 deletableProduct: null,
-                apiState: useApiState(),
                 isDeletingProductIds: [],
                 isLoadingProducts: false,
                 deleteProductModal: null,
-                storeState: useStoreState(),
                 isUpdatingProductArrangement: false,
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getProducts();
                 }
             }
@@ -376,9 +371,6 @@
         computed: {
             store() {
                 return this.storeState.store;
-            },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
             },
             tableHeaders() {
                 return this.showEverything
@@ -390,6 +382,8 @@
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             onView(product) {
 
                 if(this.isDeletingProductIds.length) return;
@@ -447,7 +441,7 @@
                     //  Stop loader
                     this.isLoadingProducts = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -466,13 +460,13 @@
 
                         if(response.data.deleted) {
 
-                            this.showSuccessfulNotification('Product deleted');
+                            this.notificationState.showSuccessNotification('Product deleted');
                             if(this.isDeletingProductIds.length == 0) this.getProducts();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -483,7 +477,7 @@
                     //  Stop loader
                     this.isDeletingProductIds.splice(this.isDeletingProductIds.findIndex((id) => id == this.deletableProduct.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -502,7 +496,7 @@
                 postApi(this.apiState.apiHome['_links']['updateProductArrangement'], params).then(response => {
 
                     if(response.status == 200) {
-                        this.showSuccessfulNotification('Product arrangement updated');
+                        this.notificationState.showSuccessNotification('Product arrangement updated');
 
                     }
 
@@ -514,7 +508,7 @@
                     //  Stop loader
                     this.isUpdatingProductArrangement = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

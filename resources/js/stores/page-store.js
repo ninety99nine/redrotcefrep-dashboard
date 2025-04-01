@@ -3,10 +3,10 @@ import LZString from 'lz-string';
 import { diff } from 'deep-diff';
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { capitalize } from 'lodash';
 import isEqual from 'lodash/isEqual';
 import debounce from 'lodash/debounce';
 import cloneDeep from 'lodash/cloneDeep';
+import { capitalize } from '@Utils/stringUtils.js';
 import { useFormState } from '@Stores/form-store.js';
 import { useNotificationState } from '@Stores/notification-store.js';
 import { getApi, postApi, putApi, deleteApi } from '@Repositories/api-repository.js';
@@ -66,7 +66,6 @@ export const usePageState = defineStore('page', {
             }
 
             //  Save to storage
-            this.pageForm
             localStorage.setItem(`pageForm:${pageHref}`, this.pageForm);
 
             if (this.history.timeline.length === 0) {
@@ -485,7 +484,7 @@ export const usePageState = defineStore('page', {
 
                     }else{
 
-                        useNotificationState().addWarningNotification('Page does not exist');
+                        useNotificationState().showWarningNotification('Page does not exist');
 
                     }
 
@@ -505,7 +504,7 @@ export const usePageState = defineStore('page', {
         updatePage() {
             if (this.pageForm.title.trim() === '') {
                 useFormState().setFormError('title', 'The page title is required');
-                useNotificationState().addWarningNotification('The page title is required');
+                useNotificationState().showWarningNotification('The page title is required');
                 return;
             }
 
@@ -568,11 +567,11 @@ export const usePageState = defineStore('page', {
 
                     this.setPageForm(response.data.page);
                     this.updateProgress.message = "Page updated successfully!";
-                    useNotificationState().addSuccessNotification('Page updated');
+                    useNotificationState().showSuccessNotification('Page updated');
 
                 } else {
                     useFormState().setGeneralFormError(response.data.message);
-                    useNotificationState().addWarningNotification(response.data.message);
+                    useNotificationState().showWarningNotification(response.data.message);
                 }
 
                 // Stop loader
@@ -693,7 +692,7 @@ export const usePageState = defineStore('page', {
 
                     if(response.data.deleted) {
 
-                        useNotificationState().addSuccessNotification('Page deleted');
+                        useNotificationState().showSuccessNotification('Page deleted');
 
                         //  Navigate to show dashboard
                         router.replace({ name: 'show-store-pages' }).then(() => {
@@ -704,7 +703,7 @@ export const usePageState = defineStore('page', {
                     }else{
 
                         useFormState().setGeneralFormError(response.data.message);
-                        useNotificationState().addWarningNotification(response.data.message);
+                        useNotificationState().showWarningNotification(response.data.message);
 
                     }
 
@@ -741,6 +740,12 @@ export const usePageState = defineStore('page', {
         },
         canRedo() {
             return this.history.currentIndex > 0;
+        },
+        historyItems() {
+            return this.history.timeline.map((item, index) => ({
+                ...item,
+                isActive: index === this.history.currentIndex
+            }));
         },
         formHasChanged() {
             var a = cloneDeep(this.pageForm);

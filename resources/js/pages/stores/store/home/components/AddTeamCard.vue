@@ -23,16 +23,11 @@
 <script>
 
     import Button from '@Partials/buttons/Button.vue';
-    import { useStoreState } from '@Stores/store-store.js';
 
     export default {
+        inject: ['storeState'],
         components: {
             Button
-        },
-        data() {
-            return {
-                storeState: useStoreState()
-            };
         },
         computed: {
             store() {

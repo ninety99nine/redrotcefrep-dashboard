@@ -16,7 +16,7 @@
                     label="Mobile Number"
                     v-model="form.mobileNumber"
                     labelPopoverTitle="What Is This?"
-                    :errorText="getFormError('mobileNumber')"
+                    :errorText="formState.getFormError('mobileNumber')"
                     labelPopoverDescription="The mobile number that will be used to receive orders via whatsapp when customers checkout on your store website">
 
                     <template v-if="showWhatsappIcon" #prepend>
@@ -33,20 +33,24 @@
                 <div class="flex space-x-2 mt-4">
 
                     <!-- Delete Button -->
-                    <DeleteButton
+                    <Button
+                        size="xs"
+                        type="danger"
                         v-if="mobileNumber"
                         :disabled="isSubmitting"
-                        :action="() => _deleteMobileNumber(triggerProps.hideModal)" size="xs" type="danger">
-                        <span class="ml-2">Delete</span>
-                    </DeleteButton>
+                        :action="() => _deleteMobileNumber(triggerProps.hideModal)">
+                        <span>Delete</span>
+                    </Button>
 
                     <!-- Save Changes / Add Mobile Number Button -->
-                    <PrimaryButton
-                    :action="() => mobileNumber ? _updateMobileNumber(triggerProps.hideModal) : _createMobileNumber(triggerProps.hideModal)"
-                        :disabled="!mustSaveChanges" size="xs" type="success"
-                        class="w-full">
-                        {{ mobileNumber ? 'Save Changes' : 'Add Mobile Number' }}
-                    </PrimaryButton>
+                    <Button
+                        size="xs"
+                        type="success"
+                        class="w-full"
+                        :disabled="!mustSaveChanges"
+                        :action="() => mobileNumber ? _updateMobileNumber(triggerProps.hideModal) : _createMobileNumber(triggerProps.hideModal)">
+                        <span>{{ mobileNumber ? 'Save Changes' : 'Add Mobile Number' }}</span>
+                    </Button>
 
                 </div>
 
@@ -72,11 +76,10 @@
                             <slot name="prefix"></slot>
 
                             <Pill
-                                class="h-6"
+                                size="xs"
                                 :key="index"
                                 type="primary"
                                 :showDot="false"
-                                :clickable="true"
                                 v-for="(mobileNumber, index) in mobileNumbers"
                                 :action="() => showMobileNumber(triggerProps.showModal, mobileNumber, index)">
 
@@ -89,17 +92,17 @@
 
                             </Pill>
 
-                            <AddButton :action="() => showMobileNumber(triggerProps.showModal, null, null)" size="xs" type="light" class="w-48" rounding="rounded-full">
+                            <Button :action="() => showMobileNumber(triggerProps.showModal, null, null)" class="w-48">
                                 <span class="text-xs">Add Mobile Number</span>
-                            </AddButton>
+                            </Button>
 
                         </div>
 
                     </template>
 
-                    <AddButton v-else :action="() => showMobileNumber(triggerProps.showModal, null, null)" size="xs" type="light" class="w-48" rounding="rounded-full">
+                    <Button v-else type="light" size="xs" :action="() => showMobileNumber(triggerProps.showModal, null, null)" class="w-48">
                         <span class="whitespace-nowrap ml-2">Add Mobile Number</span>
-                    </AddButton>
+                    </Button>
 
                 </div>
 
@@ -116,18 +119,15 @@
 
     import isEqual from 'lodash/isEqual';
     import cloneDeep from 'lodash/cloneDeep';
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import AddButton from '@Partials/buttons/AddButton.vue';
-    import BasicModal from '@Partials/modals/BasicModal.vue';
-    import DeleteButton from '@Partials/buttons/DeleteButton.vue';
-    import PrimaryButton from '@Partials/buttons/PrimaryButton.vue';
-    import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import Pill from '@Partials/pills/Pill.vue';
+    import Button from '@Partials/buttons/Button.vue';
+    import BasicModal from '@Partials/modals/BasicModal.vue';
+    import MobileNumberInput from '@Partials/inputs/MobileNumberInput.vue';
     import FormErrorMessages from '@Partials/form-errors/FormErrorMessages.vue';
 
     export default {
-        mixins: [FormMixin],
-        components: { AddButton, BasicModal, DeleteButton, PrimaryButton, MobileNumberInput, Pill, FormErrorMessages },
+        inject: ['formState'],
+        components: { Pill, Button, BasicModal, MobileNumberInput, FormErrorMessages },
         props: {
             isSubmitting: {
                 type: Boolean,
@@ -217,7 +217,7 @@
 
                 // If it exists, prevent adding and possibly show a warning
                 if(mobileNumberExists) {
-                    this.showUnsuccessfulNotification('Mobile number already exists');
+                    this.notificationState.showWarningNotification('Mobile number already exists');
                     hideModal();
                     return;
                 }
@@ -236,7 +236,7 @@
 
                 // If it exists, prevent adding and possibly show a warning
                 if(mobileNumberExists) {
-                    this.showUnsuccessfulNotification('Mobile number already exists');
+                    this.notificationState.showWarningNotification('Mobile number already exists');
                     hideModal();
                     return;
                 }

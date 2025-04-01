@@ -38,7 +38,7 @@
             <div v-if="shoppingCartForm.deliveryDate" class="text-sm">
                 <span>Delivery date: </span>
                 <span class="font-bold">
-                    {{ shoppingCartForm.deliveryDate }} ({{ customFormattedDate(shoppingCartForm.deliveryDate, 'ddd') }})
+                    {{ shoppingCartForm.deliveryDate }} ({{ formattedShortWeekday(shoppingCartForm.deliveryDate) }})
                 </span>
             </div>
 
@@ -71,14 +71,13 @@
 
 <script>
 
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { formattedShortWeekday } from '@Utils/dateUtils.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
-    import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
     import DeliveryDatePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryDatePicker.vue';
     import DeliveryTimePicker from '@Pages/stores/store/settings/delivery-methods/components/DeliveryTimePicker.vue';
 
     export default {
-        mixins: [UtilsMixin],
+        inject: ['shoppingCartState'],
         components: {
             LineSkeleton, DeliveryDatePicker, DeliveryTimePicker
         },
@@ -87,8 +86,7 @@
                 scheduleOptions: {},
                 showScheduleSummary: true,
                 isLoadingDateOptions: false,
-                isLoadingTimeOptions: false,
-                shoppingCartState: useShoppingCartState()
+                isLoadingTimeOptions: false
             }
         },
         watch: {
@@ -123,6 +121,7 @@
             },
         },
         methods: {
+            formattedShortWeekday: formattedShortWeekday,
             inspectStoreShoppingCartWithDelay() {
                 return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
             },

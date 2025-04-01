@@ -2,9 +2,9 @@
 
     <div>
 
-        <span class="text-xs text-gray-400 mr-2">
+        <div class="text-xs text-gray-400 mr-2">
             {{ description }}
-        </span>
+        </div>
 
         <a
             target="_blank"

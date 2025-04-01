@@ -54,17 +54,12 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import LineSkeleton from '@Partials/skeletons/LineSkeleton.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             LineSkeleton
-        },
-        data() {
-            return {
-                storeState: useStoreState()
-            };
         },
         computed: {
             store() {

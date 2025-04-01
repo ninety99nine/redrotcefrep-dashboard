@@ -29,20 +29,15 @@
 
 <script>
 
-    import { useStoreState } from '@Stores/store-store.js';
     import ItemsSectionHeadingTextInput from '@Pages/stores/store/settings/checkout/components/ItemsSectionHeadingTextInput.vue';
     import ShowDeliveryMethodsToggleSwitch from '@Pages/stores/store/settings/checkout/components/ShowDeliveryMethodsToggleSwitch.vue';
     import DeliveryAddressHeadingTextInput from '@Pages/stores/store/settings/checkout/components/DeliveryAddressHeadingTextInput.vue';
     import DeliveryScheduleHeadingTextInput from '@Pages/stores/store/settings/checkout/components/DeliveryScheduleHeadingTextInput.vue';
 
     export default {
+        inject: ['storeState'],
         components: {
             ItemsSectionHeadingTextInput, ShowDeliveryMethodsToggleSwitch, DeliveryAddressHeadingTextInput, DeliveryScheduleHeadingTextInput
-        },
-        data() {
-            return {
-                storeState: useStoreState(),
-            }
         },
         computed: {
             storeForm() {

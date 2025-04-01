@@ -31,20 +31,17 @@
 
 <script>
 
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import { putApi, postApi, deleteApi } from '@Repositories/api-repository.js';
     import BulkMobileNumberInput from '@Partials/inputs/BulkMobileNumberInput.vue';
 
     export default {
+        inject: ['formState', 'storeState', 'notificationState'],
         components: {
             BulkMobileNumberInput
         },
         data() {
             return {
-                isSubmitting: false,
-                apiState: useApiState(),
-                storeState: useStoreState(),
+                isSubmitting: false
             };
         },
         computed: {
@@ -78,8 +75,8 @@
                         resetForm();
 
                         var storeRollingNumber = response.data.storeRollingNumber;
-                        useStoreState().store._relationships.storeRollingNumbers.push(storeRollingNumber);
-                        this.showSuccessfulNotification('Whatsapp number added');
+                        this.storeState.store._relationships.storeRollingNumbers.push(storeRollingNumber);
+                        this.notificationState.showSuccessNotification('Whatsapp number added');
 
                     }
 
@@ -91,7 +88,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -118,18 +115,15 @@
                             resetForm();
 
                             var storeRollingNumber = response.data.storeRollingNumber;
-                            useStoreState().store._relationships.storeRollingNumbers[mobileNumberIndex] = storeRollingNumber;
+                            this.storeState.store._relationships.storeRollingNumbers[mobileNumberIndex] = storeRollingNumber;
 
-                            /**
-                             *  Note: the showSuccessfulNotification() method is part of the FormMixin methods
-                             */
-                            this.showSuccessfulNotification('Whatsapp number updated');
+                            this.notificationState.showSuccessNotification('Whatsapp number updated');
 
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -143,7 +137,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -164,12 +158,12 @@
                             hideModal();
                             resetForm();
 
-                            useStoreState().store._relationships.storeRollingNumbers.splice(this.storeRollingNumberIndex, 1);
+                            this.storeState.store._relationships.storeRollingNumbers.splice(this.storeRollingNumberIndex, 1);
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -183,7 +177,7 @@
                     //  Stop loader
                     this.isSubmitting = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

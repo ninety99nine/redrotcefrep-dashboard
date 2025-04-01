@@ -158,19 +158,17 @@
 <script>
 
     import Pill from '@Partials/pills/Pill.vue';
-    import { FormMixin } from '@Mixins/FormMixin.js';
     import Button from '@Partials/buttons/Button.vue';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import BasicTable from '@Partials/tables/BasicTable.vue';
     import ConfirmModal from '@Partials/modals/ConfirmModal.vue';
     import SpinningLoader from '@Partials/loaders/SpinningLoader.vue';
     import MoreInfoPopover from '@Partials/popover/MoreInfoPopover.vue';
     import { getApi, deleteApi } from '@Repositories/api-repository.js';
     import NoDataPlaceholder from '@Partials/placeholders/NoDataPlaceholder.vue';
+    import { formattedDatetime, formattedRelativeDate } from '@Utils/dateUtils.js';
 
     export default {
-        mixins: [FormMixin, UtilsMixin],
+        inject: ['formState', 'storeState', 'notificationState'],
         components: { Pill, Button, BasicTable, ConfirmModal, SpinningLoader, MoreInfoPopover, NoDataPlaceholder },
         data() {
             return {
@@ -181,13 +179,12 @@
                 isLoadingReviews: false,
                 deleteReviewModal: null,
                 isDeletingReviewIds: [],
-                storeState: useStoreState(),
                 tableHeaders: ['Customer', 'Subject', 'Rating', 'Comment', 'Review Date', '']
             }
         },
         watch: {
-            isLoadingStore(newValue) {
-                if(!newValue) {
+            store(newValue) {
+                if(newValue) {
                     this.getReviews();
                 }
             }
@@ -196,14 +193,13 @@
             store() {
                 return this.storeState.store;
             },
-            isLoadingStore() {
-                return this.storeState.isLoadingStore;
-            },
             hasSearchTerm() {
                 return this.searchTerm != null && this.searchTerm.trim() != '';
             }
         },
         methods: {
+            formattedDatetime: formattedDatetime,
+            formattedRelativeDate: formattedRelativeDate,
             showDeleteConfirmationModal(review) {
                 this.deletableReview = review;
                 this.deleteReviewModal.showModal();
@@ -248,7 +244,7 @@
                     //  Stop loader
                     this.isLoadingReviews = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
@@ -267,13 +263,13 @@
 
                         if(response.data.deleted) {
 
-                            this.showSuccessfulNotification('Review deleted');
+                            this.notificationState.showSuccessNotification('Review deleted');
                             if(this.isDeletingReviewIds.length == 0) this.getReviews();
 
                         }else{
 
-                            this.setFormError('general', response.data.message);
-                            this.showUnsuccessfulNotification(response.data.message);
+                            this.formState.setFormError('general', response.data.message);
+                            this.notificationState.showWarningNotification(response.data.message);
 
                         }
 
@@ -284,7 +280,7 @@
                     //  Stop loader
                     this.isDeletingReviewIds.splice(this.isDeletingReviewIds.findIndex((id) => id == this.deletableReview.id, 1));
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 

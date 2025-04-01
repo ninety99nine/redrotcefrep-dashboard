@@ -11,13 +11,12 @@
 <script>
 
     import cloneDeep from 'lodash/cloneDeep';
-    import { usePageState } from '@Stores/page-store.js';
 
     export default {
+        inject: ['pageState'],
         data() {
             return {
-                localColumn: null,
-                pageState: usePageState()
+                localColumn: null
             };
         },
         computed: {

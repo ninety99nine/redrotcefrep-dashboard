@@ -19,14 +19,14 @@
 </template>
 
 <script>
+
     /**
      * Component Reference: https://flowbite.com/docs/components/alerts/
      */
     import { Dismiss } from 'flowbite';
-    import { UtilsMixin } from '@Mixins/UtilsMixin.js';
+    import { generateUniqueId } from '@Utils/generalUtils.js';
 
     export default {
-        mixins: [UtilsMixin],
         props: {
             //  The transition duration as the element is hidden
             duration: {
@@ -45,8 +45,8 @@
         },
         data() {
             return {
-                targetElUniqueId: this.generateUniqueId('success-target-toast'),
-                triggerElUniqueId: this.generateUniqueId('success-trigger-toast'),
+                targetElUniqueId: generateUniqueId('success-target-toast'),
+                triggerElUniqueId: generateUniqueId('success-trigger-toast'),
             };
         },
         mounted() {

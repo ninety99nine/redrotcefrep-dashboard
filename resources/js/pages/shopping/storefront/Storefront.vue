@@ -52,79 +52,72 @@
 
 <script>
 
-import debounce from 'lodash.debounce';
-import { useStoreState } from '@Stores/store-store.js';
-import StoreLogo from '@Pages/shopping/components/StoreLogo.vue';
-import StoreName from '@Pages/shopping/components/StoreName.vue';
-import GrandTotal from '@Pages/shopping/components/GrandTotal.vue';
-import StoreBanner from '@Pages/shopping/components/StoreBanner.vue';
-import { useShoppingCartState } from '@Stores/shopping-cart-store.js';
-import CheckoutCard from '@Pages/shopping/components/CheckoutCard.vue';
-import TotalCartItems from '@Pages/shopping/components/TotalCartItems.vue';
-import SocialMediaCard from '@Pages/shopping/components/SocialMediaCard.vue';
-import CreateStoreLink from '@Pages/shopping/components/CreateStoreLink.vue';
-import StoreFooterMenus from '@Pages/shopping/components/StoreFooterMenus.vue';
-import StoreDescription from '@Pages/shopping/components/StoreDescription.vue';
-import CustomizeDrawer from '@Pages/shopping/components/CustomizeDrawer/Index.vue';
-import ShoppingCartDrawer from '@Pages/shopping/components/ShoppingCartDrawer/Index.vue';
+    import StoreLogo from '@Pages/shopping/components/StoreLogo.vue';
+    import StoreName from '@Pages/shopping/components/StoreName.vue';
+    import GrandTotal from '@Pages/shopping/components/GrandTotal.vue';
+    import StoreBanner from '@Pages/shopping/components/StoreBanner.vue';
+    import CheckoutCard from '@Pages/shopping/components/CheckoutCard.vue';
+    import TotalCartItems from '@Pages/shopping/components/TotalCartItems.vue';
+    import SocialMediaCard from '@Pages/shopping/components/SocialMediaCard.vue';
+    import CreateStoreLink from '@Pages/shopping/components/CreateStoreLink.vue';
+    import StoreFooterMenus from '@Pages/shopping/components/StoreFooterMenus.vue';
+    import StoreDescription from '@Pages/shopping/components/StoreDescription.vue';
+    import CustomizeDrawer from '@Pages/shopping/components/CustomizeDrawer/Index.vue';
+    import ShoppingCartDrawer from '@Pages/shopping/components/ShoppingCartDrawer/Index.vue';
 
-export default {
-    components: {
-        StoreLogo, StoreName, GrandTotal, StoreBanner, CheckoutCard, TotalCartItems,
-        SocialMediaCard, CreateStoreLink, StoreFooterMenus, StoreFooterMenus,
-        StoreDescription, CustomizeDrawer, ShoppingCartDrawer
-    },
-    data() {
-        return {
-            storeState: useStoreState(),
-            shoppingCartState: useShoppingCartState()
-        };
-    },
-    watch: {
-        'shoppingCartState.mappedCartProducts': {
-            handler(newVal) {
-                if(Object.keys(this.mappedCartProducts).length === 0) {
-                    this.closeShoppingCartDrawer();
-                }
+    export default {
+        inject: ['storeState', 'shoppingCartState'],
+        components: {
+            StoreLogo, StoreName, GrandTotal, StoreBanner, CheckoutCard, TotalCartItems,
+            SocialMediaCard, CreateStoreLink, StoreFooterMenus, StoreFooterMenus,
+            StoreDescription, CustomizeDrawer, ShoppingCartDrawer
+        },
+        watch: {
+            'shoppingCartState.mappedCartProducts': {
+                handler(newVal) {
+                    if(Object.keys(this.mappedCartProducts).length === 0) {
+                        this.closeShoppingCartDrawer();
+                    }
 
-                if(!this.isInspectingShoppingCart) {
-                    this.inspectStoreShoppingCartWithDelay();
-                }
+                    if(!this.isInspectingShoppingCart) {
+                        this.inspectStoreShoppingCartWithDelay();
+                    }
+                },
+                deep: true
+            }
+        },
+        computed: {
+            store() {
+                return this.storeState.store;
             },
-            deep: true
+            storeForm() {
+                return this.storeState.storeForm;
+            },
+            shoppingCart() {
+                return this.shoppingCartState.shoppingCart;
+            },
+            mappedCartProducts() {
+                return this.shoppingCartState.mappedCartProducts;
+            }
+        },
+        methods: {
+            setStoreForm() {
+                return this.storeState.setStoreForm(this.store);
+            },
+            setShoppingCartForm() {
+                return this.shoppingCartState.setShoppingCartForm();
+            },
+            closeShoppingCartDrawer() {
+                return this.shoppingCartState.closeShoppingCartDrawer();
+            },
+            inspectStoreShoppingCartWithDelay() {
+                return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
+            }
+        },
+        created() {
+            this.setStoreForm();
+            this.setShoppingCartForm();
         }
-    },
-    computed: {
-        store() {
-            return this.storeState.store;
-        },
-        storeForm() {
-            return this.storeState.storeForm;
-        },
-        shoppingCart() {
-            return this.shoppingCartState.shoppingCart;
-        },
-        mappedCartProducts() {
-            return this.shoppingCartState.mappedCartProducts;
-        }
-    },
-    methods: {
-        setStoreForm() {
-            return this.storeState.setStoreForm(this.store);
-        },
-        setShoppingCartForm() {
-            return this.shoppingCartState.setShoppingCartForm();
-        },
-        closeShoppingCartDrawer() {
-            return this.shoppingCartState.closeShoppingCartDrawer();
-        },
-        inspectStoreShoppingCartWithDelay() {
-            return this.shoppingCartState.inspectStoreShoppingCartWithDelay();
-        }
-    },
-    created() {
-        this.setStoreForm();
-        this.setShoppingCartForm();
-    }
-};
+    };
+
 </script>

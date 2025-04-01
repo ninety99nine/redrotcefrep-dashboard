@@ -21,22 +21,17 @@
 
 <script>
 
-    import { FormMixin } from '@Mixins/FormMixin.js';
-    import { useApiState } from '@Stores/api-store.js';
-    import { useStoreState } from '@Stores/store-store.js';
     import { postApi } from '@Repositories/api-repository.js';
     import RightSideAlerts from '@Partials/alerts/RightSideAlerts.vue';
     import Storefront from '@Pages/shopping/storefront/Storefront.vue';
     import StoreNotFound from '@Pages/shopping/store-not-found/StoreNotFound.vue';
 
     export default {
-        mixins: [FormMixin],
+        inject: ['apiState', 'formState', 'storeState'],
         components: { Storefront, RightSideAlerts, StoreNotFound },
         data() {
             return {
-                apiState: useApiState(),
-                isSearchingStore: false,
-                storeState: useStoreState(),
+                isSearchingStore: false
             }
         },
         watch: {
@@ -56,12 +51,15 @@
                 //  Start loader
                 this.isSearchingStore = true;
 
+                const url = this.apiState.apiHome['_links']['searchStoreByAlias'];
+
                 // Get the store alias
                 const params = {
-                    'alias': this.$route.params.alias
+                    'alias': this.$route.params.alias,
+                    '_relationships': 'logo'
                 }
 
-                postApi(this.apiState.apiHome['_links']['searchStoreByAlias'], params).then(response => {
+                postApi(url, params).then(response => {
 
                     if(response.status == 200) {
 
@@ -82,7 +80,7 @@
                     //  Stop loader
                     this.isSearchingStore = false;
 
-                    this.setServerFormErrors(errorException);
+                    this.formState.setServerFormErrors(errorException);
 
                 });
 
